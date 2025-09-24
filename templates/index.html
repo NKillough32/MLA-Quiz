@@ -40,9 +40,8 @@
             line-height: 1.5;
             color: #111827;
             background: #f5f7fb;
-            padding-top: 60px;
             -webkit-font-smoothing: antialiased;
-            padding-top: env(safe-area-inset-top);
+            padding-top: max(60px, env(safe-area-inset-top));
             padding-bottom: env(safe-area-inset-bottom);
         }
         
@@ -82,11 +81,9 @@
             padding: 0;
         }
         
-        /* Content Container */
+        /* Content Container - legacy styles, minimal impact */
         .container {
-            padding-top: 52px; /* Account for fixed navbar */
             min-height: 100vh;
-            padding-bottom: 80px;
         }
         
         /* Page grid layout */
@@ -201,6 +198,12 @@
             box-shadow: 0 0 0 2px rgba(37,99,235,.15) inset;
         }
 
+        /* Fallback for browsers that don't support :has() */
+        .new-option.selected {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37,99,235,.15) inset;
+        }
+
         /* Feedback states */
         .new-option.correct {
             border-color: #10b981;
@@ -257,6 +260,83 @@
             font-size: 1.1rem;
             font-weight: 800;
             color: #0f172a;
+        }
+
+        /* Quiz controls */
+        .quiz-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .submit-btn, .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .submit-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .nav-btn {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .nav-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Feedback and explanation styling */
+        .feedback-container {
+            margin: 16px 0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .feedback-container.correct {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .feedback-container.incorrect {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .explanation-container {
+            margin: 16px 0;
+            padding: 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .explanation-container h4 {
+            margin: 0 0 8px 0;
+            color: #475569;
+            font-size: 0.95rem;
         }
         
         /* iOS-Style Cards */

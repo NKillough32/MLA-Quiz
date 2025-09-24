@@ -211,12 +211,16 @@ class MLAQuizApp {
             const selectedAnswer = this.answers[question.id];
             const correctAnswer = question.correct_answer;
             
-            optionsHtml = '<form class="new-options">';
+            optionsHtml = '<div class="new-options">';
             question.options.forEach((option, index) => {
                 const isSelected = selectedAnswer === index;
                 const letter = String.fromCharCode(65 + index); // A, B, C, D, etc.
                 
                 let optionClasses = 'new-option';
+                
+                if (isSelected) {
+                    optionClasses += ' selected';
+                }
                 
                 // Add feedback classes if answer is submitted
                 if (isSubmitted) {
@@ -228,14 +232,18 @@ class MLAQuizApp {
                     }
                 }
 
+                const cleanOption = this.formatText(option).replace(/^[A-E]\)\s*/, ''); // Remove letter prefix if present
+
                 optionsHtml += `
                     <label class="${optionClasses}">
                         <input type="radio" name="question_${question.id}" value="${index}" ${isSelected ? 'checked' : ''}>
-                        <div class="label"><span class="badge">${letter})</span> ${this.formatText(option)}</div>
+                        <div class="label">
+                            <span class="badge">${letter})</span> ${cleanOption}
+                        </div>
                     </label>
                 `;
             });
-            optionsHtml += '</form>';
+            optionsHtml += '</div>';
         }
         
         container.innerHTML = `
@@ -284,8 +292,12 @@ class MLAQuizApp {
         const questionId = this.questions[this.currentQuestionIndex].id;
         this.answers[questionId] = optionIndex;
         
-        // Update UI
+        // Update UI - both old and new classes for compatibility
         document.querySelectorAll('.option').forEach((opt, index) => {
+            opt.classList.toggle('selected', index === optionIndex);
+        });
+        
+        document.querySelectorAll('.new-option').forEach((opt, index) => {
             opt.classList.toggle('selected', index === optionIndex);
         });
         
@@ -338,11 +350,11 @@ class MLAQuizApp {
         
         if (isCorrect) {
             feedbackContainer.innerHTML = '✅ Correct!';
-            feedbackContainer.className = 'feedback-container feedback-correct';
+            feedbackContainer.className = 'feedback-container correct';
         } else {
             const correctLetter = String.fromCharCode(65 + correctAnswer); // Convert 0->A, 1->B, etc.
             feedbackContainer.innerHTML = `❌ Incorrect. The correct answer is ${correctLetter}.`;
-            feedbackContainer.className = 'feedback-container feedback-incorrect';
+            feedbackContainer.className = 'feedback-container incorrect';
         }
         
         feedbackContainer.style.display = 'block';
@@ -439,16 +451,13 @@ class MLAQuizApp {
         }
         
         console.log('Showing explanations:', explanations.length, 'items');
-        let explanationHtml = '<div class="explanation-title">Explanation</div>';
-        explanationHtml += '<div class="explanation-content">';
+        let explanationHtml = '<h4>Explanation</h4>';
         
         explanations.forEach(exp => {
             // Remove "Explanation:" or "Answer:" prefix if present
             const cleanExp = exp.replace(/^(Explanation:|Answer:)\s*/i, '');
             explanationHtml += `<p>${this.formatText(cleanExp)}</p>`;
         });
-        
-        explanationHtml += '</div>';
         
         explanationContainer.innerHTML = explanationHtml;
         explanationContainer.style.display = 'block';
