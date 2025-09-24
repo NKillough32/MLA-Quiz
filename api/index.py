@@ -181,6 +181,9 @@ class PWAQuizLoader:
     def parse_markdown_content(content, filename="uploaded_quiz"):
         """Parse markdown content directly without file system."""
         try:
+            logger.info(f"Starting to parse quiz content, length: {len(content)} characters")
+            logger.info(f"First 1000 chars of content: {content[:1000]}")
+            
             # Analyze investigation variations
             PWAQuizLoader.analyze_investigation_variations(content)
 
