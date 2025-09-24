@@ -214,11 +214,14 @@ class PWAQuizLoader:
         """Get list of available quiz files."""
         quiz_files = []
         
+        # Get the directory of the current script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        
         # Check for quiz files in common locations
         search_paths = [
-            'Questions',
-            '.',
-            'MLA'
+            os.path.join(script_dir, 'Questions'),
+            script_dir,
+            os.path.join(script_dir, 'MLA')
         ]
         
         for search_path in search_paths:
@@ -402,17 +405,17 @@ def get_quiz_by_specialty(quiz_name, specialty):
 @app.route('/manifest.json')
 def manifest():
     """Serve PWA manifest."""
-    return send_from_directory('static', 'manifest.json')
+    return send_from_directory(os.path.join(os.path.dirname(__file__), 'static'), 'manifest.json')
 
 @app.route('/sw.js')
 def service_worker():
     """Serve service worker."""
-    return send_from_directory('static', 'sw.js')
+    return send_from_directory(os.path.join(os.path.dirname(__file__), 'static'), 'sw.js')
 
 @app.route('/favicon.ico')
 def favicon():
     """Serve favicon."""
-    return send_from_directory('static', 'favicon.ico')
+    return send_from_directory(os.path.join(os.path.dirname(__file__), 'static'), 'favicon.ico')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
