@@ -29,6 +29,7 @@ class MLAQuizApp {
         document.getElementById('submitBtn').addEventListener('click', () => this.submitAnswer());
         document.getElementById('nextBtn').addEventListener('click', () => this.nextQuestion());
         document.getElementById('prevBtn').addEventListener('click', () => this.prevQuestion());
+        document.getElementById('sidebarToggle').addEventListener('click', () => this.toggleSidebar());
         
         // File upload
         document.getElementById('uploadBtn').addEventListener('click', () => {
@@ -170,20 +171,28 @@ class MLAQuizApp {
     }
     
     startQuiz() {
+        // Shuffle options for all questions to prevent pattern memorization
+        this.questions = this.questions.map(question => this.shuffleOptions(question));
+        
         this.showScreen('quizScreen');
         this.updateNavigation('Quiz');
         this.renderCurrentQuestion();
         this.updateProgress();
+        this.buildQuestionList(); // Build the question list in the sidebar
     }
     
     renderCurrentQuestion() {
         const question = this.questions[this.currentQuestionIndex];
         const container = document.getElementById('questionContainer');
         
-        // Hide explanation initially (will show again if answer is already submitted)
+        // Hide explanation and feedback initially (will show again if answer is already submitted)
         const explanationContainer = document.getElementById('explanationContainer');
+        const feedbackContainer = document.getElementById('feedbackContainer');
         if (explanationContainer) {
             explanationContainer.style.display = 'none';
+        }
+        if (feedbackContainer) {
+            feedbackContainer.style.display = 'none';
         }
         
         let investigationsHtml = '';
@@ -254,9 +263,17 @@ class MLAQuizApp {
             });
         }
         
-        // If answer already submitted, show explanation
-        if (isSubmitted && question.explanations) {
-            this.showExplanation(question.explanations);
+        // If answer already submitted, show feedback and explanation
+        if (isSubmitted) {
+            const selectedAnswer = this.answers[question.id];
+            const correctAnswer = question.correct_answer;
+            const isCorrect = selectedAnswer === correctAnswer;
+            
+            this.showFeedback(isCorrect, correctAnswer);
+            
+            if (question.explanations) {
+                this.showExplanation(question.explanations);
+            }
         }
         
         // Update button states
@@ -304,10 +321,128 @@ class MLAQuizApp {
             }
         });
         
+        // Show feedback
+        this.showFeedback(isCorrect, correctAnswer);
+        
         // Show explanation if available
         this.showExplanation(currentQuestion.explanations);
         
+        // Update sidebar to reflect answer status
+        this.buildQuestionList();
+        
         this.updateButtons();
+    }
+    
+    showFeedback(isCorrect, correctAnswer) {
+        const feedbackContainer = document.getElementById('feedbackContainer');
+        
+        if (isCorrect) {
+            feedbackContainer.innerHTML = '✅ Correct!';
+            feedbackContainer.className = 'feedback-container feedback-correct';
+        } else {
+            const correctLetter = String.fromCharCode(65 + correctAnswer); // Convert 0->A, 1->B, etc.
+            feedbackContainer.innerHTML = `❌ Incorrect. The correct answer is ${correctLetter}.`;
+            feedbackContainer.className = 'feedback-container feedback-incorrect';
+        }
+        
+        feedbackContainer.style.display = 'block';
+    }
+    
+    toggleSidebar() {
+        const sidebar = document.getElementById('questionSidebar');
+        const mainContent = document.querySelector('.quiz-main-content');
+        
+        sidebar.classList.toggle('expanded');
+        mainContent.classList.toggle('sidebar-expanded');
+    }
+    
+    buildQuestionList() {
+        const sidebarContent = document.getElementById('sidebarContent');
+        const sidebarStats = document.getElementById('sidebarStats');
+        
+        if (!this.questions || this.questions.length === 0) {
+            return;
+        }
+        
+        let html = '';
+        let answeredCount = 0;
+        let correctCount = 0;
+        
+        this.questions.forEach((question, index) => {
+            const isAnswered = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
+            const isCorrect = isAnswered && this.submittedAnswers[question.id] === question.correct_answer;
+            const isCurrent = index === this.currentQuestionIndex;
+            
+            if (isAnswered) answeredCount++;
+            if (isCorrect) correctCount++;
+            
+            let statusIcon = '⚪'; // Not answered
+            if (isAnswered) {
+                statusIcon = isCorrect ? '✅' : '❌';
+            }
+            
+            html += `
+                <div class="question-item ${isCurrent ? 'current' : ''}" data-question-index="${index}">
+                    <div class="question-number">Q${index + 1}</div>
+                    <div class="question-status">${statusIcon}</div>
+                </div>
+            `;
+        });
+        
+        sidebarContent.innerHTML = html;
+        
+        // Update stats
+        const percentage = Math.round((answeredCount / this.questions.length) * 100);
+        const correctPercentage = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+        sidebarStats.innerHTML = `${percentage}% Complete<br>${correctCount}/${answeredCount} Correct (${correctPercentage}%)`;
+        
+        // Add click listeners to question items
+        document.querySelectorAll('.question-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const questionIndex = parseInt(e.currentTarget.dataset.questionIndex);
+                this.goToQuestion(questionIndex);
+            });
+        });
+    }
+    
+    goToQuestion(questionIndex) {
+        if (questionIndex >= 0 && questionIndex < this.questions.length) {
+            this.currentQuestionIndex = questionIndex;
+            this.renderCurrentQuestion();
+            this.updateProgress();
+            this.buildQuestionList(); // Refresh the list to update current indicator
+        }
+    }
+    
+    // Shuffle options for a question to prevent pattern memorization
+    shuffleOptions(question) {
+        if (!question.options || question.options.length <= 1) {
+            return question;
+        }
+        
+        // Create array of indices and their corresponding options
+        const optionPairs = question.options.map((option, index) => ({ option, originalIndex: index }));
+        
+        // Fisher-Yates shuffle
+        for (let i = optionPairs.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [optionPairs[i], optionPairs[j]] = [optionPairs[j], optionPairs[i]];
+        }
+        
+        // Create the shuffled question
+        const shuffledQuestion = { ...question };
+        shuffledQuestion.options = optionPairs.map(pair => pair.option);
+        
+        // Update the correct answer index to match the new position
+        const correctOptionPair = optionPairs.find(pair => pair.originalIndex === question.correct_answer);
+        if (correctOptionPair) {
+            shuffledQuestion.correct_answer = optionPairs.indexOf(correctOptionPair);
+        }
+        
+        // Store the mapping for this question so we can maintain consistency
+        shuffledQuestion.optionMapping = optionPairs.map(pair => pair.originalIndex);
+        
+        return shuffledQuestion;
     }
     
     showExplanation(explanations) {

@@ -263,6 +263,121 @@
             line-height: 1.4;
         }
         
+        /* Feedback Styles */
+        .feedback-container {
+            margin: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .feedback-correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback-incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        /* Question Sidebar Styles */
+        .question-sidebar {
+            position: fixed;
+            top: 60px;
+            right: 0;
+            width: 280px;
+            height: calc(100vh - 60px);
+            background: white;
+            border-left: 1px solid #e5e5ea;
+            transform: translateX(240px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .question-sidebar.expanded {
+            transform: translateX(0);
+        }
+        
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #e5e5ea;
+            background: #f8f9fa;
+        }
+        
+        .sidebar-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #1c1c1e;
+        }
+        
+        .sidebar-stats {
+            font-size: 14px;
+            color: #8e8e93;
+            margin-top: 4px;
+        }
+        
+        .sidebar-toggle {
+            position: absolute;
+            top: 16px;
+            left: -40px;
+            width: 40px;
+            height: 40px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .sidebar-content {
+            padding: 8px 0;
+        }
+        
+        .question-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-bottom: 0.5px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .question-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .question-item.current {
+            background: #e3f2fd;
+            border-left: 3px solid #007AFF;
+        }
+        
+        .question-number {
+            font-weight: 600;
+            font-size: 14px;
+            width: 30px;
+        }
+        
+        .question-status {
+            margin-left: auto;
+            font-size: 16px;
+        }
+        
+        .quiz-main-content {
+            margin-right: 40px;
+            transition: margin-right 0.3s ease;
+        }
+        
+        .quiz-main-content.sidebar-expanded {
+            margin-right: 280px;
+        }
+        
         /* Explanation Styles */
         .explanation-container {
             margin: 16px;
@@ -479,15 +594,32 @@
         
         <!-- Quiz Screen -->
         <div id="quizScreen" class="screen" style="display: none;">
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
+            <!-- Question List Sidebar -->
+            <div id="questionSidebar" class="question-sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">Progress</div>
+                    <div class="sidebar-stats" id="sidebarStats">0% Complete</div>
+                    <button class="sidebar-toggle" id="sidebarToggle">📝</button>
                 </div>
-                <div class="progress-text" id="progressText">Question 1 of 10</div>
+                <div class="sidebar-content" id="sidebarContent">
+                    <!-- Question list will be populated here -->
+                </div>
             </div>
+            
+            <div class="quiz-main-content">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Question 1 of 10</div>
+                </div>
             
             <div id="questionContainer" class="question-container active">
                 <!-- Questions will be loaded here -->
+            </div>
+            
+            <div id="feedbackContainer" class="feedback-container" style="display: none;">
+                <!-- Correct/Incorrect feedback will be shown here -->
             </div>
             
             <div id="explanationContainer" class="explanation-container" style="display: none;">
@@ -499,6 +631,7 @@
                 <button class="btn" id="nextBtn" disabled style="display: none;">Next Question</button>
                 <button class="btn btn-secondary" id="prevBtn" style="display: none;">Previous Question</button>
             </div>
+            </div> <!-- End quiz-main-content -->
         </div>
         
         <!-- Results Screen -->
