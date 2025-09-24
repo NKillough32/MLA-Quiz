@@ -22,19 +22,25 @@
     
     <!-- iOS-Style CSS -->
     <style>
-        /* iOS System Fonts and Base Styles */
-        * {
-            -webkit-tap-highlight-color: transparent;
+        /* Base sizing */
+        *,
+        *::before,
+        *::after { 
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body { 
+            height: 100%; 
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 0;
-            background: #f2f2f7;
-            color: #1c1c1e;
-            line-height: 1.4;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            line-height: 1.5;
+            color: #111827;
+            background: #f5f7fb;
+            padding-top: 60px;
             -webkit-font-smoothing: antialiased;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
@@ -81,6 +87,176 @@
             padding-top: 52px; /* Account for fixed navbar */
             min-height: 100vh;
             padding-bottom: 80px;
+        }
+        
+        /* Page grid layout */
+        .quiz-page {
+            --sidebar-w: 300px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 16px;
+            display: grid;
+            grid-template-columns: minmax(0,1fr) var(--sidebar-w);
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 1100px) {
+            .quiz-page {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(17,24,39,.06);
+            border: 1px solid rgba(17,24,39,.06);
+            overflow: hidden;
+        }
+
+        .card-body { 
+            padding: 20px 24px; 
+        }
+
+        /* Sticky sidebar on large screens */
+        .sidebar {
+            position: sticky;
+            top: 80px;
+        }
+
+        /* Gradient header bar */
+        .q-header {
+            padding: 16px 24px;
+            color: #fff;
+            background: linear-gradient(90deg,#2563eb,#7c3aed);
+        }
+        .q-header h2, .q-header h3, .q-header p { 
+            margin: 0; 
+        }
+
+        /* Long medical lines should wrap gracefully */
+        .q-text, .investigations {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .q-text p { 
+            margin: 0 0 12px; 
+        }
+
+        /* Investigations block styling */
+        .investigations {
+            margin: 16px 0 20px;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-left: 4px solid #2563eb;
+            border-radius: 10px;
+        }
+        .investigations h4 {
+            margin: 0 0 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .investigations p { 
+            margin: 0; 
+        }
+
+        /* Options list */
+        .new-options {
+            display: grid;
+            gap: 10px;
+        }
+
+        /* Each option as a "chip card" */
+        .new-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color .15s, box-shadow .15s, background .15s;
+        }
+
+        .new-option input[type="radio"] {
+            margin-top: 2px;
+            flex: 0 0 auto;
+        }
+
+        .new-option:hover {
+            border-color: #c7d2fe;
+            box-shadow: 0 2px 8px rgba(37,99,235,.08);
+            background: #fbfdff;
+        }
+
+        .new-option:has(input:checked) {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37,99,235,.15) inset;
+        }
+
+        /* Feedback states */
+        .new-option.correct {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .new-option.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* Label text wraps; letters stand out */
+        .new-option .label {
+            overflow-wrap: anywhere;
+        }
+        .new-option .badge {
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        /* Progress rail */
+        .progress-card h4 { 
+            margin: 0 0 8px; 
+        }
+        .progress-list { 
+            display: grid; 
+            gap: 8px; 
+        }
+        .progress-item {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-size: 0.92rem; 
+            padding: 6px 8px; 
+            border-radius: 8px;
+            background: #f3f4f6;
+        }
+        .progress-bar {
+            height: 6px; 
+            background: #e5e7eb; 
+            border-radius: 999px; 
+            overflow: hidden;
+        }
+        .progress-bar > span {
+            display: block; 
+            height: 100%; 
+            width: var(--w,0%);
+            background: #2563eb;
+        }
+
+        /* Spacing and headings */
+        .section-title {
+            margin: 20px 0 10px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0f172a;
         }
         
         /* iOS-Style Cards */
@@ -615,44 +791,59 @@
         
         <!-- Quiz Screen -->
         <div id="quizScreen" class="screen" style="display: none;">
-            <!-- Question List Sidebar -->
-            <div id="questionSidebar" class="question-sidebar">
-                <div class="sidebar-header">
-                    <div class="sidebar-title">Progress</div>
-                    <div class="sidebar-stats" id="sidebarStats">0% Complete</div>
-                    <button class="sidebar-toggle" id="sidebarToggle">📝</button>
-                </div>
-                <div class="sidebar-content" id="sidebarContent">
-                    <!-- Question list will be populated here -->
-                </div>
-            </div>
-            
-            <div class="quiz-main-content">
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
+            <div class="quiz-page">
+                <main class="card">
+                    <div class="q-header">
+                        <div style="font-size:.8rem;opacity:.9">Question</div>
+                        <h2 style="margin:4px 0 0" id="questionTitle">Question 1</h2>
+                        <div style="font-size:.85rem;opacity:.9" id="questionProgress">1 of 49</div>
                     </div>
-                    <div class="progress-text" id="progressText">Question 1 of 10</div>
-                </div>
-            
-            <div id="questionContainer" class="question-container active">
-                <!-- Questions will be loaded here -->
+                    
+                    <div class="card-body">
+                        <div id="questionContainer" class="question-container active">
+                            <!-- Questions will be loaded here -->
+                        </div>
+                        
+                        <div id="feedbackContainer" class="feedback-container" style="display: none;">
+                            <!-- Feedback will be shown here -->
+                        </div>
+                        
+                        <div id="explanationContainer" class="explanation-container" style="display: none;">
+                            <!-- Explanations will be shown here -->
+                        </div>
+                        
+                        <div class="quiz-controls">
+                            <button id="prevBtn" class="nav-btn" style="display: none;">Previous</button>
+                            <button id="submitBtn" class="submit-btn">Submit Answer</button>
+                            <button id="nextBtn" class="nav-btn" style="display: none;">Next</button>
+                        </div>
+                    </div>
+                </main>
+
+                <aside class="sidebar">
+                    <div class="card">
+                        <div class="card-body progress-card">
+                            <h4>Progress</h4>
+                            <div class="progress-bar">
+                                <span id="progressFill" style="--w: 0%"></span>
+                            </div>
+                            <div class="progress-list">
+                                <div class="progress-item">
+                                    <span>Completed</span>
+                                    <span id="completedCount">0/0</span>
+                                </div>
+                                <div class="progress-item">
+                                    <span>Correct</span>
+                                    <span id="correctCount">0 (0%)</span>
+                                </div>
+                            </div>
+                            <div id="sidebarContent" class="question-list-container" style="margin-top: 16px;">
+                                <!-- Question list will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </aside>
             </div>
-            
-            <div id="feedbackContainer" class="feedback-container" style="display: none;">
-                <!-- Correct/Incorrect feedback will be shown here -->
-            </div>
-            
-            <div id="explanationContainer" class="explanation-container" style="display: none;">
-                <!-- Explanations will be shown here -->
-            </div>
-            
-            <div style="padding: 16px;">
-                <button class="btn" id="submitBtn" style="display: none;">Submit Answer</button>
-                <button class="btn" id="nextBtn" disabled style="display: none;">Next Question</button>
-                <button class="btn btn-secondary" id="prevBtn" style="display: none;">Previous Question</button>
-            </div>
-            </div> <!-- End quiz-main-content -->
         </div>
         
         <!-- Results Screen -->

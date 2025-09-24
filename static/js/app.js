@@ -29,7 +29,7 @@ class MLAQuizApp {
         document.getElementById('submitBtn').addEventListener('click', () => this.submitAnswer());
         document.getElementById('nextBtn').addEventListener('click', () => this.nextQuestion());
         document.getElementById('prevBtn').addEventListener('click', () => this.prevQuestion());
-        document.getElementById('sidebarToggle').addEventListener('click', () => this.toggleSidebar());
+        // Sidebar toggle removed - now using responsive grid layout
         
         // File upload
         document.getElementById('uploadBtn').addEventListener('click', () => {
@@ -199,26 +199,24 @@ class MLAQuizApp {
         if (question.investigations && question.investigations.trim()) {
             investigationsHtml = `
                 <div class="investigations">
-                    <div class="investigations-title">Investigations</div>
-                    <div class="investigations-content">${this.formatText(question.investigations)}</div>
+                    <h4>Investigations</h4>
+                    <p>${this.formatText(question.investigations)}</p>
                 </div>
             `;
         }
-        
+
         let optionsHtml = '';
         if (question.options && question.options.length > 0) {
             const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
             const selectedAnswer = this.answers[question.id];
             const correctAnswer = question.correct_answer;
             
-            optionsHtml = '<div class="options">';
+            optionsHtml = '<form class="new-options">';
             question.options.forEach((option, index) => {
                 const isSelected = selectedAnswer === index;
-                let optionClasses = 'option';
+                const letter = String.fromCharCode(65 + index); // A, B, C, D, etc.
                 
-                if (isSelected) {
-                    optionClasses += ' selected';
-                }
+                let optionClasses = 'new-option';
                 
                 // Add feedback classes if answer is submitted
                 if (isSubmitted) {
@@ -229,36 +227,38 @@ class MLAQuizApp {
                         optionClasses += ' correct';
                     }
                 }
-                
+
                 optionsHtml += `
-                    <div class="${optionClasses}" data-option-index="${index}">
-                        <div class="option-content">${this.formatText(option)}</div>
-                    </div>
+                    <label class="${optionClasses}">
+                        <input type="radio" name="question_${question.id}" value="${index}" ${isSelected ? 'checked' : ''}>
+                        <div class="label"><span class="badge">${letter})</span> ${this.formatText(option)}</div>
+                    </label>
                 `;
             });
-            optionsHtml += '</div>';
+            optionsHtml += '</form>';
         }
         
         container.innerHTML = `
-            <div class="question-header">
-                <p class="question-number">Question ${this.currentQuestionIndex + 1} of ${this.questions.length}</p>
-                <h2 class="question-title">${question.title || 'Medical Question'}</h2>
+            <div class="q-text">
+                <p>${this.formatText(question.scenario)}</p>
             </div>
-            <div class="question-content">
-                <div class="scenario">${this.formatText(question.scenario)}</div>
-                ${investigationsHtml}
-                <div class="prompt">${this.formatText(question.prompt)}</div>
-                ${optionsHtml}
-            </div>
+            
+            ${investigationsHtml}
+            
+            <h3 class="section-title">${this.formatText(question.prompt)}</h3>
+            
+            ${optionsHtml}
         `;
         
         // Bind option selection events (only if not submitted)
         const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
         if (!isSubmitted) {
-            document.querySelectorAll('.option').forEach(option => {
-                option.addEventListener('click', () => {
-                    const optionIndex = parseInt(option.dataset.optionIndex);
-                    this.selectOption(optionIndex);
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.checked) {
+                        const optionIndex = parseInt(radio.value);
+                        this.selectOption(optionIndex);
+                    }
                 });
             });
         }
@@ -348,33 +348,19 @@ class MLAQuizApp {
         feedbackContainer.style.display = 'block';
     }
     
-    toggleSidebar() {
-        const sidebar = document.getElementById('questionSidebar');
-        const mainContent = document.querySelector('.quiz-main-content');
-        
-        sidebar.classList.toggle('expanded');
-        mainContent.classList.toggle('sidebar-expanded');
-    }
-    
     buildQuestionList() {
         const sidebarContent = document.getElementById('sidebarContent');
-        const sidebarStats = document.getElementById('sidebarStats');
         
-        if (!this.questions || this.questions.length === 0) {
+        if (!this.questions || this.questions.length === 0 || !sidebarContent) {
             return;
         }
         
-        let html = '';
-        let answeredCount = 0;
-        let correctCount = 0;
+        let html = '<div class="progress-list">';
         
         this.questions.forEach((question, index) => {
             const isAnswered = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
             const isCorrect = isAnswered && this.submittedAnswers[question.id] === question.correct_answer;
             const isCurrent = index === this.currentQuestionIndex;
-            
-            if (isAnswered) answeredCount++;
-            if (isCorrect) correctCount++;
             
             let statusIcon = '⚪'; // Not answered
             if (isAnswered) {
@@ -382,22 +368,18 @@ class MLAQuizApp {
             }
             
             html += `
-                <div class="question-item ${isCurrent ? 'current' : ''}" data-question-index="${index}">
-                    <div class="question-number">Q${index + 1}</div>
-                    <div class="question-status">${statusIcon}</div>
+                <div class="progress-item ${isCurrent ? 'current' : ''}" data-question-index="${index}" style="cursor: pointer;">
+                    <span>Q${index + 1}</span>
+                    <span>${statusIcon}</span>
                 </div>
             `;
         });
         
+        html += '</div>';
         sidebarContent.innerHTML = html;
         
-        // Update stats
-        const percentage = Math.round((answeredCount / this.questions.length) * 100);
-        const correctPercentage = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
-        sidebarStats.innerHTML = `${percentage}% Complete<br>${correctCount}/${answeredCount} Correct (${correctPercentage}%)`;
-        
         // Add click listeners to question items
-        document.querySelectorAll('.question-item').forEach(item => {
+        document.querySelectorAll('.progress-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 const questionIndex = parseInt(e.currentTarget.dataset.questionIndex);
                 this.goToQuestion(questionIndex);
@@ -526,12 +508,53 @@ class MLAQuizApp {
     }
     
     updateProgress() {
-        const progress = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
+        if (!this.questions || this.questions.length === 0) return;
         
-        progressFill.style.width = `${progress}%`;
-        progressText.textContent = `Question ${this.currentQuestionIndex + 1} of ${this.questions.length}`;
+        const percentage = Math.round(((this.currentQuestionIndex + 1) / this.questions.length) * 100);
+        
+        // Update header progress
+        const questionTitle = document.getElementById('questionTitle');
+        const questionProgress = document.getElementById('questionProgress');
+        if (questionTitle) {
+            questionTitle.textContent = `Question ${this.currentQuestionIndex + 1}`;
+        }
+        if (questionProgress) {
+            questionProgress.textContent = `${this.currentQuestionIndex + 1} of ${this.questions.length}`;
+        }
+        
+        // Update progress bar
+        const progressFill = document.getElementById('progressFill');
+        if (progressFill) {
+            progressFill.style.setProperty('--w', `${percentage}%`);
+        }
+        
+        // Update sidebar stats
+        let answeredCount = 0;
+        let correctCount = 0;
+        
+        if (this.submittedAnswers) {
+            Object.keys(this.submittedAnswers).forEach(questionId => {
+                const question = this.questions.find(q => q.id == questionId);
+                if (question) {
+                    answeredCount++;
+                    if (this.submittedAnswers[questionId] === question.correct_answer) {
+                        correctCount++;
+                    }
+                }
+            });
+        }
+        
+        const completedCount = document.getElementById('completedCount');
+        const correctCountEl = document.getElementById('correctCount');
+        
+        if (completedCount) {
+            completedCount.textContent = `${answeredCount}/${this.questions.length}`;
+        }
+        
+        if (correctCountEl) {
+            const correctPercentage = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+            correctCountEl.textContent = `${correctCount} (${correctPercentage}%)`;
+        }
     }
     
     async finishQuiz() {
