@@ -4,6 +4,10 @@
         {
             "src": "api/index.py",
             "use": "@vercel/python"
+        },
+        {
+            "src": "static/**/*",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
@@ -13,15 +17,15 @@
         },
         {
             "src": "/manifest.json",
-            "dest": "/api/index.py"
+            "dest": "/static/manifest.json"
         },
         {
             "src": "/sw.js",
-            "dest": "/api/index.py"
+            "dest": "/static/sw.js"
         },
         {
-            "src": "/favicon.ico",
-            "dest": "/api/index.py"
+            "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg))",
+            "dest": "/static/$1"
         },
         {
             "src": "/(.*)",

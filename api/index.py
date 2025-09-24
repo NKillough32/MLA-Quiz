@@ -561,17 +561,31 @@ def get_quiz_by_specialty(quiz_name, specialty):
 @app.route('/manifest.json')
 def manifest():
     """Serve PWA manifest."""
-    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'static'), 'manifest.json')
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'static'), 'manifest.json', mimetype='application/json')
 
 @app.route('/sw.js')
 def service_worker():
     """Serve service worker."""
-    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'static'), 'sw.js')
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'static'), 'sw.js', mimetype='application/javascript')
+
+@app.route('/static/js/<path:filename>')
+def serve_js(filename):
+    """Serve JavaScript files."""
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'static', 'js'), filename, mimetype='application/javascript')
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    """Serve static files."""
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'static'), filename)
 
 @app.route('/favicon.ico')
 def favicon():
     """Serve favicon."""
-    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'static'), 'favicon.ico')
+    try:
+        return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'static'), 'favicon.ico')
+    except:
+        # Return a simple 1x1 transparent PNG if favicon doesn't exist
+        return '', 204
 
 # This is what Vercel will use as the serverless function
 # Don't modify this part
