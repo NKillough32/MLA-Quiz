@@ -144,19 +144,33 @@ class PWAQuizLoader:
                 options.extend(current_options)
                 explanations.extend(current_explanations)
         
-        # Parse explanation using main.py regex pattern
-        explanation_match = re.search(
+        # Parse explanation using multiple patterns from main.py and common formats
+        explanation_patterns = [
+            # Main.py format
             r'\*\*(?:Explanation|Rationale)\*\*:\s*(.*?)(?=\n-{3,}|\n\*\*\s*End Explanation\s*\*\*|$)',
-            tail_content,
-            re.DOTALL | re.IGNORECASE
-        )
+            # Simple formats
+            r'Explanation:\s*(.*?)(?=\n\n|\n[A-Z]\.|$)',
+            r'Answer:\s*[A-Z]\.?\s*(.*?)(?=\n\n|\n[A-Z]\.|$)', 
+            r'\*\*Explanation\*\*\s*(.*?)(?=\n\n|\n[A-Z]\.|$)',
+            # Format with Answer: X followed by explanation
+            r'Answer:\s*[A-Z]\.?\s*\n(.*?)(?=\n\n|\n[A-Z]\.|$)',
+            # Just look for any text after "Answer: X"
+            r'Answer:\s*[A-Z]\.?\s*[-:\s]*(.*?)(?=\n\n|\n###|$)'
+        ]
         
-        if explanation_match:
-            explanation = explanation_match.group(1).strip()
-            explanations = [f"Explanation: {explanation}"] if explanation else []
-            logger.info(f"Found explanation for question {num}: {explanation[:100]}...")
+        explanation = ""
+        for pattern in explanation_patterns:
+            explanation_match = re.search(pattern, tail_content, re.DOTALL | re.IGNORECASE)
+            if explanation_match:
+                explanation = explanation_match.group(1).strip()
+                logger.info(f"Found explanation for question {num} using pattern: {explanation[:100]}...")
+                break
+        
+        if explanation:
+            explanations = [f"Explanation: {explanation}"]
         else:
-            logger.warning(f"No explanation found for question {num}")
+            logger.warning(f"No explanation found for question {num}. Tail content sample: {tail_content[:300]}")
+            explanations = []
 
         # If no options found, try to extract from the prompt section
         if not options and prompt:
