@@ -499,32 +499,52 @@ class MLAQuizApp {
     }
     
     async uploadSingleFile(file) {
-        const formData = new FormData();
-        formData.append('quiz_file', file);
-        
-        const response = await fetch('/api/upload-quiz', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const data = await response.json();
-        
-        if (!data.success) {
-            throw new Error(data.error || 'Upload failed');
+        try {
+            const formData = new FormData();
+            formData.append('quiz_file', file);
+            
+            const response = await fetch('/api/upload-quiz', {
+                method: 'POST',
+                body: formData
+            });
+            
+            // Check if response is ok
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Upload response not ok:', response.status, errorText);
+                
+                // Try to parse as JSON, fallback to text
+                try {
+                    const errorData = JSON.parse(errorText);
+                    throw new Error(errorData.error || `Server error: ${response.status}`);
+                } catch (parseError) {
+                    throw new Error(`Server error: ${response.status} - ${errorText.substring(0, 100)}`);
+                }
+            }
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || 'Upload failed');
+            }
+            
+            // Store uploaded quiz data temporarily for immediate use
+            const quizData = {
+                name: data.quiz_name,
+                questions: data.questions,
+                total_questions: data.total_questions,
+                isUploaded: true
+            };
+            
+            // Add to local storage or memory for immediate access
+            this.storeUploadedQuiz(quizData);
+            
+            return data;
+            
+        } catch (error) {
+            console.error('Upload error details:', error);
+            throw error;
         }
-        
-        // Store uploaded quiz data temporarily for immediate use
-        const quizData = {
-            name: data.quiz_name,
-            questions: data.questions,
-            total_questions: data.total_questions,
-            isUploaded: true
-        };
-        
-        // Add to local storage or memory for immediate access
-        this.storeUploadedQuiz(quizData);
-        
-        return data;
     }
     
     storeUploadedQuiz(quizData) {

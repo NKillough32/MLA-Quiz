@@ -409,42 +409,49 @@ def submit_quiz():
 def upload_quiz():
     """Handle quiz file upload from client."""
     try:
+        logger.info("Upload request received")
+        
         if 'quiz_file' not in request.files:
+            logger.error("No quiz_file in request.files")
             return jsonify({
                 'success': False,
                 'error': 'No quiz file provided'
             }), 400
         
         file = request.files['quiz_file']
+        logger.info(f"File received: {file.filename}")
+        
         if file.filename == '':
             return jsonify({
                 'success': False,
                 'error': 'No file selected'
             }), 400
         
-        # Validate file size (max 20MB)
-        file.seek(0, 2)  # Seek to end
-        file_size = file.tell()
-        file.seek(0)  # Reset to beginning
+        # Read file content first
+        file_content = file.read()
+        logger.info(f"File size: {len(file_content)} bytes")
         
-        if file_size > 20 * 1024 * 1024:  # 20MB limit
+        # Validate file size (max 20MB)
+        if len(file_content) > 20 * 1024 * 1024:  # 20MB limit
             return jsonify({
                 'success': False,
                 'error': 'File too large. Maximum size is 20MB.'
             }), 400
         
-        # Read file content
-        if file.filename.endswith('.zip'):
+        # Process file based on extension
+        if file.filename.lower().endswith('.zip'):
+            logger.info("Processing ZIP file")
             import zipfile
             import io
             
             try:
                 # Extract zip file
-                zip_content = io.BytesIO(file.read())
+                zip_content = io.BytesIO(file_content)
                 quiz_data = []
                 
                 with zipfile.ZipFile(zip_content, 'r') as zip_ref:
                     md_files = [f for f in zip_ref.namelist() if f.endswith('.md')]
+                    logger.info(f"Found {len(md_files)} .md files in ZIP")
                     
                     if not md_files:
                         return jsonify({
@@ -454,12 +461,17 @@ def upload_quiz():
                     
                     for filename in md_files:
                         try:
+                            logger.info(f"Processing file: {filename}")
                             with zip_ref.open(filename) as md_file:
                                 content = md_file.read().decode('utf-8')
                                 questions = PWAQuizLoader.parse_markdown_content(content, filename)
                                 quiz_data.extend(questions)
-                        except UnicodeDecodeError:
-                            logger.warning(f"Could not decode file {filename}, skipping...")
+                                logger.info(f"Extracted {len(questions)} questions from {filename}")
+                        except UnicodeDecodeError as e:
+                            logger.warning(f"Could not decode file {filename}: {e}")
+                            continue
+                        except Exception as e:
+                            logger.error(f"Error processing file {filename}: {e}")
                             continue
                 
                 if not quiz_data:
@@ -469,21 +481,32 @@ def upload_quiz():
                     }), 400
             
             except zipfile.BadZipFile:
+                logger.error("Invalid ZIP file")
                 return jsonify({
                     'success': False,
                     'error': 'Invalid zip file format'
                 }), 400
+            except Exception as e:
+                logger.error(f"ZIP processing error: {e}")
+                return jsonify({
+                    'success': False,
+                    'error': f'Error processing ZIP file: {str(e)}'
+                }), 500
+            
+            quiz_name = file.filename.replace('.zip', '')
+            logger.info(f"Successfully processed ZIP file: {len(quiz_data)} total questions")
             
             return jsonify({
                 'success': True,
-                'quiz_name': file.filename.replace('.zip', ''),
+                'quiz_name': quiz_name,
                 'questions': quiz_data,
                 'total_questions': len(quiz_data)
             })
             
-        elif file.filename.endswith('.md'):
+        elif file.filename.lower().endswith('.md'):
+            logger.info("Processing MD file")
             try:
-                content = file.read().decode('utf-8')
+                content = file_content.decode('utf-8')
                 questions = PWAQuizLoader.parse_markdown_content(content, file.filename)
                 
                 if not questions:
@@ -491,6 +514,8 @@ def upload_quiz():
                         'success': False,
                         'error': 'No valid quiz questions found in the markdown file'
                     }), 400
+                
+                logger.info(f"Successfully processed MD file: {len(questions)} questions")
                 
                 return jsonify({
                     'success': True,
@@ -503,6 +528,12 @@ def upload_quiz():
                     'success': False,
                     'error': 'Could not read the markdown file. Please ensure it is UTF-8 encoded.'
                 }), 400
+            except Exception as e:
+                logger.error(f"MD processing error: {e}")
+                return jsonify({
+                    'success': False,
+                    'error': f'Error processing markdown file: {str(e)}'
+                }), 500
         
         else:
             return jsonify({
@@ -511,7 +542,9 @@ def upload_quiz():
             }), 400
             
     except Exception as e:
-        logger.error(f"Error uploading quiz: {e}")
+        logger.error(f"Upload error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
             'error': f'Server error: {str(e)}'
