@@ -111,6 +111,27 @@ class PWAQuizLoader:
         explanations = []
         correct_answer = None
         
+        # First pass: collect all content to find answer patterns
+        all_content = ' '.join(parts[tail_start:])
+        
+        # Look for answer patterns like "Answer: B", "Correct answer: B", "Answer is B", etc.
+        answer_patterns = [
+            r'(?:Answer|Correct\s*answer):\s*([A-Z])',
+            r'(?:Answer|Correct\s*answer)\s+is\s+([A-Z])',
+            r'(?:The\s*)?(?:correct\s*)?answer\s+is\s+([A-Z])',
+            r'^([A-Z])\s*(?:is\s*)?(?:the\s*)?correct',
+            r'Answer\s*[:\-]\s*([A-Z])'
+        ]
+        
+        for pattern in answer_patterns:
+            match = re.search(pattern, all_content, re.IGNORECASE | re.MULTILINE)
+            if match:
+                answer_letter = match.group(1).upper()
+                # Convert letter to index (A=0, B=1, C=2, etc.)
+                correct_answer = ord(answer_letter) - ord('A')
+                logger.info(f"Found answer pattern: {match.group(0)} -> {answer_letter} (index {correct_answer})")
+                break
+        
         for part in parts[tail_start:]:
             lines = part.strip().split('\n')
             current_options = []
@@ -123,10 +144,6 @@ class PWAQuizLoader:
                 if option_match:
                     letter, text = option_match.groups()
                     current_options.append(f"{letter}) {text}")
-                    
-                    # Check if this is marked as correct (common patterns)
-                    if any(marker in text.lower() for marker in ['correct', '✓', '*correct*']):
-                        correct_answer = len(current_options) - 1
                 
                 # Look for explanations
                 elif line.startswith('Explanation:') or line.startswith('Answer:'):
@@ -152,6 +169,10 @@ class PWAQuizLoader:
             if option_lines:
                 options = option_lines
                 prompt = '\n'.join(non_option_lines).strip()
+
+        logger.info(f"Parsed question {num}: title='{title[:50] if len(title) > 50 else title}', options={len(options)}, correct_answer={correct_answer}")
+        if correct_answer is None and options:
+            logger.warning(f"No correct answer found for question {num}. Sample content: {all_content[:200] if 'all_content' in locals() else 'N/A'}...")
 
         return {
             'id': int(num),
