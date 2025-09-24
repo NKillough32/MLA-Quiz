@@ -313,11 +313,15 @@ class MLAQuizApp {
     showExplanation(explanations) {
         const explanationContainer = document.getElementById('explanationContainer');
         
+        console.log('showExplanation called with:', explanations);
+        
         if (!explanations || explanations.length === 0) {
+            console.log('No explanations found, hiding container');
             explanationContainer.style.display = 'none';
             return;
         }
         
+        console.log('Showing explanations:', explanations.length, 'items');
         let explanationHtml = '<div class="explanation-title">Explanation</div>';
         explanationHtml += '<div class="explanation-content">';
         

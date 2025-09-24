@@ -136,13 +136,27 @@ class PWAQuizLoader:
                     letter, text = option_match.groups()
                     current_options.append(f"{letter}) {text}")
                 
-                # Look for explanations
+                # Look for explanations using main.py format
                 elif line.startswith('Explanation:') or line.startswith('Answer:'):
                     current_explanations.append(line)
             
             if current_options:
                 options.extend(current_options)
                 explanations.extend(current_explanations)
+        
+        # Parse explanation using main.py regex pattern
+        explanation_match = re.search(
+            r'\*\*(?:Explanation|Rationale)\*\*:\s*(.*?)(?=\n-{3,}|\n\*\*\s*End Explanation\s*\*\*|$)',
+            tail_content,
+            re.DOTALL | re.IGNORECASE
+        )
+        
+        if explanation_match:
+            explanation = explanation_match.group(1).strip()
+            explanations = [f"Explanation: {explanation}"] if explanation else []
+            logger.info(f"Found explanation for question {num}: {explanation[:100]}...")
+        else:
+            logger.warning(f"No explanation found for question {num}")
 
         # If no options found, try to extract from the prompt section
         if not options and prompt:
