@@ -217,16 +217,20 @@ class MLAQuizApp {
         // Bind option selection events
         document.querySelectorAll('.option').forEach(option => {
             option.addEventListener('click', () => {
+                console.log('Option clicked:', option.dataset.optionIndex);
                 const optionIndex = parseInt(option.dataset.optionIndex);
                 this.selectOption(optionIndex);
             });
         });
+        
+        console.log('Bound click events to', document.querySelectorAll('.option').length, 'options');
         
         // Update button states
         this.updateButtons();
     }
     
     selectOption(optionIndex) {
+        console.log('selectOption called with index:', optionIndex);
         const questionId = this.questions[this.currentQuestionIndex].id;
         this.answers[questionId] = optionIndex;
         
