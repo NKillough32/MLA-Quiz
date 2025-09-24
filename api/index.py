@@ -166,6 +166,48 @@ class PWAQuizLoader:
         }
 
     @staticmethod
+    def parse_markdown_content(content, filename="uploaded_quiz"):
+        """Parse markdown content directly without file system."""
+        try:
+            # Analyze investigation variations
+            PWAQuizLoader.analyze_investigation_variations(content)
+
+            questions = []
+            specialty_markers = [(0, "Uncategorized")]
+            
+            # Find specialty headers
+            for m in PWAQuizLoader.SPECIALTY_HEADER_RE.finditer(content):
+                specialty_markers.append((m.start(), m.group(1).strip()))
+            specialty_markers.sort(key=lambda x: x[0])
+
+            def find_specialty(pos: int) -> str:
+                lo, hi = 0, len(specialty_markers) - 1
+                best = 0
+                while lo <= hi:
+                    mid = (lo + hi) // 2
+                    if specialty_markers[mid][0] <= pos:
+                        best = mid
+                        lo = mid + 1
+                    else:
+                        hi = mid - 1
+                return specialty_markers[best][1]
+
+            # Parse questions
+            for qm in PWAQuizLoader.QUESTION_RE.finditer(content):
+                block = qm.group(1)
+                specialty = find_specialty(qm.start())
+                q = PWAQuizLoader._parse_question(block, specialty)
+                if q:
+                    questions.append(q)
+
+            logger.info(f"Loaded {len(questions)} questions from {filename}")
+            return questions
+
+        except Exception as e:
+            logger.error(f"Error parsing content from {filename}: {e}")
+            return []
+
+    @staticmethod
     def load_from_markdown(path: str):
         """Load questions from markdown file - adapted from your main.py."""
         try:
@@ -361,6 +403,118 @@ def submit_quiz():
         return jsonify({
             'success': False,
             'error': str(e)
+        }), 500
+
+@app.route('/api/upload-quiz', methods=['POST'])
+def upload_quiz():
+    """Handle quiz file upload from client."""
+    try:
+        if 'quiz_file' not in request.files:
+            return jsonify({
+                'success': False,
+                'error': 'No quiz file provided'
+            }), 400
+        
+        file = request.files['quiz_file']
+        if file.filename == '':
+            return jsonify({
+                'success': False,
+                'error': 'No file selected'
+            }), 400
+        
+        # Validate file size (max 20MB)
+        file.seek(0, 2)  # Seek to end
+        file_size = file.tell()
+        file.seek(0)  # Reset to beginning
+        
+        if file_size > 20 * 1024 * 1024:  # 20MB limit
+            return jsonify({
+                'success': False,
+                'error': 'File too large. Maximum size is 20MB.'
+            }), 400
+        
+        # Read file content
+        if file.filename.endswith('.zip'):
+            import zipfile
+            import io
+            
+            try:
+                # Extract zip file
+                zip_content = io.BytesIO(file.read())
+                quiz_data = []
+                
+                with zipfile.ZipFile(zip_content, 'r') as zip_ref:
+                    md_files = [f for f in zip_ref.namelist() if f.endswith('.md')]
+                    
+                    if not md_files:
+                        return jsonify({
+                            'success': False,
+                            'error': 'No .md files found in the zip archive'
+                        }), 400
+                    
+                    for filename in md_files:
+                        try:
+                            with zip_ref.open(filename) as md_file:
+                                content = md_file.read().decode('utf-8')
+                                questions = PWAQuizLoader.parse_markdown_content(content, filename)
+                                quiz_data.extend(questions)
+                        except UnicodeDecodeError:
+                            logger.warning(f"Could not decode file {filename}, skipping...")
+                            continue
+                
+                if not quiz_data:
+                    return jsonify({
+                        'success': False,
+                        'error': 'No valid quiz questions found in the uploaded files'
+                    }), 400
+            
+            except zipfile.BadZipFile:
+                return jsonify({
+                    'success': False,
+                    'error': 'Invalid zip file format'
+                }), 400
+            
+            return jsonify({
+                'success': True,
+                'quiz_name': file.filename.replace('.zip', ''),
+                'questions': quiz_data,
+                'total_questions': len(quiz_data)
+            })
+            
+        elif file.filename.endswith('.md'):
+            try:
+                content = file.read().decode('utf-8')
+                questions = PWAQuizLoader.parse_markdown_content(content, file.filename)
+                
+                if not questions:
+                    return jsonify({
+                        'success': False,
+                        'error': 'No valid quiz questions found in the markdown file'
+                    }), 400
+                
+                return jsonify({
+                    'success': True,
+                    'quiz_name': file.filename.replace('.md', ''),
+                    'questions': questions,
+                    'total_questions': len(questions)
+                })
+            except UnicodeDecodeError:
+                return jsonify({
+                    'success': False,
+                    'error': 'Could not read the markdown file. Please ensure it is UTF-8 encoded.'
+                }), 400
+        
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Unsupported file type. Please upload .md or .zip files'
+            }), 400
+            
+    except Exception as e:
+        logger.error(f"Error uploading quiz: {e}")
+        return jsonify({
+            'success': False,
+            'error': f'Server error: {str(e)}'
         }), 500
 
 @app.route('/api/quiz/<quiz_name>/specialty/<specialty>')

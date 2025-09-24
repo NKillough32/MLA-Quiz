@@ -314,6 +314,19 @@
         }
         
         /* Results Styles */
+        .quiz-item.uploaded-quiz {
+            border-left: 3px solid #007AFF;
+        }
+        
+        .quiz-item.uploaded-quiz .quiz-name {
+            color: #007AFF;
+        }
+        
+        .file-upload-container {
+            text-align: center;
+        }
+        
+        /* Results Container */
         .results-container {
             display: none;
         }
@@ -404,6 +417,24 @@
                     <h2 class="card-title">Medical Learning Assessment</h2>
                     <p class="card-subtitle">Select a quiz to begin</p>
                 </div>
+                
+                <!-- File Upload Section -->
+                <div class="card-content" style="border-bottom: 1px solid #e5e5ea; margin-bottom: 16px;">
+                    <h3 style="font-size: 17px; font-weight: 600; margin: 0 0 8px 0; color: #1c1c1e;">Upload Quiz Files</h3>
+                    <p style="font-size: 15px; color: #8e8e93; margin: 0 0 16px 0;">Upload .md or .zip files containing quiz questions</p>
+                    
+                    <div class="file-upload-container">
+                        <input type="file" id="quizFileInput" accept=".md,.zip" multiple style="display: none;">
+                        <button class="btn btn-secondary" id="uploadBtn" style="margin-bottom: 8px;">
+                            📁 Choose Quiz Files
+                        </button>
+                        <button class="btn btn-secondary" id="clearUploaded" style="margin-bottom: 8px; background: #ff3b30;" onclick="if(confirm('Clear all uploaded quizzes?')) { localStorage.removeItem('uploadedQuizzes'); location.reload(); }">
+                            🗑️ Clear Uploaded
+                        </button>
+                        <div id="uploadStatus" style="font-size: 14px; color: #8e8e93; margin-top: 8px;"></div>
+                    </div>
+                </div>
+                
                 <div id="quizList">
                     <div class="loading">
                         <div class="spinner"></div>

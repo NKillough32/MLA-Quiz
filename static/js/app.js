@@ -28,6 +28,15 @@ class MLAQuizApp {
         // Quiz navigation
         document.getElementById('nextBtn').addEventListener('click', () => this.nextQuestion());
         document.getElementById('prevBtn').addEventListener('click', () => this.prevQuestion());
+        
+        // File upload
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+            document.getElementById('quizFileInput').click();
+        });
+        
+        document.getElementById('quizFileInput').addEventListener('change', (e) => {
+            this.handleFileUpload(e.target.files);
+        });
     }
     
     async loadQuizzes() {
@@ -49,16 +58,37 @@ class MLAQuizApp {
     renderQuizList(quizzes) {
         const quizList = document.getElementById('quizList');
         
-        if (quizzes.length === 0) {
+        // Get uploaded quizzes from localStorage
+        const uploadedQuizzes = this.getUploadedQuizzes();
+        
+        // Combine server quizzes with uploaded quizzes
+        const allQuizzes = [...quizzes];
+        
+        if (quizzes.length === 0 && uploadedQuizzes.length === 0) {
             quizList.innerHTML = `
                 <div class="loading">
-                    <p>No quizzes found. Please check that your quiz files are in the Questions folder.</p>
+                    <p>No quizzes found. Upload quiz files using the button above.</p>
                 </div>
             `;
             return;
         }
         
         let html = '';
+        
+        // Add uploaded quizzes first (with special styling)
+        uploadedQuizzes.forEach(quiz => {
+            html += `
+                <div class="quiz-item uploaded-quiz" data-quiz-name="${quiz.name}" data-is-uploaded="true">
+                    <div class="quiz-info">
+                        <h3 class="quiz-name">📁 ${quiz.name}</h3>
+                        <p class="quiz-details">Uploaded • ${quiz.total_questions} questions</p>
+                    </div>
+                    <span class="chevron">›</span>
+                </div>
+            `;
+        });
+        
+        // Add server quizzes
         quizzes.forEach(quiz => {
             const sizeKB = Math.round(quiz.size / 1024);
             html += `
@@ -78,21 +108,28 @@ class MLAQuizApp {
         document.querySelectorAll('.quiz-item').forEach(item => {
             item.addEventListener('click', () => {
                 const quizName = item.dataset.quizName;
-                this.loadQuiz(quizName);
+                const isUploaded = item.dataset.isUploaded === 'true';
+                this.loadQuiz(quizName, isUploaded);
             });
         });
     }
     
-    async loadQuiz(quizName) {
+    async loadQuiz(quizName, isUploaded = false) {
         this.showLoading('Loading quiz...');
         
         try {
-            const response = await fetch(`/api/quiz/${encodeURIComponent(quizName)}`);
-            const data = await response.json();
-            
-            if (data.success) {
-                this.questions = data.questions;
-                this.quizName = data.quiz_name;
+            if (isUploaded) {
+                // Load from localStorage
+                const uploadedQuizzes = this.getUploadedQuizzes();
+                const quiz = uploadedQuizzes.find(q => q.name === quizName);
+                
+                if (!quiz) {
+                    this.showError('Uploaded quiz not found. Please re-upload the file.');
+                    return;
+                }
+                
+                this.questions = quiz.questions;
+                this.quizName = quiz.name;
                 this.currentQuestionIndex = 0;
                 this.answers = {};
                 
@@ -103,7 +140,25 @@ class MLAQuizApp {
                 
                 this.startQuiz();
             } else {
-                this.showError('Failed to load quiz: ' + data.error);
+                // Load from server
+                const response = await fetch(`/api/quiz/${encodeURIComponent(quizName)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.questions = data.questions;
+                    this.quizName = data.quiz_name;
+                    this.currentQuestionIndex = 0;
+                    this.answers = {};
+                    
+                    if (this.questions.length === 0) {
+                        this.showError('This quiz contains no questions.');
+                        return;
+                    }
+                    
+                    this.startQuiz();
+                } else {
+                    this.showError('Failed to load quiz: ' + data.error);
+                }
             }
         } catch (error) {
             console.error('Error loading quiz:', error);
@@ -415,6 +470,78 @@ class MLAQuizApp {
             const alert = document.getElementById('errorAlert');
             if (alert) alert.remove();
         }, 5000);
+    }
+    
+    async handleFileUpload(files) {
+        if (!files || files.length === 0) return;
+        
+        const uploadStatus = document.getElementById('uploadStatus');
+        uploadStatus.innerHTML = '<span style="color: #007AFF;">📤 Uploading files...</span>';
+        
+        try {
+            for (let file of files) {
+                await this.uploadSingleFile(file);
+            }
+            
+            // Refresh the quiz list to show uploaded quizzes
+            await this.loadQuizzes();
+            uploadStatus.innerHTML = '<span style="color: #34c759;">✅ Files uploaded successfully!</span>';
+            
+            // Clear status after 3 seconds
+            setTimeout(() => {
+                uploadStatus.innerHTML = '';
+            }, 3000);
+            
+        } catch (error) {
+            console.error('Upload error:', error);
+            uploadStatus.innerHTML = '<span style="color: #ff3b30;">❌ Upload failed: ' + error.message + '</span>';
+        }
+    }
+    
+    async uploadSingleFile(file) {
+        const formData = new FormData();
+        formData.append('quiz_file', file);
+        
+        const response = await fetch('/api/upload-quiz', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || 'Upload failed');
+        }
+        
+        // Store uploaded quiz data temporarily for immediate use
+        const quizData = {
+            name: data.quiz_name,
+            questions: data.questions,
+            total_questions: data.total_questions,
+            isUploaded: true
+        };
+        
+        // Add to local storage or memory for immediate access
+        this.storeUploadedQuiz(quizData);
+        
+        return data;
+    }
+    
+    storeUploadedQuiz(quizData) {
+        // Store in localStorage for persistence
+        let uploadedQuizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
+        
+        // Remove existing quiz with same name
+        uploadedQuizzes = uploadedQuizzes.filter(quiz => quiz.name !== quizData.name);
+        
+        // Add new quiz
+        uploadedQuizzes.push(quizData);
+        
+        localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+    }
+    
+    getUploadedQuizzes() {
+        return JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
     }
     
     formatText(text) {
