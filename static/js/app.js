@@ -180,6 +180,12 @@ class MLAQuizApp {
         const question = this.questions[this.currentQuestionIndex];
         const container = document.getElementById('questionContainer');
         
+        // Hide explanation initially (will show again if answer is already submitted)
+        const explanationContainer = document.getElementById('explanationContainer');
+        if (explanationContainer) {
+            explanationContainer.style.display = 'none';
+        }
+        
         let investigationsHtml = '';
         if (question.investigations && question.investigations.trim()) {
             investigationsHtml = `
@@ -194,7 +200,7 @@ class MLAQuizApp {
         if (question.options && question.options.length > 0) {
             const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
             const selectedAnswer = this.answers[question.id];
-            const correctAnswer = question.answer;
+            const correctAnswer = question.correct_answer;
             
             optionsHtml = '<div class="options">';
             question.options.forEach((option, index) => {
@@ -248,6 +254,11 @@ class MLAQuizApp {
             });
         }
         
+        // If answer already submitted, show explanation
+        if (isSubmitted && question.explanations) {
+            this.showExplanation(question.explanations);
+        }
+        
         // Update button states
         this.updateButtons();
     }
@@ -276,8 +287,11 @@ class MLAQuizApp {
         this.submittedAnswers[currentQuestion.id] = selectedAnswer;
         
         // Show feedback (optional - you can customize this)
-        const correctAnswer = currentQuestion.answer;
+        const correctAnswer = currentQuestion.correct_answer;
         const isCorrect = selectedAnswer === correctAnswer;
+        
+        console.log('Question:', currentQuestion.title);
+        console.log('Selected:', selectedAnswer, 'Correct:', correctAnswer, 'IsCorrect:', isCorrect);
         
         // Update the selected option with feedback styling
         document.querySelectorAll('.option').forEach((opt, index) => {
@@ -290,7 +304,33 @@ class MLAQuizApp {
             }
         });
         
+        // Show explanation if available
+        this.showExplanation(currentQuestion.explanations);
+        
         this.updateButtons();
+    }
+    
+    showExplanation(explanations) {
+        const explanationContainer = document.getElementById('explanationContainer');
+        
+        if (!explanations || explanations.length === 0) {
+            explanationContainer.style.display = 'none';
+            return;
+        }
+        
+        let explanationHtml = '<div class="explanation-title">Explanation</div>';
+        explanationHtml += '<div class="explanation-content">';
+        
+        explanations.forEach(exp => {
+            // Remove "Explanation:" or "Answer:" prefix if present
+            const cleanExp = exp.replace(/^(Explanation:|Answer:)\s*/i, '');
+            explanationHtml += `<p>${this.formatText(cleanExp)}</p>`;
+        });
+        
+        explanationHtml += '</div>';
+        
+        explanationContainer.innerHTML = explanationHtml;
+        explanationContainer.style.display = 'block';
     }
     
     updateButtons() {

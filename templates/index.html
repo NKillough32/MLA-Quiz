@@ -263,6 +263,27 @@
             line-height: 1.4;
         }
         
+        /* Explanation Styles */
+        .explanation-container {
+            margin: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-left: 4px solid #007AFF;
+            border-radius: 8px;
+        }
+        
+        .explanation-title {
+            font-weight: 600;
+            color: #007AFF;
+            margin-bottom: 8px;
+        }
+        
+        .explanation-content {
+            font-size: 15px;
+            line-height: 1.4;
+            color: #1c1c1e;
+        }
+        
         /* iOS-Style Buttons */
         .btn {
             background: #007AFF;
@@ -467,6 +488,10 @@
             
             <div id="questionContainer" class="question-container active">
                 <!-- Questions will be loaded here -->
+            </div>
+            
+            <div id="explanationContainer" class="explanation-container" style="display: none;">
+                <!-- Explanations will be shown here -->
             </div>
             
             <div style="padding: 16px;">
