@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MLA Quiz</title>
+    
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="MLA Quiz">
+    <meta name="theme-color" content="#007AFF">
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/static/icons/icon-167.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS-Style CSS -->
+    <style>
+        /* iOS System Fonts and Base Styles */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f2f2f7;
+            color: #1c1c1e;
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        /* iOS-Style Navigation */
+        .navbar {
+            background: rgba(248, 248, 248, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid #c6c6c8;
+            padding: 8px 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: max(8px, env(safe-area-inset-top));
+        }
+        
+        .navbar h1 {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0;
+            color: #1c1c1e;
+        }
+        
+        .navbar .back-btn {
+            position: absolute;
+            left: 16px;
+            background: none;
+            border: none;
+            color: #007AFF;
+            font-size: 17px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        /* Content Container */
+        .container {
+            padding-top: 52px; /* Account for fixed navbar */
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        
+        /* iOS-Style Cards */
+        .card {
+            background: white;
+            margin: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            padding: 16px 16px 8px 16px;
+            border-bottom: 0.5px solid #e5e5ea;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            color: #1c1c1e;
+        }
+        
+        .card-subtitle {
+            font-size: 15px;
+            color: #8e8e93;
+            margin: 0;
+        }
+        
+        .card-content {
+            padding: 16px;
+        }
+        
+        /* Quiz List Styles */
+        .quiz-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 0.5px solid #e5e5ea;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .quiz-item:last-child {
+            border-bottom: none;
+        }
+        
+        .quiz-item:active {
+            background: #e5e5ea;
+        }
+        
+        .quiz-info {
+            flex: 1;
+        }
+        
+        .quiz-name {
+            font-size: 17px;
+            font-weight: 400;
+            margin: 0 0 2px 0;
+            color: #1c1c1e;
+        }
+        
+        .quiz-details {
+            font-size: 13px;
+            color: #8e8e93;
+            margin: 0;
+        }
+        
+        .chevron {
+            color: #c7c7cc;
+            font-size: 14px;
+        }
+        
+        /* Question Styles */
+        .question-container {
+            display: none;
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        .question-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+            color: white;
+        }
+        
+        .question-number {
+            font-size: 15px;
+            opacity: 0.8;
+            margin: 0 0 4px 0;
+        }
+        
+        .question-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .question-content {
+            padding: 20px;
+        }
+        
+        .scenario {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: #1c1c1e;
+        }
+        
+        .investigations {
+            background: #f2f2f7;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .investigations-title {
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #1c1c1e;
+            font-size: 16px;
+        }
+        
+        .investigations-content {
+            font-size: 15px;
+            line-height: 1.4;
+            margin: 0;
+            white-space: pre-line;
+            color: #3a3a3c;
+        }
+        
+        .prompt {
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #1c1c1e;
+        }
+        
+        /* iOS-Style Options */
+        .options {
+            margin: 20px 0;
+        }
+        
+        .option {
+            background: white;
+            border: 1px solid #e5e5ea;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow: hidden;
+        }
+        
+        .option:hover {
+            border-color: #007AFF;
+        }
+        
+        .option.selected {
+            border-color: #007AFF;
+            background: #f0f8ff;
+        }
+        
+        .option-content {
+            padding: 16px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        
+        /* iOS-Style Buttons */
+        .btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 600;
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin: 8px 0;
+        }
+        
+        .btn:hover {
+            background: #0056cc;
+        }
+        
+        .btn:disabled {
+            background: #8e8e93;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #8e8e93;
+        }
+        
+        .btn-secondary:hover {
+            background: #636366;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            padding: 16px;
+            background: white;
+            border-bottom: 0.5px solid #e5e5ea;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e5e5ea;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #007AFF;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 15px;
+            color: #8e8e93;
+            margin-top: 8px;
+        }
+        
+        /* Results Styles */
+        .results-container {
+            display: none;
+        }
+        
+        .results-container.active {
+            display: block;
+        }
+        
+        .score-card {
+            background: linear-gradient(135deg, #34C759 0%, #00C957 100%);
+            color: white;
+            text-align: center;
+            padding: 32px 16px;
+            margin: 16px;
+            border-radius: 16px;
+        }
+        
+        .score-percentage {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .score-details {
+            font-size: 17px;
+            opacity: 0.9;
+            margin: 8px 0 0 0;
+        }
+        
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8e8e93;
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e5e5ea;
+            border-top: 2px solid #007AFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+        
+        /* Safe Area Support for iPhone */
+        @supports (padding: max(0px)) {
+            .navbar {
+                padding-top: max(8px, env(safe-area-inset-top));
+            }
+            
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <button class="back-btn" id="backBtn" style="display: none;">← Back</button>
+        <h1 id="navTitle">MLA Quiz</h1>
+    </nav>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Quiz Selection Screen -->
+        <div id="quizSelection" class="screen active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Medical Learning Assessment</h2>
+                    <p class="card-subtitle">Select a quiz to begin</p>
+                </div>
+                <div id="quizList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading available quizzes...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="screen" style="display: none;">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Question 1 of 10</div>
+            </div>
+            
+            <div id="questionContainer" class="question-container active">
+                <!-- Questions will be loaded here -->
+            </div>
+            
+            <div style="padding: 16px;">
+                <button class="btn" id="nextBtn" disabled>Next Question</button>
+                <button class="btn btn-secondary" id="prevBtn" style="display: none;">Previous Question</button>
+            </div>
+        </div>
+        
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="screen" style="display: none;">
+            <div class="score-card">
+                <h2 class="score-percentage" id="scorePercentage">0%</h2>
+                <p class="score-details" id="scoreDetails">0 out of 0 questions correct</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Quiz Complete!</h3>
+                    <p class="card-subtitle">Review your performance</p>
+                </div>
+                <div class="card-content">
+                    <button class="btn" id="retryBtn">Take Quiz Again</button>
+                    <button class="btn btn-secondary" id="homeBtn">Back to Quizzes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript will be loaded here -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
