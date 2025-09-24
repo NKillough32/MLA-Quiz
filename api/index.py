@@ -109,28 +109,19 @@ class PWAQuizLoader:
         # Extract options (A, B, C, D, etc.)
         options = []
         explanations = []
-        correct_answer = None
         
-        # First pass: collect all content to find answer patterns
-        all_content = ' '.join(parts[tail_start:])
+        # Combine all tail parts to search for answer
+        tail_content = '\n\n'.join(parts[tail_start:])
+        logger.info(f"Question {num} tail content (first 500 chars): {tail_content[:500]}")
         
-        # Look for answer patterns like "Answer: B", "Correct answer: B", "Answer is B", etc.
-        answer_patterns = [
-            r'(?:Answer|Correct\s*answer):\s*([A-Z])',
-            r'(?:Answer|Correct\s*answer)\s+is\s+([A-Z])',
-            r'(?:The\s*)?(?:correct\s*)?answer\s+is\s+([A-Z])',
-            r'^([A-Z])\s*(?:is\s*)?(?:the\s*)?correct',
-            r'Answer\s*[:\-]\s*([A-Z])'
-        ]
+        # Parse answer using the working regex from main.py
+        answer_match = re.search(r'\*\*Ans(?:wer)?\*\*:\s*([A-Z])\.?', tail_content, re.IGNORECASE)
+        answer_letter = answer_match.group(1).upper() if answer_match else None
         
-        for pattern in answer_patterns:
-            match = re.search(pattern, all_content, re.IGNORECASE | re.MULTILINE)
-            if match:
-                answer_letter = match.group(1).upper()
-                # Convert letter to index (A=0, B=1, C=2, etc.)
-                correct_answer = ord(answer_letter) - ord('A')
-                logger.info(f"Found answer pattern: {match.group(0)} -> {answer_letter} (index {correct_answer})")
-                break
+        # Convert letter to index (A=0, B=1, C=2, etc.)
+        correct_answer = ord(answer_letter) - ord('A') if answer_letter else None
+        
+        logger.info(f"Answer detection: found pattern '{answer_match.group(0) if answer_match else 'None'}' -> letter={answer_letter}, index={correct_answer}")
         
         for part in parts[tail_start:]:
             lines = part.strip().split('\n')
@@ -172,7 +163,7 @@ class PWAQuizLoader:
 
         logger.info(f"Parsed question {num}: title='{title[:50] if len(title) > 50 else title}', options={len(options)}, correct_answer={correct_answer}")
         if correct_answer is None and options:
-            logger.warning(f"No correct answer found for question {num}. Sample content: {all_content[:200] if 'all_content' in locals() else 'N/A'}...")
+            logger.warning(f"No correct answer found for question {num}. Sample content: {tail_content[:200]}...")
 
         return {
             'id': int(num),
