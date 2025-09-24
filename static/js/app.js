@@ -26,6 +26,7 @@ class MLAQuizApp {
         document.getElementById('retryBtn').addEventListener('click', () => this.retryQuiz());
         
         // Quiz navigation
+        document.getElementById('submitBtn').addEventListener('click', () => this.submitAnswer());
         document.getElementById('nextBtn').addEventListener('click', () => this.nextQuestion());
         document.getElementById('prevBtn').addEventListener('click', () => this.prevQuestion());
         
@@ -132,6 +133,7 @@ class MLAQuizApp {
                 this.quizName = quiz.name;
                 this.currentQuestionIndex = 0;
                 this.answers = {};
+                this.submittedAnswers = {};
                 
                 if (this.questions.length === 0) {
                     this.showError('This quiz contains no questions.');
@@ -149,6 +151,7 @@ class MLAQuizApp {
                     this.quizName = data.quiz_name;
                     this.currentQuestionIndex = 0;
                     this.answers = {};
+                    this.submittedAnswers = {};
                     
                     if (this.questions.length === 0) {
                         this.showError('This quiz contains no questions.');
@@ -189,11 +192,31 @@ class MLAQuizApp {
         
         let optionsHtml = '';
         if (question.options && question.options.length > 0) {
+            const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
+            const selectedAnswer = this.answers[question.id];
+            const correctAnswer = question.answer;
+            
             optionsHtml = '<div class="options">';
             question.options.forEach((option, index) => {
-                const isSelected = this.answers[question.id] === index;
+                const isSelected = selectedAnswer === index;
+                let optionClasses = 'option';
+                
+                if (isSelected) {
+                    optionClasses += ' selected';
+                }
+                
+                // Add feedback classes if answer is submitted
+                if (isSubmitted) {
+                    if (index === selectedAnswer) {
+                        optionClasses += selectedAnswer === correctAnswer ? ' correct' : ' incorrect';
+                    }
+                    if (index === correctAnswer && selectedAnswer !== correctAnswer) {
+                        optionClasses += ' correct';
+                    }
+                }
+                
                 optionsHtml += `
-                    <div class="option ${isSelected ? 'selected' : ''}" data-option-index="${index}">
+                    <div class="${optionClasses}" data-option-index="${index}">
                         <div class="option-content">${this.formatText(option)}</div>
                     </div>
                 `;
@@ -214,23 +237,22 @@ class MLAQuizApp {
             </div>
         `;
         
-        // Bind option selection events
-        document.querySelectorAll('.option').forEach(option => {
-            option.addEventListener('click', () => {
-                console.log('Option clicked:', option.dataset.optionIndex);
-                const optionIndex = parseInt(option.dataset.optionIndex);
-                this.selectOption(optionIndex);
+        // Bind option selection events (only if not submitted)
+        const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
+        if (!isSubmitted) {
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const optionIndex = parseInt(option.dataset.optionIndex);
+                    this.selectOption(optionIndex);
+                });
             });
-        });
-        
-        console.log('Bound click events to', document.querySelectorAll('.option').length, 'options');
+        }
         
         // Update button states
         this.updateButtons();
     }
     
     selectOption(optionIndex) {
-        console.log('selectOption called with index:', optionIndex);
         const questionId = this.questions[this.currentQuestionIndex].id;
         this.answers[questionId] = optionIndex;
         
@@ -242,23 +264,67 @@ class MLAQuizApp {
         this.updateButtons();
     }
     
+    submitAnswer() {
+        const currentQuestion = this.questions[this.currentQuestionIndex];
+        const selectedAnswer = this.answers[currentQuestion.id];
+        
+        if (selectedAnswer === undefined) {
+            return; // No answer selected
+        }
+        
+        // Mark this answer as submitted
+        this.submittedAnswers[currentQuestion.id] = selectedAnswer;
+        
+        // Show feedback (optional - you can customize this)
+        const correctAnswer = currentQuestion.answer;
+        const isCorrect = selectedAnswer === correctAnswer;
+        
+        // Update the selected option with feedback styling
+        document.querySelectorAll('.option').forEach((opt, index) => {
+            opt.classList.remove('correct', 'incorrect');
+            if (index === selectedAnswer) {
+                opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+            }
+            if (index === correctAnswer && !isCorrect) {
+                opt.classList.add('correct');
+            }
+        });
+        
+        this.updateButtons();
+    }
+    
     updateButtons() {
+        const submitBtn = document.getElementById('submitBtn');
         const nextBtn = document.getElementById('nextBtn');
         const prevBtn = document.getElementById('prevBtn');
         
-        // Enable/disable next button based on answer selection
         const currentQuestion = this.questions[this.currentQuestionIndex];
         const hasAnswer = this.answers.hasOwnProperty(currentQuestion.id);
-        nextBtn.disabled = !hasAnswer;
+        const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(currentQuestion.id);
         
         // Show/hide previous button
         prevBtn.style.display = this.currentQuestionIndex > 0 ? 'block' : 'none';
         
-        // Update next button text
-        if (this.currentQuestionIndex === this.questions.length - 1) {
-            nextBtn.textContent = 'Finish Quiz';
+        if (!hasAnswer) {
+            // No answer selected - hide both submit and next
+            submitBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        } else if (!isSubmitted) {
+            // Answer selected but not submitted - show submit button
+            submitBtn.style.display = 'block';
+            nextBtn.style.display = 'none';
         } else {
-            nextBtn.textContent = 'Next Question';
+            // Answer submitted - show next button
+            submitBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+            nextBtn.disabled = false;
+            
+            // Update next button text
+            if (this.currentQuestionIndex === this.questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+            } else {
+                nextBtn.textContent = 'Next Question';
+            }
         }
     }
     
@@ -341,6 +407,7 @@ class MLAQuizApp {
     retryQuiz() {
         this.currentQuestionIndex = 0;
         this.answers = {};
+        this.submittedAnswers = {};
         this.startQuiz();
     }
     

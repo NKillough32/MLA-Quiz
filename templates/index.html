@@ -245,6 +245,18 @@
             background: #f0f8ff;
         }
         
+        .option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
         .option-content {
             padding: 16px;
             font-size: 16px;
@@ -458,7 +470,8 @@
             </div>
             
             <div style="padding: 16px;">
-                <button class="btn" id="nextBtn" disabled>Next Question</button>
+                <button class="btn" id="submitBtn" style="display: none;">Submit Answer</button>
+                <button class="btn" id="nextBtn" disabled style="display: none;">Next Question</button>
                 <button class="btn btn-secondary" id="prevBtn" style="display: none;">Previous Question</button>
             </div>
         </div>
