@@ -861,12 +861,28 @@ class MLAQuizApp {
         if (!text) return '';
         
         // Convert markdown-style formatting to HTML
-        return text
+        let formattedText = text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
             .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
             .replace(/\n/g, '<br>') // Line breaks
             .replace(/- (.*?)(?=\n|$)/g, '• $1') // Bullet points
             .trim();
+        
+        // Handle markdown-style images: ![alt text](url) or ![alt text](url "caption")
+        formattedText = formattedText.replace(/!\[([^\]]*)\]\(([^)]+?)(?:\s+"([^"]+)")?\)/g, (match, alt, url, caption) => {
+            const imageHtml = `<img src="${url}" alt="${alt}" loading="lazy">`;
+            if (caption) {
+                return `<div class="image-container">${imageHtml}<div class="image-caption">${caption}</div></div>`;
+            }
+            return `<div class="image-container">${imageHtml}</div>`;
+        });
+        
+        // Handle simple image URLs (common formats)
+        formattedText = formattedText.replace(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|svg)(\?[^\s]*)?/gi, (url) => {
+            return `<div class="image-container"><img src="${url}" alt="Image" loading="lazy"></div>`;
+        });
+        
+        return formattedText;
     }
 }
 
