@@ -227,7 +227,7 @@ class MLAQuizApp {
                     }
                 }
 
-                const cleanOption = this.formatText(option).replace(/^[A-E]\)\s*/, ''); // Remove letter prefix if present
+                const cleanOption = option.replace(/^[A-E]\)\s*/, ''); // Remove letter prefix if present
 
                 optionsHtml += `<label class="${optionClasses}"><input type="radio" name="question_${question.id}" value="${index}" ${isSelected ? 'checked' : ''}><div class="label"><span class="badge">${letter})</span> ${cleanOption}</div></label>`;
             });
@@ -859,12 +859,18 @@ class MLAQuizApp {
             return `<div class="image-container"><img src="${url}" alt="Image" loading="lazy"></div>`;
         });
         
-        // Only convert double line breaks to paragraph breaks, single line breaks to spaces
-        formattedText = formattedText
-            .replace(/\n\s*\n/g, '</p><p>') // Double line breaks = new paragraphs
-            .replace(/\n/g, ' ') // Single line breaks = spaces
-            .replace(/^/, '<p>') // Add opening paragraph tag
-            .replace(/$/, '</p>'); // Add closing paragraph tag
+        // Check if text contains line breaks that suggest multiple paragraphs
+        if (formattedText.includes('\n\n')) {
+            // Only convert double line breaks to paragraph breaks, single line breaks to spaces
+            formattedText = formattedText
+                .replace(/\n\s*\n/g, '</p><p>') // Double line breaks = new paragraphs
+                .replace(/\n/g, ' ') // Single line breaks = spaces
+                .replace(/^/, '<p>') // Add opening paragraph tag
+                .replace(/$/, '</p>'); // Add closing paragraph tag
+        } else {
+            // For single line or simple text, just convert single line breaks to spaces
+            formattedText = formattedText.replace(/\n/g, ' ');
+        }
         
         return formattedText;
     }
