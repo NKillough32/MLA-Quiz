@@ -171,6 +171,9 @@ class MLAQuizApp {
     }
     
     startQuiz() {
+        // Shuffle questions to randomize order
+        this.questions = this.shuffleArray(this.questions);
+        
         // Shuffle options for all questions to prevent pattern memorization
         this.questions = this.questions.map(question => this.shuffleOptions(question));
         
@@ -384,6 +387,16 @@ class MLAQuizApp {
             this.updateProgress();
             this.buildQuestionList(); // Refresh the list to update current indicator
         }
+    }
+    
+    // Shuffle array using Fisher-Yates algorithm
+    shuffleArray(array) {
+        const shuffled = [...array]; // Create a copy to avoid mutating original
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
     }
     
     // Shuffle options for a question to prevent pattern memorization
