@@ -864,7 +864,6 @@ class MLAQuizApp {
         let formattedText = text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
             .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
-            .replace(/\n/g, '<br>') // Line breaks
             .replace(/- (.*?)(?=\n|$)/g, '• $1') // Bullet points
             .trim();
         
@@ -881,6 +880,13 @@ class MLAQuizApp {
         formattedText = formattedText.replace(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|svg)(\?[^\s]*)?/gi, (url) => {
             return `<div class="image-container"><img src="${url}" alt="Image" loading="lazy"></div>`;
         });
+        
+        // Only convert double line breaks to paragraph breaks, single line breaks to spaces
+        formattedText = formattedText
+            .replace(/\n\s*\n/g, '</p><p>') // Double line breaks = new paragraphs
+            .replace(/\n/g, ' ') // Single line breaks = spaces
+            .replace(/^/, '<p>') // Add opening paragraph tag
+            .replace(/$/, '</p>'); // Add closing paragraph tag
         
         return formattedText;
     }
