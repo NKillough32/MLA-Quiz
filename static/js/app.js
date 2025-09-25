@@ -248,13 +248,10 @@ class MLAQuizApp {
         
         container.innerHTML = `
             <div class="q-text">
-                <p>${this.formatText(question.scenario)}</p>
+                ${this.formatText(question.scenario)}
             </div>
-            
             ${investigationsHtml}
-            
             <h3 class="section-title">${this.formatText(question.prompt)}</h3>
-            
             ${optionsHtml}
         `;
         
