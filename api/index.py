@@ -535,8 +535,11 @@ def upload_quiz():
                                 # Store just filename for relative references
                                 filename_only = image_file.split('/')[-1]
                                 image_data[filename_only] = data_url
+                                # Store filename without extension for [IMAGE: name] format
+                                name_without_ext = filename_only.rsplit('.', 1)[0]
+                                image_data[name_without_ext] = data_url
                                 
-                                logger.info(f"Processed image: {image_file} ({len(img_content)} bytes)")
+                                logger.info(f"Processed image: {image_file} -> {filename_only} ({len(img_content)} bytes)")
                         except Exception as e:
                             logger.warning(f"Could not process image {image_file}: {e}")
                             continue
@@ -547,9 +550,14 @@ def upload_quiz():
                             logger.info(f"Processing file: {filename}")
                             with zip_ref.open(filename) as md_file:
                                 content = md_file.read().decode('utf-8')
+                                original_content = content
                                 
                                 # Replace local image references with base64 data URLs
+                                replacements_made = 0
                                 for image_path, data_url in image_data.items():
+                                    # Count replacements before making them
+                                    old_content = content
+                                    
                                     # Replace various possible reference formats
                                     content = content.replace(f"({image_path})", f"({data_url})")
                                     content = content.replace(f'"{image_path}"', f'"{data_url}"')
@@ -557,6 +565,20 @@ def upload_quiz():
                                     # Handle relative paths
                                     content = content.replace(f"(./{image_path})", f"({data_url})")
                                     content = content.replace(f"(../{image_path})", f"({data_url})")
+                                    # Handle [IMAGE: filename] format specifically
+                                    content = content.replace(f"[IMAGE: {image_path}]", f"![Image]({data_url})")
+                                    content = content.replace(f"[IMAGE:{image_path}]", f"![Image]({data_url})")
+                                    
+                                    if content != old_content:
+                                        replacements_made += 1
+                                        logger.info(f"Replaced image reference: {image_path}")
+                                
+                                logger.info(f"Made {replacements_made} image replacements in {filename}")
+                                if replacements_made == 0 and len(image_data) > 0:
+                                    logger.warning(f"No image replacements made in {filename}, but {len(image_data)} images available")
+                                    logger.info(f"Available images: {list(image_data.keys())}")
+                                    # Show first 200 chars of content for debugging
+                                    logger.info(f"Content preview: {original_content[:200]}...")
                                 
                                 questions = PWAQuizLoader.parse_markdown_content(content, filename)
                                 quiz_data.extend(questions)

@@ -495,6 +495,10 @@ class MLAQuizApp {
         prevBtn.style.display = showPrev ? 'block' : 'none';
         prevBtnTop.style.display = showPrev ? 'block' : 'none';
         
+        // Next buttons are always active
+        nextBtnTop.style.display = 'block';
+        nextBtnTop.disabled = false;
+        
         // Update flag button state
         if (flagBtn) {
             if (this.flaggedQuestions.has(currentQuestion.id)) {
@@ -507,30 +511,25 @@ class MLAQuizApp {
         }
         
         if (!hasAnswer) {
-            // No answer selected - hide submit and next, show top next as disabled
+            // No answer selected - show submit button, next always available
             submitBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-            nextBtnTop.style.display = 'block';
-            nextBtnTop.disabled = true;
+            nextBtn.style.display = 'block';
+            nextBtn.disabled = false;
         } else if (!isSubmitted) {
             // Answer selected but not submitted - show submit button
             submitBtn.style.display = 'block';
             nextBtn.style.display = 'none';
-            nextBtnTop.style.display = 'block';
-            nextBtnTop.disabled = true;
         } else {
             // Answer submitted - show next button
             submitBtn.style.display = 'none';
             nextBtn.style.display = 'block';
             nextBtn.disabled = false;
-            nextBtnTop.style.display = 'block';
-            nextBtnTop.disabled = false;
-            
-            // Update next button text
-            const nextText = this.currentQuestionIndex === this.questions.length - 1 ? 'Finish Quiz' : 'Next Question';
-            nextBtn.textContent = nextText;
-            nextBtnTop.textContent = this.currentQuestionIndex === this.questions.length - 1 ? 'Finish' : 'Next →';
         }
+        
+        // Update next button text
+        const nextText = this.currentQuestionIndex === this.questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+        nextBtn.textContent = nextText;
+        nextBtnTop.textContent = this.currentQuestionIndex === this.questions.length - 1 ? 'Finish' : 'Next →';
     }
     
     toggleFlag() {
@@ -953,13 +952,35 @@ function openImageModal(imageUrl, altText) {
         existingModal.remove();
     }
     
+    // Handle case where imageUrl might be a filename that needs to be resolved
+    let actualUrl = imageUrl;
+    
+    // If it's not a data URL or http URL, try to find it in the document
+    if (!imageUrl.startsWith('data:') && !imageUrl.startsWith('http')) {
+        // Look for an image with this filename in the document
+        const images = document.querySelectorAll('img');
+        for (let img of images) {
+            if (img.src.includes(imageUrl) || img.alt === imageUrl) {
+                actualUrl = img.src;
+                break;
+            }
+        }
+        
+        // If still not found, show error
+        if (actualUrl === imageUrl && !imageUrl.startsWith('data:')) {
+            console.warn('Image not found:', imageUrl);
+            alert('Image not found: ' + imageUrl);
+            return;
+        }
+    }
+    
     // Create modal
     const modal = document.createElement('div');
     modal.id = 'imageModal';
     modal.className = 'image-modal';
     modal.innerHTML = `
         <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
-        <img src="${imageUrl}" alt="${altText}" loading="lazy">
+        <img src="${actualUrl}" alt="${altText}" loading="lazy">
     `;
     
     // Close modal when clicking on background
