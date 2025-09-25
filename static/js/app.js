@@ -860,7 +860,7 @@ class MLAQuizApp {
         
         // Handle markdown-style images: ![alt text](url) or ![alt text](url "caption")
         formattedText = formattedText.replace(/!\[([^\]]*)\]\(([^)]+?)(?:\s+"([^"]+)")?\)/g, (match, alt, url, caption) => {
-            const imageHtml = `<img src="${url}" alt="${alt}" loading="lazy">`;
+            const imageHtml = `<img src="${url}" alt="${alt}" loading="lazy" onclick="openImageModal('${url}', '${alt}')">` ;
             if (caption) {
                 return `<div class="image-container">${imageHtml}<div class="image-caption">${caption}</div></div>`;
             }
@@ -869,7 +869,12 @@ class MLAQuizApp {
         
         // Handle simple image URLs (common formats)
         formattedText = formattedText.replace(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|svg)(\?[^\s]*)?/gi, (url) => {
-            return `<div class="image-container"><img src="${url}" alt="Image" loading="lazy"></div>`;
+            return `<div class="image-container"><img src="${url}" alt="Image" loading="lazy" onclick="openImageModal('${url}', 'Image')"></div>`;
+        });
+        
+        // Handle image links with "View Image" button: [View Image](url)
+        formattedText = formattedText.replace(/\[(View Image|view image|IMAGE|Image)\]\(([^)]+)\)/gi, (match, text, url) => {
+            return `<a href="#" class="image-link" onclick="openImageModal('${url}', 'Image'); return false;">🖼️ View Image</a>`;
         });
         
         // Check if text contains line breaks that suggest multiple paragraphs
@@ -886,6 +891,50 @@ class MLAQuizApp {
         }
         
         return formattedText;
+    }
+}
+
+// Global functions for image viewing
+function openImageModal(imageUrl, altText) {
+    // Remove existing modal if any
+    const existingModal = document.getElementById('imageModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Create modal
+    const modal = document.createElement('div');
+    modal.id = 'imageModal';
+    modal.className = 'image-modal';
+    modal.innerHTML = `
+        <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+        <img src="${imageUrl}" alt="${altText}" loading="lazy">
+    `;
+    
+    // Close modal when clicking on background
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeImageModal();
+        }
+    });
+    
+    document.body.appendChild(modal);
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', handleEscapeKey);
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    if (modal) {
+        modal.remove();
+    }
+    document.removeEventListener('keydown', handleEscapeKey);
+}
+
+function handleEscapeKey(e) {
+    if (e.key === 'Escape') {
+        closeImageModal();
     }
 }
 

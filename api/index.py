@@ -10,6 +10,9 @@ import json
 import hashlib
 import time
 import logging
+import base64
+import zipfile
+import io
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from flask import Flask, render_template, jsonify, request, send_from_directory
@@ -474,27 +477,30 @@ def upload_quiz():
         file_content = file.read()
         logger.info(f"File size: {len(file_content)} bytes")
         
-        # Validate file size (max 20MB)
-        if len(file_content) > 20 * 1024 * 1024:  # 20MB limit
+        # Validate file size (max 4.5MB for Vercel Hobby plan)
+        if len(file_content) > 4.5 * 1024 * 1024:  # 4.5MB limit
             return jsonify({
                 'success': False,
-                'error': 'File too large. Maximum size is 20MB.'
+                'error': 'File too large. Maximum size is 4.5MB.'
             }), 400
         
         # Process file based on extension
         if file.filename.lower().endswith('.zip'):
             logger.info("Processing ZIP file")
-            import zipfile
-            import io
             
             try:
                 # Extract zip file
                 zip_content = io.BytesIO(file_content)
                 quiz_data = []
+                image_data = {}  # Store images from zip
                 
                 with zipfile.ZipFile(zip_content, 'r') as zip_ref:
-                    md_files = [f for f in zip_ref.namelist() if f.endswith('.md')]
-                    logger.info(f"Found {len(md_files)} .md files in ZIP")
+                    # Get all files in the zip
+                    all_files = zip_ref.namelist()
+                    md_files = [f for f in all_files if f.endswith('.md')]
+                    image_files = [f for f in all_files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'))]
+                    
+                    logger.info(f"Found {len(md_files)} .md files and {len(image_files)} image files in ZIP")
                     
                     if not md_files:
                         return jsonify({
@@ -502,11 +508,56 @@ def upload_quiz():
                             'error': 'No .md files found in the zip archive'
                         }), 400
                     
+                    # Extract and encode images as base64
+                    for image_file in image_files:
+                        try:
+                            with zip_ref.open(image_file) as img_file:
+                                img_content = img_file.read()
+                                # Get file extension for mime type
+                                ext = image_file.lower().split('.')[-1]
+                                mime_type = {
+                                    'jpg': 'image/jpeg',
+                                    'jpeg': 'image/jpeg', 
+                                    'png': 'image/png',
+                                    'gif': 'image/gif',
+                                    'webp': 'image/webp',
+                                    'svg': 'image/svg+xml'
+                                }.get(ext, 'image/jpeg')
+                                
+                                # Convert to base64 data URL
+                                img_base64 = base64.b64encode(img_content).decode('utf-8')
+                                data_url = f"data:{mime_type};base64,{img_base64}"
+                                
+                                # Store with normalized path (remove leading ./ or ../)
+                                clean_path = image_file.replace('\\', '/').lstrip('./')
+                                image_data[clean_path] = data_url
+                                image_data[image_file] = data_url  # Also store original path
+                                # Store just filename for relative references
+                                filename_only = image_file.split('/')[-1]
+                                image_data[filename_only] = data_url
+                                
+                                logger.info(f"Processed image: {image_file} ({len(img_content)} bytes)")
+                        except Exception as e:
+                            logger.warning(f"Could not process image {image_file}: {e}")
+                            continue
+                    
+                    # Process markdown files
                     for filename in md_files:
                         try:
                             logger.info(f"Processing file: {filename}")
                             with zip_ref.open(filename) as md_file:
                                 content = md_file.read().decode('utf-8')
+                                
+                                # Replace local image references with base64 data URLs
+                                for image_path, data_url in image_data.items():
+                                    # Replace various possible reference formats
+                                    content = content.replace(f"({image_path})", f"({data_url})")
+                                    content = content.replace(f'"{image_path}"', f'"{data_url}"')
+                                    content = content.replace(f"'{image_path}'", f"'{data_url}'")
+                                    # Handle relative paths
+                                    content = content.replace(f"(./{image_path})", f"({data_url})")
+                                    content = content.replace(f"(../{image_path})", f"({data_url})")
+                                
                                 questions = PWAQuizLoader.parse_markdown_content(content, filename)
                                 quiz_data.extend(questions)
                                 logger.info(f"Extracted {len(questions)} questions from {filename}")
