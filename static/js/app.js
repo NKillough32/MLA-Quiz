@@ -414,6 +414,13 @@ class MLAQuizApp {
             return question;
         }
         
+        // Validate correct_answer index is within bounds
+        if (question.correct_answer < 0 || question.correct_answer >= question.options.length) {
+            console.warn('Invalid correct_answer index:', question.correct_answer, 'for question with', question.options.length, 'options. Question:', question.title);
+            // Try to find the correct answer by looking at the first option
+            question.correct_answer = 0; // Default to first option as fallback
+        }
+        
         // Create array of indices and their corresponding options
         const optionPairs = question.options.map((option, index) => ({ option, originalIndex: index }));
         
@@ -431,6 +438,10 @@ class MLAQuizApp {
         const correctOptionPair = optionPairs.find(pair => pair.originalIndex === question.correct_answer);
         if (correctOptionPair) {
             shuffledQuestion.correct_answer = optionPairs.indexOf(correctOptionPair);
+        } else {
+            // This should not happen after validation, but as a safety measure
+            console.error('Failed to find correct option pair for question:', question.title);
+            shuffledQuestion.correct_answer = 0; // Default to first option
         }
         
         // Store the mapping for this question so we can maintain consistency
