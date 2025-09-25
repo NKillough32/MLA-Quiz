@@ -538,8 +538,11 @@ def upload_quiz():
                                 # Store filename without extension for [IMAGE: name] format
                                 name_without_ext = filename_only.rsplit('.', 1)[0]
                                 image_data[name_without_ext] = data_url
+                                # Store variations of the filename
+                                image_data[filename_only.lower()] = data_url
+                                image_data[name_without_ext.lower()] = data_url
                                 
-                                logger.info(f"Processed image: {image_file} -> {filename_only} ({len(img_content)} bytes)")
+                                logger.info(f"Processed image: {image_file} -> stored as keys: {filename_only}, {name_without_ext}, {clean_path}")
                         except Exception as e:
                             logger.warning(f"Could not process image {image_file}: {e}")
                             continue
@@ -554,8 +557,9 @@ def upload_quiz():
                                 
                                 # Replace local image references with base64 data URLs
                                 replacements_made = 0
+                                
+                                # First pass: exact matches
                                 for image_path, data_url in image_data.items():
-                                    # Count replacements before making them
                                     old_content = content
                                     
                                     # Replace various possible reference formats
@@ -568,17 +572,55 @@ def upload_quiz():
                                     # Handle [IMAGE: filename] format specifically
                                     content = content.replace(f"[IMAGE: {image_path}]", f"![Image]({data_url})")
                                     content = content.replace(f"[IMAGE:{image_path}]", f"![Image]({data_url})")
+                                    # Handle spaces in IMAGE format
+                                    content = content.replace(f"[IMAGE:  {image_path}]", f"![Image]({data_url})")
+                                    content = content.replace(f"[IMAGE:   {image_path}]", f"![Image]({data_url})")
                                     
                                     if content != old_content:
                                         replacements_made += 1
                                         logger.info(f"Replaced image reference: {image_path}")
                                 
+                                # Second pass: case-insensitive search for unreplaced IMAGE tags
+                                image_pattern = re.compile(r'\\[IMAGE:\\s*([^\\]]+)\\]', re.IGNORECASE)
+                                matches = image_pattern.findall(content)
+                                
+                                for match in matches:
+                                    match_clean = match.strip()
+                                    found_replacement = None
+                                    
+                                    # Try to find matching image by filename (case insensitive)
+                                    for image_path, data_url in image_data.items():
+                                        if (match_clean.lower() == image_path.lower() or 
+                                            match_clean.lower() in image_path.lower() or
+                                            image_path.lower() in match_clean.lower()):
+                                            found_replacement = data_url
+                                            logger.info(f"Found case-insensitive match: '{match_clean}' -> '{image_path}'")
+                                            break
+                                    
+                                    if found_replacement:
+                                        # Replace with case-insensitive regex
+                                        old_content = content
+                                        pattern = re.compile(re.escape(f"[IMAGE: {match_clean}]"), re.IGNORECASE)
+                                        content = pattern.sub(f"![Image]({found_replacement})", content)
+                                        pattern = re.compile(re.escape(f"[IMAGE:{match_clean}]"), re.IGNORECASE)
+                                        content = pattern.sub(f"![Image]({found_replacement})", content)
+                                        
+                                        if content != old_content:
+                                            replacements_made += 1
+                                            logger.info(f"Case-insensitive replacement: {match_clean}")
+                                
                                 logger.info(f"Made {replacements_made} image replacements in {filename}")
                                 if replacements_made == 0 and len(image_data) > 0:
                                     logger.warning(f"No image replacements made in {filename}, but {len(image_data)} images available")
                                     logger.info(f"Available images: {list(image_data.keys())}")
-                                    # Show first 200 chars of content for debugging
-                                    logger.info(f"Content preview: {original_content[:200]}...")
+                                    # Show IMAGE references found in content
+                                    image_refs = re.findall(r'\\[IMAGE:\\s*([^\\]]+)\\]', original_content, re.IGNORECASE)
+                                    if image_refs:
+                                        logger.info(f"Found IMAGE references: {image_refs}")
+                                    else:
+                                        logger.info("No [IMAGE: ...] references found in content")
+                                    # Show first 300 chars of content for debugging
+                                    logger.info(f"Content preview: {original_content[:300]}...")
                                 
                                 questions = PWAQuizLoader.parse_markdown_content(content, filename)
                                 quiz_data.extend(questions)
