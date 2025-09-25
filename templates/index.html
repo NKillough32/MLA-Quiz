@@ -88,19 +88,26 @@
         
         /* Page grid layout */
         .quiz-page {
-            --sidebar-w: 240px;
-            max-width: 1200px;
+            --sidebar-w: 280px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 24px 16px;
             display: grid;
-            grid-template-columns: minmax(0,1fr) var(--sidebar-w);
-            gap: 24px;
+            grid-template-columns: minmax(600px, 2fr) var(--sidebar-w);
+            gap: 32px;
             align-items: start;
         }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1200px) {
             .quiz-page {
                 grid-template-columns: 1fr;
+                max-width: 900px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-page {
+                padding: 16px 12px;
             }
         }
 
@@ -114,7 +121,13 @@
         }
 
         .card-body { 
-            padding: 20px 24px; 
+            padding: 24px 32px; 
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 20px 24px;
+            }
         }
 
         /* Sticky sidebar on large screens */
@@ -138,48 +151,66 @@
             overflow-wrap: anywhere;
             word-break: break-word;
             white-space: pre-wrap;
+            width: 100%;
         }
 
         .q-text p { 
-            margin: 0 0 12px; 
+            margin: 0 0 16px;
+            line-height: 1.6;
+        }
+
+        /* Question container improvements */
+        .question-container {
+            width: 100%;
+            max-width: none;
+        }
+
+        .question-container.active {
+            display: block;
+            width: 100%;
         }
 
         /* Investigations block styling */
         .investigations {
-            margin: 16px 0 20px;
-            padding: 14px 16px;
+            margin: 20px 0 24px;
+            padding: 18px 20px;
             background: #f8fafc;
             border: 1px solid #e5e7eb;
             border-left: 4px solid #2563eb;
-            border-radius: 10px;
+            border-radius: 12px;
+            width: 100%;
         }
         .investigations h4 {
-            margin: 0 0 8px;
-            font-size: 0.95rem;
+            margin: 0 0 12px;
+            font-size: 1rem;
             font-weight: 700;
             color: #1f2937;
         }
         .investigations p { 
-            margin: 0; 
+            margin: 0;
+            line-height: 1.6;
         }
 
         /* Options list */
         .new-options {
             display: grid;
-            gap: 10px;
+            gap: 12px;
+            margin-top: 20px;
         }
 
         /* Each option as a "chip card" */
         .new-option {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            padding: 12px 14px;
+            gap: 16px;
+            padding: 16px 18px;
             border: 1px solid #e5e7eb;
             border-radius: 12px;
             background: #fff;
             cursor: pointer;
             transition: border-color .15s, box-shadow .15s, background .15s;
+            width: 100%;
+            min-height: 60px;
         }
 
         .new-option input[type="radio"] {
