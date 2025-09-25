@@ -197,12 +197,7 @@ class MLAQuizApp {
         
         let investigationsHtml = '';
         if (question.investigations && question.investigations.trim()) {
-            investigationsHtml = `
-                <div class="investigations">
-                    <h4>Investigations</h4>
-                    <p>${this.formatText(question.investigations)}</p>
-                </div>
-            `;
+            investigationsHtml = `<div class="investigations"><h4>Investigations</h4><div>${this.formatText(question.investigations)}</div></div>`;
         }
 
         let optionsHtml = '';
@@ -234,26 +229,12 @@ class MLAQuizApp {
 
                 const cleanOption = this.formatText(option).replace(/^[A-E]\)\s*/, ''); // Remove letter prefix if present
 
-                optionsHtml += `
-                    <label class="${optionClasses}">
-                        <input type="radio" name="question_${question.id}" value="${index}" ${isSelected ? 'checked' : ''}>
-                        <div class="label">
-                            <span class="badge">${letter})</span> ${cleanOption}
-                        </div>
-                    </label>
-                `;
+                optionsHtml += `<label class="${optionClasses}"><input type="radio" name="question_${question.id}" value="${index}" ${isSelected ? 'checked' : ''}><div class="label"><span class="badge">${letter})</span> ${cleanOption}</div></label>`;
             });
             optionsHtml += '</div>';
         }
         
-        container.innerHTML = `
-            <div class="q-text">
-                ${this.formatText(question.scenario)}
-            </div>
-            ${investigationsHtml}
-            <h3 class="section-title">${this.formatText(question.prompt)}</h3>
-            ${optionsHtml}
-        `;
+        container.innerHTML = `<div class="q-text">${this.formatText(question.scenario)}</div>${investigationsHtml}<h3 class="section-title">${this.formatText(question.prompt)}</h3>${optionsHtml}`;
         
         // Bind option selection events (only if not submitted)
         const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
