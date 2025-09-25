@@ -10,6 +10,7 @@ class MLAQuizApp {
         this.answers = {};
         this.questions = [];
         this.quizName = '';
+        this.flaggedQuestions = new Set(); // Track flagged questions
         
         this.init();
     }
@@ -29,6 +30,13 @@ class MLAQuizApp {
         document.getElementById('submitBtn').addEventListener('click', () => this.submitAnswer());
         document.getElementById('nextBtn').addEventListener('click', () => this.nextQuestion());
         document.getElementById('prevBtn').addEventListener('click', () => this.prevQuestion());
+        
+        // Top navigation buttons
+        document.getElementById('nextBtnTop').addEventListener('click', () => this.nextQuestion());
+        document.getElementById('prevBtnTop').addEventListener('click', () => this.prevQuestion());
+        
+        // Flag button
+        document.getElementById('flagBtn').addEventListener('click', () => this.toggleFlag());
         // Sidebar toggle removed - now using responsive grid layout
         
         // File upload
@@ -135,6 +143,7 @@ class MLAQuizApp {
                 this.currentQuestionIndex = 0;
                 this.answers = {};
                 this.submittedAnswers = {};
+                this.flaggedQuestions = new Set();
                 
                 if (this.questions.length === 0) {
                     this.showError('This quiz contains no questions.');
@@ -153,6 +162,7 @@ class MLAQuizApp {
                     this.currentQuestionIndex = 0;
                     this.answers = {};
                     this.submittedAnswers = {};
+                    this.flaggedQuestions = new Set();
                     
                     if (this.questions.length === 0) {
                         this.showError('This quiz contains no questions.');
@@ -354,15 +364,18 @@ class MLAQuizApp {
             const isAnswered = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
             const isCorrect = isAnswered && this.submittedAnswers[question.id] === question.correct_answer;
             const isCurrent = index === this.currentQuestionIndex;
+            const isFlagged = this.flaggedQuestions.has(question.id);
             
             let statusIcon = '⚪'; // Not answered
             if (isAnswered) {
                 statusIcon = isCorrect ? '✅' : '❌';
             }
             
+            const flagIcon = isFlagged ? ' 🚩' : '';
+            
             html += `
                 <div class="progress-item ${isCurrent ? 'current' : ''}" data-question-index="${index}" style="cursor: pointer;">
-                    <span>Q${index + 1}</span>
+                    <span>Q${index + 1}${flagIcon}</span>
                     <span>${statusIcon}</span>
                 </div>
             `;
@@ -469,35 +482,68 @@ class MLAQuizApp {
         const submitBtn = document.getElementById('submitBtn');
         const nextBtn = document.getElementById('nextBtn');
         const prevBtn = document.getElementById('prevBtn');
+        const nextBtnTop = document.getElementById('nextBtnTop');
+        const prevBtnTop = document.getElementById('prevBtnTop');
+        const flagBtn = document.getElementById('flagBtn');
         
         const currentQuestion = this.questions[this.currentQuestionIndex];
         const hasAnswer = this.answers.hasOwnProperty(currentQuestion.id);
         const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(currentQuestion.id);
         
-        // Show/hide previous button
-        prevBtn.style.display = this.currentQuestionIndex > 0 ? 'block' : 'none';
+        // Show/hide previous buttons
+        const showPrev = this.currentQuestionIndex > 0;
+        prevBtn.style.display = showPrev ? 'block' : 'none';
+        prevBtnTop.style.display = showPrev ? 'block' : 'none';
+        
+        // Update flag button state
+        if (flagBtn) {
+            if (this.flaggedQuestions.has(currentQuestion.id)) {
+                flagBtn.classList.add('flagged');
+                flagBtn.title = 'Remove flag';
+            } else {
+                flagBtn.classList.remove('flagged');
+                flagBtn.title = 'Flag this question';
+            }
+        }
         
         if (!hasAnswer) {
-            // No answer selected - hide both submit and next
+            // No answer selected - hide submit and next, show top next as disabled
             submitBtn.style.display = 'none';
             nextBtn.style.display = 'none';
+            nextBtnTop.style.display = 'block';
+            nextBtnTop.disabled = true;
         } else if (!isSubmitted) {
             // Answer selected but not submitted - show submit button
             submitBtn.style.display = 'block';
             nextBtn.style.display = 'none';
+            nextBtnTop.style.display = 'block';
+            nextBtnTop.disabled = true;
         } else {
             // Answer submitted - show next button
             submitBtn.style.display = 'none';
             nextBtn.style.display = 'block';
             nextBtn.disabled = false;
+            nextBtnTop.style.display = 'block';
+            nextBtnTop.disabled = false;
             
             // Update next button text
-            if (this.currentQuestionIndex === this.questions.length - 1) {
-                nextBtn.textContent = 'Finish Quiz';
-            } else {
-                nextBtn.textContent = 'Next Question';
-            }
+            const nextText = this.currentQuestionIndex === this.questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+            nextBtn.textContent = nextText;
+            nextBtnTop.textContent = this.currentQuestionIndex === this.questions.length - 1 ? 'Finish' : 'Next →';
         }
+    }
+    
+    toggleFlag() {
+        const currentQuestion = this.questions[this.currentQuestionIndex];
+        
+        if (this.flaggedQuestions.has(currentQuestion.id)) {
+            this.flaggedQuestions.delete(currentQuestion.id);
+        } else {
+            this.flaggedQuestions.add(currentQuestion.id);
+        }
+        
+        this.updateButtons();
+        this.buildQuestionList(); // Refresh sidebar to show flag status
     }
     
     nextQuestion() {
@@ -857,6 +903,11 @@ class MLAQuizApp {
             .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
             .replace(/- (.*?)(?=\n|$)/g, '• $1') // Bullet points
             .trim();
+        
+        // Handle [IMAGE: filename] format first
+        formattedText = formattedText.replace(/\[IMAGE:\s*([^\]]+)\]/gi, (match, filename) => {
+            return `<a href="#" class="image-link" onclick="openImageModal('${filename}', 'Image'); return false;">🖼️ View Image: ${filename}</a>`;
+        });
         
         // Handle markdown-style images: ![alt text](url) or ![alt text](url "caption")
         formattedText = formattedText.replace(/!\[([^\]]*)\]\(([^)]+?)(?:\s+"([^"]+)")?\)/g, (match, alt, url, caption) => {
