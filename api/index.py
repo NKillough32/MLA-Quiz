@@ -84,7 +84,8 @@ class PWAQuizLoader:
 
         for i, part in enumerate(parts):
             # Enhanced regex to handle all Investigation section variations
-            investigation_pattern = r'\*\*Investigations?(?::\*\*|\*\*:)\s*'
+            # Matches: **Investigations:** OR **Investigations**: OR **Investigation:** OR **Investigation**:
+            investigation_pattern = r'\*\*Investigations?(?::\*\*|\*\*:|:\*\*|\*\*)\s*'
             investigation_match = re.search(investigation_pattern, part, re.IGNORECASE)
             
             if investigation_match:
@@ -117,8 +118,9 @@ class PWAQuizLoader:
         tail_content = '\n\n'.join(parts[tail_start:])
         logger.info(f"Question {num} tail content (first 500 chars): {tail_content[:500]}")
         
-        # Parse answer using the working regex from main.py
-        answer_match = re.search(r'\*\*Ans(?:wer)?\*\*:\s*([A-Z])\.?', tail_content, re.IGNORECASE)
+        # Parse answer using flexible regex to handle both formats
+        # Matches: **Answer:** A OR **Answer**: A OR **Ans:** A OR **Ans**: A
+        answer_match = re.search(r'\*\*Ans(?:wer)?(?::\*\*|\*\*:|:\*\*|\*\*)\s*([A-Z])\.?', tail_content, re.IGNORECASE)
         answer_letter = answer_match.group(1).upper() if answer_match else None
         
         # Convert letter to index (A=0, B=1, C=2, etc.)
