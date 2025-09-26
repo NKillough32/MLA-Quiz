@@ -524,7 +524,9 @@ def upload_quiz():
                     md_files = [f for f in all_files if f.endswith('.md')]
                     image_files = [f for f in all_files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'))]
                     
-                    logger.info(f"Found {len(md_files)} .md files and {len(image_files)} image files in ZIP")
+                    logger.info(f"ZIP contents: {all_files}")
+                    logger.info(f"Found {len(md_files)} .md files: {md_files}")
+                    logger.info(f"Found {len(image_files)} image files: {image_files}")
                     
                     if not md_files:
                         return jsonify({
@@ -574,9 +576,31 @@ def upload_quiz():
                     # Process markdown files
                     for filename in md_files:
                         try:
-                            logger.info(f"Processing file: {filename}")
+                            logger.info(f"Processing MD file: {filename}")
                             with zip_ref.open(filename) as md_file:
-                                content = md_file.read().decode('utf-8')
+                                raw_content = md_file.read()
+                                logger.info(f"Raw content length: {len(raw_content)} bytes")
+                                
+                                # Try different encodings
+                                content = None
+                                encodings_to_try = ['utf-8', 'utf-8-sig', 'latin1', 'cp1252']
+                                
+                                for encoding in encodings_to_try:
+                                    try:
+                                        content = raw_content.decode(encoding)
+                                        logger.info(f"Successfully decoded with {encoding}")
+                                        break
+                                    except UnicodeDecodeError as e:
+                                        logger.warning(f"Failed to decode with {encoding}: {e}")
+                                        continue
+                                
+                                if content is None:
+                                    logger.error(f"Could not decode {filename} with any encoding")
+                                    continue
+                                
+                                logger.info(f"Decoded content length: {len(content)} characters")
+                                logger.info(f"First 500 characters: {repr(content[:500])}")
+                                
                                 original_content = content
                                 
                                 # Replace local image references with base64 data URLs
