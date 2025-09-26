@@ -255,10 +255,23 @@ class MLAQuizApp {
         
         // Add spacing between sections with conditional breaks
         let questionPromptHtml = '';
-        if (question.prompt) {
+        if (question.prompt && question.prompt.trim()) {
             const needsTopBreak = scenarioText || investigationsHtml;
-            questionPromptHtml = `${needsTopBreak ? '<br>' : ''}<h3 class="section-title">${this.formatText(question.prompt)}</h3>${optionsHtml ? '<br>' : ''}`;
+            const needsBottomBreak = optionsHtml.trim().length > 0;
+            questionPromptHtml = `${needsTopBreak ? '<br>' : ''}<h3 class="section-title">${this.formatText(question.prompt)}</h3>${needsBottomBreak ? '<br>' : ''}`;
         }
+        
+        console.log('Final HTML pieces:');
+        console.log('Scenario:', scenarioText);
+        console.log('Investigations HTML:', investigationsHtml);
+        console.log('Question Prompt HTML:', questionPromptHtml);
+        console.log('Options HTML length:', optionsHtml.length);
+        
+        console.log('Final HTML pieces:');
+        console.log('Scenario:', scenarioText);
+        console.log('Investigations HTML:', investigationsHtml);
+        console.log('Question Prompt HTML:', questionPromptHtml);
+        console.log('Options HTML length:', optionsHtml.length);
         
         container.innerHTML = `<div class="q-text">${this.formatText(scenarioText)}</div>${investigationsHtml}${questionPromptHtml}${optionsHtml}`;
         
@@ -432,7 +445,8 @@ class MLAQuizApp {
         }
         
         // Validate correct_answer index is within bounds
-        if (question.correct_answer < 0 || question.correct_answer >= question.options.length) {
+        if (question.correct_answer === null || question.correct_answer === undefined || 
+            question.correct_answer < 0 || question.correct_answer >= question.options.length) {
             console.warn('Invalid correct_answer index:', question.correct_answer, 'for question with', question.options.length, 'options. Question:', question.title);
             // Try to find the correct answer by looking at the first option
             question.correct_answer = 0; // Default to first option as fallback
@@ -458,6 +472,8 @@ class MLAQuizApp {
         } else {
             // This should not happen after validation, but as a safety measure
             console.error('Failed to find correct option pair for question:', question.title);
+            console.error('Original correct_answer:', question.correct_answer, 'Options length:', question.options.length);
+            console.error('Options:', question.options);
             shuffledQuestion.correct_answer = 0; // Default to first option
         }
         
@@ -916,9 +932,17 @@ class MLAQuizApp {
             .replace(/- (.*?)(?=\n|$)/g, '• $1') // Bullet points
             .trim();
         
-        // Handle [IMAGE: filename] format first
+        // Handle [IMAGE: filename] format first - improved handling
         formattedText = formattedText.replace(/\[IMAGE:\s*([^\]]+)\]/gi, (match, filename) => {
-            return `<a href="#" class="image-link" onclick="openImageModal('${filename}', 'Image'); return false;">🖼️ View Image: ${filename}</a>`;
+            // Check if we have a data URL already embedded in the text
+            const dataUrlPattern = /data:[^;]+;base64,[A-Za-z0-9+/=]+/;
+            if (dataUrlPattern.test(filename)) {
+                // It's already a data URL, display it as an image
+                return `<div class="image-container"><img src="${filename}" alt="Image" loading="lazy" onclick="openImageModal('${filename}', 'Image')"></div>`;
+            } else {
+                // It's a filename, show as a link
+                return `<a href="#" class="image-link" onclick="openImageModal('${filename}', 'Image'); return false;">🖼️ View Image: ${filename}</a>`;
+            }
         });
         
         // Handle markdown-style images: ![alt text](url) or ![alt text](url "caption")
