@@ -217,6 +217,13 @@ class PWAQuizLoader:
             logger.info(f"Starting to parse quiz content, length: {len(content)} characters")
             logger.info(f"First 1000 chars of content: {content[:1000]}")
             
+            # Debug: Look for question patterns
+            question_pattern_matches = re.findall(r'###\s*\d+.*?(?=###\s*\d+|\Z)', content, re.DOTALL)
+            logger.info(f"Found {len(question_pattern_matches)} question blocks using basic regex")
+            
+            if len(question_pattern_matches) > 0:
+                logger.info(f"First question block preview: {question_pattern_matches[0][:200]}...")
+            
             # Analyze investigation variations
             PWAQuizLoader.analyze_investigation_variations(content)
 
@@ -241,14 +248,29 @@ class PWAQuizLoader:
                 return specialty_markers[best][1]
 
             # Parse questions
+            question_count = 0
             for qm in PWAQuizLoader.QUESTION_RE.finditer(content):
                 block = qm.group(1)
                 specialty = find_specialty(qm.start())
+                logger.info(f"Processing question block {question_count + 1}: {block[:100]}...")
                 q = PWAQuizLoader._parse_question(block, specialty)
                 if q:
                     questions.append(q)
+                    question_count += 1
+                    logger.info(f"Successfully parsed question {question_count}: {q['title'][:50]}")
+                else:
+                    logger.warning(f"Failed to parse question block {question_count + 1}")
 
             logger.info(f"Loaded {len(questions)} questions from {filename}")
+            
+            if len(questions) == 0:
+                logger.error(f"NO QUESTIONS PARSED! Debug info:")
+                logger.error(f"Content has ### headers: {'###' in content}")
+                logger.error(f"QUESTION_RE pattern: {PWAQuizLoader.QUESTION_RE.pattern}")
+                # Show all lines starting with ###
+                lines_with_hash = [line.strip() for line in content.split('\n') if line.strip().startswith('###')]
+                logger.error(f"Lines starting with ###: {lines_with_hash}")
+            
             return questions
 
         except Exception as e:
@@ -627,6 +649,17 @@ def upload_quiz():
                                 questions = PWAQuizLoader.parse_markdown_content(content, filename)
                                 quiz_data.extend(questions)
                                 logger.info(f"Extracted {len(questions)} questions from {filename}")
+                                
+                                # Debug: Show sample of content being parsed
+                                if len(questions) == 0:
+                                    logger.error(f"NO QUESTIONS FOUND in {filename}")
+                                    logger.error(f"Content length: {len(content)} characters")
+                                    logger.error(f"Content preview (first 500 chars): {content[:500]}")
+                                    logger.error(f"Looking for ### patterns...")
+                                    question_matches = re.findall(r'###\s*\d+', content)
+                                    logger.error(f"Found {len(question_matches)} question headers: {question_matches[:5]}")
+                                else:
+                                    logger.info(f"Successfully found {len(questions)} questions in {filename}")
                         except UnicodeDecodeError as e:
                             logger.warning(f"Could not decode file {filename}: {e}")
                             continue
