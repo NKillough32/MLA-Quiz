@@ -208,9 +208,15 @@ class MLAQuizApp {
             feedbackContainer.style.display = 'none';
         }
         
+        // Process scenario text - add full stop if missing
+        let scenarioText = question.scenario || '';
+        if (scenarioText && scenarioText.trim() && !scenarioText.trim().endsWith('.') && !scenarioText.trim().endsWith('?') && !scenarioText.trim().endsWith('!')) {
+            scenarioText = scenarioText.trim() + '.';
+        }
+
         let investigationsHtml = '';
         if (question.investigations && question.investigations.trim()) {
-            investigationsHtml = `<div class="investigations"><h4>Investigations</h4><div>${this.formatText(question.investigations)}</div></div>`;
+            investigationsHtml = `<br><div class="investigations"><h4>Investigations</h4><div>${this.formatText(question.investigations)}</div></div><br>`;
         }
 
         let optionsHtml = '';
@@ -247,7 +253,14 @@ class MLAQuizApp {
             optionsHtml += '</div>';
         }
         
-        container.innerHTML = `<div class="q-text">${this.formatText(question.scenario)}</div>${investigationsHtml}<h3 class="section-title">${this.formatText(question.prompt)}</h3>${optionsHtml}`;
+        // Add spacing between sections with conditional breaks
+        let questionPromptHtml = '';
+        if (question.prompt) {
+            const needsTopBreak = scenarioText || investigationsHtml;
+            questionPromptHtml = `${needsTopBreak ? '<br>' : ''}<h3 class="section-title">${this.formatText(question.prompt)}</h3>${optionsHtml ? '<br>' : ''}`;
+        }
+        
+        container.innerHTML = `<div class="q-text">${this.formatText(scenarioText)}</div>${investigationsHtml}${questionPromptHtml}${optionsHtml}`;
         
         // Bind option selection events (only if not submitted)
         const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
