@@ -196,8 +196,12 @@ class MLAQuizApp {
     
     renderCurrentQuestion() {
         const question = this.questions[this.currentQuestionIndex];
+        console.log('Debug - Question object:', question);
+    
+        if (!question) return;
+    
         const container = document.getElementById('questionContainer');
-        
+    
         // Hide explanation and feedback initially (will show again if answer is already submitted)
         const explanationContainer = document.getElementById('explanationContainer');
         const feedbackContainer = document.getElementById('feedbackContainer');
@@ -207,35 +211,56 @@ class MLAQuizApp {
         if (feedbackContainer) {
             feedbackContainer.style.display = 'none';
         }
-        
+    
         // Process scenario text - add full stop if missing
         let scenarioText = question.scenario || '';
-        if (scenarioText && scenarioText.trim() && !scenarioText.trim().endsWith('.') && !scenarioText.trim().endsWith('?') && !scenarioText.trim().endsWith('!')) {
+        if (
+            scenarioText &&
+            scenarioText.trim() &&
+            !scenarioText.trim().endsWith('.') &&
+            !scenarioText.trim().endsWith('?') &&
+            !scenarioText.trim().endsWith('!')
+        ) {
             scenarioText = scenarioText.trim() + '.';
         }
-
+        console.log('Debug - Processed scenario:', scenarioText);
+    
+        // Format investigations if present (no br tags here; spacing handled later)
         let investigationsHtml = '';
         if (question.investigations && question.investigations.trim()) {
-            investigationsHtml = `<br><div class="investigations"><h4>Investigations</h4><div>${this.formatText(question.investigations)}</div></div><br>`;
+            investigationsHtml = `
+                <div class="investigations">
+                    <h4>Investigations</h4>
+                    <div>${this.formatText(question.investigations)}</div>
+                </div>`;
         }
-
+        console.log('Debug - Investigations HTML:', investigationsHtml);
+    
+        // Format question prompt - don't wrap in h3 tags
+        let questionPromptHtml = '';
+        if (question.prompt && question.prompt.trim()) {
+            questionPromptHtml = `<div class="prompt">${this.formatText(question.prompt)}</div>`;
+        }
+        console.log('Debug - Question Prompt HTML:', questionPromptHtml);
+    
+        // Format options
         let optionsHtml = '';
         if (question.options && question.options.length > 0) {
             const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
             const selectedAnswer = this.answers[question.id];
             const correctAnswer = question.correct_answer;
-            
+    
             optionsHtml = '<div class="new-options">';
             question.options.forEach((option, index) => {
                 const isSelected = selectedAnswer === index;
                 const letter = String.fromCharCode(65 + index); // A, B, C, D, etc.
-                
+    
                 let optionClasses = 'new-option';
-                
+    
                 if (isSelected) {
                     optionClasses += ' selected';
                 }
-                
+    
                 // Add feedback classes if answer is submitted
                 if (isSubmitted) {
                     if (index === selectedAnswer) {
@@ -245,36 +270,45 @@ class MLAQuizApp {
                         optionClasses += ' correct';
                     }
                 }
-
+    
                 const cleanOption = option.replace(/^[A-E]\)\s*/, ''); // Remove letter prefix if present
-
+    
                 optionsHtml += `<label class="${optionClasses}"><input type="radio" name="question_${question.id}" value="${index}" ${isSelected ? 'checked' : ''}><div class="label"><span class="badge">${letter})</span> ${cleanOption}</div></label>`;
             });
             optionsHtml += '</div>';
         }
-        
-        // Add spacing between sections with conditional breaks
-        let questionPromptHtml = '';
-        if (question.prompt && question.prompt.trim()) {
-            const needsTopBreak = scenarioText || investigationsHtml;
-            const needsBottomBreak = optionsHtml.trim().length > 0;
-            questionPromptHtml = `${needsTopBreak ? '<br>' : ''}<h3 class="section-title">${this.formatText(question.prompt)}</h3>${needsBottomBreak ? '<br>' : ''}`;
+        console.log('Debug - Options HTML length:', optionsHtml.length);
+    
+        // Assemble the final HTML with proper spacing
+        let finalHtml = '';
+    
+        // Add scenario/stem
+        if (scenarioText) {
+            finalHtml += `<div class="q-text">${this.formatText(scenarioText)}</div>`;
         }
-        
-        console.log('Final HTML pieces:');
-        console.log('Scenario:', scenarioText);
-        console.log('Investigations HTML:', investigationsHtml);
-        console.log('Question Prompt HTML:', questionPromptHtml);
-        console.log('Options HTML length:', optionsHtml.length);
-        
-        console.log('Final HTML pieces:');
-        console.log('Scenario:', scenarioText);
-        console.log('Investigations HTML:', investigationsHtml);
-        console.log('Question Prompt HTML:', questionPromptHtml);
-        console.log('Options HTML length:', optionsHtml.length);
-        
-        container.innerHTML = `<div class="q-text">${this.formatText(scenarioText)}</div>${investigationsHtml}${questionPromptHtml}${optionsHtml}`;
-        
+    
+        // Add spacing and investigations if present
+        if (investigationsHtml) {
+            finalHtml += '<br>' + investigationsHtml;
+        }
+    
+        // Add spacing and question prompt if present
+        if (questionPromptHtml) {
+            finalHtml += '<br>' + questionPromptHtml;
+        } else if (scenarioText && !investigationsHtml) {
+            // Add spacing between stem and options if no investigations or prompt
+            finalHtml += '<br>';
+        }
+    
+        // Add spacing and options
+        if (optionsHtml) {
+            finalHtml += '<br>' + optionsHtml;
+        }
+    
+        console.log('Debug - Final HTML pieces:', finalHtml.substring(0, 200) + '...');
+    
+        container.innerHTML = finalHtml;
+    
         // Bind option selection events (only if not submitted)
         const isSubmitted = this.submittedAnswers && this.submittedAnswers.hasOwnProperty(question.id);
         if (!isSubmitted) {
@@ -287,20 +321,20 @@ class MLAQuizApp {
                 });
             });
         }
-        
+    
         // If answer already submitted, show feedback and explanation
         if (isSubmitted) {
             const selectedAnswer = this.answers[question.id];
             const correctAnswer = question.correct_answer;
             const isCorrect = selectedAnswer === correctAnswer;
-            
+    
             this.showFeedback(isCorrect, correctAnswer);
-            
+    
             if (question.explanations) {
                 this.showExplanation(question.explanations);
             }
         }
-        
+    
         // Update button states
         this.updateButtons();
     }
