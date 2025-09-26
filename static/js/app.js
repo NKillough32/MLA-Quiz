@@ -950,9 +950,15 @@ class MLAQuizApp {
                 }
             }
             
+            console.log('🔍 UPLOAD DEBUG - Raw response status:', response.status);
+            console.log('🔍 UPLOAD DEBUG - Response headers:', [...response.headers.entries()]);
+            
             const data = await response.json();
             console.log('🔍 UPLOAD DEBUG - Full server response:', data);
+            console.log('🔍 UPLOAD DEBUG - Response keys:', Object.keys(data));
             console.log('🔍 UPLOAD DEBUG - Questions received:', data.questions?.length);
+            console.log('🔍 UPLOAD DEBUG - Images in response:', data.images);
+            console.log('🔍 UPLOAD DEBUG - Images keys:', data.images ? Object.keys(data.images) : 'No images property');
             console.log('🔍 UPLOAD DEBUG - First question sample:', data.questions?.[0]);
             
             if (!data.success) {

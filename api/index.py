@@ -654,13 +654,14 @@ def upload_quiz():
                 }), 500
             
             quiz_name = file.filename.replace('.zip', '')
-            logger.info(f"Successfully processed ZIP file: {len(quiz_data)} total questions")
+            logger.info(f"Successfully processed ZIP file: {len(quiz_data)} total questions, {len(image_data)} images")
             
             return jsonify({
                 'success': True,
                 'quiz_name': quiz_name,
                 'questions': quiz_data,
-                'total_questions': len(quiz_data)
+                'total_questions': len(quiz_data),
+                'images': image_data  # Add this line to include images in response
             })
             
         elif file.filename.lower().endswith('.md'):
