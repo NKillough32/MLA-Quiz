@@ -241,22 +241,40 @@ class MLAQuizApp {
         }
         console.log('Debug - Investigations HTML:', investigationsHtml);
     
-        // Format question prompt - check for different possible field names
+        // Format question prompt - separate images from question text
         let questionPromptHtml = '';
+        let imageHtml = '';
         const promptText = question.prompt || question.question || question.title || '';
         console.log('Debug - Prompt text found:', promptText);
         
+        // Extract images from prompt text and handle them separately
         if (promptText && promptText.trim()) {
-            // If it's just an image reference, add a default question text
-            if (promptText.match(/^\[IMAGE:[^\]]+\]$/)) {
-                questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}<br><strong>What is the most likely diagnosis?</strong></div>`;
+            // Check if prompt contains image references
+            const imageMatches = promptText.match(/\[IMAGE:[^\]]+\]/g);
+            let cleanPromptText = promptText;
+            
+            if (imageMatches) {
+                // Remove image references from prompt text
+                cleanPromptText = promptText.replace(/\[IMAGE:[^\]]+\]/g, '').trim();
+                
+                // Process each image
+                imageMatches.forEach(imageRef => {
+                    imageHtml += this.formatText(imageRef);
+                });
+            }
+            
+            // Use clean prompt text or default question
+            if (cleanPromptText && cleanPromptText.length > 0) {
+                questionPromptHtml = `<div class="prompt">${this.formatText(cleanPromptText)}</div>`;
             } else {
-                questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}</div>`;
+                questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
             }
         } else {
             // If no prompt found, add a default question
             questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
         }
+        
+        console.log('Debug - Image HTML:', imageHtml);
         console.log('Debug - Question Prompt HTML:', questionPromptHtml);
     
         // Format options
@@ -302,18 +320,20 @@ class MLAQuizApp {
         if (scenarioText) {
             finalHtml += `<div class="q-text">${this.formatText(scenarioText)}</div>`;
         }
+        
+        // Add spacing and images if present
+        if (imageHtml) {
+            finalHtml += '<br>' + imageHtml;
+        }
     
         // Add spacing and investigations if present
         if (investigationsHtml) {
             finalHtml += '<br>' + investigationsHtml;
         }
     
-        // Add spacing and question prompt if present
+        // Add spacing and question prompt (always present now)
         if (questionPromptHtml) {
             finalHtml += '<br>' + questionPromptHtml;
-        } else if (scenarioText && !investigationsHtml) {
-            // Add spacing between stem and options if no investigations or prompt
-            finalHtml += '<br>';
         }
     
         // Add spacing and options
@@ -982,7 +1002,7 @@ class MLAQuizApp {
             .replace(/- (.*?)(?=\n|$)/g, '• $1') // Bullet points
             .trim();
         
-        // Handle [IMAGE: filename] format first - improved handling
+        // Handle [IMAGE: filename] format first - improved handling with better path resolution
         formattedText = formattedText.replace(/\[IMAGE:\s*([^\]]+)\]/gi, (match, filename) => {
             // Check if we have a data URL already embedded in the text
             const dataUrlPattern = /data:[^;]+;base64,[A-Za-z0-9+/=]+/;
@@ -990,8 +1010,29 @@ class MLAQuizApp {
                 // It's already a data URL, display it as an image
                 return `<div class="image-container"><img src="${filename}" alt="Image" loading="lazy" onclick="openImageModal('${filename}', 'Image')"></div>`;
             } else {
-                // It's a filename, show as a link
-                return `<a href="#" class="image-link" onclick="openImageModal('${filename}', 'Image'); return false;">🖼️ View Image: ${filename}</a>`;
+                // It's a filename, try different possible paths
+                let imagePath = filename.trim();
+                
+                // Try common paths for images
+                const possiblePaths = [
+                    imagePath, // Original filename
+                    `Questions/MLA/MLA_images/${imagePath}`, // Common MLA images folder
+                    `static/images/${imagePath}`, // Static images folder
+                    `/api/image/${imagePath}` // API endpoint for images
+                ];
+                
+                // For uploaded quizzes, check if images are embedded in localStorage
+                const uploadedQuizzes = this.getUploadedQuizzes();
+                for (const quiz of uploadedQuizzes) {
+                    if (quiz.images && quiz.images[imagePath]) {
+                        // Found embedded image data
+                        const imageData = quiz.images[imagePath];
+                        return `<div class="image-container"><img src="${imageData}" alt="Image" loading="lazy" onclick="openImageModal('${imageData}', 'Image')"></div>`;
+                    }
+                }
+                
+                // Default: show as a link that tries the first possible path
+                return `<a href="#" class="image-link" onclick="openImageModal('${possiblePaths[1]}', 'Image'); return false;">🖼️ View Image: ${imagePath}</a>`;
             }
         });
         
