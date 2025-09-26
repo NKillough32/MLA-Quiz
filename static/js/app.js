@@ -927,26 +927,40 @@ class MLAQuizApp {
     }
     
     async uploadSingleFile(file) {
+        console.log('🔄 UPLOAD START - File details:', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: new Date(file.lastModified).toISOString()
+        });
+
         try {
             const formData = new FormData();
             formData.append('quiz_file', file);
+            
+            console.log('🔄 UPLOAD - Sending request to /api/upload-quiz');
             
             const response = await fetch('/api/upload-quiz', {
                 method: 'POST',
                 body: formData
             });
             
+            console.log('🔍 UPLOAD DEBUG - Response received:', response.status, response.statusText);
+            
             // Check if response is ok
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('Upload response not ok:', response.status, errorText);
+                console.error('❌ UPLOAD ERROR - Response not ok:', response.status, errorText);
+                console.error('❌ UPLOAD ERROR - Full response text:', errorText);
                 
                 // Try to parse as JSON, fallback to text
                 try {
                     const errorData = JSON.parse(errorText);
+                    console.error('❌ UPLOAD ERROR - Parsed error:', errorData);
                     throw new Error(errorData.error || `Server error: ${response.status}`);
                 } catch (parseError) {
-                    throw new Error(`Server error: ${response.status} - ${errorText.substring(0, 100)}`);
+                    console.error('❌ UPLOAD ERROR - Could not parse as JSON:', parseError);
+                    throw new Error(`Server error: ${response.status} - ${errorText.substring(0, 200)}`);
                 }
             }
             
