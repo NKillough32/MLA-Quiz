@@ -8,6 +8,7 @@ class MLAQuizApp {
         this.currentQuiz = null;
         this.currentQuestionIndex = 0;
         this.answers = {};
+        this.submittedAnswers = {}; // Track which questions have been submitted
         this.questions = [];
         this.quizName = '';
         this.flaggedQuestions = new Set(); // Track flagged questions
@@ -181,6 +182,9 @@ class MLAQuizApp {
     }
     
     startQuiz() {
+        // Reset quiz state
+        this.submittedAnswers = {}; // Reset submitted answers
+        
         // Shuffle questions to randomize order
         this.questions = this.shuffleArray(this.questions);
         
@@ -243,7 +247,15 @@ class MLAQuizApp {
         console.log('Debug - Prompt text found:', promptText);
         
         if (promptText && promptText.trim()) {
-            questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}</div>`;
+            // If it's just an image reference, add a default question text
+            if (promptText.match(/^\[IMAGE:[^\]]+\]$/)) {
+                questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}<br><strong>What is the most likely diagnosis?</strong></div>`;
+            } else {
+                questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}</div>`;
+            }
+        } else {
+            // If no prompt found, add a default question
+            questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
         }
         console.log('Debug - Question Prompt HTML:', questionPromptHtml);
     
