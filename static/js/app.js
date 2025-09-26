@@ -197,6 +197,7 @@ class MLAQuizApp {
     renderCurrentQuestion() {
         const question = this.questions[this.currentQuestionIndex];
         console.log('Debug - Question object:', question);
+        console.log('Debug - Question prompt value:', question.prompt);
     
         if (!question) return;
     
@@ -211,7 +212,7 @@ class MLAQuizApp {
         if (feedbackContainer) {
             feedbackContainer.style.display = 'none';
         }
-    
+
         // Process scenario text - add full stop if missing
         let scenarioText = question.scenario || '';
         if (
@@ -236,10 +237,13 @@ class MLAQuizApp {
         }
         console.log('Debug - Investigations HTML:', investigationsHtml);
     
-        // Format question prompt - don't wrap in h3 tags
+        // Format question prompt - check for different possible field names
         let questionPromptHtml = '';
-        if (question.prompt && question.prompt.trim()) {
-            questionPromptHtml = `<div class="prompt">${this.formatText(question.prompt)}</div>`;
+        const promptText = question.prompt || question.question || question.title || '';
+        console.log('Debug - Prompt text found:', promptText);
+        
+        if (promptText && promptText.trim()) {
+            questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}</div>`;
         }
         console.log('Debug - Question Prompt HTML:', questionPromptHtml);
     
