@@ -48,17 +48,17 @@
         .navbar {
             background: #f8f8f8;
             border-bottom: 0.5px solid #c6c6c8;
-            padding: 8px 16px;
+            padding: 12px 16px;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            height: 44px;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding-top: max(8px, env(safe-area-inset-top));
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
         .navbar h1 {
@@ -93,7 +93,8 @@
         /* Content Container - legacy styles, minimal impact */
         .container {
             min-height: 100vh;
-            margin-top: 80px;
+            margin-top: 68px;
+            padding-top: 10px;
         }
         
         /* Page grid layout */
@@ -1030,8 +1031,8 @@
         <!-- Quiz Selection Screen -->
         <div id="quizSelection" class="screen active">
             <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Medical License Assessment</h2>
+                <div class="card-header" style="padding-top: 32px;">
+                    <h2 class="card-title">Medical Licensing Assessment (MLA)</h2>
                     <p class="card-subtitle">Select a quiz to begin</p>
                 </div>
                 
