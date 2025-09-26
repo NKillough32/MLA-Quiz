@@ -47,8 +47,7 @@
         
         /* iOS-Style Navigation */
         .navbar {
-            background: rgba(248, 248, 248, 0.95);
-            backdrop-filter: blur(20px);
+            background: #f8f8f8;
             border-bottom: 0.5px solid #c6c6c8;
             padding: 8px 16px;
             position: fixed;
@@ -73,6 +72,17 @@
         .navbar .back-btn {
             position: absolute;
             left: 16px;
+            background: none;
+            border: none;
+            color: #007AFF;
+            font-size: 17px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .navbar .next-btn {
+            position: absolute;
+            right: 16px;
             background: none;
             border: none;
             color: #007AFF;
@@ -1009,6 +1019,13 @@
     </style>
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <button class="back-btn" id="backBtn" style="display: none;">← Back</button>
+        <h1 id="navTitle">MLA Quiz</h1>
+        <button class="next-btn" id="nextNavBtn" style="display: none;">Next →</button>
+    </nav>
+    
     <!-- Main Container -->
     <div class="container">
         <!-- Quiz Selection Screen -->
