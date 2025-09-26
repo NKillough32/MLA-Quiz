@@ -951,6 +951,9 @@ class MLAQuizApp {
             }
             
             const data = await response.json();
+            console.log('🔍 UPLOAD DEBUG - Full server response:', data);
+            console.log('🔍 UPLOAD DEBUG - Questions received:', data.questions?.length);
+            console.log('🔍 UPLOAD DEBUG - First question sample:', data.questions?.[0]);
             
             if (!data.success) {
                 throw new Error(data.error || 'Upload failed');
@@ -961,8 +964,13 @@ class MLAQuizApp {
                 name: data.quiz_name,
                 questions: data.questions,
                 total_questions: data.total_questions,
-                isUploaded: true
+                isUploaded: true,
+                images: data.images || {}, // Store any images that came with the upload
+                uploadTimestamp: Date.now()
             };
+            
+            console.log('🔍 UPLOAD DEBUG - Quiz data to store:', quizData);
+            console.log('🔍 UPLOAD DEBUG - Images in quiz data:', Object.keys(quizData.images || {}));
             
             // Add to local storage or memory for immediate access
             this.storeUploadedQuiz(quizData);
@@ -976,6 +984,9 @@ class MLAQuizApp {
     }
     
     storeUploadedQuiz(quizData) {
+        console.log('🔍 STORAGE DEBUG - Storing quiz:', quizData.name);
+        console.log('🔍 STORAGE DEBUG - Quiz has images:', Object.keys(quizData.images || {}));
+        
         // Store in localStorage for persistence
         let uploadedQuizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
         
@@ -986,10 +997,16 @@ class MLAQuizApp {
         uploadedQuizzes.push(quizData);
         
         localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+        console.log('🔍 STORAGE DEBUG - Total uploaded quizzes stored:', uploadedQuizzes.length);
     }
     
     getUploadedQuizzes() {
-        return JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
+        const quizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
+        console.log('🔍 STORAGE DEBUG - Retrieved', quizzes.length, 'uploaded quizzes from localStorage');
+        quizzes.forEach((quiz, index) => {
+            console.log(`🔍 STORAGE DEBUG - Quiz ${index + 1}: ${quiz.name}, Images:`, Object.keys(quiz.images || {}));
+        });
+        return quizzes;
     }
     
     formatText(text) {
@@ -1004,14 +1021,18 @@ class MLAQuizApp {
         
         // Handle [IMAGE: filename] format first - improved handling with better path resolution
         formattedText = formattedText.replace(/\[IMAGE:\s*([^\]]+)\]/gi, (match, filename) => {
+            console.log('🖼️ IMAGE DEBUG - Processing image:', filename);
+            
             // Check if we have a data URL already embedded in the text
             const dataUrlPattern = /data:[^;]+;base64,[A-Za-z0-9+/=]+/;
             if (dataUrlPattern.test(filename)) {
+                console.log('🖼️ IMAGE DEBUG - Found data URL, displaying directly');
                 // It's already a data URL, display it as an image
                 return `<div class="image-container"><img src="${filename}" alt="Image" loading="lazy" onclick="openImageModal('${filename}', 'Image')"></div>`;
             } else {
                 // It's a filename, try different possible paths
                 let imagePath = filename.trim();
+                console.log('🖼️ IMAGE DEBUG - Looking for image file:', imagePath);
                 
                 // Try common paths for images
                 const possiblePaths = [
@@ -1020,17 +1041,23 @@ class MLAQuizApp {
                     `static/images/${imagePath}`, // Static images folder
                     `/api/image/${imagePath}` // API endpoint for images
                 ];
+                console.log('🖼️ IMAGE DEBUG - Possible paths:', possiblePaths);
                 
                 // For uploaded quizzes, check if images are embedded in localStorage
                 const uploadedQuizzes = this.getUploadedQuizzes();
+                console.log('🖼️ IMAGE DEBUG - Checking', uploadedQuizzes.length, 'uploaded quizzes for embedded images');
+                
                 for (const quiz of uploadedQuizzes) {
+                    console.log('🖼️ IMAGE DEBUG - Quiz:', quiz.name, 'has images:', Object.keys(quiz.images || {}));
                     if (quiz.images && quiz.images[imagePath]) {
+                        console.log('🖼️ IMAGE DEBUG - Found embedded image data for:', imagePath);
                         // Found embedded image data
                         const imageData = quiz.images[imagePath];
                         return `<div class="image-container"><img src="${imageData}" alt="Image" loading="lazy" onclick="openImageModal('${imageData}', 'Image')"></div>`;
                     }
                 }
                 
+                console.log('🖼️ IMAGE DEBUG - No embedded image found, showing as link with path:', possiblePaths[1]);
                 // Default: show as a link that tries the first possible path
                 return `<a href="#" class="image-link" onclick="openImageModal('${possiblePaths[1]}', 'Image'); return false;">🖼️ View Image: ${imagePath}</a>`;
             }
