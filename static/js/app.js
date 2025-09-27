@@ -1171,7 +1171,7 @@ class MLAQuizApp {
     // Helper function to resolve image references
     resolveImageReference(imageData, allImages) {
         if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
-            const refKey = imageData.substring(7); // Remove '__REF__:' prefix
+            const refKey = imageData.substring(8); // Remove '__REF__:' prefix (8 characters)
             return allImages[refKey] || imageData; // Return actual data or original if not found
         }
         return imageData;
@@ -1245,7 +1245,7 @@ class MLAQuizApp {
                             
                             // Handle reference-based storage (resolve references)
                             if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
-                                const refKey = imageData.substring(7); // Remove '__REF__:' prefix
+                                const refKey = imageData.substring(8); // Remove '__REF__:' prefix (8 characters)
                                 imageData = quiz.images[refKey];
                                 console.log('🖼️ IMAGE DEBUG - Resolved reference from', foundKey, 'to', refKey);
                             }
@@ -1273,7 +1273,7 @@ class MLAQuizApp {
             // Handle reference-based storage (resolve references)
             if (typeof url === 'string' && url.startsWith('__REF__:')) {
                 console.log('🖼️ IMAGE DEBUG - Found reference in markdown image:', url);
-                const refKey = url.substring(7); // Remove '__REF__:' prefix
+                const refKey = url.substring(8); // Remove '__REF__:' prefix (8 characters)
                 console.log('🖼️ IMAGE DEBUG - Looking for refKey:', refKey);
                 
                 // Look up the actual image data
@@ -1289,7 +1289,7 @@ class MLAQuizApp {
                             
                             // If it's another reference, resolve it
                             if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
-                                const secondRefKey = imageData.substring(7);
+                                const secondRefKey = imageData.substring(8); // Remove '__REF__:' prefix (8 characters)
                                 imageData = quiz.images[secondRefKey];
                                 console.log('🖼️ IMAGE DEBUG - Resolved nested reference from', refKey, 'to', secondRefKey);
                             }
