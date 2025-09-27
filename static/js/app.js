@@ -554,32 +554,6 @@ class MLAQuizApp {
         this.renderCurrentQuestion();
     }
     
-    
-    toggleRuledOut(questionId, optionIndex) {
-        // Don't allow ruling out if answer is already submitted
-        if (this.submittedAnswers && this.submittedAnswers.hasOwnProperty(questionId)) {
-            return;
-        }
-        
-        if (!this.ruledOutAnswers[questionId]) {
-            this.ruledOutAnswers[questionId] = [];
-        }
-        
-        const ruledOutList = this.ruledOutAnswers[questionId];
-        const index = ruledOutList.indexOf(optionIndex);
-        
-        if (index > -1) {
-            // Remove from ruled out list
-            ruledOutList.splice(index, 1);
-        } else {
-            // Add to ruled out list
-            ruledOutList.push(optionIndex);
-        }
-        
-        // Re-render the current question to update the UI
-        this.renderCurrentQuestion();
-    }
-    
     submitAnswer() {
         const currentQuestion = this.questions[this.currentQuestionIndex];
         const selectedAnswer = this.answers[currentQuestion.id];
