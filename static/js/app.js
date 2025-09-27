@@ -1274,15 +1274,41 @@ class MLAQuizApp {
             if (typeof url === 'string' && url.startsWith('__REF__:')) {
                 console.log('🖼️ IMAGE DEBUG - Found reference in markdown image:', url);
                 const refKey = url.substring(7); // Remove '__REF__:' prefix
+                console.log('🖼️ IMAGE DEBUG - Looking for refKey:', refKey);
                 
                 // Look up the actual image data
                 const uploadedQuizzes = this.getUploadedQuizzes();
                 for (const quiz of uploadedQuizzes) {
-                    if (quiz.images && quiz.images[refKey]) {
-                        actualUrl = quiz.images[refKey];
-                        console.log('🖼️ IMAGE DEBUG - Resolved markdown reference to:', actualUrl.substring(0, 50) + '...');
-                        break;
+                    if (quiz.images) {
+                        console.log('🖼️ IMAGE DEBUG - Checking quiz:', quiz.name, 'for key:', refKey);
+                        
+                        // Check if the reference key exists directly
+                        if (quiz.images[refKey]) {
+                            let imageData = quiz.images[refKey];
+                            console.log('🖼️ IMAGE DEBUG - Found direct match for key:', refKey);
+                            
+                            // If it's another reference, resolve it
+                            if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
+                                const secondRefKey = imageData.substring(7);
+                                imageData = quiz.images[secondRefKey];
+                                console.log('🖼️ IMAGE DEBUG - Resolved nested reference from', refKey, 'to', secondRefKey);
+                            }
+                            
+                            if (imageData && imageData.startsWith('data:')) {
+                                actualUrl = imageData;
+                                console.log('🖼️ IMAGE DEBUG - Resolved markdown reference to base64 data');
+                                break;
+                            } else {
+                                console.log('🖼️ IMAGE DEBUG - Found data but not base64:', typeof imageData, imageData?.substring(0, 50));
+                            }
+                        } else {
+                            console.log('🖼️ IMAGE DEBUG - Key not found directly, available keys:', Object.keys(quiz.images).slice(0, 10));
+                        }
                     }
+                }
+                
+                if (actualUrl === url) {
+                    console.log('🖼️ IMAGE DEBUG - Failed to resolve reference:', refKey);
                 }
             }
             
