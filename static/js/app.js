@@ -1268,7 +1268,25 @@ class MLAQuizApp {
         
         // Handle markdown-style images: ![alt text](url) or ![alt text](url "caption")
         formattedText = formattedText.replace(/!\[([^\]]*)\]\(([^)]+?)(?:\s+"([^"]+)")?\)/g, (match, alt, url, caption) => {
-            const imageHtml = `<img src="${url}" alt="${alt}" loading="lazy" onclick="openImageModal('${url}', '${alt}')">` ;
+            let actualUrl = url;
+            
+            // Handle reference-based storage (resolve references)
+            if (typeof url === 'string' && url.startsWith('__REF__:')) {
+                console.log('🖼️ IMAGE DEBUG - Found reference in markdown image:', url);
+                const refKey = url.substring(7); // Remove '__REF__:' prefix
+                
+                // Look up the actual image data
+                const uploadedQuizzes = this.getUploadedQuizzes();
+                for (const quiz of uploadedQuizzes) {
+                    if (quiz.images && quiz.images[refKey]) {
+                        actualUrl = quiz.images[refKey];
+                        console.log('🖼️ IMAGE DEBUG - Resolved markdown reference to:', actualUrl.substring(0, 50) + '...');
+                        break;
+                    }
+                }
+            }
+            
+            const imageHtml = `<img src="${actualUrl}" alt="${alt}" loading="lazy" onclick="openImageModal('${actualUrl}', '${alt}')">`;
             if (caption) {
                 return `<div class="image-container">${imageHtml}<div class="image-caption">${caption}</div></div>`;
             }

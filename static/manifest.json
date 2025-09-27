@@ -10,20 +10,6 @@
     "scope": "/",
     "lang": "en",
     "categories": ["education", "medical", "productivity"],
-    "screenshots": [
-        {
-            "src": "/static/screenshots/mobile-screenshot.png",
-            "sizes": "320x640",
-            "type": "image/png",
-            "form_factor": "narrow"
-        },
-        {
-            "src": "/static/screenshots/desktop-screenshot.png",
-            "sizes": "1280x800",
-            "type": "image/png",
-            "form_factor": "wide"
-        }
-    ],
     "icons": [
         {
             "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzAiIGZpbGw9IiMwMDdBRkYiLz4KPHBhdGggZD0iTTQ4IDEzNlYxMjBIMTQ0VjEzNkg0OFpNNDggOTZWODBIMTQ0Vjk2SDQ4Wk00OCA1NlY0MEgxNDRWNTZINDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K",
