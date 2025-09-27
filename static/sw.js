@@ -11,9 +11,8 @@ const RUNTIME_CACHE = 'mla-quiz-runtime-v1';
 const STATIC_FILES = [
     '/',
     '/static/js/app.js',
-    '/static/manifest.json',
-    '/static/icons/icon-192.png',
-    '/static/icons/icon-512.png'
+    '/static/manifest.json'
+    // Icons are inline SVG data URIs, no need to cache external files
 ];
 
 // API endpoints to cache
@@ -233,8 +232,8 @@ async function handleBackgroundSync() {
 self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : 'New quiz available!',
-        icon: '/static/icons/icon-192.png',
-        badge: '/static/icons/icon-72.png',
+        icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzAiIGZpbGw9IiMwMDdBRkYiLz4KPHBhdGggZD0iTTQ4IDEzNlYxMjBIMTQ0VjEzNkg0OFpNNDggOTZWODBIMTQ0Vjk2SDQ4Wk00OCA1NlY0MEgxNDRWNTZINDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
+        badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTIiIGZpbGw9IiMwMDdBRkYiLz4KPHBhdGggZD0iTTE4IDQ0VjM4SDU0VjQ0SDE4Wk0xOCAzNFYyOEg1NFYzNEgxOFpNMTggMjRWMThINTRWMjRIMThaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
         vibrate: [200, 100, 200],
         data: {
             dateOfArrival: Date.now(),
@@ -244,12 +243,12 @@ self.addEventListener('push', (event) => {
             {
                 action: 'explore',
                 title: 'Take Quiz',
-                icon: '/static/icons/icon-96.png'
+                icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTYiIGZpbGw9IiMwMDdBRkYiLz4KPHBhdGggZD0iTTI0IDU4VjUwSDcyVjU4SDI0Wk0yNCA0MlYzNEg3MlY0MkgyNFpNMjQgMjZWMThINzJWMjZIMjRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K'
             },
             {
                 action: 'close',
                 title: 'Close',
-                icon: '/static/icons/icon-72.png'
+                icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTIiIGZpbGw9IiM4ZThlOTMiLz4KPHBhdGggZD0iTTIyLjUgMjIuNUw0OS41IDQ5LjVNNDkuNSAyMi41TDIyLjUgNDkuNSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg=='
             }
         ]
     };

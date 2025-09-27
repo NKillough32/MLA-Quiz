@@ -1190,15 +1190,29 @@ document.addEventListener('DOMContentLoaded', () => {
     window.quizApp = new MLAQuizApp();
 });
 
-// Service Worker registration
+// Service Worker registration with better error handling
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/static/sw.js')
             .then(registration => {
                 console.log('SW registered: ', registration);
+                
+                // Check for updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // New content is available, show update notification
+                            console.log('New content is available; please refresh.');
+                        }
+                    });
+                });
             })
             .catch(registrationError => {
                 console.log('SW registration failed: ', registrationError);
+                // Continue without service worker - app should still work
             });
     });
+} else {
+    console.log('Service Worker not supported in this browser');
 }
