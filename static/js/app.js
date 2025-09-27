@@ -414,9 +414,9 @@ class MLAQuizApp {
                     startPos = { x: touch.clientX, y: touch.clientY };
                     
                     pressTimer = setTimeout(() => {
-                        // Maximum haptic feedback - strongest vibration
+                        // Maximum haptic feedback - single strong vibration
                         if (navigator.vibrate) {
-                            navigator.vibrate([400, 100, 300, 100, 200]); // Maximum intensity pattern
+                            navigator.vibrate(500); // Maximum single vibration
                         }
                         this.toggleRuledOut(question.id, index);
                     }, 800); // Longer delay for more reliable detection
