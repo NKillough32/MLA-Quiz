@@ -405,94 +405,109 @@ class MLAQuizApp {
                     this.toggleRuledOut(question.id, index);
                 });
                 
-                // Improved long press for mobile with better event handling
-                let longPressTimer = null;
-                let touchStartTime = 0;
-                let touchStartPosition = null;
-                let longPressTriggered = false;
-                
-                const clearLongPress = () => {
-                    if (longPressTimer) {
-                        clearTimeout(longPressTimer);
-                        longPressTimer = null;
-                    }
-                };
-                
-                const handleLongPress = () => {
-                    longPressTriggered = true;
-                    this.toggleRuledOut(question.id, index);
-                    // Add stronger haptic feedback
-                    if (navigator.vibrate) {
-                        navigator.vibrate([100, 50, 100]);
-                    }
-                    clearLongPress();
-                };
-                
-                option.addEventListener('touchstart', (e) => {
-                    // Don't prevent default - let normal touch work
-                    longPressTriggered = false;
-                    touchStartTime = Date.now();
+                // Create isolated variables for each option to prevent interference
+                (function(optionIndex) {
+                    let longPressTimer = null;
+                    let touchStartTime = 0;
+                    let touchStartPosition = null;
+                    let longPressTriggered = false;
+                    let isProcessing = false;
                     
-                    // Record starting position
-                    const touch = e.touches[0];
-                    touchStartPosition = {
-                        x: touch.clientX,
-                        y: touch.clientY
+                    const clearLongPress = () => {
+                        if (longPressTimer) {
+                            clearTimeout(longPressTimer);
+                            longPressTimer = null;
+                        }
                     };
                     
-                    clearLongPress();
-                    
-                    longPressTimer = setTimeout(() => {
-                        handleLongPress();
-                    }, 700); // Slightly longer for more reliable detection
-                    
-                }, { passive: true }); // Use passive for better performance
-                
-                option.addEventListener('touchmove', (e) => {
-                    if (!touchStartPosition || !longPressTimer) return;
-                    
-                    const touch = e.touches[0];
-                    const deltaX = Math.abs(touch.clientX - touchStartPosition.x);
-                    const deltaY = Math.abs(touch.clientY - touchStartPosition.y);
-                    
-                    // Allow small movements (10px threshold)
-                    if (deltaX > 10 || deltaY > 10) {
-                        clearLongPress();
-                    }
-                }, { passive: true });
-                
-                option.addEventListener('touchend', (e) => {
-                    clearLongPress();
-                    
-                    // If long press was triggered, prevent the click
-                    if (longPressTriggered) {
-                        // Small delay to prevent click event
+                    const handleLongPress = () => {
+                        if (isProcessing) return;
+                        isProcessing = true;
+                        
+                        longPressTriggered = true;
+                        
+                        // Add stronger haptic feedback
+                        if (navigator.vibrate) {
+                            navigator.vibrate([100, 50, 100]);
+                        }
+                        
+                        // Use a small delay to ensure clean execution
                         setTimeout(() => {
-                            longPressTriggered = false;
-                        }, 100);
-                        return;
-                    }
+                            this.toggleRuledOut(question.id, optionIndex);
+                            isProcessing = false;
+                        }, 50);
+                        
+                        clearLongPress();
+                    };
                     
-                    // Reset for next interaction
-                    touchStartPosition = null;
-                    touchStartTime = 0;
-                }, { passive: true });
-                
-                option.addEventListener('touchcancel', () => {
-                    clearLongPress();
-                    touchStartPosition = null;
-                    touchStartTime = 0;
-                    longPressTriggered = false;
-                }, { passive: true });
-                
-                // Handle click event to prevent it after long press
-                option.addEventListener('click', (e) => {
-                    if (longPressTriggered) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
-                    }
-                });
+                    option.addEventListener('touchstart', (e) => {
+                        if (isProcessing) return;
+                        
+                        longPressTriggered = false;
+                        touchStartTime = Date.now();
+                        
+                        // Record starting position
+                        const touch = e.touches[0];
+                        touchStartPosition = {
+                            x: touch.clientX,
+                            y: touch.clientY
+                        };
+                        
+                        clearLongPress();
+                        
+                        longPressTimer = setTimeout(() => {
+                            handleLongPress();
+                        }, 700);
+                        
+                    }, { passive: true });
+                    
+                    option.addEventListener('touchmove', (e) => {
+                        if (!touchStartPosition || !longPressTimer || isProcessing) return;
+                        
+                        const touch = e.touches[0];
+                        const deltaX = Math.abs(touch.clientX - touchStartPosition.x);
+                        const deltaY = Math.abs(touch.clientY - touchStartPosition.y);
+                        
+                        // Allow small movements (10px threshold)
+                        if (deltaX > 10 || deltaY > 10) {
+                            clearLongPress();
+                        }
+                    }, { passive: true });
+                    
+                    option.addEventListener('touchend', (e) => {
+                        clearLongPress();
+                        
+                        // If long press was triggered, prevent the click
+                        if (longPressTriggered) {
+                            // Small delay to prevent click event
+                            setTimeout(() => {
+                                longPressTriggered = false;
+                            }, 200);
+                            return;
+                        }
+                        
+                        // Reset for next interaction
+                        touchStartPosition = null;
+                        touchStartTime = 0;
+                    }, { passive: true });
+                    
+                    option.addEventListener('touchcancel', () => {
+                        clearLongPress();
+                        touchStartPosition = null;
+                        touchStartTime = 0;
+                        longPressTriggered = false;
+                        isProcessing = false;
+                    }, { passive: true });
+                    
+                    // Handle click event to prevent it after long press
+                    option.addEventListener('click', (e) => {
+                        if (longPressTriggered || isProcessing) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return false;
+                        }
+                    });
+                }).call(this, index);
             });
         }
     
