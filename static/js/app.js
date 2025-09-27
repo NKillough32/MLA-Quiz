@@ -254,13 +254,14 @@ class MLAQuizApp {
         }
         console.log('Debug - Processed scenario:', scenarioText);
     
-        // Format investigations if present (no br tags here; spacing handled later)
+        // Format investigations if present (with proper line breaks)
         let investigationsHtml = '';
         if (question.investigations && question.investigations.trim()) {
+            const formattedInvestigations = this.formatInvestigations(question.investigations);
             investigationsHtml = `
                 <div class="investigations">
                     <h4>Investigations</h4>
-                    <div>${this.formatText(question.investigations)}</div>
+                    <div>${formattedInvestigations}</div>
                 </div>`;
         }
         console.log('Debug - Investigations HTML:', investigationsHtml);
@@ -1177,6 +1178,28 @@ class MLAQuizApp {
         return imageData;
     }
     
+    // Format investigations with proper line breaks
+    formatInvestigations(investigationsText) {
+        if (!investigationsText) return '';
+        
+        let formatted = investigationsText.trim();
+        
+        // Split investigations at natural break points:
+        // 1. After reference ranges in parentheses followed by a capital letter
+        // 2. After test results with colons followed by a capital letter
+        formatted = formatted
+            // Pattern: "Value unit (range) NextTest" -> "Value unit (range)<br>NextTest"
+            .replace(/(\([^)]+\))\s+([A-Z][A-Za-z])/g, '$1<br>$2')
+            // Pattern: "Test: result NextTest" -> "Test: result<br>NextTest" 
+            .replace(/(:\s*[a-z][^:]*?)\s+([A-Z][A-Za-z])/g, '$1<br>$2')
+            // Clean up multiple spaces
+            .replace(/\s+/g, ' ')
+            // Trim any extra whitespace
+            .trim();
+            
+        return this.formatText(formatted);
+    }
+
     formatText(text) {
         if (!text) return '';
         
