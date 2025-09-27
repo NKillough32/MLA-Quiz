@@ -397,124 +397,60 @@ class MLAQuizApp {
                 });
             });
             
-            // Add right-click/long-press to rule out options
+            // Add right-click/long-press to rule out options - SIMPLIFIED VERSION
             document.querySelectorAll('.new-option').forEach((option, index) => {
                 // Right-click for desktop
                 option.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
-                    this.performHapticFeedback();
                     this.toggleRuledOut(question.id, index);
                 });
                 
-                // Create isolated variables for each option to prevent interference
-                (function(optionIndex) {
-                    let longPressTimer = null;
-                    let touchStartTime = 0;
-                    let touchStartPosition = null;
-                    let longPressTriggered = false;
-                    let isProcessing = false;
+                // Simple, reliable long press for mobile
+                let pressTimer = null;
+                let startPos = null;
+                
+                option.addEventListener('touchstart', (e) => {
+                    const touch = e.touches[0];
+                    startPos = { x: touch.clientX, y: touch.clientY };
                     
-                    // Standardized constants
-                    const LONG_PRESS_DURATION = 600; // Consistent 600ms
-                    const MOVEMENT_THRESHOLD = 12;   // Consistent 12px threshold
-                    
-                    const clearLongPress = () => {
-                        if (longPressTimer) {
-                            clearTimeout(longPressTimer);
-                            longPressTimer = null;
+                    pressTimer = setTimeout(() => {
+                        // Simple haptic feedback
+                        if (navigator.vibrate) {
+                            navigator.vibrate(100);
                         }
-                    };
+                        this.toggleRuledOut(question.id, index);
+                    }, 800); // Longer delay for more reliable detection
                     
-                    const handleLongPress = () => {
-                        if (isProcessing || longPressTriggered) return;
-                        
-                        isProcessing = true;
-                        longPressTriggered = true;
-                        
-                        // Standardized haptic feedback
-                        this.performHapticFeedback();
-                        
-                        // Execute toggle with small delay for clean execution
-                        setTimeout(() => {
-                            this.toggleRuledOut(question.id, optionIndex);
-                            
-                            // Reset processing flag after a safe delay
-                            setTimeout(() => {
-                                isProcessing = false;
-                            }, 100);
-                        }, 10);
-                        
-                        clearLongPress();
-                    };
-                    
-                    option.addEventListener('touchstart', (e) => {
-                        if (isProcessing) return;
-                        
-                        longPressTriggered = false;
-                        touchStartTime = Date.now();
-                        
-                        // Record starting position
+                }, { passive: true });
+                
+                option.addEventListener('touchmove', (e) => {
+                    if (startPos && pressTimer) {
                         const touch = e.touches[0];
-                        touchStartPosition = {
-                            x: touch.clientX,
-                            y: touch.clientY
-                        };
+                        const deltaX = Math.abs(touch.clientX - startPos.x);
+                        const deltaY = Math.abs(touch.clientY - startPos.y);
                         
-                        clearLongPress();
-                        
-                        // Use consistent timing
-                        longPressTimer = setTimeout(() => {
-                            handleLongPress();
-                        }, LONG_PRESS_DURATION);
-                        
-                    }, { passive: true });
-                    
-                    option.addEventListener('touchmove', (e) => {
-                        if (!touchStartPosition || !longPressTimer || isProcessing) return;
-                        
-                        const touch = e.touches[0];
-                        const deltaX = Math.abs(touch.clientX - touchStartPosition.x);
-                        const deltaY = Math.abs(touch.clientY - touchStartPosition.y);
-                        
-                        // Use consistent movement threshold
-                        if (deltaX > MOVEMENT_THRESHOLD || deltaY > MOVEMENT_THRESHOLD) {
-                            clearLongPress();
+                        if (deltaX > 15 || deltaY > 15) {
+                            clearTimeout(pressTimer);
+                            pressTimer = null;
                         }
-                    }, { passive: true });
-                    
-                    option.addEventListener('touchend', (e) => {
-                        clearLongPress();
-                        
-                        // If long press was triggered, prevent the click with consistent delay
-                        if (longPressTriggered) {
-                            setTimeout(() => {
-                                longPressTriggered = false;
-                            }, 150);
-                            return;
-                        }
-                        
-                        // Reset for next interaction
-                        touchStartPosition = null;
-                        touchStartTime = 0;
-                    }, { passive: true });
-                    
-                    option.addEventListener('touchcancel', () => {
-                        clearLongPress();
-                        touchStartPosition = null;
-                        touchStartTime = 0;
-                        longPressTriggered = false;
-                        isProcessing = false;
-                    }, { passive: true });
-                    
-                    // Handle click event to prevent it after long press
-                    option.addEventListener('click', (e) => {
-                        if (longPressTriggered || isProcessing) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return false;
-                        }
-                    });
-                }).call(this, index);
+                    }
+                }, { passive: true });
+                
+                option.addEventListener('touchend', () => {
+                    if (pressTimer) {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                    }
+                    startPos = null;
+                }, { passive: true });
+                
+                option.addEventListener('touchcancel', () => {
+                    if (pressTimer) {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                    }
+                    startPos = null;
+                }, { passive: true });
             });
         }
     
@@ -556,6 +492,13 @@ class MLAQuizApp {
         if (this.submittedAnswers && this.submittedAnswers.hasOwnProperty(questionId)) {
             return;
         }
+        
+        // Simple debounce - prevent rapid calls
+        const now = Date.now();
+        if (this.lastRuleOutTime && (now - this.lastRuleOutTime) < 1000) {
+            return;
+        }
+        this.lastRuleOutTime = now;
         
         if (!this.ruledOutAnswers[questionId]) {
             this.ruledOutAnswers[questionId] = [];
