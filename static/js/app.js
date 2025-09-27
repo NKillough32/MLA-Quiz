@@ -402,6 +402,7 @@ class MLAQuizApp {
                 // Right-click for desktop
                 option.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
+                    this.performHapticFeedback();
                     this.toggleRuledOut(question.id, index);
                 });
                 
@@ -413,6 +414,10 @@ class MLAQuizApp {
                     let longPressTriggered = false;
                     let isProcessing = false;
                     
+                    // Standardized constants
+                    const LONG_PRESS_DURATION = 600; // Consistent 600ms
+                    const MOVEMENT_THRESHOLD = 12;   // Consistent 12px threshold
+                    
                     const clearLongPress = () => {
                         if (longPressTimer) {
                             clearTimeout(longPressTimer);
@@ -421,21 +426,23 @@ class MLAQuizApp {
                     };
                     
                     const handleLongPress = () => {
-                        if (isProcessing) return;
-                        isProcessing = true;
+                        if (isProcessing || longPressTriggered) return;
                         
+                        isProcessing = true;
                         longPressTriggered = true;
                         
-                        // Add stronger haptic feedback
-                        if (navigator.vibrate) {
-                            navigator.vibrate([100, 50, 100]);
-                        }
+                        // Standardized haptic feedback
+                        this.performHapticFeedback();
                         
-                        // Use a small delay to ensure clean execution
+                        // Execute toggle with small delay for clean execution
                         setTimeout(() => {
                             this.toggleRuledOut(question.id, optionIndex);
-                            isProcessing = false;
-                        }, 50);
+                            
+                            // Reset processing flag after a safe delay
+                            setTimeout(() => {
+                                isProcessing = false;
+                            }, 100);
+                        }, 10);
                         
                         clearLongPress();
                     };
@@ -455,9 +462,10 @@ class MLAQuizApp {
                         
                         clearLongPress();
                         
+                        // Use consistent timing
                         longPressTimer = setTimeout(() => {
                             handleLongPress();
-                        }, 700);
+                        }, LONG_PRESS_DURATION);
                         
                     }, { passive: true });
                     
@@ -468,8 +476,8 @@ class MLAQuizApp {
                         const deltaX = Math.abs(touch.clientX - touchStartPosition.x);
                         const deltaY = Math.abs(touch.clientY - touchStartPosition.y);
                         
-                        // Allow small movements (10px threshold)
-                        if (deltaX > 10 || deltaY > 10) {
+                        // Use consistent movement threshold
+                        if (deltaX > MOVEMENT_THRESHOLD || deltaY > MOVEMENT_THRESHOLD) {
                             clearLongPress();
                         }
                     }, { passive: true });
@@ -477,12 +485,11 @@ class MLAQuizApp {
                     option.addEventListener('touchend', (e) => {
                         clearLongPress();
                         
-                        // If long press was triggered, prevent the click
+                        // If long press was triggered, prevent the click with consistent delay
                         if (longPressTriggered) {
-                            // Small delay to prevent click event
                             setTimeout(() => {
                                 longPressTriggered = false;
-                            }, 200);
+                            }, 150);
                             return;
                         }
                         
@@ -580,6 +587,31 @@ class MLAQuizApp {
             } else {
                 option.classList.remove('ruled-out');
             }
+        }
+    }
+    
+    performHapticFeedback() {
+        // Standardized haptic feedback with fallbacks
+        if (navigator.vibrate) {
+            try {
+                // Primary pattern: strong-pause-strong for clear feedback
+                navigator.vibrate([80, 40, 80]);
+            } catch (error) {
+                console.log('Vibration not supported or failed');
+            }
+        }
+        
+        // Fallback: Audio feedback (optional)
+        // You could add a subtle audio cue here if needed
+        
+        // Visual feedback (brief highlight)
+        try {
+            document.documentElement.style.setProperty('--haptic-flash', '1');
+            setTimeout(() => {
+                document.documentElement.style.setProperty('--haptic-flash', '0');
+            }, 100);
+        } catch (error) {
+            // Ignore visual feedback errors
         }
     }
     
