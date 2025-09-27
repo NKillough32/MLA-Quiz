@@ -268,9 +268,15 @@ class MLAQuizApp {
         const promptText = question.prompt || question.question || question.title || '';
         console.log('Debug - Prompt text found:', promptText);
         
-        // Extract images from prompt text and handle them separately
-        if (promptText && promptText.trim()) {
-            // Check if prompt contains image references
+        // Check if prompt is just an image reference (common for questions with images)
+        const isImageOnlyPrompt = promptText && promptText.match(/^!\[Image\]\(__REF__:[^)]+\)$/);
+        
+        if (isImageOnlyPrompt) {
+            // If prompt is just an image reference, process it as image and use default question text
+            imageHtml = this.formatText(promptText);
+            questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
+        } else if (promptText && promptText.trim()) {
+            // Check if prompt contains image references mixed with text
             const imageMatches = promptText.match(/\[IMAGE:[^\]]+\]/g);
             let cleanPromptText = promptText;
             
@@ -282,15 +288,16 @@ class MLAQuizApp {
                 imageMatches.forEach(imageRef => {
                     imageHtml += this.formatText(imageRef);
                 });
-            } else {
-                // Process the entire prompt through formatText to handle embedded images
-                questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}</div>`;
             }
             
-            // Use clean prompt text or default question
+            // Use clean prompt text or process entire prompt if no image matches found
             if (cleanPromptText && cleanPromptText.length > 0) {
                 questionPromptHtml = `<div class="prompt">${this.formatText(cleanPromptText)}</div>`;
+            } else if (!imageMatches) {
+                // Process the entire prompt through formatText to handle embedded images
+                questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}</div>`;
             } else {
+                // Clean prompt is empty after removing images, use default
                 questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
             }
         } else {
