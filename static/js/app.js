@@ -460,6 +460,9 @@ class MLAQuizApp {
         // Update sidebar to reflect answer status
         this.buildQuestionList();
         
+        // Update progress immediately upon submission
+        this.updateProgress();
+        
         this.updateButtons();
     }
     
