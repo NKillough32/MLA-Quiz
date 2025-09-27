@@ -214,15 +214,42 @@ class PWAQuizLoader:
     def parse_markdown_content(content, filename="uploaded_quiz"):
         """Parse markdown content directly without file system."""
         try:
-            logger.info(f"Starting to parse quiz content, length: {len(content)} characters")
-            logger.info(f"First 1000 chars of content: {content[:1000]}")
+            logger.info(f"Starting to parse quiz content from {filename}, length: {len(content)} characters")
+            
+            # Clean up the content first
+            content = content.strip()
+            
+            # Log some debugging info about the content structure
+            lines_with_hash = [line.strip() for line in content.split('\n') if line.strip().startswith('###')]
+            logger.info(f"Found {len(lines_with_hash)} lines starting with '###': {lines_with_hash[:5]}")
+            
+            if len(lines_with_hash) == 0:
+                # Maybe the content uses different formatting - check for other patterns
+                lines_with_numbers = [line.strip() for line in content.split('\n') if re.match(r'^\d+\.', line.strip())]
+                logger.info(f"Found {len(lines_with_numbers)} lines starting with numbers: {lines_with_numbers[:3]}")
+                
+                # Try to detect other question patterns
+                question_patterns = [
+                    r'^\d+\.\s+',  # 1. Question
+                    r'^Q\d+[.:]\s*',  # Q1: Question
+                    r'^Question\s+\d+',  # Question 1
+                    r'##\s*\d+',  # ## 1
+                ]
+                
+                for pattern in question_patterns:
+                    matches = re.findall(pattern, content, re.MULTILINE)
+                    if matches:
+                        logger.info(f"Found {len(matches)} matches for pattern '{pattern}': {matches[:3]}")
+                        break
             
             # Debug: Look for question patterns
             question_pattern_matches = re.findall(r'###\s*\d+.*?(?=###\s*\d+|\Z)', content, re.DOTALL)
-            logger.info(f"Found {len(question_pattern_matches)} question blocks using basic regex")
+            logger.info(f"Found {len(question_pattern_matches)} question blocks using QUESTION_RE pattern")
             
             if len(question_pattern_matches) > 0:
-                logger.info(f"First question block preview: {question_pattern_matches[0][:200]}...")
+                logger.info(f"First question block preview (200 chars): {question_pattern_matches[0][:200]}...")
+                if len(question_pattern_matches) > 1:
+                    logger.info(f"Second question block preview (200 chars): {question_pattern_matches[1][:200]}...")
             
             # Analyze investigation variations
             PWAQuizLoader.analyze_investigation_variations(content)
@@ -234,6 +261,7 @@ class PWAQuizLoader:
             for m in PWAQuizLoader.SPECIALTY_HEADER_RE.finditer(content):
                 specialty_markers.append((m.start(), m.group(1).strip()))
             specialty_markers.sort(key=lambda x: x[0])
+            logger.info(f"Found {len(specialty_markers)} specialty markers: {[s[1] for s in specialty_markers]}")
 
             def find_specialty(pos: int) -> str:
                 lo, hi = 0, len(specialty_markers) - 1
@@ -249,32 +277,92 @@ class PWAQuizLoader:
 
             # Parse questions
             question_count = 0
+            failed_blocks = 0
             for qm in PWAQuizLoader.QUESTION_RE.finditer(content):
                 block = qm.group(1)
                 specialty = find_specialty(qm.start())
-                logger.info(f"Processing question block {question_count + 1}: {block[:100]}...")
+                logger.info(f"Processing question block {question_count + 1} (specialty: {specialty})")
+                logger.debug(f"Block content: {block[:200]}...")
+                
                 q = PWAQuizLoader._parse_question(block, specialty)
                 if q:
                     questions.append(q)
                     question_count += 1
-                    logger.info(f"Successfully parsed question {question_count}: {q['title'][:50]}")
+                    logger.info(f"✓ Successfully parsed question {question_count}: ID={q['id']}, title='{q['title'][:50]}...'")
                 else:
-                    logger.warning(f"Failed to parse question block {question_count + 1}")
+                    failed_blocks += 1
+                    logger.warning(f"✗ Failed to parse question block {question_count + failed_blocks}. Block start: {block[:100]}...")
 
-            logger.info(f"Loaded {len(questions)} questions from {filename}")
+            logger.info(f"Parsing complete: {len(questions)} questions successfully parsed, {failed_blocks} blocks failed")
             
             if len(questions) == 0:
-                logger.error(f"NO QUESTIONS PARSED! Debug info:")
+                logger.error(f"NO QUESTIONS PARSED! Debug info for {filename}:")
                 logger.error(f"Content has ### headers: {'###' in content}")
                 logger.error(f"QUESTION_RE pattern: {PWAQuizLoader.QUESTION_RE.pattern}")
-                # Show all lines starting with ###
-                lines_with_hash = [line.strip() for line in content.split('\n') if line.strip().startswith('###')]
-                logger.error(f"Lines starting with ###: {lines_with_hash}")
+                logger.error(f"Content length: {len(content)} characters")
+                logger.error(f"First 1000 chars: {content[:1000]}")
+                
+                # Try alternative parsing approach
+                logger.info("Attempting alternative parsing approaches...")
+                
+                # Try a more flexible question pattern
+                alternative_patterns = [
+                    r'(\d+\.\s+.*?)(?=\d+\.\s+|\Z)',  # 1. Question format
+                    r'(Q\d+[.:]\s*.*?)(?=Q\d+[.:]\s*|\Z)',  # Q1: Question format
+                    r'(Question\s+\d+.*?)(?=Question\s+\d+|\Z)',  # Question 1 format
+                ]
+                
+                for pattern_name, pattern in [("numbered", alternative_patterns[0]), ("Q-format", alternative_patterns[1]), ("Question-format", alternative_patterns[2])]:
+                    alt_matches = re.findall(pattern, content, re.DOTALL | re.IGNORECASE)
+                    logger.info(f"Alternative pattern '{pattern_name}' found {len(alt_matches)} matches")
+                    if alt_matches:
+                        logger.info(f"Sample match: {alt_matches[0][:200]}...")
+                        # Try to parse with modified content
+                        modified_content = content
+                        # Convert to ### format
+                        for i, match in enumerate(alt_matches, 1):
+                            if pattern_name == "numbered":
+                                # Convert "1. Question" to "### 1. Question"
+                                modified_content = re.sub(r'^(\d+\.\s+)', r'### \1', modified_content, flags=re.MULTILINE)
+                            elif pattern_name == "Q-format":
+                                # Convert "Q1: Question" to "### 1. Question"
+                                modified_content = re.sub(r'^Q(\d+)[.:]\s*', r'### \1. ', modified_content, flags=re.MULTILINE)
+                            elif pattern_name == "Question-format":
+                                # Convert "Question 1" to "### 1."
+                                modified_content = re.sub(r'^Question\s+(\d+)', r'### \1.', modified_content, flags=re.MULTILINE)
+                        
+                        # Try parsing again with modified content
+                        if modified_content != content:
+                            logger.info(f"Attempting to re-parse with {pattern_name} conversion...")
+                            alt_questions = []
+                            for qm in PWAQuizLoader.QUESTION_RE.finditer(modified_content):
+                                block = qm.group(1)
+                                specialty = find_specialty(qm.start())
+                                q = PWAQuizLoader._parse_question(block, specialty)
+                                if q:
+                                    alt_questions.append(q)
+                            
+                            if alt_questions:
+                                logger.info(f"✓ Alternative parsing succeeded with {len(alt_questions)} questions!")
+                                questions = alt_questions
+                                break
+                
+                if len(questions) == 0:
+                    # Split by lines and look for numbered items
+                    lines = content.split('\n')
+                    question_lines = []
+                    for i, line in enumerate(lines):
+                        if re.match(r'^\s*###\s*\d+', line) or re.match(r'^\s*\d+\.', line):
+                            question_lines.append((i, line.strip()))
+                    
+                    logger.info(f"Found {len(question_lines)} potential question lines: {question_lines[:5]}")
             
             return questions
 
         except Exception as e:
             logger.error(f"Error parsing content from {filename}: {e}")
+            import traceback
+            traceback.print_exc()
             return []
 
     @staticmethod
@@ -521,8 +609,10 @@ def upload_quiz():
                 with zipfile.ZipFile(zip_content, 'r') as zip_ref:
                     # Get all files in the zip
                     all_files = zip_ref.namelist()
-                    md_files = [f for f in all_files if f.endswith('.md')]
-                    image_files = [f for f in all_files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'))]
+                    # Filter out directories and hidden files
+                    actual_files = [f for f in all_files if not f.endswith('/') and not f.startswith('__MACOSX') and not f.startswith('.')]
+                    md_files = [f for f in actual_files if f.lower().endswith(('.md', '.txt')) and not f.startswith('.')]
+                    image_files = [f for f in actual_files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'))]
                     
                     logger.info(f"ZIP contents: {all_files}")
                     logger.info(f"Found {len(md_files)} .md files: {md_files}")
@@ -531,7 +621,7 @@ def upload_quiz():
                     if not md_files:
                         return jsonify({
                             'success': False,
-                            'error': 'No .md files found in the zip archive'
+                            'error': f'No markdown files found in ZIP. Found files: {actual_files[:10]}... (showing first 10)'
                         }), 400
                     
                     # Extract and encode images as base64
@@ -601,6 +691,19 @@ def upload_quiz():
                                 logger.info(f"Decoded content length: {len(content)} characters")
                                 logger.info(f"First 500 characters: {repr(content[:500])}")
                                 
+                                # Check if this looks like a valid markdown quiz file
+                                has_questions = bool(re.search(r'###\s*\d+', content))
+                                has_hash_headers = content.count('###') > 0
+                                has_bullet_points = content.count('A)') > 0 or content.count('A.') > 0
+                                
+                                logger.info(f"Content validation - has_questions: {has_questions}, has_hash_headers: {has_hash_headers}, has_bullet_points: {has_bullet_points}")
+                                
+                                if not has_questions and not has_hash_headers:
+                                    logger.warning(f"File {filename} does not appear to contain quiz questions (no ### headers found)")
+                                    # Show some sample lines to help debug
+                                    sample_lines = content.split('\n')[:20]
+                                    logger.info(f"First 20 lines: {sample_lines}")
+                                
                                 original_content = content
                                 
                                 # Replace local image references with base64 data URLs
@@ -629,7 +732,7 @@ def upload_quiz():
                                         logger.info(f"Replaced image reference: {image_path}")
                                 
                                 # Second pass: case-insensitive search for unreplaced IMAGE tags
-                                image_pattern = re.compile(r'\\[IMAGE:\\s*([^\\]]+)\\]', re.IGNORECASE)
+                                image_pattern = re.compile(r'\[IMAGE:\s*([^\]]+)\]', re.IGNORECASE)
                                 matches = image_pattern.findall(content)
                                 
                                 for match in matches:
@@ -662,7 +765,7 @@ def upload_quiz():
                                     logger.warning(f"No image replacements made in {filename}, but {len(image_data)} images available")
                                     logger.info(f"Available images: {list(image_data.keys())}")
                                     # Show IMAGE references found in content
-                                    image_refs = re.findall(r'\\[IMAGE:\\s*([^\\]]+)\\]', original_content, re.IGNORECASE)
+                                    image_refs = re.findall(r'\[IMAGE:\s*([^\]]+)\]', original_content, re.IGNORECASE)
                                     if image_refs:
                                         logger.info(f"Found IMAGE references: {image_refs}")
                                     else:
@@ -692,9 +795,11 @@ def upload_quiz():
                             continue
                 
                 if not quiz_data:
+                    error_msg = f'No valid quiz questions found in the uploaded files. Processed {len(md_files)} markdown files: {", ".join([f.split("/")[-1] for f in md_files])}'
+                    logger.error(f"Final error: {error_msg}")
                     return jsonify({
                         'success': False,
-                        'error': 'No valid quiz questions found in the uploaded files'
+                        'error': error_msg
                     }), 400
             
             except zipfile.BadZipFile:
