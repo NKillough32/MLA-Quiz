@@ -429,9 +429,7 @@ class MLAQuizApp {
                 };
                 
                 option.addEventListener('touchstart', (e) => {
-                    // Prevent default to avoid conflicts
-                    e.preventDefault();
-                    
+                    // Don't prevent default - let normal touch work
                     longPressTriggered = false;
                     touchStartTime = Date.now();
                     
@@ -448,7 +446,7 @@ class MLAQuizApp {
                         handleLongPress();
                     }, 700); // Slightly longer for more reliable detection
                     
-                }, { passive: false });
+                }, { passive: true }); // Use passive for better performance
                 
                 option.addEventListener('touchmove', (e) => {
                     if (!touchStartPosition || !longPressTimer) return;
@@ -461,28 +459,39 @@ class MLAQuizApp {
                     if (deltaX > 10 || deltaY > 10) {
                         clearLongPress();
                     }
-                });
+                }, { passive: true });
                 
                 option.addEventListener('touchend', (e) => {
                     clearLongPress();
                     
-                    // If long press was triggered, don't process as normal tap
+                    // If long press was triggered, prevent the click
                     if (longPressTriggered) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
+                        // Small delay to prevent click event
+                        setTimeout(() => {
+                            longPressTriggered = false;
+                        }, 100);
+                        return;
                     }
                     
                     // Reset for next interaction
                     touchStartPosition = null;
                     touchStartTime = 0;
-                });
+                }, { passive: true });
                 
                 option.addEventListener('touchcancel', () => {
                     clearLongPress();
                     touchStartPosition = null;
                     touchStartTime = 0;
                     longPressTriggered = false;
+                }, { passive: true });
+                
+                // Handle click event to prevent it after long press
+                option.addEventListener('click', (e) => {
+                    if (longPressTriggered) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
                 });
             });
         }
