@@ -1047,7 +1047,21 @@
                         <button class="btn btn-secondary" id="uploadBtn" style="margin-bottom: 8px;">
                             📁 Choose Quiz Files
                         </button>
-                        <button class="btn btn-secondary" id="clearUploaded" style="margin-bottom: 8px; background: #ff3b30;" onclick="if(confirm('Clear all uploaded quizzes?')) { localStorage.removeItem('uploadedQuizzes'); location.reload(); }">
+                        <button class="btn btn-secondary" id="clearUploaded" style="margin-bottom: 8px; background: #ff3b30;" onclick="if(confirm('Clear all uploaded quizzes? This will free up browser storage space.')) { 
+                            // Clear localStorage
+                            const uploadedQuizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
+                            uploadedQuizzes.forEach(quiz => {
+                                if (quiz.dataStored === 'split') {
+                                    localStorage.removeItem('quiz_' + quiz.name);
+                                }
+                            });
+                            localStorage.removeItem('uploadedQuizzes'); 
+                            // Clear temporary storage
+                            if (window.tempUploadedQuizzes) {
+                                window.tempUploadedQuizzes = [];
+                            }
+                            location.reload(); 
+                        }">>
                             🗑️ Clear Uploaded
                         </button>
                         <div id="uploadStatus" style="font-size: 14px; color: #8e8e93; margin-top: 8px;"></div>

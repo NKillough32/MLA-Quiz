@@ -644,21 +644,29 @@ def upload_quiz():
                                 img_base64 = base64.b64encode(img_content).decode('utf-8')
                                 data_url = f"data:{mime_type};base64,{img_base64}"
                                 
-                                # Store with normalized path (remove leading ./ or ../)
-                                clean_path = image_file.replace('\\', '/').lstrip('./')
-                                image_data[clean_path] = data_url
-                                image_data[image_file] = data_url  # Also store original path
-                                # Store just filename for relative references
-                                filename_only = image_file.split('/')[-1]
-                                image_data[filename_only] = data_url
-                                # Store filename without extension for [IMAGE: name] format
-                                name_without_ext = filename_only.rsplit('.', 1)[0]
-                                image_data[name_without_ext] = data_url
-                                # Store variations of the filename
-                                image_data[filename_only.lower()] = data_url
-                                image_data[name_without_ext.lower()] = data_url
+                                # Store the actual image data only once with the primary key
+                                primary_key = image_file.replace('\\', '/').lstrip('./')
+                                image_data[primary_key] = data_url
                                 
-                                logger.info(f"Processed image: {image_file} -> stored as keys: {filename_only}, {name_without_ext}, {clean_path}")
+                                # Create reference mappings (without duplicating the base64 data)
+                                filename_only = image_file.split('/')[-1]
+                                name_without_ext = filename_only.rsplit('.', 1)[0]
+                                
+                                # Only store references if they're different from the primary key
+                                reference_keys = [
+                                    image_file,  # Original path
+                                    filename_only,  # Just filename
+                                    name_without_ext,  # Name without extension
+                                    filename_only.lower(),  # Lowercase filename
+                                    name_without_ext.lower()  # Lowercase name without extension
+                                ]
+                                
+                                # Store references that point to the primary key (much smaller)
+                                for ref_key in reference_keys:
+                                    if ref_key != primary_key and ref_key not in image_data:
+                                        image_data[ref_key] = f"__REF__:{primary_key}"
+                                
+                                logger.info(f"Processed image: {image_file} -> primary key: {primary_key}, references: {len(reference_keys)}")
                         except Exception as e:
                             logger.warning(f"Could not process image {image_file}: {e}")
                             continue

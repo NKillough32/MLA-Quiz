@@ -139,7 +139,26 @@ class MLAQuizApp {
                     return;
                 }
                 
-                this.questions = quiz.questions;
+                // Check if this is a split storage quiz that needs reconstruction
+                if (quiz.dataStored === 'split' && (!quiz.questions || quiz.questions.length === 0)) {
+                    console.log('🔍 LOADING - Reconstructing split storage quiz');
+                    try {
+                        const quizData = JSON.parse(localStorage.getItem(`quiz_${quiz.name}`) || '{}');
+                        if (quizData.questions && quizData.questions.length > 0) {
+                            quiz.questions = quizData.questions;
+                            quiz.images = quizData.images || {};
+                            console.log('🔍 LOADING - Successfully reconstructed quiz with', quiz.questions.length, 'questions');
+                        } else {
+                            throw new Error('No questions found in split storage');
+                        }
+                    } catch (error) {
+                        console.error('🔍 LOADING ERROR - Failed to reconstruct quiz:', error);
+                        this.showError('Failed to load quiz data. Please re-upload the file.');
+                        return;
+                    }
+                }
+                
+                this.questions = quiz.questions || [];
                 this.quizName = quiz.name;
                 this.currentQuestionIndex = 0;
                 this.answers = {};
@@ -149,6 +168,11 @@ class MLAQuizApp {
                 if (this.questions.length === 0) {
                     this.showError('This quiz contains no questions.');
                     return;
+                }
+                
+                console.log('🔍 LOADING - Successfully loaded uploaded quiz with', this.questions.length, 'questions');
+                if (quiz.imagesRemoved) {
+                    this.showError('Note: Images were not stored due to browser limits. Questions will work but images may not display.');
                 }
                 
                 this.startQuiz();
@@ -979,7 +1003,7 @@ class MLAQuizApp {
                 throw new Error(data.error || 'Upload failed');
             }
             
-            // Store uploaded quiz data temporarily for immediate use
+            // Store quiz data temporarily for immediate use
             const quizData = {
                 name: data.quiz_name,
                 questions: data.questions,
@@ -990,7 +1014,18 @@ class MLAQuizApp {
             };
             
             console.log('🔍 UPLOAD DEBUG - Quiz data to store:', quizData);
-            console.log('🔍 UPLOAD DEBUG - Images in quiz data:', Object.keys(quizData.images || {}));
+            
+            // Count actual images vs references for debugging
+            const actualImages = Object.values(quizData.images).filter(v => typeof v === 'string' && v.startsWith('data:')).length;
+            const references = Object.values(quizData.images).filter(v => typeof v === 'string' && v.startsWith('__REF__:')).length;
+            const totalKeys = Object.keys(quizData.images || {}).length;
+            
+            console.log('🔍 UPLOAD DEBUG - Image storage breakdown:', {
+                totalKeys,
+                actualImages,
+                references,
+                compressionRatio: totalKeys > 0 ? (actualImages / totalKeys).toFixed(2) : 0
+            });
             
             // Add to local storage or memory for immediate access
             this.storeUploadedQuiz(quizData);
@@ -1007,26 +1042,136 @@ class MLAQuizApp {
         console.log('🔍 STORAGE DEBUG - Storing quiz:', quizData.name);
         console.log('🔍 STORAGE DEBUG - Quiz has images:', Object.keys(quizData.images || {}));
         
-        // Store in localStorage for persistence
-        let uploadedQuizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
-        
-        // Remove existing quiz with same name
-        uploadedQuizzes = uploadedQuizzes.filter(quiz => quiz.name !== quizData.name);
-        
-        // Add new quiz
-        uploadedQuizzes.push(quizData);
-        
-        localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
-        console.log('🔍 STORAGE DEBUG - Total uploaded quizzes stored:', uploadedQuizzes.length);
+        try {
+            // Store in localStorage for persistence
+            let uploadedQuizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
+            
+            // Remove existing quiz with same name
+            uploadedQuizzes = uploadedQuizzes.filter(quiz => quiz.name !== quizData.name);
+            
+            // Check if we need to compress or split the data
+            const dataSize = JSON.stringify(quizData).length;
+            const maxLocalStorageSize = 5 * 1024 * 1024; // 5MB typical limit
+            
+            console.log('🔍 STORAGE DEBUG - Quiz data size:', Math.round(dataSize / 1024), 'KB');
+            
+            if (dataSize > maxLocalStorageSize) {
+                console.log('🔍 STORAGE DEBUG - Quiz too large for localStorage, using split storage');
+                
+                // Store quiz metadata separately
+                const quizMeta = {
+                    name: quizData.name,
+                    total_questions: quizData.total_questions,
+                    isUploaded: true,
+                    uploadTimestamp: quizData.uploadTimestamp,
+                    hasImages: Object.keys(quizData.images || {}).length > 0,
+                    dataStored: 'split' // Flag to indicate split storage
+                };
+                
+                uploadedQuizzes.push(quizMeta);
+                
+                // Store questions and images separately with compression
+                const questionsData = {
+                    questions: quizData.questions,
+                    images: quizData.images
+                };
+                
+                // Try to store the full data
+                try {
+                    localStorage.setItem(`quiz_${quizData.name}`, JSON.stringify(questionsData));
+                    localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+                    console.log('🔍 STORAGE DEBUG - Successfully stored quiz using split storage');
+                } catch (quotaError) {
+                    console.log('🔍 STORAGE DEBUG - Still too large, using image-reduced storage');
+                    
+                    // If still too large, store without images and show warning
+                    const questionsOnly = {
+                        questions: quizData.questions,
+                        images: {} // Empty images to save space
+                    };
+                    
+                    localStorage.setItem(`quiz_${quizData.name}`, JSON.stringify(questionsOnly));
+                    quizMeta.imagesRemoved = true;
+                    localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+                    
+                    // Show user warning about images
+                    this.showError('Quiz uploaded successfully, but images were not stored due to browser storage limits. Questions will work but images may not display.');
+                }
+            } else {
+                // Small enough to store normally
+                uploadedQuizzes.push(quizData);
+                localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+                console.log('🔍 STORAGE DEBUG - Successfully stored quiz normally');
+            }
+            
+            console.log('🔍 STORAGE DEBUG - Total uploaded quizzes stored:', uploadedQuizzes.length);
+            
+        } catch (error) {
+            console.error('🔍 STORAGE ERROR - Failed to store quiz:', error);
+            
+            // Fallback: store only in memory for this session
+            if (!window.tempUploadedQuizzes) {
+                window.tempUploadedQuizzes = [];
+            }
+            
+            // Remove existing quiz with same name from temp storage
+            window.tempUploadedQuizzes = window.tempUploadedQuizzes.filter(quiz => quiz.name !== quizData.name);
+            window.tempUploadedQuizzes.push(quizData);
+            
+            console.log('🔍 STORAGE DEBUG - Stored quiz in temporary memory storage');
+            this.showError('Quiz uploaded successfully but could not be saved permanently. It will be available until you refresh the page.');
+        }
     }
     
     getUploadedQuizzes() {
-        const quizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
-        console.log('🔍 STORAGE DEBUG - Retrieved', quizzes.length, 'uploaded quizzes from localStorage');
-        quizzes.forEach((quiz, index) => {
+        console.log('🔍 STORAGE DEBUG - Retrieving uploaded quizzes');
+        
+        // Get quizzes from localStorage
+        let quizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
+        
+        // Also check temporary storage
+        if (window.tempUploadedQuizzes && window.tempUploadedQuizzes.length > 0) {
+            console.log('🔍 STORAGE DEBUG - Found', window.tempUploadedQuizzes.length, 'quizzes in temporary storage');
+            // Merge with persistent storage, removing duplicates
+            const tempNames = window.tempUploadedQuizzes.map(q => q.name);
+            quizzes = quizzes.filter(q => !tempNames.includes(q.name));
+            quizzes = [...quizzes, ...window.tempUploadedQuizzes];
+        }
+        
+        // For split storage quizzes, we need to reconstruct the data when loading
+        const reconstructedQuizzes = quizzes.map(quiz => {
+            if (quiz.dataStored === 'split') {
+                console.log('🔍 STORAGE DEBUG - Reconstructing split storage quiz:', quiz.name);
+                try {
+                    const quizData = JSON.parse(localStorage.getItem(`quiz_${quiz.name}`) || '{}');
+                    return {
+                        ...quiz,
+                        questions: quizData.questions || [],
+                        images: quizData.images || {}
+                    };
+                } catch (error) {
+                    console.error('🔍 STORAGE ERROR - Failed to reconstruct quiz:', quiz.name, error);
+                    return quiz; // Return metadata only
+                }
+            }
+            return quiz;
+        });
+        
+        console.log('🔍 STORAGE DEBUG - Retrieved', reconstructedQuizzes.length, 'uploaded quizzes from localStorage');
+        reconstructedQuizzes.forEach((quiz, index) => {
             console.log(`🔍 STORAGE DEBUG - Quiz ${index + 1}: ${quiz.name}, Images:`, Object.keys(quiz.images || {}));
         });
-        return quizzes;
+        
+        return reconstructedQuizzes;
+    }
+    
+    // Helper function to resolve image references
+    resolveImageReference(imageData, allImages) {
+        if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
+            const refKey = imageData.substring(7); // Remove '__REF__:' prefix
+            return allImages[refKey] || imageData; // Return actual data or original if not found
+        }
+        return imageData;
     }
     
     formatText(text) {
@@ -1071,9 +1216,20 @@ class MLAQuizApp {
                     console.log('🖼️ IMAGE DEBUG - Quiz:', quiz.name, 'has images:', Object.keys(quiz.images || {}));
                     if (quiz.images && quiz.images[imagePath]) {
                         console.log('🖼️ IMAGE DEBUG - Found embedded image data for:', imagePath);
-                        // Found embedded image data
-                        const imageData = quiz.images[imagePath];
-                        return `<div class="image-container"><img src="${imageData}" alt="Image" loading="lazy" onclick="openImageModal('${imageData}', 'Image')"></div>`;
+                        
+                        let imageData = quiz.images[imagePath];
+                        
+                        // Handle reference-based storage (resolve references)
+                        if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
+                            const refKey = imageData.substring(7); // Remove '__REF__:' prefix
+                            imageData = quiz.images[refKey];
+                            console.log('🖼️ IMAGE DEBUG - Resolved reference from', imagePath, 'to', refKey);
+                        }
+                        
+                        if (imageData && imageData.startsWith('data:')) {
+                            // Found actual image data
+                            return `<div class="image-container"><img src="${imageData}" alt="Image" loading="lazy" onclick="openImageModal('${imageData}', 'Image')"></div>`;
+                        }
                     }
                 }
                 
