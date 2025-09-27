@@ -285,6 +285,9 @@ class MLAQuizApp {
                 imageMatches.forEach(imageRef => {
                     imageHtml += this.formatText(imageRef);
                 });
+            } else {
+                // Process the entire prompt through formatText to handle embedded images
+                questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}</div>`;
             }
             
             // Use clean prompt text or default question
@@ -345,24 +348,24 @@ class MLAQuizApp {
             finalHtml += `<div class="q-text">${this.formatText(scenarioText)}</div>`;
         }
         
-        // Add spacing and images if present
+        // Add images if present (with minimal spacing)
         if (imageHtml) {
-            finalHtml += '<br>' + imageHtml;
+            finalHtml += imageHtml;
         }
     
-        // Add spacing and investigations if present
+        // Add investigations if present (with minimal spacing)
         if (investigationsHtml) {
-            finalHtml += '<br>' + investigationsHtml;
+            finalHtml += investigationsHtml;
         }
     
-        // Add spacing and question prompt (always present now)
+        // Add question prompt (always present now, with minimal spacing)
         if (questionPromptHtml) {
-            finalHtml += '<br>' + questionPromptHtml;
+            finalHtml += questionPromptHtml;
         }
     
-        // Add spacing and options
+        // Add options (with minimal spacing)
         if (optionsHtml) {
-            finalHtml += '<br>' + optionsHtml;
+            finalHtml += '<div style="margin-top: 16px;">' + optionsHtml + '</div>';
         }
     
         console.log('Debug - Final HTML pieces:', finalHtml.substring(0, 200) + '...');
@@ -1214,21 +1217,45 @@ class MLAQuizApp {
                 
                 for (const quiz of uploadedQuizzes) {
                     console.log('🖼️ IMAGE DEBUG - Quiz:', quiz.name, 'has images:', Object.keys(quiz.images || {}));
-                    if (quiz.images && quiz.images[imagePath]) {
-                        console.log('🖼️ IMAGE DEBUG - Found embedded image data for:', imagePath);
+                    if (quiz.images) {
+                        // Try multiple possible keys for the image
+                        const possibleKeys = [
+                            imagePath, // Original filename
+                            imagePath.toLowerCase(), // Lowercase
+                            imagePath.replace(/\.[^.]+$/, ''), // Without extension
+                            imagePath.replace(/\.[^.]+$/, '').toLowerCase(), // Without extension, lowercase
+                            `MLA_images/${imagePath}`, // With folder prefix
+                            `MLA_images/${imagePath.toLowerCase()}`, // With folder prefix, lowercase
+                        ];
                         
-                        let imageData = quiz.images[imagePath];
+                        let imageData = null;
+                        let foundKey = null;
                         
-                        // Handle reference-based storage (resolve references)
-                        if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
-                            const refKey = imageData.substring(7); // Remove '__REF__:' prefix
-                            imageData = quiz.images[refKey];
-                            console.log('🖼️ IMAGE DEBUG - Resolved reference from', imagePath, 'to', refKey);
+                        for (const key of possibleKeys) {
+                            if (quiz.images[key]) {
+                                imageData = quiz.images[key];
+                                foundKey = key;
+                                console.log('🖼️ IMAGE DEBUG - Found image with key:', key);
+                                break;
+                            }
                         }
                         
-                        if (imageData && imageData.startsWith('data:')) {
-                            // Found actual image data
-                            return `<div class="image-container"><img src="${imageData}" alt="Image" loading="lazy" onclick="openImageModal('${imageData}', 'Image')"></div>`;
+                        if (imageData) {
+                            console.log('🖼️ IMAGE DEBUG - Found embedded image data for:', foundKey);
+                            
+                            // Handle reference-based storage (resolve references)
+                            if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
+                                const refKey = imageData.substring(7); // Remove '__REF__:' prefix
+                                imageData = quiz.images[refKey];
+                                console.log('🖼️ IMAGE DEBUG - Resolved reference from', foundKey, 'to', refKey);
+                            }
+                            
+                            if (imageData && imageData.startsWith('data:')) {
+                                // Found actual image data
+                                return `<div class="image-container"><img src="${imageData}" alt="Image" loading="lazy" onclick="openImageModal('${imageData}', 'Image')"></div>`;
+                            } else {
+                                console.log('🖼️ IMAGE DEBUG - Image data after resolution:', typeof imageData, imageData?.substring(0, 50) + '...');
+                            }
                         }
                     }
                 }
