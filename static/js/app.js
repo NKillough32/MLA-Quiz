@@ -1512,7 +1512,7 @@ class MLAQuizApp {
     }
 }
 
-// Global functions for image viewing
+// Global functions for image viewing with pinch zoom
 function openImageModal(imageUrl, altText) {
     // Remove existing modal if any
     const existingModal = document.getElementById('imageModal');
@@ -1542,26 +1542,171 @@ function openImageModal(imageUrl, altText) {
         }
     }
     
-    // Create modal
+    // Create modal with zoom container
     const modal = document.createElement('div');
     modal.id = 'imageModal';
     modal.className = 'image-modal';
     modal.innerHTML = `
         <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
-        <img src="${actualUrl}" alt="${altText}" loading="lazy">
+        <div class="image-zoom-container">
+            <img src="${actualUrl}" alt="${altText}" loading="lazy" class="zoomable-image">
+        </div>
     `;
     
-    // Close modal when clicking on background
+    document.body.appendChild(modal);
+    
+    // Initialize pinch zoom functionality
+    const img = modal.querySelector('.zoomable-image');
+    const container = modal.querySelector('.image-zoom-container');
+    initPinchZoom(img, container);
+    
+    // Close modal when clicking on background (but not on image)
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeImageModal();
         }
     });
     
-    document.body.appendChild(modal);
-    
     // Close modal with Escape key
     document.addEventListener('keydown', handleEscapeKey);
+}
+
+function initPinchZoom(img, container) {
+    let scale = 1;
+    let startDistance = 0;
+    let startScale = 1;
+    let translateX = 0;
+    let translateY = 0;
+    let startTranslateX = 0;
+    let startTranslateY = 0;
+    let isDragging = false;
+    let lastTouchTime = 0;
+    
+    // Touch event handlers for pinch zoom and pan
+    container.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        
+        if (e.touches.length === 2) {
+            // Pinch gesture
+            isDragging = false;
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            startDistance = Math.sqrt(
+                Math.pow(touch2.clientX - touch1.clientX, 2) +
+                Math.pow(touch2.clientY - touch1.clientY, 2)
+            );
+            startScale = scale;
+        } else if (e.touches.length === 1 && scale > 1) {
+            // Pan gesture (only when zoomed in)
+            isDragging = true;
+            const touch = e.touches[0];
+            startTranslateX = translateX;
+            startTranslateY = translateY;
+            container.dataset.startX = touch.clientX;
+            container.dataset.startY = touch.clientY;
+        }
+        
+        // Double tap to zoom
+        const currentTime = new Date().getTime();
+        if (currentTime - lastTouchTime < 300 && e.touches.length === 1) {
+            if (scale === 1) {
+                // Zoom in to 2x
+                scale = 2;
+                translateX = 0;
+                translateY = 0;
+            } else {
+                // Reset zoom
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+            }
+            updateTransform();
+        }
+        lastTouchTime = currentTime;
+    }, { passive: false });
+    
+    container.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        
+        if (e.touches.length === 2 && startDistance > 0) {
+            // Pinch zoom
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const currentDistance = Math.sqrt(
+                Math.pow(touch2.clientX - touch1.clientX, 2) +
+                Math.pow(touch2.clientY - touch1.clientY, 2)
+            );
+            
+            scale = startScale * (currentDistance / startDistance);
+            scale = Math.max(1, Math.min(scale, 4)); // Limit zoom between 1x and 4x
+            
+            // Reset translation when zooming out to 1x
+            if (scale === 1) {
+                translateX = 0;
+                translateY = 0;
+            }
+            
+            updateTransform();
+        } else if (e.touches.length === 1 && isDragging && scale > 1) {
+            // Pan when zoomed in
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - parseFloat(container.dataset.startX);
+            const deltaY = touch.clientY - parseFloat(container.dataset.startY);
+            
+            translateX = startTranslateX + deltaX;
+            translateY = startTranslateY + deltaY;
+            
+            // Limit panning to keep image bounds reasonable
+            const maxTranslate = (scale - 1) * 150;
+            translateX = Math.max(-maxTranslate, Math.min(maxTranslate, translateX));
+            translateY = Math.max(-maxTranslate, Math.min(maxTranslate, translateY));
+            
+            updateTransform();
+        }
+    }, { passive: false });
+    
+    container.addEventListener('touchend', (e) => {
+        isDragging = false;
+        if (e.touches.length === 0) {
+            startDistance = 0;
+        }
+    }, { passive: false });
+    
+    // Mouse wheel zoom for desktop
+    container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        scale *= delta;
+        scale = Math.max(1, Math.min(scale, 4));
+        
+        if (scale === 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+        
+        updateTransform();
+    }, { passive: false });
+    
+    // Double click to zoom for desktop
+    container.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        if (scale === 1) {
+            scale = 2;
+            translateX = 0;
+            translateY = 0;
+        } else {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+        }
+        updateTransform();
+    });
+    
+    function updateTransform() {
+        img.style.transform = `scale(${scale}) translate(${translateX/scale}px, ${translateY/scale}px)`;
+        img.style.transformOrigin = 'center center';
+        img.style.transition = isDragging ? 'none' : 'transform 0.2s ease';
+    }
 }
 
 function closeImageModal() {
