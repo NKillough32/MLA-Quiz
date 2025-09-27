@@ -405,25 +405,49 @@ class MLAQuizApp {
                     this.toggleRuledOut(question.id, index);
                 });
                 
-                // Long press for mobile
+                // Improved long press for mobile
                 let longPressTimer;
+                let touchStarted = false;
+                let touchMoved = false;
+                
                 option.addEventListener('touchstart', (e) => {
+                    touchStarted = true;
+                    touchMoved = false;
+                    
                     longPressTimer = setTimeout(() => {
-                        this.toggleRuledOut(question.id, index);
-                        // Add haptic feedback if available
-                        if (navigator.vibrate) {
-                            navigator.vibrate(50);
+                        if (touchStarted && !touchMoved) {
+                            e.preventDefault();
+                            this.toggleRuledOut(question.id, index);
+                            // Add haptic feedback if available
+                            if (navigator.vibrate) {
+                                navigator.vibrate([50]);
+                            }
+                            touchStarted = false; // Prevent normal click after long press
                         }
-                    }, 500); // 500ms long press
-                });
+                    }, 600); // Slightly longer duration for more reliable detection
+                }, { passive: false });
                 
-                option.addEventListener('touchend', () => {
+                option.addEventListener('touchmove', (e) => {
+                    touchMoved = true;
                     clearTimeout(longPressTimer);
                 });
                 
-                option.addEventListener('touchmove', () => {
+                option.addEventListener('touchend', (e) => {
                     clearTimeout(longPressTimer);
+                    touchStarted = false;
                 });
+                
+                option.addEventListener('touchcancel', () => {
+                    clearTimeout(longPressTimer);
+                    touchStarted = false;
+                    touchMoved = false;
+                });
+                
+                // Prevent context menu on mobile that might interfere
+                option.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    return false;
+                }, { passive: false });
             });
         }
     
