@@ -405,49 +405,85 @@ class MLAQuizApp {
                     this.toggleRuledOut(question.id, index);
                 });
                 
-                // Improved long press for mobile
-                let longPressTimer;
-                let touchStarted = false;
-                let touchMoved = false;
+                // Improved long press for mobile with better event handling
+                let longPressTimer = null;
+                let touchStartTime = 0;
+                let touchStartPosition = null;
+                let longPressTriggered = false;
+                
+                const clearLongPress = () => {
+                    if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                };
+                
+                const handleLongPress = () => {
+                    longPressTriggered = true;
+                    this.toggleRuledOut(question.id, index);
+                    // Add stronger haptic feedback
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+                    clearLongPress();
+                };
                 
                 option.addEventListener('touchstart', (e) => {
-                    touchStarted = true;
-                    touchMoved = false;
+                    // Prevent default to avoid conflicts
+                    e.preventDefault();
+                    
+                    longPressTriggered = false;
+                    touchStartTime = Date.now();
+                    
+                    // Record starting position
+                    const touch = e.touches[0];
+                    touchStartPosition = {
+                        x: touch.clientX,
+                        y: touch.clientY
+                    };
+                    
+                    clearLongPress();
                     
                     longPressTimer = setTimeout(() => {
-                        if (touchStarted && !touchMoved) {
-                            e.preventDefault();
-                            this.toggleRuledOut(question.id, index);
-                            // Add haptic feedback if available
-                            if (navigator.vibrate) {
-                                navigator.vibrate([50]);
-                            }
-                            touchStarted = false; // Prevent normal click after long press
-                        }
-                    }, 600); // Slightly longer duration for more reliable detection
+                        handleLongPress();
+                    }, 700); // Slightly longer for more reliable detection
+                    
                 }, { passive: false });
                 
                 option.addEventListener('touchmove', (e) => {
-                    touchMoved = true;
-                    clearTimeout(longPressTimer);
+                    if (!touchStartPosition || !longPressTimer) return;
+                    
+                    const touch = e.touches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartPosition.x);
+                    const deltaY = Math.abs(touch.clientY - touchStartPosition.y);
+                    
+                    // Allow small movements (10px threshold)
+                    if (deltaX > 10 || deltaY > 10) {
+                        clearLongPress();
+                    }
                 });
                 
                 option.addEventListener('touchend', (e) => {
-                    clearTimeout(longPressTimer);
-                    touchStarted = false;
+                    clearLongPress();
+                    
+                    // If long press was triggered, don't process as normal tap
+                    if (longPressTriggered) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
+                    
+                    // Reset for next interaction
+                    touchStartPosition = null;
+                    touchStartTime = 0;
                 });
                 
                 option.addEventListener('touchcancel', () => {
-                    clearTimeout(longPressTimer);
-                    touchStarted = false;
-                    touchMoved = false;
+                    clearLongPress();
+                    touchStartPosition = null;
+                    touchStartTime = 0;
+                    longPressTriggered = false;
                 });
-                
-                // Prevent context menu on mobile that might interfere
-                option.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    return false;
-                }, { passive: false });
             });
         }
     
