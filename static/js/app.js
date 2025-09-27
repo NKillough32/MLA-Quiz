@@ -258,11 +258,7 @@ class MLAQuizApp {
         let investigationsHtml = '';
         if (question.investigations && question.investigations.trim()) {
             const formattedInvestigations = this.formatInvestigations(question.investigations);
-            investigationsHtml = `
-                <div class="investigations">
-                    <h4>Investigations</h4>
-                    <div>${formattedInvestigations}</div>
-                </div>`;
+            investigationsHtml = `<div class="investigations"><h4>Investigations</h4><div>${formattedInvestigations}</div></div>`;
         }
         console.log('Debug - Investigations HTML:', investigationsHtml);
     
