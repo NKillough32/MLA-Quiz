@@ -382,6 +382,18 @@
             border-color: #ef4444;
             background: #fef2f2;
         }
+        
+        /* Ruled out state - user marked as eliminated */
+        .new-option.ruled-out {
+            opacity: 0.5;
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+        
+        .new-option.ruled-out .label {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
 
         /* Label text wraps; letters stand out */
         .new-option .label {
@@ -1089,6 +1101,9 @@
                             🗑️ Clear Uploaded
                         </button>
                         <div id="uploadStatus" style="font-size: 14px; color: #8e8e93; margin-top: 8px;"></div>
+                        <div style="font-size: 12px; color: #8e8e93; margin-top: 8px; font-style: italic;">
+                            💡 Tip: Right-click (or long-press on mobile) answer options to rule them out with a strikethrough
+                        </div>
                     </div>
                 </div>
                 

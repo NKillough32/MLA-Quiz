@@ -9,6 +9,7 @@ class MLAQuizApp {
         this.currentQuestionIndex = 0;
         this.answers = {};
         this.submittedAnswers = {}; // Track which questions have been submitted
+        this.ruledOutAnswers = {}; // Track which options are ruled out
         this.questions = [];
         this.quizName = '';
         this.flaggedQuestions = new Set(); // Track flagged questions
@@ -163,6 +164,7 @@ class MLAQuizApp {
                 this.currentQuestionIndex = 0;
                 this.answers = {};
                 this.submittedAnswers = {};
+                this.ruledOutAnswers = {};
                 this.flaggedQuestions = new Set();
                 
                 if (this.questions.length === 0) {
@@ -208,6 +210,8 @@ class MLAQuizApp {
     startQuiz() {
         // Reset quiz state
         this.submittedAnswers = {}; // Reset submitted answers
+        this.ruledOutAnswers = {}; // Reset ruled out answers
+        this.ruledOutAnswers = {}; // Reset ruled out answers
         
         // Shuffle questions to randomize order
         this.questions = this.shuffleArray(this.questions);
@@ -319,13 +323,18 @@ class MLAQuizApp {
             question.options.forEach((option, index) => {
                 const isSelected = selectedAnswer === index;
                 const letter = String.fromCharCode(65 + index); // A, B, C, D, etc.
-    
+                const isRuledOut = this.ruledOutAnswers[question.id] && this.ruledOutAnswers[question.id].includes(index);
+
                 let optionClasses = 'new-option';
-    
+
                 if (isSelected) {
                     optionClasses += ' selected';
                 }
-    
+                
+                if (isRuledOut) {
+                    optionClasses += ' ruled-out';
+                }
+
                 // Add feedback classes if answer is submitted
                 if (isSubmitted) {
                     if (index === selectedAnswer) {
@@ -335,9 +344,9 @@ class MLAQuizApp {
                         optionClasses += ' correct';
                     }
                 }
-    
+
                 const cleanOption = option.replace(/^[A-E]\)\s*/, ''); // Remove letter prefix if present
-    
+
                 optionsHtml += `<label class="${optionClasses}"><input type="radio" name="question_${question.id}" value="${index}" ${isSelected ? 'checked' : ''}><div class="label"><span class="badge">${letter})</span> ${cleanOption}</div></label>`;
             });
             optionsHtml += '</div>';
@@ -387,6 +396,35 @@ class MLAQuizApp {
                     }
                 });
             });
+            
+            // Add right-click/long-press to rule out options
+            document.querySelectorAll('.new-option').forEach((option, index) => {
+                // Right-click for desktop
+                option.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    this.toggleRuledOut(question.id, index);
+                });
+                
+                // Long press for mobile
+                let longPressTimer;
+                option.addEventListener('touchstart', (e) => {
+                    longPressTimer = setTimeout(() => {
+                        this.toggleRuledOut(question.id, index);
+                        // Add haptic feedback if available
+                        if (navigator.vibrate) {
+                            navigator.vibrate(50);
+                        }
+                    }, 500); // 500ms long press
+                });
+                
+                option.addEventListener('touchend', () => {
+                    clearTimeout(longPressTimer);
+                });
+                
+                option.addEventListener('touchmove', () => {
+                    clearTimeout(longPressTimer);
+                });
+            });
         }
     
         // If answer already submitted, show feedback and explanation
@@ -420,6 +458,57 @@ class MLAQuizApp {
         });
         
         this.updateButtons();
+    }
+    
+    toggleRuledOut(questionId, optionIndex) {
+        // Don't allow ruling out if answer is already submitted
+        if (this.submittedAnswers && this.submittedAnswers.hasOwnProperty(questionId)) {
+            return;
+        }
+        
+        if (!this.ruledOutAnswers[questionId]) {
+            this.ruledOutAnswers[questionId] = [];
+        }
+        
+        const ruledOutList = this.ruledOutAnswers[questionId];
+        const index = ruledOutList.indexOf(optionIndex);
+        
+        if (index > -1) {
+            // Remove from ruled out list
+            ruledOutList.splice(index, 1);
+        } else {
+            // Add to ruled out list
+            ruledOutList.push(optionIndex);
+        }
+        
+        // Re-render the current question to update the UI
+        this.renderCurrentQuestion();
+    }
+    
+    
+    toggleRuledOut(questionId, optionIndex) {
+        // Don't allow ruling out if answer is already submitted
+        if (this.submittedAnswers && this.submittedAnswers.hasOwnProperty(questionId)) {
+            return;
+        }
+        
+        if (!this.ruledOutAnswers[questionId]) {
+            this.ruledOutAnswers[questionId] = [];
+        }
+        
+        const ruledOutList = this.ruledOutAnswers[questionId];
+        const index = ruledOutList.indexOf(optionIndex);
+        
+        if (index > -1) {
+            // Remove from ruled out list
+            ruledOutList.splice(index, 1);
+        } else {
+            // Add to ruled out list
+            ruledOutList.push(optionIndex);
+        }
+        
+        // Re-render the current question to update the UI
+        this.renderCurrentQuestion();
     }
     
     submitAnswer() {
@@ -799,6 +888,7 @@ class MLAQuizApp {
         this.currentQuestionIndex = 0;
         this.answers = {};
         this.submittedAnswers = {};
+        this.ruledOutAnswers = {};
         this.startQuiz();
     }
     
