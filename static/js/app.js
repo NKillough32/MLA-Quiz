@@ -560,13 +560,27 @@ class MLAQuizApp {
         if (index > -1) {
             // Remove from ruled out list
             ruledOutList.splice(index, 1);
+            console.log(`Removed rule-out for Q${questionId} option ${optionIndex}`);
         } else {
             // Add to ruled out list
             ruledOutList.push(optionIndex);
+            console.log(`Added rule-out for Q${questionId} option ${optionIndex}`);
         }
         
-        // Re-render the current question to update the UI
-        this.renderCurrentQuestion();
+        // Update just the visual state without re-rendering entire question
+        this.updateOptionVisualState(optionIndex, index === -1);
+    }
+    
+    updateOptionVisualState(optionIndex, isRuledOut) {
+        const options = document.querySelectorAll('.new-option');
+        if (options[optionIndex]) {
+            const option = options[optionIndex];
+            if (isRuledOut) {
+                option.classList.add('ruled-out');
+            } else {
+                option.classList.remove('ruled-out');
+            }
+        }
     }
     
     submitAnswer() {
