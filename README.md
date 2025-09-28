@@ -1,151 +1,192 @@
 # MLA Quiz - Progressive Web App
 
-A Medical Learning Assessment quiz application that works perfectly on iOS devices as a Progressive Web App (PWA).
+A Medical Learning Assessment quiz application optimized for mobile devices with full PWA capabilities and advanced touch interactions.
 
-## 🚀 Features
+## 🚀 Key Features
 
 - **iOS Native Experience**: Looks and feels like a native iPhone app
-- **Progressive Web App**: Install directly from Safari to home screen
+- **Progressive Web App**: Install directly from Safari to home screen  
 - **Offline Support**: Take quizzes without internet connection
-- **Investigation Section Parsing**: Advanced regex patterns handle all Investigation formats
-- **Responsive Design**: Works on iPhone, iPad, and desktop
-- **Real-time Scoring**: Instant feedback and results
+- **Advanced Touch Controls**: Long-press to rule out incorrect answers with haptic feedback
+- **Pinch-to-Zoom Images**: Examine medical images with full zoom and pan capabilities
+- **Investigation Section Parsing**: Advanced parsing handles all medical investigation formats
+- **Responsive Design**: Optimized for iPhone, iPad, and desktop
+- **Real-time Feedback**: Instant scoring with immediate answer validation
 
-## 📱 How to Use
+## 📱 Mobile Experience
 
-### For End Users:
+### Installation:
 1. Visit the app URL in iOS Safari
-2. Tap the Share button
+2. Tap the Share button (□↑)
 3. Select "Add to Home Screen"
-4. The app installs like a native app
-5. Launch from home screen for full PWA experience
+4. App installs with custom icon
+5. Launch from home screen for full-screen experience
 
-### Features:
-- Browse available medical quizzes
-- Take interactive quizzes with Investigation sections
-- Track progress with visual progress bar
-- View detailed results and scoring
-- Works completely offline once loaded
+### Touch Interactions:
+- **Tap**: Select answers
+- **Long-press**: Rule out incorrect options (with haptic feedback)
+- **Right-click**: Rule out options (desktop)
+- **Tap images**: Open full-screen viewer with pinch-to-zoom
+- **Double-tap images**: Quick zoom toggle
+- **Pinch**: Zoom medical images for detailed examination
 
 ## 🛠️ Technical Stack
 
-- **Backend**: Flask (Python)
-- **Frontend**: HTML5, CSS3, JavaScript
-- **PWA Features**: Service Worker, Web App Manifest
-- **Deployment**: Multiple platform support (Heroku, Vercel, Railway, Render)
+- **Backend**: Flask (Python 3.11) with Vercel serverless functions
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript
+- **PWA**: Service Worker, Web App Manifest, Offline Caching
+- **Deployment**: Vercel (optimized for serverless architecture)
+- **Mobile**: Touch events, Haptic feedback, Responsive design
 
-## 📦 Installation for Development
+## 📦 Development Setup
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/mla-quiz-pwa.git
-cd mla-quiz-pwa
+git clone https://github.com/NKillough32/MLA-Quiz.git
+cd MLA-Quiz
 ```
 
 2. Install dependencies:
 ```bash
-pip install -r requirements_pwa.txt
+pip install -r requirements.txt
 ```
 
-3. Run locally:
+3. Run locally (development only - files in archive folder):
 ```bash
-python app.py
+python archive/main.py  # Local development server
 ```
 
-4. Open http://localhost:5000 in your browser
+4. For Vercel development:
+```bash
+vercel dev  # Runs serverless functions locally
+```
 
-## 🌐 Deployment
+## 🌐 Deployment (Vercel Optimized)
 
-The app includes configuration for multiple deployment platforms:
+This project is optimized for **Vercel** deployment with serverless architecture:
 
-- **Heroku**: Use `Procfile` and `runtime.txt`
-- **Vercel**: Use `vercel.json` for serverless deployment
-- **Railway/Render**: Connect GitHub repo for auto-deployment
+```bash
+# Deploy to Vercel
+vercel --prod
 
-See `DEPLOYMENT_GUIDE.md` for detailed deployment instructions.
+# Or connect GitHub repo for auto-deployment
+```
 
-## 📁 Project Structure
+**Deployment files:**
+- `vercel.json` - Routing and build configuration
+- `api/index.py` - Serverless function entry point
+- `requirements.txt` - Python dependencies
+- `runtime.txt` - Python version specification
+
+## 📁 Clean Project Structure
 
 ```
-├── app.py                 # Flask backend with quiz logic
-├── templates/
-│   └── index.html        # iOS-style responsive interface
+├── api/
+│   └── index.py          # Vercel serverless function
 ├── static/
-│   ├── js/app.js         # Quiz functionality and API communication
-│   ├── manifest.json     # PWA manifest for installation
+│   ├── icons/icon.png    # Custom PWA icon
+│   ├── js/app.js         # Touch interactions & quiz logic
+│   ├── manifest.json     # PWA configuration
 │   └── sw.js            # Service worker for offline support
-├── Questions/           # Medical quiz content (.md files)
-├── requirements_pwa.txt # Python dependencies
-└── Procfile            # Heroku deployment config
+├── templates/
+│   └── index.html       # Responsive UI with iOS styling
+├── Questions/
+│   └── MLA.zip          # Medical quiz content
+├── archive/             # Development files (not deployed)
+├── vercel.json         # Vercel deployment configuration
+├── requirements.txt    # Production dependencies
+└── runtime.txt        # Python 3.11.6
 ```
 
-## 🔧 Quiz Content
+## 🎯 Advanced Features
 
-Place your medical quiz files (`.md` format) in the `Questions/` folder. The app supports:
+### Answer Elimination System
+- **Long-press** any answer option to rule it out
+- **Visual feedback**: Crossed-out styling for eliminated options
+- **Haptic feedback**: Strong vibration pattern (500ms) for mobile
+- **Persistence**: Ruled-out answers stay marked during question
 
-- Multiple choice questions
+### Image Viewing System
+- **Full-screen modal** for all medical images
+- **Pinch-to-zoom**: 1x to 4x magnification
+- **Pan support**: Drag to navigate zoomed images
+- **Double-tap zoom**: Quick 2x toggle
+- **Mouse wheel**: Desktop zoom support
+- **Touch boundaries**: Smart limits prevent over-panning
+
+### Quiz Content Support
+- Multiple choice medical questions
 - Investigation sections with enhanced parsing
-- Medical specialty categorization
-- Detailed explanations and feedback
+- Embedded images with zoom capability
+- File upload for custom quizzes
+- Progress tracking and scoring
 
-## 📊 Investigation Section Support
+## 🔧 Quiz File Formats
 
-The app handles various Investigation section formats:
-- `**Investigations:**`
-- `**Investigations**:`
-- `**Investigation:**`
-- `**Investigation**:`
-- Variations with trailing spaces
+Supports multiple quiz formats:
+- **ZIP files**: Containing markdown quiz files and images  
+- **Direct upload**: Via browser interface
+- **Markdown format**: Standard medical quiz structure
+- **Images**: Embedded or referenced medical images
 
-## 🎯 PWA Capabilities
+## 📊 Investigation Parsing
 
-- **Offline First**: Service worker caches quizzes
-- **App-like Experience**: Full screen, native navigation
-- **iOS Integration**: Home screen installation, splash screen
-- **Performance**: Fast loading, smooth interactions
-- **Cross-Platform**: Works on iOS, Android, and desktop
+Handles various medical investigation formats:
+- `**Investigations:**` / `**Investigation:**`
+- `**Investigations**` / `**Investigation**` 
+- Automatic line break formatting
+- Reference range parsing
+- Multiple test result handling
 
-## 📈 Benefits Over Native Apps
+## � PWA Capabilities
 
-- **No App Store**: Direct distribution via URL
-- **Instant Updates**: No user downloads required
-- **Cross-Platform**: One codebase works everywhere
-- **Easy Development**: No macOS needed for iOS deployment
-- **Lower Barriers**: Users just visit URL, no installation friction
+- **Offline-first**: Service worker caches all content
+- **App-like**: Full screen, native navigation feel
+- **iOS integration**: Custom splash screen, status bar styling
+- **Performance**: Optimized loading, smooth 60fps animations
+- **Auto-updates**: Service worker handles content updates
+- **Cross-platform**: iOS, Android, desktop compatibility
 
-## 🔍 Testing
+## 🧪 File Organization
 
-Run the test suite:
-```bash
-python test_pwa.py
-```
+**Active files** (deployed to Vercel):
+- All files in root, api/, static/, templates/, Questions/
 
-This tests:
-- API endpoints functionality
-- Quiz loading and parsing
-- Investigation section handling
-- Error handling and edge cases
+**Archived files** (development/legacy):
+- `archive/main.py` - Local development server
+- `archive/app_old.py` - Legacy version
+- `archive/utils.py` - Standalone utilities  
+- `archive/Procfile` - Heroku configuration
+- `archive/*.md` - Development documentation
 
-## 📄 License
+## 🔍 Browser Compatibility
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+- **iOS Safari**: Full PWA support, haptic feedback
+- **Chrome Mobile**: Complete touch gesture support
+- **Firefox Mobile**: Standard PWA features
+- **Desktop**: Mouse interactions, keyboard shortcuts
+- **Offline**: Full functionality without internet
 
-## 🤝 Contributing
+## � Performance Features
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+- **Serverless**: Vercel functions for instant scaling
+- **CDN**: Static assets served globally
+- **Caching**: Aggressive caching for offline use
+- **Compression**: Optimized asset delivery
+- **Touch**: 60fps touch response, minimal latency
 
-## 📞 Support
+## 📞 Support & Troubleshooting
 
-For issues or questions:
-1. Check the `DEPLOYMENT_GUIDE.md` for troubleshooting
-2. Verify quiz files are properly formatted
-3. Test locally before deployment
-4. Use browser developer tools for debugging
+**Common Issues:**
+- Images not loading: Check file upload and browser storage
+- Touch not working: Ensure modern mobile browser
+- PWA not installing: Use iOS Safari or Chrome
+
+**Development:**
+- Use browser dev tools for debugging
+- Check service worker for cache issues
+- Verify touch events in mobile device mode
 
 ---
 
-**Ready for production deployment!** 🚀
+**🚀 Production-ready Vercel deployment with advanced mobile features!**
