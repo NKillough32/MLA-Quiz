@@ -1695,6 +1695,7 @@ class MLAQuizApp {
     initializeDarkMode() {
         // Load saved theme preference
         const savedTheme = localStorage.getItem('theme') || 'light';
+        console.log(`Initializing dark mode with theme: ${savedTheme}`);
         this.setTheme(savedTheme);
         
         // Add dark mode toggle button
@@ -1702,35 +1703,53 @@ class MLAQuizApp {
     }
 
     setTheme(theme) {
+        console.log(`Setting theme to: ${theme}`);
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
+        
+        // Force a reflow to apply the changes
+        document.body.offsetHeight;
         
         // Update toggle button text
         const toggleBtn = document.getElementById('dark-mode-toggle');
         if (toggleBtn) {
             toggleBtn.textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+            toggleBtn.style.color = theme === 'dark' ? '#ffffff' : '#007AFF';
         }
+        
+        console.log(`Theme applied. Current data-theme: ${document.documentElement.getAttribute('data-theme')}`);
     }
 
     toggleDarkMode() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        console.log(`Toggling theme from ${currentTheme} to ${newTheme}`);
         this.setTheme(newTheme);
     }
 
     addDarkModeToggle() {
         const navbar = document.querySelector('.navbar');
         if (navbar) {
+            // Remove existing toggle if present
+            const existingToggle = document.getElementById('dark-mode-toggle');
+            if (existingToggle) {
+                existingToggle.remove();
+            }
+            
             const toggleBtn = document.createElement('button');
             toggleBtn.id = 'dark-mode-toggle';
             toggleBtn.className = 'navbar-btn';
-            toggleBtn.style.cssText = 'position: absolute; right: 60px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px;';
+            toggleBtn.style.cssText = 'position: absolute; right: 60px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
             toggleBtn.onclick = () => this.toggleDarkMode();
             
-            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             toggleBtn.textContent = currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
             
             navbar.appendChild(toggleBtn);
+            console.log('Dark mode toggle added to navbar');
+        } else {
+            console.log('Navbar not found, retrying in 100ms');
+            setTimeout(() => this.addDarkModeToggle(), 100);
         }
     }
     
@@ -1752,48 +1771,66 @@ class MLAQuizApp {
         const fontSizeMap = {
             'small': '0.85',
             'medium': '1.0',
-            'large': '1.15',
-            'xlarge': '1.3'
+            'large': '1.2',
+            'xlarge': '1.4'
         };
         
         const multiplier = fontSizeMap[size] || '1.0';
-        document.documentElement.style.setProperty('--font-scale', multiplier);
         
-        // Update all text elements
-        const elements = document.querySelectorAll('.q-text, .investigations, .explanation-container, .prompt, .new-option, p, div');
-        elements.forEach(el => {
-            if (!el.style.fontSize) {
-                el.style.fontSize = `calc(1rem * ${multiplier})`;
-            }
-        });
+        // Apply scaling to root element for rem-based sizing
+        document.documentElement.style.fontSize = `${16 * parseFloat(multiplier)}px`;
         
         // Update active button
         document.querySelectorAll('.font-size-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.size === size);
+            btn.classList.remove('active');
+            if (btn.dataset.size === size) {
+                btn.classList.add('active');
+                btn.style.backgroundColor = '#007AFF';
+                btn.style.color = 'white';
+            } else {
+                btn.style.backgroundColor = 'transparent';
+                btn.style.color = '#007AFF';
+            }
         });
+        
+        console.log(`Font size set to ${size} (${multiplier}x)`);
     }
 
     addFontSizeControls() {
         const navbar = document.querySelector('.navbar');
         if (navbar) {
+            // Remove existing font controls if present
+            const existingControls = document.querySelector('.font-controls');
+            if (existingControls) {
+                existingControls.remove();
+            }
+            
             const fontControls = document.createElement('div');
             fontControls.className = 'font-controls';
-            fontControls.style.cssText = 'position: absolute; right: 150px; display: flex; gap: 5px; align-items: center;';
+            fontControls.style.cssText = 'position: absolute; right: 200px; display: flex; gap: 5px; align-items: center; z-index: 1001;';
             fontControls.innerHTML = `
-                <button class="font-size-btn" data-size="small" title="Small Text" style="background: none; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 10px; cursor: pointer;">A</button>
-                <button class="font-size-btn" data-size="medium" title="Medium Text" style="background: none; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 12px; cursor: pointer;">A</button>
-                <button class="font-size-btn" data-size="large" title="Large Text" style="background: none; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 14px; cursor: pointer;">A</button>
-                <button class="font-size-btn" data-size="xlarge" title="Extra Large Text" style="background: none; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 16px; cursor: pointer;">A</button>
+                <button class="font-size-btn" data-size="small" title="Small Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; font-weight: bold;">A</button>
+                <button class="font-size-btn" data-size="medium" title="Medium Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold;">A</button>
+                <button class="font-size-btn" data-size="large" title="Large Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 8px; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: bold;">A</button>
+                <button class="font-size-btn" data-size="xlarge" title="Extra Large Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 8px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold;">A</button>
             `;
             
             // Add event listeners
             fontControls.addEventListener('click', (e) => {
                 if (e.target.classList.contains('font-size-btn')) {
+                    console.log(`Font size button clicked: ${e.target.dataset.size}`);
                     this.setFontSize(e.target.dataset.size);
                 }
             });
             
             navbar.appendChild(fontControls);
+            
+            // Set initial state
+            this.setFontSize(this.fontSize);
+            console.log('Font size controls added to navbar');
+        } else {
+            console.log('Navbar not found for font controls, retrying in 100ms');
+            setTimeout(() => this.addFontSizeControls(), 100);
         }
     }
 }
