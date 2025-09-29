@@ -1807,12 +1807,11 @@ class MLAQuizApp {
             
             const fontControls = document.createElement('div');
             fontControls.className = 'font-controls';
-            fontControls.style.cssText = 'position: absolute; right: 200px; display: flex; gap: 5px; align-items: center; z-index: 1001;';
             fontControls.innerHTML = `
-                <button class="font-size-btn" data-size="small" title="Small Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; font-weight: bold;">A</button>
-                <button class="font-size-btn" data-size="medium" title="Medium Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold;">A</button>
-                <button class="font-size-btn" data-size="large" title="Large Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 8px; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: bold;">A</button>
-                <button class="font-size-btn" data-size="xlarge" title="Extra Large Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 8px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold;">A</button>
+                <button class="font-size-btn" data-size="small" title="Small Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: bold; min-width: 20px;">A</button>
+                <button class="font-size-btn" data-size="medium" title="Medium Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; min-width: 20px;">A</button>
+                <button class="font-size-btn" data-size="large" title="Large Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; min-width: 20px;">A</button>
+                <button class="font-size-btn" data-size="xlarge" title="Extra Large Text" style="background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 15px; cursor: pointer; font-weight: bold; min-width: 20px;">A</button>
             `;
             
             // Add event listeners

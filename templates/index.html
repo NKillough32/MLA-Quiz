@@ -94,8 +94,8 @@
         /* Content Container - legacy styles, minimal impact */
         .container {
             min-height: 100vh;
-            margin-top: 68px;
-            padding-top: 10px;
+            margin-top: 56px;
+            padding-top: 8px;
         }
         
         /* Page grid layout */
@@ -483,6 +483,55 @@
         
         [data-theme="dark"] .time-stats {
             color: var(--text-secondary);
+        }
+        
+        /* Responsive font controls for mobile */
+        .font-controls {
+            position: absolute;
+            right: 200px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            z-index: 1001;
+        }
+        
+        @media (max-width: 768px) {
+            .font-controls {
+                right: 10px !important;
+                top: 50px !important;
+                gap: 3px !important;
+            }
+            
+            .font-size-btn {
+                padding: 3px 5px !important;
+                min-width: 18px !important;
+                font-size: 8px !important;
+            }
+            
+            .font-size-btn[data-size="medium"] {
+                font-size: 9px !important;
+            }
+            
+            .font-size-btn[data-size="large"] {
+                font-size: 10px !important;
+            }
+            
+            .font-size-btn[data-size="xlarge"] {
+                font-size: 11px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .font-controls {
+                right: 5px !important;
+                top: 55px !important;
+                gap: 2px !important;
+            }
+            
+            .font-size-btn {
+                padding: 2px 4px !important;
+                min-width: 16px !important;
+            }
         }
 
         /* Long medical lines should wrap gracefully */
