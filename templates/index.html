@@ -277,6 +277,102 @@
         .image-modal-close:hover {
             opacity: 0.7;
         }
+        
+        /* Dark Mode Styles */
+        [data-theme="dark"] {
+            --bg-primary: #1c1c1e;
+            --bg-secondary: #2c2c2e;
+            --bg-tertiary: #3a3a3c;
+            --text-primary: #ffffff;
+            --text-secondary: #98989d;
+            --border-color: #38383a;
+            --card-bg: #2c2c2e;
+            --button-bg: #0a84ff;
+            --danger-bg: #ff453a;
+            --success-bg: #32d74b;
+        }
+
+        [data-theme="dark"] body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .container {
+            background-color: var(--bg-primary);
+        }
+
+        [data-theme="dark"] .quiz-item {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .quiz-details {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .sidebar {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .new-option {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .new-option.selected {
+            background-color: var(--button-bg);
+            border-color: var(--button-bg);
+        }
+
+        [data-theme="dark"] .new-option.ruled-out {
+            background-color: var(--bg-secondary);
+            opacity: 0.5;
+        }
+
+        [data-theme="dark"] .btn {
+            background-color: var(--button-bg);
+            color: white;
+        }
+
+        [data-theme="dark"] .explanation-container {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .navbar {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] input[type="file"] {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        /* Font size button active state */
+        .font-size-btn.active {
+            background-color: #007AFF !important;
+            color: white !important;
+        }
+        
+        /* Time display styling */
+        .time-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 11px;
+            color: #8e8e93;
+            text-align: center;
+        }
+        
+        [data-theme="dark"] .time-stats {
+            color: var(--text-secondary);
+        }
 
         /* Long medical lines should wrap gracefully */
         .q-text {
@@ -1194,6 +1290,13 @@
                                     <span>Correct</span>
                                     <span id="correctCount">0 (0%)</span>
                                 </div>
+                                
+                                <!-- Time tracking display -->
+                                <div id="time-display" class="time-display" style="margin-top: 15px; padding: 10px; border-top: 1px solid #e5e5ea;">
+                                    <div class="time-stats">
+                                        <span>Time tracking will appear here</span>
+                                    </div>
+                                </div>
                             </div>
                             <div id="sidebarContent" class="question-list-container" style="margin-top: 16px;">
                                 <!-- Question list will be populated here -->
@@ -1218,6 +1321,7 @@
                 </div>
                 <div class="card-content">
                     <button class="btn" id="retryBtn">Take Quiz Again</button>
+                    <button class="btn" id="generate-report-btn" style="background-color: #34c759; margin-top: 10px;">📊 Generate Study Report</button>
                     <button class="btn btn-secondary" id="homeBtn">Back to Quizzes</button>
                 </div>
             </div>
@@ -1226,5 +1330,19 @@
     
     <!-- JavaScript will be loaded here -->
     <script src="/static/js/app.js"></script>
+    
+    <script>
+        // Add event listener for report generation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add report generation handler
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'generate-report-btn') {
+                    if (window.quizApp) {
+                        window.quizApp.generateStudyReport();
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

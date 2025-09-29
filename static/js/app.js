@@ -14,12 +14,30 @@ class MLAQuizApp {
         this.quizName = '';
         this.flaggedQuestions = new Set(); // Track flagged questions
         
+        // Time tracking properties
+        this.questionStartTime = null;
+        this.questionTimes = {}; // Store time per question
+        this.quizStartTime = null;
+        this.totalStudyTime = 0;
+        this.sessionStats = {
+            questionsAnswered: 0,
+            totalTime: 0,
+            averageTimePerQuestion: 0
+        };
+        
+        // Theme and font size settings
+        this.fontSize = localStorage.getItem('fontSize') || 'medium';
+        
         this.init();
     }
     
     init() {
         this.bindEvents();
         this.loadQuizzes();
+        
+        // Initialize new features
+        this.initializeDarkMode();
+        this.initializeFontSize();
     }
     
     bindEvents() {
@@ -213,6 +231,15 @@ class MLAQuizApp {
         this.ruledOutAnswers = {}; // Reset ruled out answers
         this.ruledOutAnswers = {}; // Reset ruled out answers
         
+        // Reset time tracking for new quiz
+        this.quizStartTime = Date.now();
+        this.questionTimes = {};
+        this.sessionStats = {
+            questionsAnswered: 0,
+            totalTime: 0,
+            averageTimePerQuestion: 0
+        };
+        
         // Shuffle questions to randomize order
         this.questions = this.shuffleArray(this.questions);
         
@@ -232,10 +259,11 @@ class MLAQuizApp {
         console.log('Debug - Question prompt value:', question.prompt);
     
         if (!question) return;
-    
-        const container = document.getElementById('questionContainer');
-    
-        // Hide explanation and feedback initially (will show again if answer is already submitted)
+        
+        // Track question start time
+        this.questionStartTime = Date.now();
+
+        const container = document.getElementById('questionContainer');        // Hide explanation and feedback initially (will show again if answer is already submitted)
         const explanationContainer = document.getElementById('explanationContainer');
         const feedbackContainer = document.getElementById('feedbackContainer');
         if (explanationContainer) {
@@ -566,6 +594,15 @@ class MLAQuizApp {
             return; // No answer selected
         }
         
+        // Record time spent on this question
+        if (this.questionStartTime) {
+            const timeSpent = Date.now() - this.questionStartTime;
+            this.questionTimes[this.currentQuestionIndex] = timeSpent;
+            this.sessionStats.questionsAnswered++;
+            this.sessionStats.totalTime += timeSpent;
+            this.sessionStats.averageTimePerQuestion = this.sessionStats.totalTime / this.sessionStats.questionsAnswered;
+        }
+        
         // Mark this answer as submitted
         this.submittedAnswers[currentQuestion.id] = selectedAnswer;
         
@@ -598,6 +635,9 @@ class MLAQuizApp {
         
         // Update progress immediately upon submission
         this.updateProgress();
+        
+        // Update time tracking display
+        this.updateTimeDisplay();
         
         this.updateButtons();
     }
@@ -1509,6 +1549,252 @@ class MLAQuizApp {
         }
         
         return formattedText;
+    }
+    
+    // Time tracking methods
+    updateTimeDisplay() {
+        const timeDisplayEl = document.getElementById('time-display');
+        if (timeDisplayEl && this.sessionStats.questionsAnswered > 0) {
+            const avgTime = Math.round(this.sessionStats.averageTimePerQuestion / 1000);
+            const totalTime = Math.round(this.sessionStats.totalTime / 1000);
+            timeDisplayEl.innerHTML = `
+                <div class="time-stats">
+                    <span>Avg: ${avgTime}s</span>
+                    <span>Total: ${this.formatTime(totalTime)}</span>
+                </div>
+            `;
+        }
+    }
+
+    formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+    }
+    
+    // Study report generation methods
+    generateStudyReport() {
+        const reportData = this.calculateReportData();
+        const reportHTML = this.generateReportHTML(reportData);
+        
+        // Create a printable window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>MLA Quiz Study Report</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 20px; }
+                    .report-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #007AFF; padding-bottom: 20px; }
+                    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 20px 0; }
+                    .stat-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+                    .weak-areas { margin: 20px 0; }
+                    .question-list { margin: 20px 0; }
+                    .incorrect-question { background: #ffebee; padding: 10px; margin: 10px 0; border-radius: 5px; }
+                    .correct-question { background: #e8f5e8; padding: 10px; margin: 10px 0; border-radius: 5px; }
+                    @media print { body { margin: 0; } }
+                </style>
+            </head>
+            <body>${reportHTML}</body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    calculateReportData() {
+        const totalQuestions = Object.keys(this.submittedAnswers).length;
+        let correctAnswers = 0;
+        
+        Object.keys(this.submittedAnswers).forEach(questionId => {
+            const question = this.questions.find(q => q.id == questionId);
+            if (question && this.submittedAnswers[questionId] === question.correct_answer) {
+                correctAnswers++;
+            }
+        });
+        
+        const incorrectAnswers = totalQuestions - correctAnswers;
+        const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+        
+        return {
+            quizName: this.quizName,
+            totalQuestions,
+            correctAnswers,
+            incorrectAnswers,
+            accuracy,
+            totalTime: this.sessionStats.totalTime,
+            averageTime: this.sessionStats.averageTimePerQuestion,
+            questionsAnswered: this.sessionStats.questionsAnswered,
+            date: new Date().toLocaleDateString(),
+            incorrectQuestionsList: this.getIncorrectQuestions(),
+            timePerQuestion: this.questionTimes
+        };
+    }
+
+    generateReportHTML(data) {
+        return `
+            <div class="report-header">
+                <h1>📊 MLA Quiz Study Report</h1>
+                <h2>${data.quizName}</h2>
+                <p>Generated on ${data.date}</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>📈 Performance</h3>
+                    <p><strong>Accuracy:</strong> ${data.accuracy}%</p>
+                    <p><strong>Correct:</strong> ${data.correctAnswers}</p>
+                    <p><strong>Incorrect:</strong> ${data.incorrectAnswers}</p>
+                    <p><strong>Total Questions:</strong> ${data.totalQuestions}</p>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>⏱️ Time Analysis</h3>
+                    <p><strong>Total Time:</strong> ${this.formatTime(Math.round(data.totalTime / 1000))}</p>
+                    <p><strong>Average per Question:</strong> ${Math.round(data.averageTime / 1000)}s</p>
+                    <p><strong>Questions Answered:</strong> ${data.questionsAnswered}</p>
+                </div>
+            </div>
+            
+            <div class="weak-areas">
+                <h3>🎯 Areas for Improvement</h3>
+                ${data.incorrectQuestionsList.length > 0 ? 
+                    data.incorrectQuestionsList.map(q => `
+                        <div class="incorrect-question">
+                            <strong>Question ${q.index + 1}:</strong> ${(q.question.prompt || q.question.scenario || 'Review this question').substring(0, 100)}...
+                            <br><small>Your answer: Option ${q.yourAnswer + 1} | Correct: Option ${q.correctAnswer + 1}</small>
+                        </div>
+                    `).join('') : 
+                    '<p>🎉 Great job! No incorrect answers to review.</p>'
+                }
+            </div>
+        `;
+    }
+
+    getIncorrectQuestions() {
+        const incorrectQuestions = [];
+        Object.keys(this.submittedAnswers).forEach(questionId => {
+            const question = this.questions.find(q => q.id == questionId);
+            const selectedAnswer = this.submittedAnswers[questionId];
+            
+            if (question && selectedAnswer !== question.correct_answer) {
+                const questionIndex = this.questions.findIndex(q => q.id == questionId);
+                incorrectQuestions.push({
+                    index: questionIndex,
+                    question: question,
+                    yourAnswer: selectedAnswer,
+                    correctAnswer: question.correct_answer
+                });
+            }
+        });
+        return incorrectQuestions;
+    }
+    
+    // Dark mode methods
+    initializeDarkMode() {
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        this.setTheme(savedTheme);
+        
+        // Add dark mode toggle button
+        this.addDarkModeToggle();
+    }
+
+    setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        
+        // Update toggle button text
+        const toggleBtn = document.getElementById('dark-mode-toggle');
+        if (toggleBtn) {
+            toggleBtn.textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+        }
+    }
+
+    toggleDarkMode() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        this.setTheme(newTheme);
+    }
+
+    addDarkModeToggle() {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.id = 'dark-mode-toggle';
+            toggleBtn.className = 'navbar-btn';
+            toggleBtn.style.cssText = 'position: absolute; right: 60px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px;';
+            toggleBtn.onclick = () => this.toggleDarkMode();
+            
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            toggleBtn.textContent = currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+            
+            navbar.appendChild(toggleBtn);
+        }
+    }
+    
+    // Font size adjustment methods
+    initializeFontSize() {
+        // Load saved font size
+        const savedSize = localStorage.getItem('fontSize') || 'medium';
+        this.setFontSize(savedSize);
+        
+        // Add font size controls
+        this.addFontSizeControls();
+    }
+
+    setFontSize(size) {
+        this.fontSize = size;
+        localStorage.setItem('fontSize', size);
+        
+        // Apply font size CSS
+        const fontSizeMap = {
+            'small': '0.85',
+            'medium': '1.0',
+            'large': '1.15',
+            'xlarge': '1.3'
+        };
+        
+        const multiplier = fontSizeMap[size] || '1.0';
+        document.documentElement.style.setProperty('--font-scale', multiplier);
+        
+        // Update all text elements
+        const elements = document.querySelectorAll('.q-text, .investigations, .explanation-container, .prompt, .new-option, p, div');
+        elements.forEach(el => {
+            if (!el.style.fontSize) {
+                el.style.fontSize = `calc(1rem * ${multiplier})`;
+            }
+        });
+        
+        // Update active button
+        document.querySelectorAll('.font-size-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.size === size);
+        });
+    }
+
+    addFontSizeControls() {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            const fontControls = document.createElement('div');
+            fontControls.className = 'font-controls';
+            fontControls.style.cssText = 'position: absolute; right: 150px; display: flex; gap: 5px; align-items: center;';
+            fontControls.innerHTML = `
+                <button class="font-size-btn" data-size="small" title="Small Text" style="background: none; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 10px; cursor: pointer;">A</button>
+                <button class="font-size-btn" data-size="medium" title="Medium Text" style="background: none; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 12px; cursor: pointer;">A</button>
+                <button class="font-size-btn" data-size="large" title="Large Text" style="background: none; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 14px; cursor: pointer;">A</button>
+                <button class="font-size-btn" data-size="xlarge" title="Extra Large Text" style="background: none; border: 1px solid #007AFF; color: #007AFF; padding: 4px 6px; border-radius: 4px; font-size: 16px; cursor: pointer;">A</button>
+            `;
+            
+            // Add event listeners
+            fontControls.addEventListener('click', (e) => {
+                if (e.target.classList.contains('font-size-btn')) {
+                    this.setFontSize(e.target.dataset.size);
+                }
+            });
+            
+            navbar.appendChild(fontControls);
+        }
     }
 }
 
