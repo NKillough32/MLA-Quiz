@@ -414,6 +414,34 @@
             color: var(--text-secondary) !important;
         }
         
+        /* Dark mode for progress buttons and sidebar elements */
+        [data-theme="dark"] .progress-stats .progress-item {
+            background-color: var(--bg-tertiary) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .question-list-container {
+            background-color: var(--bg-secondary) !important;
+        }
+        
+        [data-theme="dark"] .question-list-container .progress-item {
+            background-color: var(--bg-tertiary) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+        
+        [data-theme="dark"] .question-list-container .progress-item.current {
+            background-color: var(--button-bg) !important;
+            color: white !important;
+        }
+        
+        [data-theme="dark"] #time-display {
+            background-color: var(--bg-tertiary) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-secondary) !important;
+        }
+        
         /* Font size button active state */
         .font-size-btn.active {
             background-color: #007AFF !important;
