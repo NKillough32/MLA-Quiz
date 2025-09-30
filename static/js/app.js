@@ -1538,6 +1538,18 @@ class MLAQuizApp {
             return `<a href="#" class="image-link" onclick="openImageModal('${url}', 'Image'); return false;">🖼️ View Image</a>`;
         });
         
+        // Convert plain URLs to clickable links with proper wrapping attributes
+        formattedText = formattedText.replace(
+            /(https?:\/\/[^\s<>"']+)/gi,
+            '<a href="$1" target="_blank" rel="noopener noreferrer" class="explanation-link">$1</a>'
+        );
+        
+        // Convert www.domain.com to clickable links
+        formattedText = formattedText.replace(
+            /(?<!https?:\/\/)\b(www\.[^\s<>"']+)/gi,
+            '<a href="http://$1" target="_blank" rel="noopener noreferrer" class="explanation-link">$1</a>'
+        );
+        
         // Check if text contains line breaks that suggest multiple paragraphs
         if (formattedText.includes('\n\n')) {
             // Only convert double line breaks to paragraph breaks, single line breaks to spaces
