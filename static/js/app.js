@@ -1627,6 +1627,46 @@ class MLAQuizApp {
                         font-size: 16px;
                         font-weight: bold;
                     }
+                    .question-scenario {
+                        margin: 10px 0;
+                        padding: 10px;
+                        background: #f0f9ff;
+                        border-left: 4px solid #0ea5e9;
+                        border-radius: 4px;
+                    }
+                    .scenario-text {
+                        margin-top: 5px;
+                        font-size: 14px;
+                        line-height: 1.5;
+                        color: #0f172a;
+                    }
+                    .question-investigations {
+                        margin: 10px 0;
+                        padding: 10px;
+                        background: #f0fdf4;
+                        border-left: 4px solid #22c55e;
+                        border-radius: 4px;
+                    }
+                    .investigations-text {
+                        margin-top: 5px;
+                        font-size: 14px;
+                        line-height: 1.5;
+                        color: #0f172a;
+                    }
+                    .question-prompt {
+                        margin: 10px 0;
+                        padding: 10px;
+                        background: #fefce8;
+                        border-left: 4px solid #eab308;
+                        border-radius: 4px;
+                    }
+                    .prompt-text {
+                        margin-top: 5px;
+                        font-size: 14px;
+                        line-height: 1.5;
+                        color: #0f172a;
+                        font-weight: 500;
+                    }
                     .question-text {
                         margin: 10px 0;
                         padding: 8px;
@@ -1788,9 +1828,24 @@ class MLAQuizApp {
                             <div class="question-header">
                                 <strong>Question ${q.index + 1}:</strong>
                             </div>
-                            <div class="question-text">
-                                ${this.cleanTextForPDF(q.question.prompt || q.question.scenario || 'Question text not available')}
-                            </div>
+                            ${q.question.scenario ? `
+                                <div class="question-scenario">
+                                    <strong>Scenario:</strong>
+                                    <div class="scenario-text">${this.cleanTextForPDF(q.question.scenario)}</div>
+                                </div>
+                            ` : ''}
+                            ${q.question.investigations ? `
+                                <div class="question-investigations">
+                                    <strong>Investigations:</strong>
+                                    <div class="investigations-text">${this.cleanTextForPDF(q.question.investigations)}</div>
+                                </div>
+                            ` : ''}
+                            ${q.question.prompt ? `
+                                <div class="question-prompt">
+                                    <strong>Question:</strong>
+                                    <div class="prompt-text">${this.cleanTextForPDF(q.question.prompt)}</div>
+                                </div>
+                            ` : ''}
                             ${q.question.options ? `
                                 <div class="question-options">
                                     <strong>Options:</strong>
