@@ -1613,7 +1613,70 @@ class MLAQuizApp {
                     .stat-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
                     .weak-areas { margin: 20px 0; }
                     .question-list { margin: 20px 0; }
-                    .incorrect-question { background: #ffebee; padding: 10px; margin: 10px 0; border-radius: 5px; }
+                    .incorrect-question {
+                        margin: 20px 0;
+                        padding: 15px;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 8px;
+                        background: #f8fafc;
+                        page-break-inside: avoid;
+                    }
+                    .question-header {
+                        margin-bottom: 10px;
+                        color: #dc2626;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+                    .question-text {
+                        margin: 10px 0;
+                        padding: 8px;
+                        background: white;
+                        border-left: 3px solid #007AFF;
+                        font-size: 14px;
+                        line-height: 1.5;
+                    }
+                    .question-options {
+                        margin: 10px 0;
+                    }
+                    .question-options ol {
+                        margin: 5px 0;
+                        padding-left: 20px;
+                    }
+                    .question-options li {
+                        margin: 5px 0;
+                        padding: 3px 8px;
+                        border-radius: 4px;
+                        font-size: 13px;
+                    }
+                    .question-options li.your-answer {
+                        background: #fee2e2;
+                        border-left: 3px solid #dc2626;
+                    }
+                    .question-options li.correct-answer {
+                        background: #dcfce7;
+                        border-left: 3px solid #16a34a;
+                        font-weight: bold;
+                    }
+                    .answer-analysis {
+                        margin: 10px 0;
+                        padding: 8px;
+                        background: #f1f5f9;
+                        border-radius: 4px;
+                        font-size: 13px;
+                    }
+                    .explanation-section {
+                        margin: 10px 0;
+                        padding: 10px;
+                        background: #fffbeb;
+                        border: 1px solid #fbbf24;
+                        border-radius: 4px;
+                    }
+                    .explanation-text {
+                        margin-top: 5px;
+                        font-size: 13px;
+                        line-height: 1.6;
+                        color: #374151;
+                    }
                     .correct-question { background: #e8f5e8; padding: 10px; margin: 10px 0; border-radius: 5px; }
                     .progress-note { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; }
                     @media print { body { margin: 0; } }
@@ -1653,6 +1716,29 @@ class MLAQuizApp {
             incorrectQuestionsList: this.getIncorrectQuestions(),
             timePerQuestion: this.questionTimes
         };
+    }
+
+    cleanTextForPDF(text) {
+        if (!text) return 'N/A';
+        
+        // Remove HTML tags but preserve basic formatting
+        let cleanText = text
+            .replace(/<strong>(.*?)<\/strong>/gi, '**$1**')
+            .replace(/<em>(.*?)<\/em>/gi, '*$1*')
+            .replace(/<[^>]*>/g, '') // Remove all other HTML tags
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .trim();
+            
+        // Limit length for readability in PDF
+        if (cleanText.length > 800) {
+            cleanText = cleanText.substring(0, 800) + '...';
+        }
+        
+        return cleanText;
     }
 
     generateReportHTML(data) {
@@ -1699,8 +1785,32 @@ class MLAQuizApp {
                 ${data.incorrectQuestionsList.length > 0 ? 
                     data.incorrectQuestionsList.map(q => `
                         <div class="incorrect-question">
-                            <strong>Question ${q.index + 1}:</strong> ${(q.question.prompt || q.question.scenario || 'Review this question').substring(0, 100)}...
-                            <br><small>Your answer: Option ${q.yourAnswer + 1} | Correct: Option ${q.correctAnswer + 1}</small>
+                            <div class="question-header">
+                                <strong>Question ${q.index + 1}:</strong>
+                            </div>
+                            <div class="question-text">
+                                ${this.cleanTextForPDF(q.question.prompt || q.question.scenario || 'Question text not available')}
+                            </div>
+                            ${q.question.options ? `
+                                <div class="question-options">
+                                    <strong>Options:</strong>
+                                    <ol type="A">
+                                        ${q.question.options.map((option, idx) => `
+                                            <li class="${idx === q.yourAnswer ? 'your-answer' : ''} ${idx === q.correctAnswer ? 'correct-answer' : ''}">${this.cleanTextForPDF(option)}</li>
+                                        `).join('')}
+                                    </ol>
+                                </div>
+                            ` : ''}
+                            <div class="answer-analysis">
+                                <p><strong>Your Answer:</strong> Option ${String.fromCharCode(65 + q.yourAnswer)} - ${this.cleanTextForPDF(q.question.options[q.yourAnswer] || 'N/A')}</p>
+                                <p><strong>Correct Answer:</strong> Option ${String.fromCharCode(65 + q.correctAnswer)} - ${this.cleanTextForPDF(q.question.options[q.correctAnswer] || 'N/A')}</p>
+                            </div>
+                            ${q.question.explanation ? `
+                                <div class="explanation-section">
+                                    <strong>Explanation:</strong>
+                                    <div class="explanation-text">${this.cleanTextForPDF(q.question.explanation)}</div>
+                                </div>
+                            ` : ''}
                         </div>
                     `).join('') : 
                     '<p>🎉 Great job! No incorrect answers to review so far.</p>'
