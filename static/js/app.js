@@ -705,6 +705,7 @@ class MLAQuizApp {
             this.renderCurrentQuestion();
             this.updateProgress();
             this.buildQuestionList(); // Refresh the list to update current indicator
+            this.scrollToTop();
         }
     }
     
@@ -859,6 +860,7 @@ class MLAQuizApp {
             this.currentQuestionIndex++;
             this.renderCurrentQuestion();
             this.updateProgress();
+            this.scrollToTop();
         } else {
             this.finishQuiz();
         }
@@ -869,6 +871,7 @@ class MLAQuizApp {
             this.currentQuestionIndex--;
             this.renderCurrentQuestion();
             this.updateProgress();
+            this.scrollToTop();
         }
     }
     
@@ -1575,6 +1578,13 @@ class MLAQuizApp {
     // Study report generation methods
     generateStudyReport() {
         const reportData = this.calculateReportData();
+        
+        // Check if there's any data to report
+        if (reportData.totalQuestions === 0) {
+            alert('No questions answered yet. Please answer at least one question to generate a report.');
+            return;
+        }
+        
         const reportHTML = this.generateReportHTML(reportData);
         
         // Create a printable window
@@ -1593,6 +1603,7 @@ class MLAQuizApp {
                     .question-list { margin: 20px 0; }
                     .incorrect-question { background: #ffebee; padding: 10px; margin: 10px 0; border-radius: 5px; }
                     .correct-question { background: #e8f5e8; padding: 10px; margin: 10px 0; border-radius: 5px; }
+                    .progress-note { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; }
                     @media print { body { margin: 0; } }
                 </style>
             </head>
@@ -1633,12 +1644,24 @@ class MLAQuizApp {
     }
 
     generateReportHTML(data) {
+        const isPartialReport = data.totalQuestions < (this.questions?.length || 0);
+        const totalQuizQuestions = this.questions?.length || data.totalQuestions;
+        
         return `
             <div class="report-header">
                 <h1>📊 MLA Quiz Study Report</h1>
                 <h2>${data.quizName}</h2>
                 <p>Generated on ${data.date}</p>
+                ${isPartialReport ? '<p><em>⚠️ Partial Report - Quiz in progress</em></p>' : ''}
             </div>
+            
+            ${isPartialReport ? `
+                <div class="progress-note">
+                    <h3>📈 Progress Status</h3>
+                    <p><strong>Questions Answered:</strong> ${data.totalQuestions} of ${totalQuizQuestions}</p>
+                    <p><strong>Completion:</strong> ${Math.round((data.totalQuestions / totalQuizQuestions) * 100)}%</p>
+                </div>
+            ` : ''}
             
             <div class="stats-grid">
                 <div class="stat-card">
@@ -1646,14 +1669,16 @@ class MLAQuizApp {
                     <p><strong>Accuracy:</strong> ${data.accuracy}%</p>
                     <p><strong>Correct:</strong> ${data.correctAnswers}</p>
                     <p><strong>Incorrect:</strong> ${data.incorrectAnswers}</p>
-                    <p><strong>Total Questions:</strong> ${data.totalQuestions}</p>
+                    <p><strong>Questions Answered:</strong> ${data.totalQuestions}</p>
+                    ${isPartialReport ? `<p><strong>Total Quiz Questions:</strong> ${totalQuizQuestions}</p>` : ''}
                 </div>
                 
                 <div class="stat-card">
                     <h3>⏱️ Time Analysis</h3>
                     <p><strong>Total Time:</strong> ${this.formatTime(Math.round(data.totalTime / 1000))}</p>
                     <p><strong>Average per Question:</strong> ${Math.round(data.averageTime / 1000)}s</p>
-                    <p><strong>Questions Answered:</strong> ${data.questionsAnswered}</p>
+                    <p><strong>Questions Timed:</strong> ${data.questionsAnswered}</p>
+                    ${isPartialReport ? '<p><em>Note: Times for answered questions only</em></p>' : ''}
                 </div>
             </div>
             
@@ -1666,8 +1691,9 @@ class MLAQuizApp {
                             <br><small>Your answer: Option ${q.yourAnswer + 1} | Correct: Option ${q.correctAnswer + 1}</small>
                         </div>
                     `).join('') : 
-                    '<p>🎉 Great job! No incorrect answers to review.</p>'
+                    '<p>🎉 Great job! No incorrect answers to review so far.</p>'
                 }
+                ${isPartialReport ? '<p><em>Note: Only showing answered questions. Continue the quiz for complete analysis.</em></p>' : ''}
             </div>
         `;
     }
@@ -1831,6 +1857,38 @@ class MLAQuizApp {
             console.log('Navbar not found for font controls, retrying in 100ms');
             setTimeout(() => this.addFontSizeControls(), 100);
         }
+    }
+    
+    // Scroll to top functionality
+    scrollToTop() {
+        // Smooth scroll to top of the page
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+        
+        // Also scroll the main container if it exists
+        const container = document.querySelector('.container');
+        if (container) {
+            container.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Scroll the quiz screen container specifically
+        const quizScreen = document.getElementById('quizScreen');
+        if (quizScreen) {
+            quizScreen.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        console.log('Scrolled to top');
     }
 }
 
