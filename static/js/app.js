@@ -2880,6 +2880,7 @@ class MLAQuizApp {
 
     // Lab Values Functions
     loadLabValues() {
+        console.log('🧪 Loading lab values...');
         const labDatabase = {
             'cbc': {
                 name: 'Complete Blood Count (CBC)',
@@ -3168,6 +3169,7 @@ class MLAQuizApp {
         searchInput.addEventListener('input', () => this.searchLabValues(labDatabase));
         this.labDatabase = labDatabase;
         this.showLabCategory('all');
+        console.log('🧪 Lab values interface loaded successfully');
     }
 
     searchLabValues(labDatabase) {
@@ -4481,6 +4483,7 @@ function handleEscapeKey(e) {
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.quizApp = new MLAQuizApp();
+    console.log('🩺 QuizApp initialized and assigned to window.quizApp');
 });
 
 // Service Worker registration with better error handling
