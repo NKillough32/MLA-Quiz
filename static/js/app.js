@@ -13,6 +13,7 @@ class MLAQuizApp {
         this.questions = [];
         this.quizName = '';
         this.flaggedQuestions = new Set(); // Track flagged questions
+        this.selectedQuizLength = 20; // Default quiz length
         
         // Time tracking properties
         this.questionStartTime = null;
@@ -67,8 +68,59 @@ class MLAQuizApp {
         document.getElementById('quizFileInput').addEventListener('change', (e) => {
             this.handleFileUpload(e.target.files);
         });
+        
+        // Quiz length selection
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quiz-length-btn')) {
+                this.selectQuizLength(e.target);
+            }
+        });
+    }
+
+    // Quiz length selection methods
+    selectQuizLength(button) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.quiz-length-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        // Update selected length
+        const length = button.getAttribute('data-length');
+        this.selectedQuizLength = length === 'all' ? 'all' : parseInt(length);
+        
+        // Update info text
+        this.updateQuizLengthInfo();
     }
     
+    updateQuizLengthInfo() {
+        const infoEl = document.getElementById('quiz-length-info');
+        if (!infoEl) return;
+        
+        let message = '';
+        if (this.selectedQuizLength === 'all') {
+            message = '📚 Selected: All available questions for comprehensive practice';
+        } else if (this.selectedQuizLength === 100) {
+            message = '🎯 Selected: 100 questions for standard test simulation';
+        } else {
+            message = '📝 Selected: 20 questions for quick practice session';
+        }
+        
+        infoEl.textContent = message;
+    }
+    
+    filterQuestionsByLength(questions) {
+        if (this.selectedQuizLength === 'all' || this.selectedQuizLength >= questions.length) {
+            return questions;
+        }
+        
+        // Shuffle questions and take the selected amount
+        const shuffled = [...questions].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, this.selectedQuizLength);
+    }
+
     async loadQuizzes() {
         try {
             const response = await fetch('/api/quizzes');
@@ -178,6 +230,9 @@ class MLAQuizApp {
                 }
                 
                 this.questions = quiz.questions || [];
+                
+                // Filter questions based on selected length
+                this.questions = this.filterQuestionsByLength(this.questions);
                 this.quizName = quiz.name;
                 this.currentQuestionIndex = 0;
                 this.answers = {};
@@ -203,6 +258,10 @@ class MLAQuizApp {
                 
                 if (data.success) {
                     this.questions = data.questions;
+                    
+                    // Filter questions based on selected length
+                    this.questions = this.filterQuestionsByLength(this.questions);
+                    
                     this.quizName = data.quiz_name;
                     this.currentQuestionIndex = 0;
                     this.answers = {};

@@ -550,6 +550,56 @@
             display: none;
         }
         
+        /* Quiz Length Selection Styling */
+        .quiz-length-btn:hover {
+            border-color: #007AFF !important;
+            background: #f0f8ff !important;
+            color: #007AFF !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+        }
+        
+        .quiz-length-btn.active {
+            border-color: #007AFF !important;
+            background: #007AFF !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        .quiz-length-btn.active:hover {
+            background: #0056cc !important;
+            border-color: #0056cc !important;
+        }
+        
+        [data-theme="dark"] .quiz-length-btn {
+            background: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--border-color) !important;
+        }
+        
+        [data-theme="dark"] .quiz-length-btn:hover {
+            border-color: var(--button-bg) !important;
+            background: var(--bg-tertiary) !important;
+            color: var(--button-bg) !important;
+        }
+        
+        [data-theme="dark"] .quiz-length-btn.active {
+            background: var(--button-bg) !important;
+            border-color: var(--button-bg) !important;
+            color: white !important;
+        }
+        
+        @media (max-width: 480px) {
+            .quiz-length-options {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+            
+            .quiz-length-btn {
+                padding: 10px 12px !important;
+            }
+        }
+        
         /* Responsive font controls for mobile */
         .font-controls {
             position: absolute;
@@ -1487,6 +1537,33 @@
                     </div>
                 </div>
                 
+                <!-- Quiz Length Selection -->
+                <div class="card-content" style="border-bottom: 1px solid #e5e5ea; margin-bottom: 16px;">
+                    <h3 style="font-size: 17px; font-weight: 600; margin: 0 0 8px 0; color: #1c1c1e;">Quiz Length</h3>
+                    <p style="font-size: 15px; color: #8e8e93; margin: 0 0 16px 0;">Choose how many questions you want to practice</p>
+                    
+                    <div class="quiz-length-options" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                        <button class="quiz-length-btn active" data-length="20" style="padding: 12px 8px; border: 2px solid #007AFF; border-radius: 8px; background: #f0f8ff; color: #007AFF; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;">
+                            <div style="font-size: 18px; font-weight: bold;">20</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Quick Practice</div>
+                        </button>
+                        
+                        <button class="quiz-length-btn" data-length="100" style="padding: 12px 8px; border: 2px solid #e5e5ea; border-radius: 8px; background: white; color: #1c1c1e; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;">
+                            <div style="font-size: 18px; font-weight: bold;">100</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Standard Test</div>
+                        </button>
+                        
+                        <button class="quiz-length-btn" data-length="all" style="padding: 12px 8px; border: 2px solid #e5e5ea; border-radius: 8px; background: white; color: #1c1c1e; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;">
+                            <div style="font-size: 18px; font-weight: bold;">ALL</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Full Practice</div>
+                        </button>
+                    </div>
+                    
+                    <div id="quiz-length-info" style="font-size: 13px; color: #8e8e93; margin-top: 12px; text-align: center;">
+                        📝 Selected: 20 questions for quick practice session
+                    </div>
+                </div>
+                
                 <div id="quizList">
                     <div class="loading">
                         <div class="spinner"></div>
@@ -1623,6 +1700,13 @@
             // Check periodically for screen changes
             setInterval(updateFloatingButton, 500);
             updateFloatingButton(); // Initial check
+            
+            // Initialize quiz length selection
+            setTimeout(() => {
+                if (window.quizApp) {
+                    window.quizApp.updateQuizLengthInfo();
+                }
+            }, 100);
         });
     </script>
 </body>
