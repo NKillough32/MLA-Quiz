@@ -2613,62 +2613,111 @@ class MLAQuizApp {
             'acetaminophen': {
                 name: 'Acetaminophen (Paracetamol)',
                 class: 'Analgesic, Antipyretic',
-                mechanism: 'Inhibits COX enzymes centrally',
-                dosing: 'Adults: 325-1000mg q4-6h (max 4g/day). Pediatric: 10-15mg/kg q4-6h',
-                contraindications: 'Severe hepatic impairment, hypersensitivity',
-                interactions: 'Warfarin (↑ INR), chronic alcohol use (↑ hepatotoxicity)',
-                monitoring: 'Liver function with prolonged use or overdose',
-                pregnancy: 'Category B - Safe in pregnancy'
+                mechanism: 'Inhibits COX enzymes centrally, affects prostaglandin synthesis in hypothalamus',
+                dosing: 'Adults: 325-1000mg q4-6h (max 4g/day). Pediatric: 10-15mg/kg q4-6h (max 75mg/kg/day)',
+                contraindications: 'Severe hepatic impairment, hypersensitivity, chronic alcoholism',
+                interactions: 'Warfarin (↑ INR), chronic alcohol use (↑ hepatotoxicity), phenytoin (↑ metabolism)',
+                monitoring: 'Liver function with prolonged use, serum levels in overdose',
+                pregnancy: 'Category B - Safe in pregnancy, preferred analgesic',
+                sideEffects: 'Rare: hepatotoxicity, skin reactions (SJS/TEN), nephrotoxicity with chronic use',
+                pharmacokinetics: 'Onset: 30-60min, Peak: 1-3h, Half-life: 2-3h, Metabolism: hepatic (CYP2E1)',
+                clinicalPearls: 'No anti-inflammatory effect. Safer than NSAIDs in elderly. Overdose antidote: N-acetylcysteine',
+                maxDose: 'Adults: 4g/day, Elderly: 3g/day. Lower in hepatic impairment'
             },
             'amoxicillin': {
                 name: 'Amoxicillin',
-                class: 'Beta-lactam antibiotic (Penicillin)',
-                mechanism: 'Inhibits bacterial cell wall synthesis',
-                dosing: 'Adults: 500mg q8h or 875mg q12h. Pediatric: 25-50mg/kg/day divided q8-12h',
-                contraindications: 'Penicillin allergy, severe renal impairment',
-                interactions: 'Methotrexate (↑ toxicity), oral contraceptives (↓ efficacy)',
-                monitoring: 'Signs of allergic reaction, C. diff colitis',
-                pregnancy: 'Category B - Safe in pregnancy'
+                class: 'Beta-lactam antibiotic (Aminopenicillin)',
+                mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
+                dosing: 'Adults: 500mg q8h or 875mg q12h. Severe infections: 1g q8h. Pediatric: 25-50mg/kg/day divided q8-12h',
+                contraindications: 'Penicillin allergy, infectious mononucleosis (rash risk)',
+                interactions: 'Methotrexate (↑ toxicity), oral contraceptives (↓ efficacy), probenecid (↑ levels)',
+                monitoring: 'Signs of allergic reaction, C. difficile colitis, renal function',
+                pregnancy: 'Category B - Safe in pregnancy',
+                sideEffects: 'GI upset, diarrhea, rash (especially with EBV), C. diff colitis, hypersensitivity',
+                pharmacokinetics: 'Onset: 1h, Peak: 1-2h, Half-life: 1.3h, Excretion: renal (80%)',
+                clinicalPearls: 'Broad spectrum. Good oral bioavailability. Adjust dose in renal impairment',
+                coverage: 'Gram-positive: Strep, some Staph. Gram-negative: E. coli, H. influenzae. Not: MRSA, Pseudomonas'
             },
             'atorvastatin': {
                 name: 'Atorvastatin',
                 class: 'HMG-CoA reductase inhibitor (Statin)',
-                mechanism: 'Inhibits cholesterol synthesis',
-                dosing: 'Adults: 10-80mg daily in evening',
-                contraindications: 'Active liver disease, pregnancy, breastfeeding',
-                interactions: 'Warfarin (↑ INR), cyclosporine (↑ statin levels)',
-                monitoring: 'Liver enzymes, CK, lipid panel',
-                pregnancy: 'Category X - Contraindicated'
+                mechanism: 'Competitively inhibits HMG-CoA reductase, rate-limiting enzyme in cholesterol synthesis',
+                dosing: 'Adults: Start 10-20mg daily, titrate q4-6 weeks. Range: 10-80mg daily. Take in evening',
+                contraindications: 'Active liver disease, pregnancy, breastfeeding, unexplained ↑ transaminases',
+                interactions: 'CYP3A4 inhibitors (↑ statin levels), warfarin (↑ INR), digoxin (↑ levels)',
+                monitoring: 'Lipid panel (6-8 weeks), ALT/AST baseline and PRN, CK if muscle symptoms',
+                pregnancy: 'Category X - Contraindicated (teratogenic)',
+                sideEffects: 'Myalgia (5-10%), hepatotoxicity (<1%), rhabdomyolysis (rare), new-onset diabetes',
+                pharmacokinetics: 'Peak: 1-2h, Half-life: 14h, Metabolism: CYP3A4, Active metabolites',
+                clinicalPearls: 'Most potent statin. Long half-life allows morning dosing. Pleiotropic effects beyond lipids',
+                targets: 'LDL reduction: 30-60%. Also ↓ triglycerides, ↑ HDL. Goal LDL <100 (<70 if high risk)'
             },
             'metformin': {
                 name: 'Metformin',
                 class: 'Biguanide antidiabetic',
-                mechanism: 'Decreases hepatic glucose production, improves insulin sensitivity',
-                dosing: 'Adults: Start 500mg BID, max 2550mg/day divided',
-                contraindications: 'eGFR <30, acute heart failure, severe liver disease',
-                interactions: 'Contrast dye (hold 48h), alcohol (↑ lactic acidosis risk)',
-                monitoring: 'Renal function, B12 levels, lactic acid',
-                pregnancy: 'Category B - Generally safe'
+                mechanism: 'Decreases hepatic glucose production, improves peripheral insulin sensitivity, ↓ glucose absorption',
+                dosing: 'Adults: Start 500mg BID with meals, titrate weekly by 500mg. Max: 2550mg/day. Extended-release: once daily',
+                contraindications: 'eGFR <30, acute heart failure, severe liver disease, alcohol abuse, contrast procedures',
+                interactions: 'Contrast dye (hold 48h), alcohol (↑ lactic acidosis), carbonic anhydrase inhibitors',
+                monitoring: 'Renal function q6mo, B12 levels annually, lactic acid if symptoms, A1C q3mo',
+                pregnancy: 'Category B - Generally safe, may use in gestational diabetes',
+                sideEffects: 'GI upset (25%), diarrhea, metallic taste, B12 deficiency, lactic acidosis (<1/100,000)',
+                pharmacokinetics: 'Peak: 2-3h, Half-life: 5h, No metabolism, Excretion: renal unchanged',
+                clinicalPearls: 'First-line T2DM. Weight neutral/loss. Cardiovascular benefits. Start low, go slow for GI tolerance',
+                efficacy: 'A1C reduction: 1-2%. FPG reduction: 60-80 mg/dL. No hypoglycemia as monotherapy'
             },
             'lisinopril': {
                 name: 'Lisinopril',
-                class: 'ACE inhibitor',
-                mechanism: 'Inhibits angiotensin-converting enzyme',
-                dosing: 'Adults: 5-40mg daily',
-                contraindications: 'Pregnancy, bilateral renal artery stenosis, angioedema history',
-                interactions: 'NSAIDs (↓ efficacy), potassium supplements (hyperkalemia)',
-                monitoring: 'Blood pressure, renal function, potassium',
-                pregnancy: 'Category D - Contraindicated'
+                class: 'Angiotensin-Converting Enzyme (ACE) inhibitor',
+                mechanism: 'Inhibits ACE, preventing conversion of angiotensin I to II, ↓ aldosterone secretion',
+                dosing: 'HTN: Start 5-10mg daily, titrate to 10-40mg daily. HF: Start 2.5-5mg daily, titrate to 20-40mg daily',
+                contraindications: 'Pregnancy, bilateral renal artery stenosis, angioedema history, hyperkalemia >5.5',
+                interactions: 'NSAIDs (↓ efficacy, ↑ nephrotoxicity), K+ supplements (hyperkalemia), lithium (↑ levels)',
+                monitoring: 'Blood pressure, renal function, potassium (baseline, 1-2 weeks, then periodic)',
+                pregnancy: 'Category D - Contraindicated (teratogenic: oligohydramnios, IUGR)',
+                sideEffects: 'Dry cough (10-15%), hyperkalemia, angioedema (<1%), hypotension, renal impairment',
+                pharmacokinetics: 'Onset: 1h, Peak: 6-8h, Half-life: 12h, No metabolism, Excretion: renal',
+                clinicalPearls: 'Renoprotective in diabetes. Cardioprotective post-MI. Cough more common in women/Asians',
+                indications: 'HTN, HF, post-MI, diabetic nephropathy. Proven mortality benefit in HF and post-MI'
             },
             'levothyroxine': {
-                name: 'Levothyroxine',
+                name: 'Levothyroxine (T4)',
                 class: 'Thyroid hormone replacement',
-                mechanism: 'Synthetic T4 hormone replacement',
-                dosing: 'Adults: 1.6mcg/kg/day, adjust based on TSH',
-                contraindications: 'Untreated adrenal insufficiency, acute MI',
-                interactions: 'Iron, calcium (↓ absorption), warfarin (↑ effect)',
-                monitoring: 'TSH, T4, cardiac symptoms',
-                pregnancy: 'Category A - Safe, may need dose increase'
+                mechanism: 'Synthetic T4 hormone, converted to active T3 in peripheral tissues',
+                dosing: 'Adults: 1.6mcg/kg/day (healthy), 1.0mcg/kg/day (elderly/cardiac disease). Adjust by TSH',
+                contraindications: 'Untreated adrenal insufficiency, acute MI, hyperthyroidism',
+                interactions: 'Iron/calcium (↓ absorption by 4h), warfarin (↑ effect), phenytoin (↑ metabolism)',
+                monitoring: 'TSH q6-8 weeks until stable, then annually. Free T4 if central hypothyroidism',
+                pregnancy: 'Category A - Safe, increase dose 25-50% in pregnancy. Critical for fetal development',
+                sideEffects: 'Overtreatment: palpitations, insomnia, tremor, weight loss, heat intolerance, osteoporosis',
+                pharmacokinetics: 'Peak: 2-4h, Half-life: 7 days, Steady state: 6-8 weeks, Metabolism: peripheral deiodination',
+                clinicalPearls: 'Take on empty stomach 30-60min before breakfast. Consistent timing crucial. Long half-life allows missed doses',
+                targets: 'TSH: 0.5-2.5 mIU/L (general), 2.5-3.0 (pregnancy), <2.0 (elderly). Adjust dose by 25-50mcg'
+            },
+            'simvastatin': {
+                name: 'Simvastatin',
+                class: 'HMG-CoA reductase inhibitor (Statin)',
+                mechanism: 'Inhibits cholesterol synthesis, upregulates LDL receptors',
+                dosing: 'Adults: 10-40mg daily in evening. Max: 40mg (80mg restricted due to myopathy risk)',
+                contraindications: 'Active liver disease, pregnancy, strong CYP3A4 inhibitors',
+                interactions: 'Strong CYP3A4 inhibitors contraindicated. Moderate inhibitors: max 10-20mg',
+                monitoring: 'Lipids, LFTs, CK if symptoms',
+                pregnancy: 'Category X - Contraindicated',
+                sideEffects: 'Myopathy risk higher than other statins, especially at 80mg dose',
+                clinicalPearls: 'Generic available. Higher myopathy risk than atorvastatin. 80mg dose avoided'
+            },
+            'amlodipine': {
+                name: 'Amlodipine',
+                class: 'Dihydropyridine calcium channel blocker',
+                mechanism: 'Blocks L-type calcium channels in vascular smooth muscle, causing vasodilation',
+                dosing: 'Adults: Start 2.5-5mg daily, max 10mg daily. Elderly: start 2.5mg daily',
+                contraindications: 'Hypersensitivity, severe aortic stenosis',
+                interactions: 'CYP3A4 inhibitors (↑ levels), simvastatin (limit dose)',
+                monitoring: 'Blood pressure, heart rate, peripheral edema',
+                pregnancy: 'Category C - Use if benefit outweighs risk',
+                sideEffects: 'Peripheral edema (7-11%), flushing, dizziness, fatigue, gum hyperplasia',
+                pharmacokinetics: 'Peak: 6-12h, Half-life: 35-50h, Metabolism: hepatic',
+                clinicalPearls: 'Long half-life allows once daily dosing. Lower incidence of reflex tachycardia. Peripheral edema not fluid overload'
             }
         };
         
@@ -2758,33 +2807,69 @@ class MLAQuizApp {
                 <h3>${drug.name}</h3>
                 <div class="drug-info">
                     <div class="info-section">
-                        <h4>Classification</h4>
+                        <h4>🏷️ Classification</h4>
                         <p>${drug.class}</p>
                     </div>
                     <div class="info-section">
-                        <h4>Mechanism of Action</h4>
+                        <h4>⚙️ Mechanism of Action</h4>
                         <p>${drug.mechanism}</p>
                     </div>
                     <div class="info-section">
-                        <h4>Dosing</h4>
+                        <h4>💊 Dosing & Administration</h4>
                         <p>${drug.dosing}</p>
+                        ${drug.maxDose ? `<p><strong>Maximum Dose:</strong> ${drug.maxDose}</p>` : ''}
                     </div>
                     <div class="info-section">
-                        <h4>Contraindications</h4>
+                        <h4>⚠️ Contraindications</h4>
                         <p>${drug.contraindications}</p>
                     </div>
                     <div class="info-section">
-                        <h4>Drug Interactions</h4>
+                        <h4>🔄 Drug Interactions</h4>
                         <p>${drug.interactions}</p>
                     </div>
                     <div class="info-section">
-                        <h4>Monitoring</h4>
+                        <h4>📊 Monitoring Parameters</h4>
                         <p>${drug.monitoring}</p>
                     </div>
                     <div class="info-section">
-                        <h4>Pregnancy Category</h4>
+                        <h4>🤰 Pregnancy Safety</h4>
                         <p>${drug.pregnancy}</p>
                     </div>
+                    ${drug.sideEffects ? `
+                    <div class="info-section">
+                        <h4>🚨 Side Effects</h4>
+                        <p>${drug.sideEffects}</p>
+                    </div>` : ''}
+                    ${drug.pharmacokinetics ? `
+                    <div class="info-section">
+                        <h4>⏱️ Pharmacokinetics</h4>
+                        <p>${drug.pharmacokinetics}</p>
+                    </div>` : ''}
+                    ${drug.clinicalPearls ? `
+                    <div class="info-section">
+                        <h4>💎 Clinical Pearls</h4>
+                        <p>${drug.clinicalPearls}</p>
+                    </div>` : ''}
+                    ${drug.coverage ? `
+                    <div class="info-section">
+                        <h4>🦠 Antimicrobial Coverage</h4>
+                        <p>${drug.coverage}</p>
+                    </div>` : ''}
+                    ${drug.targets ? `
+                    <div class="info-section">
+                        <h4>🎯 Treatment Targets</h4>
+                        <p>${drug.targets}</p>
+                    </div>` : ''}
+                    ${drug.efficacy ? `
+                    <div class="info-section">
+                        <h4>📈 Clinical Efficacy</h4>
+                        <p>${drug.efficacy}</p>
+                    </div>` : ''}
+                    ${drug.indications ? `
+                    <div class="info-section">
+                        <h4>🎯 Indications</h4>
+                        <p>${drug.indications}</p>
+                    </div>` : ''}
                 </div>
             </div>
         `;
@@ -2796,43 +2881,266 @@ class MLAQuizApp {
             'cbc': {
                 name: 'Complete Blood Count (CBC)',
                 values: {
-                    'WBC': { normal: '4.5-11.0 × 10³/μL', low: 'Immunosuppression, viral infection', high: 'Infection, leukemia, stress' },
-                    'RBC': { normal: 'M: 4.7-6.1, F: 4.2-5.4 × 10⁶/μL', low: 'Anemia, bleeding', high: 'Polycythemia, dehydration' },
-                    'Hemoglobin': { normal: 'M: 14-18, F: 12-16 g/dL', low: 'Anemia, bleeding', high: 'Polycythemia, COPD' },
-                    'Hematocrit': { normal: 'M: 42-52%, F: 37-47%', low: 'Anemia, overhydration', high: 'Dehydration, polycythemia' },
-                    'Platelets': { normal: '150-450 × 10³/μL', low: 'Bleeding risk, ITP', high: 'Thrombocytosis, malignancy' }
+                    'WBC': { 
+                        normal: '4.5-11.0 × 10³/μL', 
+                        low: 'Immunosuppression, viral infection, autoimmune disease, chemotherapy', 
+                        high: 'Bacterial infection, leukemia, stress, tissue necrosis, smoking',
+                        critical: '<1.0 or >30 × 10³/μL',
+                        ageVariations: 'Newborn: 9-30, Child: 5-17, Adult: 4.5-11',
+                        clinicalSignificance: 'Left shift suggests bacterial infection. Lymphocytosis in viral infections.'
+                    },
+                    'RBC': { 
+                        normal: 'M: 4.7-6.1, F: 4.2-5.4 × 10⁶/μL', 
+                        low: 'Anemia (iron deficiency, chronic disease, hemolysis), bleeding, kidney disease', 
+                        high: 'Polycythemia vera, dehydration, COPD, high altitude',
+                        critical: '<2.5 or >7.0 × 10⁶/μL',
+                        ageVariations: 'Newborn: 4.8-7.1, Child: 4.0-5.2',
+                        clinicalSignificance: 'Combined with Hgb/Hct for anemia classification. MCV helps determine type.'
+                    },
+                    'Hemoglobin': { 
+                        normal: 'M: 14-18, F: 12-16 g/dL', 
+                        low: 'Anemia, bleeding, iron deficiency, chronic kidney disease', 
+                        high: 'Polycythemia, dehydration, COPD, smoking',
+                        critical: '<7.0 or >20 g/dL',
+                        ageVariations: 'Newborn: 14-24, Child: 11-16, Pregnancy: 11-13',
+                        clinicalSignificance: 'Best indicator of oxygen-carrying capacity. Transfusion threshold typically <7-8 g/dL.'
+                    },
+                    'Hematocrit': { 
+                        normal: 'M: 42-52%, F: 37-47%', 
+                        low: 'Anemia, overhydration, pregnancy, bleeding', 
+                        high: 'Dehydration, polycythemia, COPD, diuretic use',
+                        critical: '<20% or >60%',
+                        ageVariations: 'Newborn: 42-75%, Child: 33-45%',
+                        clinicalSignificance: 'Rule of 3: Hct ≈ 3 × Hgb. Falsely elevated in dehydration.'
+                    },
+                    'Platelets': { 
+                        normal: '150-450 × 10³/μL', 
+                        low: 'ITP, drug-induced, hypersplenism, viral infection, heparin', 
+                        high: 'Essential thrombocythemia, reactive (infection, malignancy), iron deficiency',
+                        critical: '<20 or >1000 × 10³/μL',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Bleeding risk increases <50K. Spontaneous bleeding <10K. Thrombosis risk >1000K.'
+                    },
+                    'MCV': {
+                        normal: '80-100 fL',
+                        low: 'Iron deficiency, thalassemia, chronic disease, lead poisoning',
+                        high: 'B12/folate deficiency, alcohol use, hypothyroidism, reticulocytosis',
+                        critical: '<70 or >120 fL',
+                        ageVariations: 'Child: 70-90, Adult: 80-100',
+                        clinicalSignificance: 'Microcytic: iron studies. Macrocytic: B12/folate levels. Normocytic: chronic disease.'
+                    }
                 }
             },
             'bmp': {
                 name: 'Basic Metabolic Panel (BMP)',
                 values: {
-                    'Glucose': { normal: '70-100 mg/dL (fasting)', low: 'Hypoglycemia, insulin excess', high: 'Diabetes, stress, steroids' },
-                    'BUN': { normal: '7-20 mg/dL', low: 'Liver disease, malnutrition', high: 'Renal failure, dehydration' },
-                    'Creatinine': { normal: 'M: 0.7-1.3, F: 0.6-1.1 mg/dL', low: 'Low muscle mass', high: 'Renal failure, dehydration' },
-                    'Sodium': { normal: '136-145 mEq/L', low: 'Hyponatremia, SIADH', high: 'Dehydration, diabetes insipidus' },
-                    'Potassium': { normal: '3.5-5.0 mEq/L', low: 'Diuretics, diarrhea', high: 'Renal failure, ACE inhibitors' },
-                    'Chloride': { normal: '98-107 mEq/L', low: 'Vomiting, diuretics', high: 'Dehydration, hypernatremia' },
-                    'CO2': { normal: '22-29 mEq/L', low: 'Metabolic acidosis', high: 'Metabolic alkalosis' }
+                    'Glucose': { 
+                        normal: '70-100 mg/dL (fasting), <140 random', 
+                        low: 'Hypoglycemia: insulin excess, liver disease, adrenal insufficiency, starvation', 
+                        high: 'Diabetes, prediabetes, stress, steroids, pancreatic disease',
+                        critical: '<40 or >400 mg/dL',
+                        ageVariations: 'Child: 60-100, Adult: 70-100, Elderly: may be slightly higher',
+                        clinicalSignificance: 'Fasting >126 or random >200 suggests diabetes. HbA1c >6.5% diagnostic.'
+                    },
+                    'BUN': { 
+                        normal: '7-20 mg/dL', 
+                        low: 'Liver disease, malnutrition, overhydration, low protein diet', 
+                        high: 'Acute/chronic kidney disease, dehydration, GI bleeding, high protein diet',
+                        critical: '>100 mg/dL',
+                        ageVariations: 'Child: 5-18, Adult: 7-20, Elderly: may be elevated',
+                        clinicalSignificance: 'BUN:Cr ratio >20 suggests prerenal azotemia. <10 suggests liver disease.'
+                    },
+                    'Creatinine': { 
+                        normal: 'M: 0.7-1.3, F: 0.6-1.1 mg/dL', 
+                        low: 'Low muscle mass, malnutrition, pregnancy', 
+                        high: 'Acute/chronic kidney disease, dehydration, muscle breakdown',
+                        critical: '>4.0 mg/dL or >3× baseline',
+                        ageVariations: 'Child: 0.3-0.7, Adult varies by muscle mass, Elderly: lower baseline',
+                        clinicalSignificance: 'Use eGFR for kidney function. 50% increase = AKI. Delayed rise after injury.'
+                    },
+                    'eGFR': {
+                        normal: '>90 mL/min/1.73m²',
+                        low: 'CKD stages: 60-89 (stage 2), 45-59 (3a), 30-44 (3b), 15-29 (4), <15 (5)',
+                        high: 'Hyperfiltration (early diabetes), pregnancy',
+                        critical: '<15 mL/min/1.73m² (dialysis consideration)',
+                        ageVariations: 'Declines ~1 mL/min/year after age 40',
+                        clinicalSignificance: 'More accurate than creatinine alone. Adjust medications at <60. Nephrology referral <30.'
+                    },
+                    'Sodium': { 
+                        normal: '136-145 mEq/L', 
+                        low: 'SIADH, diuretics, heart failure, liver disease, hypothyroidism', 
+                        high: 'Dehydration, diabetes insipidus, excess salt intake, hyperaldosteronism',
+                        critical: '<125 or >160 mEq/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Hyponatremia symptoms: confusion, seizures. Correct slowly (0.5-1 mEq/L/hr) to avoid osmotic demyelination.'
+                    },
+                    'Potassium': { 
+                        normal: '3.5-5.0 mEq/L', 
+                        low: 'Diuretics, diarrhea, hyperaldosteronism, poor intake, alkalosis', 
+                        high: 'Kidney disease, ACE inhibitors, tissue breakdown, acidosis, hemolysis',
+                        critical: '<2.5 or >6.5 mEq/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Cardiac effects: peaked T-waves >6.5, paralysis >8.0. Replace cautiously in kidney disease.'
+                    },
+                    'Chloride': { 
+                        normal: '98-107 mEq/L', 
+                        low: 'Vomiting, diuretics, Addison disease, metabolic alkalosis', 
+                        high: 'Dehydration, hypernatremia, metabolic acidosis, diarrhea',
+                        critical: '<85 or >115 mEq/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Usually follows sodium. Anion gap = Na - (Cl + CO2). Normal gap: 8-12.'
+                    },
+                    'CO2': { 
+                        normal: '22-29 mEq/L', 
+                        low: 'Metabolic acidosis (DKA, lactic acidosis, renal failure)', 
+                        high: 'Metabolic alkalosis (vomiting, diuretics), respiratory acidosis',
+                        critical: '<15 or >35 mEq/L',
+                        ageVariations: 'Child: 20-28, Adult: 22-29',
+                        clinicalSignificance: 'Reflects bicarbonate level. Low CO2 with high anion gap suggests metabolic acidosis.'
+                    }
                 }
             },
             'lft': {
                 name: 'Liver Function Tests (LFT)',
                 values: {
-                    'ALT': { normal: 'M: 10-40, F: 7-35 U/L', low: 'Rarely significant', high: 'Hepatitis, liver damage' },
-                    'AST': { normal: 'M: 10-40, F: 9-32 U/L', low: 'Rarely significant', high: 'Liver/muscle damage, MI' },
-                    'Alkaline Phosphatase': { normal: '44-147 U/L', low: 'Hypothyroidism', high: 'Liver disease, bone disease' },
-                    'Total Bilirubin': { normal: '0.3-1.2 mg/dL', low: 'Rarely significant', high: 'Hemolysis, liver disease' },
-                    'Albumin': { normal: '3.5-5.0 g/dL', low: 'Liver disease, malnutrition', high: 'Dehydration' },
-                    'PT/INR': { normal: 'PT: 11-13 sec, INR: 0.8-1.1', low: 'Hypercoagulable state', high: 'Liver disease, warfarin' }
+                    'ALT': { 
+                        normal: 'M: 10-40, F: 7-35 U/L', 
+                        low: 'Rarely clinically significant', 
+                        high: 'Hepatocellular injury: hepatitis, drugs, alcohol, NASH, Wilson disease',
+                        critical: '>1000 U/L (acute hepatic necrosis)',
+                        ageVariations: 'Child: 5-25, Adult varies by gender',
+                        clinicalSignificance: 'More liver-specific than AST. ALT>AST suggests hepatocellular injury. Peak in acute hepatitis: 1000-5000.'
+                    },
+                    'AST': { 
+                        normal: 'M: 10-40, F: 9-32 U/L', 
+                        low: 'Rarely clinically significant', 
+                        high: 'Liver/muscle damage, MI, hemolysis, alcohol use',
+                        critical: '>1000 U/L',
+                        ageVariations: 'Child: 15-40, Adult varies by gender',
+                        clinicalSignificance: 'AST>ALT (ratio >2) suggests alcohol. Also elevated in muscle disease, MI, hemolysis.'
+                    },
+                    'Alkaline Phosphatase': { 
+                        normal: '44-147 U/L (adult)', 
+                        low: 'Hypothyroidism, malnutrition, Wilson disease', 
+                        high: 'Cholestasis, bone disease, pregnancy, malignancy, Paget disease',
+                        critical: '>5× upper limit',
+                        ageVariations: 'Child/adolescent: 100-390 (bone growth), Pregnancy: elevated',
+                        clinicalSignificance: 'Elevated with GGT suggests hepatic source. Isolated elevation: bone disease, pregnancy.'
+                    },
+                    'GGT': {
+                        normal: 'M: 9-50, F: 8-40 U/L',
+                        low: 'Rarely significant',
+                        high: 'Alcohol use, cholestasis, drugs, NASH',
+                        critical: '>10× upper limit',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'Most sensitive for alcohol use. Helps differentiate hepatic vs. bone source of elevated ALP.'
+                    },
+                    'Total Bilirubin': { 
+                        normal: '0.3-1.2 mg/dL', 
+                        low: 'Rarely significant', 
+                        high: 'Hemolysis, liver disease, Gilbert syndrome, cholestasis',
+                        critical: '>20 mg/dL',
+                        ageVariations: 'Newborn: physiologic elevation first week',
+                        clinicalSignificance: 'Conjugated >2.0 suggests hepatic/post-hepatic cause. Unconjugated elevation: hemolysis, Gilbert.'
+                    },
+                    'Direct Bilirubin': {
+                        normal: '0.0-0.3 mg/dL',
+                        low: 'Normal',
+                        high: 'Hepatocellular injury, cholestasis, Dubin-Johnson syndrome',
+                        critical: '>15 mg/dL',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Conjugated bilirubin. Elevation suggests hepatic processing defect or biliary obstruction.'
+                    },
+                    'Albumin': { 
+                        normal: '3.5-5.0 g/dL', 
+                        low: 'Liver disease, malnutrition, nephrotic syndrome, inflammation', 
+                        high: 'Dehydration (rare)',
+                        critical: '<2.0 g/dL',
+                        ageVariations: 'Child: 3.4-4.8, Adult: 3.5-5.0, Elderly: may be lower',
+                        clinicalSignificance: 'Half-life 20 days, reflects chronic liver function. Low albumin increases drug free fractions.'
+                    },
+                    'PT/INR': { 
+                        normal: 'PT: 11-13 sec, INR: 0.8-1.1', 
+                        low: 'Hypercoagulable state (rare)', 
+                        high: 'Liver disease, warfarin, vitamin K deficiency, factor deficiencies',
+                        critical: 'INR >5.0',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Reflects hepatic synthetic function. Warfarin target INR: 2-3 (most), 2.5-3.5 (mechanical valves).'
+                    }
                 }
             },
             'lipids': {
                 name: 'Lipid Panel',
                 values: {
-                    'Total Cholesterol': { normal: '<200 mg/dL', low: 'Malnutrition, hyperthyroid', high: 'CAD risk, familial hypercholesterolemia' },
-                    'LDL': { normal: '<100 mg/dL (optimal)', low: 'Over-treatment', high: 'CAD risk, diabetes' },
-                    'HDL': { normal: 'M: >40, F: >50 mg/dL', low: 'CAD risk, metabolic syndrome', high: 'Cardioprotective' },
-                    'Triglycerides': { normal: '<150 mg/dL', low: 'Malnutrition', high: 'Pancreatitis risk, diabetes' }
+                    'Total Cholesterol': { 
+                        normal: '<200 mg/dL (desirable)', 
+                        low: 'Malnutrition, hyperthyroidism, liver disease, malabsorption', 
+                        high: 'Familial hypercholesterolemia, diabetes, hypothyroidism, diet',
+                        critical: '>400 mg/dL',
+                        ageVariations: 'Increases with age until menopause (women)',
+                        clinicalSignificance: 'Borderline high: 200-239. High: ≥240. Less important than LDL for risk assessment.'
+                    },
+                    'LDL': { 
+                        normal: '<100 mg/dL (optimal), <70 (high risk)', 
+                        low: 'Overtreatment, malnutrition, hyperthyroidism', 
+                        high: 'Primary hyperlipidemia, diabetes, hypothyroidism, diet',
+                        critical: '>190 mg/dL',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'Primary target for statin therapy. Goals: <70 (very high risk), <100 (high risk), <130 (moderate risk).'
+                    },
+                    'HDL': { 
+                        normal: 'M: >40, F: >50 mg/dL', 
+                        low: 'Metabolic syndrome, diabetes, smoking, sedentary lifestyle', 
+                        high: 'Cardioprotective, exercise, moderate alcohol, genetics',
+                        critical: '<25 mg/dL',
+                        ageVariations: 'Higher in premenopausal women',
+                        clinicalSignificance: 'Low HDL major CAD risk factor. HDL >60 is negative risk factor (protective).'
+                    },
+                    'Triglycerides': { 
+                        normal: '<150 mg/dL', 
+                        low: 'Malnutrition, hyperthyroidism', 
+                        high: 'Diabetes, alcohol, obesity, familial hypertriglyceridemia',
+                        critical: '>1000 mg/dL (pancreatitis risk)',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'High: 200-499. Very high: ≥500. Pancreatitis risk >1000. Fasting required for accuracy.'
+                    },
+                    'Non-HDL Cholesterol': {
+                        normal: '<130 mg/dL',
+                        low: 'Malnutrition, overtreatment',
+                        high: 'Atherogenic dyslipidemia, diabetes',
+                        critical: '>220 mg/dL',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'Total cholesterol - HDL. Better predictor than LDL when triglycerides elevated. Secondary target.'
+                    }
+                }
+            },
+            'thyroid': {
+                name: 'Thyroid Function Tests',
+                values: {
+                    'TSH': {
+                        normal: '0.4-4.0 mIU/L',
+                        low: 'Hyperthyroidism, central hypothyroidism, pregnancy (1st trimester)',
+                        high: 'Primary hypothyroidism, subclinical hypothyroidism',
+                        critical: '<0.01 or >20 mIU/L',
+                        ageVariations: 'Elderly: upper limit may be 6-7 mIU/L',
+                        clinicalSignificance: 'Best screening test. Suppressed in hyperthyroidism, elevated in primary hypothyroidism.'
+                    },
+                    'Free T4': {
+                        normal: '0.8-1.8 ng/dL',
+                        low: 'Hypothyroidism, central thyroid disease, severe illness',
+                        high: 'Hyperthyroidism, excess thyroid hormone replacement',
+                        critical: '<0.4 or >4.0 ng/dL',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Reflects thyroid hormone activity. Normal with abnormal TSH suggests subclinical disease.'
+                    },
+                    'Free T3': {
+                        normal: '2.3-4.2 pg/mL',
+                        low: 'Hypothyroidism, sick euthyroid syndrome',
+                        high: 'Hyperthyroidism, T3 toxicosis',
+                        critical: '<1.0 or >8.0 pg/mL',
+                        ageVariations: 'Decreases slightly with age',
+                        clinicalSignificance: 'Most metabolically active hormone. May be normal in early hypothyroidism.'
+                    }
                 }
             }
         };
@@ -2939,20 +3247,35 @@ class MLAQuizApp {
         container.innerHTML = `
             <button class="back-btn" onclick="window.quizApp.showLabPanel('${panelKey}')">← Back to ${this.labDatabase[panelKey].name}</button>
             <div class="lab-test-detail">
-                <h3>${testKey}</h3>
+                <h3>📊 ${testKey}</h3>
                 <div class="test-info">
                     <div class="info-section">
-                        <h4>Normal Range</h4>
+                        <h4>🎯 Normal Range</h4>
                         <p>${test.normal}</p>
                     </div>
+                    ${test.ageVariations ? `
                     <div class="info-section">
-                        <h4>Low Values</h4>
+                        <h4>👶🧓 Age Variations</h4>
+                        <p>${test.ageVariations}</p>
+                    </div>` : ''}
+                    <div class="info-section">
+                        <h4>⬇️ Low Values (Causes)</h4>
                         <p>${test.low}</p>
                     </div>
                     <div class="info-section">
-                        <h4>High Values</h4>
+                        <h4>⬆️ High Values (Causes)</h4>
                         <p>${test.high}</p>
                     </div>
+                    ${test.critical ? `
+                    <div class="info-section critical-values">
+                        <h4>🚨 Critical Values</h4>
+                        <p>${test.critical}</p>
+                    </div>` : ''}
+                    ${test.clinicalSignificance ? `
+                    <div class="info-section">
+                        <h4>🔬 Clinical Significance</h4>
+                        <p>${test.clinicalSignificance}</p>
+                    </div>` : ''}
                 </div>
             </div>
         `;
@@ -2964,52 +3287,169 @@ class MLAQuizApp {
             'hypertension': {
                 title: 'Hypertension Management (ACC/AHA 2017)',
                 category: 'Cardiovascular',
+                evidenceLevel: 'Class I, Level A',
+                lastUpdated: '2017',
                 stages: {
                     'Normal': 'SBP <120 AND DBP <80 mmHg',
                     'Elevated': 'SBP 120-129 AND DBP <80 mmHg',
                     'Stage 1': 'SBP 130-139 OR DBP 80-89 mmHg',
-                    'Stage 2': 'SBP ≥140 OR DBP ≥90 mmHg'
+                    'Stage 2': 'SBP ≥140 OR DBP ≥90 mmHg',
+                    'Hypertensive Crisis': 'SBP >180 AND/OR DBP >120 mmHg'
                 },
                 treatment: {
-                    'Elevated': 'Lifestyle modifications only',
-                    'Stage 1': 'Lifestyle + medication if CVD risk ≥10% or DM/CKD',
-                    'Stage 2': 'Lifestyle + combination therapy (ACE-I/ARB + CCB or thiazide)'
+                    'Normal': 'Promote optimal lifestyle habits. Reassess in 1 year',
+                    'Elevated': 'Nonpharmacologic therapy. Reassess in 3-6 months',
+                    'Stage 1': 'Lifestyle + medication if ASCVD risk ≥10% or DM/CKD/CVD. Goal <130/80',
+                    'Stage 2': 'Lifestyle + combination therapy (ACE-I/ARB + CCB or thiazide). Goal <130/80',
+                    'Crisis': 'Immediate evaluation. Lower BP gradually over 24-48h unless end-organ damage'
                 },
-                lifestyle: 'Weight loss, DASH diet, sodium restriction (<2.3g/day), exercise, alcohol moderation'
+                lifestyle: 'Weight loss (1kg = 1mmHg), DASH diet, sodium <2.3g/day, exercise 150min/week, limit alcohol (M: ≤2 drinks, F: ≤1 drink)',
+                medications: {
+                    'First-line': 'ACE inhibitor, ARB, thiazide diuretic, CCB',
+                    'Combination': 'ACE-I/ARB + CCB, ACE-I/ARB + thiazide, CCB + thiazide',
+                    'Resistant': 'Add spironolactone 25-50mg daily after optimizing first-line agents'
+                },
+                monitoring: 'Home BP monitoring preferred. Office visits q1-3mo until goal, then q3-6mo',
+                contraindications: {
+                    'ACE-I/ARB': 'Pregnancy, hyperkalemia, bilateral RAS, angioedema',
+                    'Thiazides': 'Gout, hyponatremia, sulfa allergy',
+                    'CCB': 'Heart failure with reduced EF (non-DHP)',
+                    'Beta-blockers': 'Asthma, heart block, peripheral artery disease'
+                },
+                specialPopulations: {
+                    'Diabetes': 'Goal <130/80, prefer ACE-I/ARB for renoprotection',
+                    'CKD': 'Goal <130/80, prefer ACE-I/ARB, monitor K+ and Cr',
+                    'Elderly': 'Goal <130/80 if tolerated, start low and go slow',
+                    'Pregnancy': 'Goal <140/90, use labetalol, nifedipine, methyldopa'
+                }
             },
             'diabetes': {
                 title: 'Type 2 Diabetes Management (ADA 2024)',
                 category: 'Endocrine',
+                evidenceLevel: 'Evidence-based recommendations',
+                lastUpdated: '2024',
                 targets: {
-                    'HbA1c': '<7% (individualize 6.5-8%)',
+                    'HbA1c': '<7% (individualize 6.5-8% based on age, comorbidities, life expectancy)',
                     'Preprandial glucose': '80-130 mg/dL',
                     'Postprandial glucose': '<180 mg/dL',
                     'Blood pressure': '<130/80 mmHg',
-                    'LDL': '<100 mg/dL (<70 if CVD)'
+                    'LDL cholesterol': '<100 mg/dL (<70 if ASCVD, <55 if very high risk)',
+                    'Triglycerides': '<150 mg/dL',
+                    'HDL': '>40 mg/dL (men), >50 mg/dL (women)'
                 },
-                firstLine: 'Metformin + lifestyle modifications',
-                secondLine: 'Add SGLT2-i, GLP-1 RA, DPP-4i, insulin, or SU based on patient factors',
-                cvd: 'SGLT2-i or GLP-1 RA with proven CV benefit if established CVD'
+                algorithm: {
+                    'Initial': 'Metformin + comprehensive lifestyle intervention',
+                    'Dual therapy': 'Metformin + SGLT2-i (CKD/HF), GLP-1 RA (ASCVD/obesity), DPP-4i, SU, or insulin',
+                    'Triple therapy': 'Add third agent based on patient factors and A1C target',
+                    'Injectable': 'GLP-1 RA preferred over insulin when possible'
+                },
+                firstLine: 'Metformin 500mg BID, titrate to 2000mg daily or maximum tolerated dose',
+                secondLine: {
+                    'ASCVD': 'GLP-1 RA or SGLT2-i with proven CV benefit',
+                    'Heart failure': 'SGLT2-i (empagliflozin, dapagliflozin)',
+                    'CKD': 'SGLT2-i, finerenone if albuminuria',
+                    'Obesity': 'GLP-1 RA (semaglutide, liraglutide)',
+                    'Hypoglycemia risk': 'DPP-4 inhibitor',
+                    'Cost concern': 'Sulfonylurea (glyburide avoid in elderly)'
+                },
+                lifestyle: 'Medical nutrition therapy (150min exercise/week, 5-10% weight loss), diabetes self-management education',
+                monitoring: {
+                    'A1C': 'q3mo if not at goal, q6mo if stable at goal',
+                    'BP': 'Every visit',
+                    'Lipids': 'Annually or more frequently if not at goal',
+                    'Nephropathy': 'Annual eGFR and urine albumin/creatinine ratio',
+                    'Retinopathy': 'Annual dilated eye exam',
+                    'Neuropathy': 'Annual foot exam with monofilament'
+                },
+                complications: {
+                    'Microvascular': 'Retinopathy, nephropathy, neuropathy - prevented by glycemic control',
+                    'Macrovascular': 'CAD, stroke, PAD - prevented by comprehensive risk factor management',
+                    'Acute': 'DKA (rare in T2DM), HHS (elderly, precipitated by illness/dehydration)'
+                },
+                specialConsiderations: {
+                    'Elderly': 'Individualized A1C goals (7.5-8.5%), avoid hypoglycemia, assess cognitive function',
+                    'CKD': 'Adjust medications for eGFR, avoid metformin if eGFR <30',
+                    'Pregnancy': 'Preconception counseling, insulin preferred, A1C <6.5%'
+                }
             },
             'copd': {
                 title: 'COPD Management (GOLD 2023)',
                 category: 'Pulmonary',
+                evidenceLevel: 'Evidence-based global strategy',
+                lastUpdated: '2023',
                 stages: {
-                    'GOLD 1': 'FEV1 ≥80% predicted',
-                    'GOLD 2': 'FEV1 50-79% predicted',
-                    'GOLD 3': 'FEV1 30-49% predicted',
-                    'GOLD 4': 'FEV1 <30% predicted'
+                    'GOLD 1 (Mild)': 'FEV1 ≥80% predicted',
+                    'GOLD 2 (Moderate)': 'FEV1 50-79% predicted',
+                    'GOLD 3 (Severe)': 'FEV1 30-49% predicted',
+                    'GOLD 4 (Very Severe)': 'FEV1 <30% predicted'
+                },
+                assessment: {
+                    'mMRC': '0-1: less breathless, ≥2: more breathless',
+                    'CAT': '<10: less symptoms, ≥10: more symptoms',
+                    'Exacerbations': '0-1 not leading to hospitalization: low risk, ≥2 or ≥1 hospitalization: high risk'
                 },
                 groups: {
-                    'Group A': 'Low symptoms, low risk (mMRC 0-1, CAT <10, 0-1 exacerbation)',
-                    'Group B': 'High symptoms, low risk (mMRC ≥2, CAT ≥10, 0-1 exacerbation)',
+                    'Group A': 'Low symptoms (mMRC 0-1, CAT <10), low risk (0-1 exacerbation not requiring hospitalization)',
+                    'Group B': 'High symptoms (mMRC ≥2, CAT ≥10), low risk (0-1 exacerbation not requiring hospitalization)',
                     'Group E': 'Any symptoms, high risk (≥2 exacerbations or ≥1 hospitalization)'
                 },
                 treatment: {
-                    'Group A': 'Bronchodilator (SABA or LABA or LAMA)',
-                    'Group B': 'LABA + LAMA',
-                    'Group E': 'LABA + LAMA ± ICS (if eosinophils >300 or frequent exacerbations)'
-                }
+                    'Group A': 'Bronchodilator (SABA PRN or LABA or LAMA daily)',
+                    'Group B': 'LABA + LAMA combination',
+                    'Group E': 'LABA + LAMA ± ICS (if eosinophils >300 or recurrent exacerbations)'
+                },
+                medications: {
+                    'SABA': 'Albuterol 2-4 puffs q4-6h PRN',
+                    'LABA': 'Formoterol, salmeterol, indacaterol, olodaterol',
+                    'LAMA': 'Tiotropium, umeclidinium, glycopyrronium, aclidinium',
+                    'ICS': 'Consider if eosinophils >300 cells/μL or history of asthma',
+                    'Combinations': 'LABA/LAMA, LABA/ICS, LABA/LAMA/ICS (triple therapy)'
+                },
+                exacerbations: {
+                    'Mild': 'Increase bronchodilator use',
+                    'Moderate': 'Bronchodilators + oral corticosteroids (prednisone 40mg × 5 days)',
+                    'Severe': 'Hospitalization, IV corticosteroids, antibiotics if purulent sputum, O2 if hypoxemic'
+                },
+                nonPharmacologic: {
+                    'Smoking cessation': 'Most important intervention, refer to cessation programs',
+                    'Pulmonary rehabilitation': 'Class I recommendation for all symptomatic patients',
+                    'Vaccinations': 'Annual influenza, pneumococcal (PCV20 or PCV15 + PPSV23)',
+                    'Oxygen therapy': 'Long-term if PaO2 ≤55mmHg or SaO2 ≤88%',
+                    'Surgery': 'Lung volume reduction, transplantation in selected patients'
+                },
+                monitoring: 'Spirometry annually, assess symptoms and exacerbations at each visit, review inhaler technique',
+                redFlags: 'Hemoptysis, unexplained weight loss, chest pain, rapid decline in FEV1 (>80mL/year)'
+            },
+            'heartFailure': {
+                title: 'Heart Failure Management (AHA/ACC/HFSA 2022)',
+                category: 'Cardiovascular',
+                evidenceLevel: 'Class I recommendations',
+                lastUpdated: '2022',
+                classification: {
+                    'HFrEF': 'LVEF ≤40% - reduced ejection fraction',
+                    'HFmrEF': 'LVEF 41-49% - mildly reduced ejection fraction',
+                    'HFpEF': 'LVEF ≥50% - preserved ejection fraction'
+                },
+                nyhaClass: {
+                    'Class I': 'No limitation of physical activity',
+                    'Class II': 'Slight limitation, comfortable at rest',
+                    'Class III': 'Marked limitation, comfortable only at rest',
+                    'Class IV': 'Unable to carry out physical activity without discomfort'
+                },
+                guidedMedicalTherapy: {
+                    'ACE-I/ARB/ARNI': 'First-line for HFrEF. ARNI preferred if tolerated',
+                    'Beta-blockers': 'Carvedilol, metoprolol succinate, or bisoprolol',
+                    'MRA': 'Spironolactone or eplerenone if eGFR >30 and K+ <5.0',
+                    'SGLT2-i': 'Dapagliflozin or empagliflozin regardless of diabetes status',
+                    'Diuretics': 'Loop diuretics for volume overload'
+                },
+                deviceTherapy: {
+                    'ICD': 'Primary prevention if EF ≤35% despite 3 months optimal medical therapy',
+                    'CRT': 'QRS ≥150ms with LBBB pattern and EF ≤35%',
+                    'LVAD': 'Bridge to transplant or destination therapy'
+                },
+                lifestyle: 'Daily weights, fluid restriction 2L/day if severe, sodium <3g/day, exercise training',
+                monitoring: 'BNP/NT-proBNP, renal function, electrolytes, daily weights'
             }
         };
         
@@ -3089,14 +3529,20 @@ class MLAQuizApp {
             <button class="back-btn" onclick="window.quizApp.loadGuidelines()">← Back to Guidelines</button>
             <div class="guideline-detail">
                 <h3>${guideline.title}</h3>
+                <div class="guideline-meta">
+                    <span class="evidence-level">📋 ${guideline.evidenceLevel || 'Evidence-based'}</span>
+                    <span class="last-updated">🗓️ Last updated: ${guideline.lastUpdated || 'Recent'}</span>
+                </div>
         `;
         
         if (guideline.stages) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>Stages/Classification</h4>
+                    <h4>📊 Stages/Classification</h4>
                     ${Object.entries(guideline.stages).map(([stage, description]) => `
-                        <p><strong>${stage}:</strong> ${description}</p>
+                        <div class="stage-item">
+                            <strong>${stage}:</strong> ${description}
+                        </div>
                     `).join('')}
                 </div>
             `;
@@ -3105,9 +3551,11 @@ class MLAQuizApp {
         if (guideline.groups) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>Patient Groups</h4>
+                    <h4>👥 Patient Groups</h4>
                     ${Object.entries(guideline.groups).map(([group, description]) => `
-                        <p><strong>${group}:</strong> ${description}</p>
+                        <div class="group-item">
+                            <strong>${group}:</strong> ${description}
+                        </div>
                     `).join('')}
                 </div>
             `;
@@ -3116,9 +3564,11 @@ class MLAQuizApp {
         if (guideline.targets) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>Treatment Targets</h4>
+                    <h4>🎯 Treatment Targets</h4>
                     ${Object.entries(guideline.targets).map(([target, value]) => `
-                        <p><strong>${target}:</strong> ${value}</p>
+                        <div class="target-item">
+                            <strong>${target}:</strong> ${value}
+                        </div>
                     `).join('')}
                 </div>
             `;
@@ -3127,9 +3577,37 @@ class MLAQuizApp {
         if (guideline.treatment) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>Treatment Recommendations</h4>
+                    <h4>💊 Treatment Recommendations</h4>
                     ${Object.entries(guideline.treatment).map(([stage, treatment]) => `
-                        <p><strong>${stage}:</strong> ${treatment}</p>
+                        <div class="treatment-item">
+                            <strong>${stage}:</strong> ${treatment}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.algorithm) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🔄 Treatment Algorithm</h4>
+                    ${Object.entries(guideline.algorithm).map(([step, description]) => `
+                        <div class="algorithm-item">
+                            <strong>${step}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.medications) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>💊 Medication Classes</h4>
+                    ${Object.entries(guideline.medications).map(([type, meds]) => `
+                        <div class="medication-item">
+                            <strong>${type}:</strong> ${meds}
+                        </div>
                     `).join('')}
                 </div>
             `;
@@ -3138,7 +3616,7 @@ class MLAQuizApp {
         if (guideline.firstLine) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>First-line Therapy</h4>
+                    <h4>🥇 First-line Therapy</h4>
                     <p>${guideline.firstLine}</p>
                 </div>
             `;
@@ -3147,8 +3625,15 @@ class MLAQuizApp {
         if (guideline.secondLine) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>Second-line Options</h4>
-                    <p>${guideline.secondLine}</p>
+                    <h4>🥈 Second-line Options</h4>
+                    ${typeof guideline.secondLine === 'string' ? 
+                        `<p>${guideline.secondLine}</p>` :
+                        Object.entries(guideline.secondLine).map(([indication, treatment]) => `
+                            <div class="secondline-item">
+                                <strong>${indication}:</strong> ${treatment}
+                            </div>
+                        `).join('')
+                    }
                 </div>
             `;
         }
@@ -3156,8 +3641,85 @@ class MLAQuizApp {
         if (guideline.lifestyle) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>Lifestyle Modifications</h4>
+                    <h4>🏃‍♂️ Lifestyle Modifications</h4>
                     <p>${guideline.lifestyle}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.monitoring) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>📊 Monitoring</h4>
+                    ${typeof guideline.monitoring === 'string' ? 
+                        `<p>${guideline.monitoring}</p>` :
+                        Object.entries(guideline.monitoring).map(([parameter, frequency]) => `
+                            <div class="monitoring-item">
+                                <strong>${parameter}:</strong> ${frequency}
+                            </div>
+                        `).join('')
+                    }
+                </div>
+            `;
+        }
+        
+        if (guideline.contraindications) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>⚠️ Contraindications</h4>
+                    ${Object.entries(guideline.contraindications).map(([drug, contraindication]) => `
+                        <div class="contraindication-item">
+                            <strong>${drug}:</strong> ${contraindication}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.specialPopulations) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>👨‍⚕️ Special Populations</h4>
+                    ${Object.entries(guideline.specialPopulations).map(([population, guidance]) => `
+                        <div class="special-population-item">
+                            <strong>${population}:</strong> ${guidance}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.exacerbations) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🚨 Exacerbation Management</h4>
+                    ${Object.entries(guideline.exacerbations).map(([severity, treatment]) => `
+                        <div class="exacerbation-item">
+                            <strong>${severity}:</strong> ${treatment}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.nonPharmacologic) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🏥 Non-pharmacologic Interventions</h4>
+                    ${Object.entries(guideline.nonPharmacologic).map(([intervention, description]) => `
+                        <div class="nonpharm-item">
+                            <strong>${intervention}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.redFlags) {
+            contentHtml += `
+                <div class="info-section alert">
+                    <h4>🚩 Red Flags</h4>
+                    <p>${guideline.redFlags}</p>
                 </div>
             `;
         }
@@ -3172,98 +3734,228 @@ class MLAQuizApp {
             'chest-pain': {
                 title: 'Chest Pain',
                 category: 'Cardiovascular/Pulmonary',
+                redFlags: '🚩 Sudden onset, severe pain, radiation to back/jaw, diaphoresis, hypotension, syncope',
                 presentations: {
                     'Acute coronary syndrome': {
-                        features: 'Crushing, substernal, radiates to arm/jaw, diaphoresis, dyspnea',
-                        tests: 'ECG, troponins, CXR',
-                        urgency: 'Emergency'
+                        features: 'Crushing, substernal, radiates to left arm/jaw, diaphoresis, dyspnea, nausea. Risk factors: age, DM, HTN, smoking, family history',
+                        tests: 'ECG (ST changes, Q waves), troponins (peak 12-24h), CXR, echo if available',
+                        urgency: 'Emergency',
+                        timeToTreat: '90 minutes door-to-balloon for STEMI',
+                        clinicalPearls: 'Women may present atypically (fatigue, nausea). Troponins can be elevated in kidney disease',
+                        differentiatingFeatures: 'Chest pressure >20min, not positional, not reproduced by palpation'
                     },
                     'Pulmonary embolism': {
-                        features: 'Sudden onset, pleuritic, dyspnea, tachycardia, risk factors',
-                        tests: 'Wells score, D-dimer, CTPA, V/Q scan',
-                        urgency: 'Emergency'
+                        features: 'Sudden onset, pleuritic, dyspnea, tachycardia. Risk factors: immobilization, surgery, malignancy, OCP, DVT',
+                        tests: 'Wells score, D-dimer (if low risk), CTPA, V/Q scan, echo (RV strain)',
+                        urgency: 'Emergency',
+                        timeToTreat: 'Anticoagulation within hours if high suspicion',
+                        clinicalPearls: 'Wells score >4 = high risk. Normal D-dimer rules out PE if low risk. Tachycardia most common sign',
+                        differentiatingFeatures: 'Sudden onset, associated dyspnea, risk factors for VTE'
                     },
                     'Pneumothorax': {
-                        features: 'Sudden onset, pleuritic, dyspnea, decreased breath sounds',
-                        tests: 'CXR, CT chest',
-                        urgency: 'Urgent'
+                        features: 'Sudden onset, sharp, pleuritic, dyspnea. Risk factors: tall, thin, young males, COPD, trauma',
+                        tests: 'CXR (upright, expiratory), CT chest if small pneumothorax suspected',
+                        urgency: 'Urgent',
+                        timeToTreat: 'Immediate chest tube if tension pneumothorax',
+                        clinicalPearls: 'May be missed on supine CXR. Tension pneumothorax causes hemodynamic compromise',
+                        differentiatingFeatures: 'Decreased breath sounds, hyperresonance to percussion'
                     },
                     'Aortic dissection': {
-                        features: 'Tearing, severe, radiates to back, pulse deficits',
-                        tests: 'CTA chest, TEE, MRI',
-                        urgency: 'Emergency'
+                        features: 'Tearing, severe, radiates to back, pulse deficits, HTN. Risk factors: HTN, Marfan, bicuspid valve',
+                        tests: 'CTA chest (preferred), TEE, MRI. ECG to rule out MI',
+                        urgency: 'Emergency',
+                        timeToTreat: 'Emergency surgery for Type A, medical management for Type B',
+                        clinicalPearls: 'Type A involves ascending aorta, Type B does not. Blood pressure differential >20mmHg between arms',
+                        differentiatingFeatures: 'Maximal intensity at onset, tearing quality, back radiation'
                     },
                     'GERD': {
-                        features: 'Burning, postprandial, positional, antacid relief',
-                        tests: 'Clinical, PPI trial, EGD if alarming features',
-                        urgency: 'Non-urgent'
+                        features: 'Burning, retrosternal, postprandial, positional, antacid relief. Triggers: spicy foods, caffeine, alcohol',
+                        tests: 'Clinical diagnosis, PPI trial, EGD if alarming features (dysphagia, weight loss, GI bleeding)',
+                        urgency: 'Non-urgent',
+                        timeToTreat: 'PPI trial 4-8 weeks',
+                        clinicalPearls: 'Can mimic angina. Barrett esophagus risk with chronic GERD. H. pylori testing if refractory',
+                        differentiatingFeatures: 'Relationship to meals, positional, responds to antacids'
                     },
                     'Costochondritis': {
-                        features: 'Sharp, localized, reproducible with palpation',
-                        tests: 'Clinical diagnosis, rule out cardiac causes',
-                        urgency: 'Non-urgent'
+                        features: 'Sharp, localized, reproducible with palpation, worse with movement/deep inspiration',
+                        tests: 'Clinical diagnosis, rule out cardiac causes if risk factors present',
+                        urgency: 'Non-urgent',
+                        timeToTreat: 'NSAIDs, heat/ice therapy',
+                        clinicalPearls: 'Diagnosis of exclusion. Tietze syndrome involves swelling of costal cartilage',
+                        differentiatingFeatures: 'Reproducible with palpation, sharp quality, chest wall tenderness'
+                    },
+                    'Anxiety/Panic attack': {
+                        features: 'Sudden onset, sharp/stabbing, palpitations, diaphoresis, sense of doom, hyperventilation',
+                        tests: 'Rule out organic causes first, especially in older patients or those with risk factors',
+                        urgency: 'Non-urgent',
+                        timeToTreat: 'Reassurance, breathing exercises, consider anxiolytics',
+                        clinicalPearls: 'Peak symptoms within 10 minutes. Often recurrent. Associated with agoraphobia',
+                        differentiatingFeatures: 'Young patient, recurrent episodes, associated anxiety symptoms'
                     }
                 }
             },
             'shortness-of-breath': {
                 title: 'Shortness of Breath (Dyspnea)',
                 category: 'Pulmonary/Cardiovascular',
+                redFlags: '🚩 Stridor, tripod positioning, inability to speak, cyanosis, altered mental status',
                 presentations: {
                     'Heart failure': {
-                        features: 'Exertional dyspnea, orthopnea, PND, edema, JVD',
-                        tests: 'BNP/NT-proBNP, echo, CXR, ECG',
-                        urgency: 'Urgent'
+                        features: 'Exertional dyspnea, orthopnea, PND, bilateral ankle edema, JVD, S3 gallop. History of CAD, HTN, DM',
+                        tests: 'BNP/NT-proBNP (>400 pg/mL), echo (EF, wall motion), CXR (pulmonary edema), ECG',
+                        urgency: 'Urgent',
+                        timeToTreat: 'Diuretics, ACE-I, beta-blockers per guidelines',
+                        clinicalPearls: 'BNP <100 rules out HF. Preserved vs reduced EF affects treatment. Check for precipitants',
+                        differentiatingFeatures: 'Orthopnea, PND, bilateral edema, elevated JVP'
                     },
                     'Asthma exacerbation': {
-                        features: 'Wheezing, cough, chest tightness, trigger exposure',
-                        tests: 'Peak flow, ABG if severe, CXR',
-                        urgency: 'Urgent'
+                        features: 'Wheezing, cough, chest tightness, trigger exposure (allergens, URI, exercise), personal/family history',
+                        tests: 'Peak flow (<50% predicted = severe), ABG if severe, CXR to rule out pneumothorax',
+                        urgency: 'Urgent',
+                        timeToTreat: 'Beta-agonists, steroids, escalate based on severity',
+                        clinicalPearls: 'Silent chest = severe. Peak flow may be unreliable in severe cases. Consider vocal cord dysfunction',
+                        differentiatingFeatures: 'Expiratory wheeze, response to bronchodilators, known triggers'
                     },
                     'COPD exacerbation': {
-                        features: 'Increased dyspnea, cough, sputum production, smoking history',
-                        tests: 'ABG, CXR, sputum culture',
-                        urgency: 'Urgent'
+                        features: 'Increased dyspnea, cough, sputum production (purulent), smoking history, barrel chest, prolonged expiration',
+                        tests: 'ABG (CO2 retention), CXR (hyperinflation), sputum culture, CBC',
+                        urgency: 'Urgent',
+                        timeToTreat: 'Bronchodilators, steroids, antibiotics if purulent sputum',
+                        clinicalPearls: 'Watch for CO2 retention with O2 therapy. NIV may avoid intubation. Check for precipitants',
+                        differentiatingFeatures: 'Smoking history, chronic productive cough, barrel chest'
                     },
                     'Pneumonia': {
-                        features: 'Fever, cough, purulent sputum, pleuritic pain',
-                        tests: 'CXR, CBC, blood cultures, sputum culture',
-                        urgency: 'Urgent'
+                        features: 'Fever, cough, purulent sputum, pleuritic chest pain, rales, dullness to percussion',
+                        tests: 'CXR (infiltrate), CBC (leukocytosis), blood cultures, sputum culture, procalcitonin',
+                        urgency: 'Urgent',
+                        timeToTreat: 'Antibiotics within 4-6 hours, based on community vs hospital acquired',
+                        clinicalPearls: 'CURB-65 score for severity. Atypical organisms in young patients. Check for complications',
+                        differentiatingFeatures: 'Fever, productive cough, focal findings on exam and CXR'
                     },
-                    'Anxiety/Panic': {
-                        features: 'Acute onset, palpitations, diaphoresis, sense of doom',
-                        tests: 'Rule out organic causes first',
-                        urgency: 'Non-urgent'
+                    'Pulmonary embolism': {
+                        features: 'Sudden onset, pleuritic chest pain, tachycardia, risk factors for VTE',
+                        tests: 'Wells score, D-dimer, CTPA, V/Q scan, echo (RV dysfunction)',
+                        urgency: 'Emergency',
+                        timeToTreat: 'Anticoagulation immediately if high suspicion',
+                        clinicalPearls: 'May present with isolated dyspnea. Hampton hump and Westermark sign on CXR rare',
+                        differentiatingFeatures: 'Sudden onset, VTE risk factors, clear lungs on exam'
+                    },
+                    'Anxiety/Hyperventilation': {
+                        features: 'Acute onset, perioral numbness, carpopedal spasm, palpitations, sense of doom',
+                        tests: 'Rule out organic causes, ABG (respiratory alkalosis), basic metabolic panel',
+                        urgency: 'Non-urgent',
+                        timeToTreat: 'Reassurance, breathing exercises, paper bag rebreathing',
+                        clinicalPearls: 'Often in young patients. May have history of panic attacks. Exclude underlying disease first',
+                        differentiatingFeatures: 'Young patient, associated anxiety, perioral numbness'
                     }
                 }
             },
             'abdominal-pain': {
                 title: 'Abdominal Pain',
                 category: 'Gastroenterology/Surgery',
+                redFlags: '🚩 Hemodynamic instability, peritoneal signs, severe persistent pain, vomiting blood',
                 presentations: {
                     'Appendicitis': {
-                        features: 'Periumbilical → RLQ pain, fever, nausea, McBurney point',
-                        tests: 'CBC, CT abdomen, ultrasound',
-                        urgency: 'Emergency'
+                        features: 'Periumbilical pain → RLQ, fever, nausea, vomiting, McBurney point tenderness, psoas/obturator signs',
+                        tests: 'CT abdomen/pelvis (preferred), ultrasound (children/pregnancy), CBC (leukocytosis), urinalysis',
+                        urgency: 'Emergency',
+                        timeToTreat: 'Surgery within 12-24 hours, antibiotics if perforated',
+                        clinicalPearls: 'Alvarado score for risk stratification. Atypical presentation in elderly, pregnant. Perforation risk increases with time',
+                        differentiatingFeatures: 'Migration of pain to RLQ, rebound tenderness, fever'
                     },
                     'Cholecystitis': {
-                        features: 'RUQ pain, Murphy sign, fat intolerance, fever',
-                        tests: 'Ultrasound, HIDA scan, LFTs',
-                        urgency: 'Urgent'
+                        features: 'RUQ pain, Murphy sign, fat intolerance, fever, nausea. Risk factors: 4 Fs (fat, female, forty, fertile)',
+                        tests: 'Ultrasound (gallstones, wall thickening), HIDA scan if unclear, LFTs, lipase',
+                        urgency: 'Urgent',
+                        timeToTreat: 'Cholecystectomy within 72 hours, antibiotics if complicated',
+                        clinicalPearls: 'Murphy sign more specific than ultrasound findings. Emphysematous cholecystitis in diabetics',
+                        differentiatingFeatures: 'RUQ pain, positive Murphy sign, gallstones on imaging'
                     },
                     'Pancreatitis': {
-                        features: 'Epigastric pain radiating to back, nausea, vomiting',
-                        tests: 'Lipase, amylase, CT abdomen',
-                        urgency: 'Urgent'
+                        features: 'Epigastric pain radiating to back, nausea, vomiting. Triggers: alcohol, gallstones, hypertriglyceridemia',
+                        tests: 'Lipase (>3× normal), amylase, CT abdomen if severe, LFTs, triglycerides',
+                        urgency: 'Urgent',
+                        timeToTreat: 'Supportive care, pain control, IV fluids, NPO',
+                        clinicalPearls: 'Ranson criteria for severity. ERCP if gallstone pancreatitis. Watch for complications (pseudocyst, necrosis)',
+                        differentiatingFeatures: 'Epigastric pain radiating to back, elevated lipase'
                     },
                     'Bowel obstruction': {
-                        features: 'Crampy pain, nausea, vomiting, distension, constipation',
-                        tests: 'CT abdomen, abdominal X-ray',
-                        urgency: 'Emergency'
+                        features: 'Crampy pain, nausea, vomiting, distension, constipation, high-pitched bowel sounds or silence',
+                        tests: 'CT abdomen/pelvis (transition point), abdominal X-ray (dilated loops), CBC, BMP',
+                        urgency: 'Emergency',
+                        timeToTreat: 'NGT decompression, IV fluids, surgery if complete obstruction',
+                        clinicalPearls: 'Small bowel: crampy, early vomiting. Large bowel: distension, late vomiting. Strangulation risk',
+                        differentiatingFeatures: 'Crampy pain, vomiting, distension, abnormal bowel sounds'
+                    },
+                    'Diverticulitis': {
+                        features: 'LLQ pain (Western), fever, change in bowel habits, tender mass. More common in elderly',
+                        tests: 'CT abdomen/pelvis (wall thickening, fat stranding), CBC, CRP',
+                        urgency: 'Urgent',
+                        timeToTreat: 'Antibiotics (ciprofloxacin + metronidazole), bowel rest',
+                        clinicalPearls: 'Avoid colonoscopy in acute phase. Hinchey classification for severity. Consider complications',
+                        differentiatingFeatures: 'LLQ pain, older patient, known diverticulosis'
                     },
                     'Gastroenteritis': {
-                        features: 'Crampy pain, diarrhea, nausea, vomiting',
-                        tests: 'Clinical, stool studies if severe',
-                        urgency: 'Non-urgent'
+                        features: 'Crampy pain, diarrhea, nausea, vomiting, fever. Food/water exposure, contacts with similar illness',
+                        tests: 'Clinical diagnosis, stool studies if severe/bloody, CBC if dehydrated',
+                        urgency: 'Non-urgent',
+                        timeToTreat: 'Supportive care, hydration, probiotics',
+                        clinicalPearls: 'Usually self-limited. Antibiotics only if bacterial and severe. Watch for dehydration',
+                        differentiatingFeatures: 'Diarrhea predominant, food/water exposure, multiple affected individuals'
+                    },
+                    'Peptic ulcer disease': {
+                        features: 'Epigastric pain, relationship to meals (duodenal: hungry pain, gastric: worse with food), H. pylori history',
+                        tests: 'H. pylori testing (stool antigen, urea breath test), upper endoscopy if alarming features',
+                        urgency: 'Non-urgent',
+                        timeToTreat: 'PPI therapy, H. pylori eradication if positive',
+                        clinicalPearls: 'NSAID and H. pylori most common causes. Triple therapy for eradication. Watch for complications',
+                        differentiatingFeatures: 'Relationship to meals, response to PPIs, H. pylori positive'
+                    }
+                }
+            },
+            'headache': {
+                title: 'Headache',
+                category: 'Neurology',
+                redFlags: '🚩 Sudden severe (thunderclap), fever + neck stiffness, focal neurologic deficits, papilledema',
+                presentations: {
+                    'Migraine': {
+                        features: 'Unilateral, throbbing, 4-72 hours, photophobia, phonophobia, nausea. Aura in 20%. Family history common',
+                        tests: 'Clinical diagnosis, neuroimaging if atypical features or red flags',
+                        urgency: 'Non-urgent',
+                        timeToTreat: 'Triptans (within 2 hours), NSAIDs, antiemetics. Preventive therapy if frequent',
+                        clinicalPearls: 'POUND criteria (Pulsating, One day, Unilateral, Nausea, Disabling). Avoid medication overuse',
+                        differentiatingFeatures: 'Unilateral throbbing, photophobia, family history'
+                    },
+                    'Tension headache': {
+                        features: 'Bilateral, pressing/tightening, mild-moderate, no photophobia/phonophobia, stress-related',
+                        tests: 'Clinical diagnosis',
+                        urgency: 'Non-urgent',
+                        timeToTreat: 'NSAIDs, acetaminophen, stress management, relaxation techniques',
+                        clinicalPearls: 'Most common primary headache. Often chronic. Exclude medication overuse',
+                        differentiatingFeatures: 'Bilateral pressing pain, no associated symptoms'
+                    },
+                    'Cluster headache': {
+                        features: 'Unilateral severe, orbital/temporal, 15min-3h, lacrimation, nasal congestion. Male predominance, circadian',
+                        tests: 'Clinical diagnosis',
+                        urgency: 'Urgent',
+                        timeToTreat: 'High-flow oxygen, subcutaneous sumatriptan. Preventive: verapamil',
+                        clinicalPearls: 'Attacks in clusters (weeks-months). Patient restless during attack. Alcohol trigger during cluster',
+                        differentiatingFeatures: 'Severe unilateral orbital pain, autonomic symptoms, restlessness'
+                    },
+                    'Subarachnoid hemorrhage': {
+                        features: 'Sudden severe (thunderclap), worst headache of life, neck stiffness, photophobia, altered consciousness',
+                        tests: 'Non-contrast CT head (within 6h), LP if CT negative, CTA for aneurysm',
+                        urgency: 'Emergency',
+                        timeToTreat: 'Neurosurgical consultation, aneurysm securing, prevent vasospasm',
+                        clinicalPearls: 'Sentinel headache may precede. Hunt-Hess grade for severity. Watch for complications',
+                        differentiatingFeatures: 'Thunderclap onset, worst headache ever, meningeal signs'
+                    },
+                    'Meningitis': {
+                        features: 'Fever, headache, neck stiffness, photophobia, altered mental status. Kernig/Brudzinski signs',
+                        tests: 'LP (opening pressure, cell count, glucose, protein, culture), blood cultures, CT if focal signs',
+                        urgency: 'Emergency',
+                        timeToTreat: 'Antibiotics immediately after LP (within 1 hour), steroids for bacterial',
+                        clinicalPearls: 'Classic triad only in 44%. Bacterial more acute, viral more indolent. Don\'t delay antibiotics',
+                        differentiatingFeatures: 'Fever + headache + neck stiffness, altered mental status'
                     }
                 }
             }
@@ -3352,16 +4044,22 @@ class MLAQuizApp {
             <div class="ddx-item ${data.urgency.toLowerCase()}" onclick="window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}')">
                 <div class="ddx-diagnosis">${dx}</div>
                 <div class="ddx-urgency ${data.urgency.toLowerCase()}">${data.urgency}</div>
-                <div class="ddx-features">${data.features}</div>
+                <div class="ddx-features">${data.features.substring(0, 100)}...</div>
+                ${data.differentiatingFeatures ? `<div class="ddx-key-features">🔍 ${data.differentiatingFeatures.substring(0, 80)}...</div>` : ''}
             </div>
         `).join('');
         
         container.innerHTML = `
             <button class="back-btn" onclick="window.quizApp.loadDifferentialDx()">← Back to Symptoms</button>
             <div class="ddx-detail">
-                <h3>${symptom.title}</h3>
-                <p class="ddx-category">${symptom.category}</p>
-                <h4>Differential Diagnoses:</h4>
+                <h3>🔍 ${symptom.title}</h3>
+                <p class="ddx-category">📋 ${symptom.category}</p>
+                ${symptom.redFlags ? `
+                <div class="red-flags-banner">
+                    <h4>🚨 RED FLAGS</h4>
+                    <p>${symptom.redFlags}</p>
+                </div>` : ''}
+                <h4>📋 Differential Diagnoses:</h4>
                 <div class="ddx-presentations">
                     ${presentationsHtml}
                 </div>
@@ -3376,20 +4074,30 @@ class MLAQuizApp {
         container.innerHTML = `
             <button class="back-btn" onclick="window.quizApp.showDdxDetail('${symptomKey}')">← Back to ${this.ddxDatabase[symptomKey].title}</button>
             <div class="diagnosis-detail">
-                <h3>${dxKey}</h3>
+                <h3>🔍 ${dxKey}</h3>
+                <div class="urgency-banner ${diagnosis.urgency.toLowerCase()}">
+                    <span class="urgency-level">⚡ ${diagnosis.urgency.toUpperCase()}</span>
+                    ${diagnosis.timeToTreat ? `<span class="time-to-treat">⏱️ ${diagnosis.timeToTreat}</span>` : ''}
+                </div>
                 <div class="diagnosis-info">
                     <div class="info-section">
-                        <h4>Clinical Features</h4>
+                        <h4>🎯 Clinical Features</h4>
                         <p>${diagnosis.features}</p>
                     </div>
                     <div class="info-section">
-                        <h4>Diagnostic Tests</h4>
+                        <h4>🔬 Diagnostic Tests</h4>
                         <p>${diagnosis.tests}</p>
                     </div>
+                    ${diagnosis.differentiatingFeatures ? `
                     <div class="info-section">
-                        <h4>Urgency Level</h4>
-                        <p class="urgency-level ${diagnosis.urgency.toLowerCase()}">${diagnosis.urgency}</p>
-                    </div>
+                        <h4>🔍 Key Differentiating Features</h4>
+                        <p>${diagnosis.differentiatingFeatures}</p>
+                    </div>` : ''}
+                    ${diagnosis.clinicalPearls ? `
+                    <div class="info-section">
+                        <h4>💎 Clinical Pearls</h4>
+                        <p>${diagnosis.clinicalPearls}</p>
+                    </div>` : ''}
                 </div>
             </div>
         `;

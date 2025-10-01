@@ -664,17 +664,22 @@
         
         .tool-nav-btn {
             flex: 1;
-            min-width: 80px;
-            padding: 12px 8px;
+            min-width: fit-content;
+            padding: 12px 16px;
             background: none;
             border: none;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             color: #8e8e93;
             cursor: pointer;
             transition: all 0.2s;
             border-bottom: 3px solid transparent;
             white-space: nowrap;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
         
         .tool-nav-btn:hover {
@@ -972,8 +977,21 @@
             }
             
             .tool-nav-btn {
-                font-size: 10px;
-                padding: 10px 6px;
+                font-size: 11px;
+                padding: 10px 12px;
+                min-width: fit-content;
+                flex: 1 1 auto;
+            }
+            
+            .tools-navigation {
+                overflow-x: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                gap: 2px;
+            }
+            
+            .tools-navigation::-webkit-scrollbar {
+                display: none;
             }
         }
         
@@ -991,6 +1009,205 @@
         
         .calc-input-group {
             margin-bottom: 12px;
+        }
+        
+        /* Enhanced Medical Tools Panel Content Styling */
+        .critical-values {
+            background: rgba(255, 59, 48, 0.1);
+            border-left: 4px solid #ff3b30;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .critical-values h4 {
+            color: #ff3b30;
+            margin: 0 0 8px 0;
+        }
+        
+        .red-flags-banner {
+            background: rgba(255, 69, 58, 0.1);
+            border: 2px solid #ff453a;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .red-flags-banner h4 {
+            color: #ff453a;
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+        
+        .urgency-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-weight: 600;
+        }
+        
+        .urgency-banner.emergency {
+            background: rgba(255, 59, 48, 0.15);
+            border: 2px solid #ff3b30;
+            color: #ff3b30;
+        }
+        
+        .urgency-banner.urgent {
+            background: rgba(255, 149, 0, 0.15);
+            border: 2px solid #ff9500;
+            color: #ff9500;
+        }
+        
+        .urgency-banner.non-urgent {
+            background: rgba(52, 199, 89, 0.15);
+            border: 2px solid #34c759;
+            color: #34c759;
+        }
+        
+        .guideline-meta {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        
+        .evidence-level {
+            background: rgba(0, 122, 255, 0.1);
+            color: #007AFF;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .last-updated {
+            background: rgba(142, 142, 147, 0.1);
+            color: #8e8e93;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .stage-item, .group-item, .target-item, .treatment-item,
+        .algorithm-item, .medication-item, .secondline-item,
+        .monitoring-item, .contraindication-item, .special-population-item,
+        .exacerbation-item, .nonpharm-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(142, 142, 147, 0.2);
+        }
+        
+        .stage-item:last-child, .group-item:last-child, .target-item:last-child,
+        .treatment-item:last-child, .algorithm-item:last-child, .medication-item:last-child,
+        .secondline-item:last-child, .monitoring-item:last-child, .contraindication-item:last-child,
+        .special-population-item:last-child, .exacerbation-item:last-child, .nonpharm-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ddx-key-features {
+            font-size: 12px;
+            color: #007AFF;
+            margin-top: 4px;
+            font-style: italic;
+        }
+        
+        .ddx-item.emergency {
+            border-left: 4px solid #ff3b30;
+        }
+        
+        .ddx-item.urgent {
+            border-left: 4px solid #ff9500;
+        }
+        
+        .ddx-item.non-urgent {
+            border-left: 4px solid #34c759;
+        }
+        
+        .time-to-treat {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .alert {
+            background: rgba(255, 204, 0, 0.1);
+            border: 2px solid #ffcc00;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        
+        .alert h4 {
+            color: #ffcc00;
+        }
+        
+        [data-theme="dark"] .critical-values {
+            background: rgba(255, 69, 58, 0.2);
+            border-left-color: #ff453a;
+        }
+        
+        [data-theme="dark"] .critical-values h4 {
+            color: #ff453a;
+        }
+        
+        [data-theme="dark"] .red-flags-banner {
+            background: rgba(255, 69, 58, 0.2);
+            border-color: #ff453a;
+        }
+        
+        [data-theme="dark"] .red-flags-banner h4 {
+            color: #ff453a;
+        }
+        
+        [data-theme="dark"] .urgency-banner.emergency {
+            background: rgba(255, 69, 58, 0.2);
+            border-color: #ff453a;
+            color: #ff453a;
+        }
+        
+        [data-theme="dark"] .urgency-banner.urgent {
+            background: rgba(255, 159, 10, 0.2);
+            border-color: #ff9f0a;
+            color: #ff9f0a;
+        }
+        
+        [data-theme="dark"] .urgency-banner.non-urgent {
+            background: rgba(50, 215, 75, 0.2);
+            border-color: #32d74b;
+            color: #32d74b;
+        }
+        
+        [data-theme="dark"] .evidence-level {
+            background: rgba(10, 132, 255, 0.2);
+            color: #0a84ff;
+        }
+        
+        [data-theme="dark"] .last-updated {
+            background: rgba(174, 174, 178, 0.2);
+            color: #aeaeb2;
+        }
+        
+        [data-theme="dark"] .ddx-key-features {
+            color: #0a84ff;
+        }
+        
+        [data-theme="dark"] .ddx-item.emergency {
+            border-left-color: #ff453a;
+        }
+        
+        [data-theme="dark"] .ddx-item.urgent {
+            border-left-color: #ff9f0a;
+        }
+        
+        [data-theme="dark"] .ddx-item.non-urgent {
+            border-left-color: #32d74b;
+        }
+        
+        [data-theme="dark"] .alert {
+            background: rgba(255, 214, 10, 0.2);
+            border-color: #ffd60a;
+        }
+        
+        [data-theme="dark"] .alert h4 {
+            color: #ffd60a;
         }
         
         .calc-input-group label {
@@ -2314,11 +2531,11 @@
         </div>
         
         <div class="tools-navigation">
-            <button class="tool-nav-btn active" data-tool="drugs">💊 Drugs</button>
-            <button class="tool-nav-btn" data-tool="calculators">🧮 Calc</button>
-            <button class="tool-nav-btn" data-tool="labs">📊 Labs</button>
+            <button class="tool-nav-btn active" data-tool="drug-reference">💊 Drug Reference</button>
+            <button class="tool-nav-btn" data-tool="calculators">🧮 Calculators</button>
+            <button class="tool-nav-btn" data-tool="lab-values">📊 Lab Values</button>
             <button class="tool-nav-btn" data-tool="guidelines">📋 Guidelines</button>
-            <button class="tool-nav-btn" data-tool="differential">🔍 DDx</button>
+            <button class="tool-nav-btn" data-tool="differential-dx">🔍 Differential Dx</button>
         </div>
         
         <div class="tools-content">
