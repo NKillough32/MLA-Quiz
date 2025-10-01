@@ -551,6 +551,589 @@
             display: none;
         }
         
+        /* Medical Tools Toggle Button */
+        .medical-tools-toggle {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .medical-tools-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.5);
+        }
+        
+        [data-theme="dark"] .medical-tools-toggle {
+            background: var(--button-bg);
+        }
+        
+        /* Medical Tools Panel */
+        .medical-tools-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            border-left: 1px solid #e5e5ea;
+            z-index: 1002;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .medical-tools-panel.open {
+            right: 0;
+        }
+        
+        [data-theme="dark"] .medical-tools-panel {
+            background: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+        
+        /* Tools Header */
+        .tools-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e5ea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+        
+        .tools-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c1c1e;
+        }
+        
+        .tools-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #8e8e93;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            transition: all 0.2s;
+        }
+        
+        .tools-close-btn:hover {
+            background: #e5e5ea;
+            color: #1c1c1e;
+        }
+        
+        [data-theme="dark"] .tools-header {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .tools-header h3 {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .tools-close-btn {
+            color: var(--text-secondary);
+        }
+        
+        /* Tools Navigation */
+        .tools-navigation {
+            display: flex;
+            border-bottom: 1px solid #e5e5ea;
+            background: #f8f9fa;
+            overflow-x: auto;
+        }
+        
+        .tool-nav-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 12px 8px;
+            background: none;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8e8e93;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+        
+        .tool-nav-btn:hover {
+            color: #007AFF;
+            background: rgba(0, 122, 255, 0.1);
+        }
+        
+        .tool-nav-btn.active {
+            color: #007AFF;
+            border-bottom-color: #007AFF;
+            background: rgba(0, 122, 255, 0.1);
+        }
+        
+        [data-theme="dark"] .tools-navigation {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .tool-nav-btn {
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="dark"] .tool-nav-btn:hover,
+        [data-theme="dark"] .tool-nav-btn.active {
+            color: var(--button-bg);
+            background: rgba(10, 132, 255, 0.1);
+        }
+        
+        /* Tools Content */
+        .tools-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .tool-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            padding: 16px;
+            display: none;
+        }
+        
+        .tool-panel.active {
+            opacity: 1;
+            transform: translateX(0);
+            display: block;
+        }
+        
+        /* Search Container */
+        .search-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .tool-search {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .tool-search:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+        
+        .search-container button {
+            padding: 10px 12px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        [data-theme="dark"] .tool-search {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        /* Category Buttons */
+        .drug-categories,
+        .lab-categories,
+        .guideline-categories,
+        .symptom-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        
+        .category-btn {
+            padding: 6px 12px;
+            background: #f1f3f4;
+            border: 1px solid #e5e5ea;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #1c1c1e;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background: #007AFF;
+            color: white;
+            border-color: #007AFF;
+        }
+        
+        [data-theme="dark"] .category-btn {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        /* Tool Results */
+        .tool-results {
+            max-height: calc(100vh - 250px);
+            overflow-y: auto;
+        }
+        
+        .drug-item,
+        .lab-item,
+        .guideline-item,
+        .differential-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .drug-item:hover,
+        .lab-item:hover,
+        .guideline-item:hover,
+        .differential-item:hover {
+            background: #e3f2fd;
+            border-color: #007AFF;
+        }
+        
+        .drug-item h4,
+        .lab-item h4,
+        .guideline-item h4,
+        .differential-item h4 {
+            margin: 0 0 4px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c1c1e;
+        }
+        
+        .drug-class,
+        .drug-indication,
+        .lab-ranges,
+        .lab-significance,
+        .guideline-source,
+        .guideline-summary {
+            font-size: 12px;
+            color: #8e8e93;
+            margin: 2px 0;
+        }
+        
+        [data-theme="dark"] .drug-item,
+        [data-theme="dark"] .lab-item,
+        [data-theme="dark"] .guideline-item,
+        [data-theme="dark"] .differential-item {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .drug-item h4,
+        [data-theme="dark"] .lab-item h4,
+        [data-theme="dark"] .guideline-item h4,
+        [data-theme="dark"] .differential-item h4 {
+            color: var(--text-primary);
+        }
+        
+        /* Calculator Grid */
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .calculator-btn {
+            padding: 16px 12px;
+            background: #f8f9fa;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .calculator-btn:hover {
+            background: #e3f2fd;
+            border-color: #007AFF;
+            transform: translateY(-2px);
+        }
+        
+        .calc-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .calc-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1c1c1e;
+        }
+        
+        [data-theme="dark"] .calculator-btn {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .calc-name {
+            color: var(--text-primary);
+        }
+        
+        /* Calculator Workspace */
+        .calculator-workspace {
+            padding: 16px;
+            background: #f8f9fa;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            min-height: 200px;
+            display: none;
+        }
+        
+        .calculator-workspace.active {
+            display: block;
+        }
+        
+        [data-theme="dark"] .calculator-workspace {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
+        /* Differential Diagnosis */
+        .differential-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .dx-item {
+            padding: 4px 8px;
+            background: #e3f2fd;
+            color: #1565c0;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .dx-item.urgent {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .medical-tools-panel {
+                width: 100vw;
+                right: -100vw;
+            }
+            
+            .medical-tools-toggle {
+                bottom: 70px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+            
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tool-nav-btn {
+                font-size: 10px;
+                padding: 10px 6px;
+            }
+        }
+        
+        /* Calculator Form Styles */
+        .calculator-form {
+            padding: 16px;
+        }
+        
+        .calculator-form h4 {
+            margin: 0 0 8px 0;
+            color: #1c1c1e;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .calc-input-group {
+            margin-bottom: 12px;
+        }
+        
+        .calc-input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1c1c1e;
+            margin-bottom: 4px;
+        }
+        
+        .calc-input-group input,
+        .calc-select-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e5ea;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .calc-input-group input:focus,
+        .calc-select-group select:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+        
+        .calc-select-group {
+            margin-bottom: 12px;
+        }
+        
+        .calc-checkbox-group {
+            margin-bottom: 16px;
+        }
+        
+        .calc-checkbox-group label {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .calc-checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+        }
+        
+        .calculator-form button {
+            width: 100%;
+            padding: 12px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+        
+        .calculator-form button:hover {
+            background: #0056cc;
+        }
+        
+        .calc-result {
+            padding: 12px;
+            background: #f8f9fa;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .calc-reference {
+            padding: 8px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #856404;
+        }
+        
+        .bmi-result-display,
+        .score-result,
+        .gcs-result-display,
+        .apache-result-display,
+        .wells-result-display {
+            text-align: center;
+        }
+        
+        .bmi-value,
+        .score-value,
+        .gcs-total,
+        .wells-score {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .bmi-category,
+        .score-risk,
+        .score-recommendation,
+        .gcs-severity,
+        .wells-probability,
+        .wells-recommendation {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .gcs-breakdown {
+            font-size: 12px;
+            color: #8e8e93;
+            margin-bottom: 8px;
+        }
+        
+        .error {
+            color: #F44336;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        [data-theme="dark"] .calculator-form h4,
+        [data-theme="dark"] .calc-input-group label {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .calc-input-group input,
+        [data-theme="dark"] .calc-select-group select {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .calc-result {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .calc-reference {
+            background: #2d2a1f;
+            border-color: #4a3f2a;
+            color: #e6d576;
+        }
+        
         /* Quiz Length Selection Styling */
         .quiz-length-btn {
             padding: 12px 8px;
@@ -1717,6 +2300,183 @@
     <button id="floating-pdf-btn" class="floating-pdf-btn" title="Generate Study Report">
         📊 Report
     </button>
+    
+    <!-- Medical Tools Toggle Button -->
+    <button id="medical-tools-toggle" class="medical-tools-toggle" title="Open Medical Tools">
+        🩺
+    </button>
+    
+    <!-- Medical Tools Panel -->
+    <div id="medical-tools-panel" class="medical-tools-panel">
+        <div class="tools-header">
+            <h3>🩺 Medical Tools</h3>
+            <button id="tools-close-btn" class="tools-close-btn">×</button>
+        </div>
+        
+        <div class="tools-navigation">
+            <button class="tool-nav-btn active" data-tool="drugs">💊 Drugs</button>
+            <button class="tool-nav-btn" data-tool="calculators">🧮 Calc</button>
+            <button class="tool-nav-btn" data-tool="labs">📊 Labs</button>
+            <button class="tool-nav-btn" data-tool="guidelines">📋 Guidelines</button>
+            <button class="tool-nav-btn" data-tool="differential">🔍 DDx</button>
+        </div>
+        
+        <div class="tools-content">
+            <!-- Drug Reference Panel -->
+            <div id="drug-panel" class="tool-panel active">
+                <div class="search-container">
+                    <input type="text" id="drug-search" placeholder="Search medications..." class="tool-search">
+                    <button id="drug-search-btn">🔍</button>
+                </div>
+                <div class="drug-categories">
+                    <button class="category-btn" data-category="all">All</button>
+                    <button class="category-btn" data-category="cardiac">Cardiac</button>
+                    <button class="category-btn" data-category="antibiotics">Antibiotics</button>
+                    <button class="category-btn" data-category="diabetes">Diabetes</button>
+                    <button class="category-btn" data-category="analgesics">Analgesics</button>
+                </div>
+                <div id="drug-results" class="tool-results">
+                    <div class="drug-item" data-drug="metformin">
+                        <h4>Metformin</h4>
+                        <p class="drug-class">Biguanide</p>
+                        <p class="drug-indication">Type 2 diabetes</p>
+                    </div>
+                    <div class="drug-item" data-drug="aspirin">
+                        <h4>Aspirin</h4>
+                        <p class="drug-class">NSAID/Antiplatelet</p>
+                        <p class="drug-indication">CAD prevention, pain</p>
+                    </div>
+                    <div class="drug-item" data-drug="lisinopril">
+                        <h4>Lisinopril</h4>
+                        <p class="drug-class">ACE Inhibitor</p>
+                        <p class="drug-indication">Hypertension, heart failure</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Calculator Panel -->
+            <div id="calculator-panel" class="tool-panel">
+                <div class="calculator-grid">
+                    <button class="calculator-btn" data-calc="bmi">
+                        <div class="calc-icon">⚖️</div>
+                        <div class="calc-name">BMI Calculator</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="chads2vasc">
+                        <div class="calc-icon">💗</div>
+                        <div class="calc-name">CHA2DS2-VASc</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="hasbled">
+                        <div class="calc-icon">🩸</div>
+                        <div class="calc-name">HAS-BLED</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="gcs">
+                        <div class="calc-icon">🧠</div>
+                        <div class="calc-name">Glasgow Coma</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="apache">
+                        <div class="calc-icon">🏥</div>
+                        <div class="calc-name">APACHE II</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="wells">
+                        <div class="calc-icon">🫁</div>
+                        <div class="calc-name">Wells PE Score</div>
+                    </button>
+                </div>
+                <div id="calculator-workspace" class="calculator-workspace">
+                    <!-- Dynamic calculator content loads here -->
+                </div>
+            </div>
+            
+            <!-- Lab Values Panel -->
+            <div id="lab-panel" class="tool-panel">
+                <div class="search-container">
+                    <input type="text" id="lab-search" placeholder="Search lab values..." class="tool-search">
+                    <button id="lab-search-btn">🔍</button>
+                </div>
+                <div class="lab-categories">
+                    <button class="category-btn" data-category="all">All</button>
+                    <button class="category-btn" data-category="chemistry">Chemistry</button>
+                    <button class="category-btn" data-category="hematology">Hematology</button>
+                    <button class="category-btn" data-category="cardiac">Cardiac</button>
+                    <button class="category-btn" data-category="liver">Liver</button>
+                    <button class="category-btn" data-category="kidney">Kidney</button>
+                </div>
+                <div id="lab-results" class="tool-results">
+                    <div class="lab-item">
+                        <h4>Hemoglobin</h4>
+                        <div class="lab-ranges">
+                            <p>Male: 13.5-17.5 g/dL</p>
+                            <p>Female: 12.0-16.0 g/dL</p>
+                        </div>
+                        <p class="lab-significance">Low: Anemia investigation needed</p>
+                    </div>
+                    <div class="lab-item">
+                        <h4>Creatinine</h4>
+                        <div class="lab-ranges">
+                            <p>Male: 0.7-1.3 mg/dL</p>
+                            <p>Female: 0.6-1.1 mg/dL</p>
+                        </div>
+                        <p class="lab-significance">Kidney function indicator</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Guidelines Panel -->
+            <div id="guidelines-panel" class="tool-panel">
+                <div class="search-container">
+                    <input type="text" id="guideline-search" placeholder="Search guidelines..." class="tool-search">
+                    <button id="guideline-search-btn">🔍</button>
+                </div>
+                <div class="guideline-categories">
+                    <button class="category-btn" data-category="all">All</button>
+                    <button class="category-btn" data-category="cardiac">Cardiac</button>
+                    <button class="category-btn" data-category="diabetes">Diabetes</button>
+                    <button class="category-btn" data-category="hypertension">HTN</button>
+                    <button class="category-btn" data-category="emergency">Emergency</button>
+                </div>
+                <div id="guideline-results" class="tool-results">
+                    <div class="guideline-item">
+                        <h4>Hypertension Management</h4>
+                        <p class="guideline-source">AHA/ACC 2017</p>
+                        <p class="guideline-summary">Target: &lt;130/80 mmHg for most adults</p>
+                    </div>
+                    <div class="guideline-item">
+                        <h4>Type 2 Diabetes</h4>
+                        <p class="guideline-source">ADA 2023</p>
+                        <p class="guideline-summary">HbA1c target: &lt;7% for most adults</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Differential Diagnosis Panel -->
+            <div id="differential-panel" class="tool-panel">
+                <div class="search-container">
+                    <input type="text" id="differential-search" placeholder="Search symptoms..." class="tool-search">
+                    <button id="differential-search-btn">🔍</button>
+                </div>
+                <div class="symptom-categories">
+                    <button class="category-btn" data-category="all">All</button>
+                    <button class="category-btn" data-category="chest-pain">Chest Pain</button>
+                    <button class="category-btn" data-category="dyspnea">Dyspnea</button>
+                    <button class="category-btn" data-category="abdominal">Abdominal</button>
+                    <button class="category-btn" data-category="neurologic">Neuro</button>
+                </div>
+                <div id="differential-results" class="tool-results">
+                    <div class="differential-item">
+                        <h4>Acute Chest Pain</h4>
+                        <div class="differential-list">
+                            <span class="dx-item urgent">MI</span>
+                            <span class="dx-item urgent">PE</span>
+                            <span class="dx-item urgent">Aortic Dissection</span>
+                            <span class="dx-item">Angina</span>
+                            <span class="dx-item">GERD</span>
+                            <span class="dx-item">Costochondritis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- JavaScript will be loaded here -->
     <script src="/static/js/app.js"></script>

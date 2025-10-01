@@ -40,6 +40,7 @@ class MLAQuizApp {
         this.initializeDarkMode();
         this.initializeFontSize();
         this.initializeQuizLength();
+        this.initializeMedicalTools();
     }
     
     bindEvents() {
@@ -2096,6 +2097,1336 @@ class MLAQuizApp {
             
             console.log('🎯 Quiz length initialized:', this.selectedQuizLength);
         }, 100);
+    }
+
+    initializeMedicalTools() {
+        // Medical tools panel functionality
+        const toolsToggle = document.getElementById('medical-tools-toggle');
+        const toolsPanel = document.getElementById('medical-tools-panel');
+        const toolsClose = document.getElementById('tools-close-btn');
+        const toolNavBtns = document.querySelectorAll('.tool-nav-btn');
+        const toolPanels = document.querySelectorAll('.tool-panel');
+
+        // Toggle panel open/close
+        if (toolsToggle) {
+            toolsToggle.addEventListener('click', () => {
+                toolsPanel.classList.toggle('open');
+                console.log('🩺 Medical tools panel toggled');
+            });
+        }
+
+        // Close panel
+        if (toolsClose) {
+            toolsClose.addEventListener('click', () => {
+                toolsPanel.classList.remove('open');
+            });
+        }
+
+        // Close panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (toolsPanel && toolsPanel.classList.contains('open')) {
+                if (!toolsPanel.contains(e.target) && !toolsToggle.contains(e.target)) {
+                    toolsPanel.classList.remove('open');
+                }
+            }
+        });
+
+        // Handle tool navigation
+        toolNavBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const toolType = btn.getAttribute('data-tool');
+                this.switchMedicalTool(toolType);
+                
+                // Update active nav button
+                toolNavBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Initialize calculators
+        this.initializeCalculators();
+        
+        console.log('🩺 Medical tools initialized');
+    }
+
+    switchMedicalTool(toolType) {
+        const toolPanels = document.querySelectorAll('.tool-panel');
+        
+        // Hide all panels
+        toolPanels.forEach(panel => {
+            panel.classList.remove('active');
+        });
+        
+        // Show selected panel
+        const targetPanel = document.getElementById(`${toolType}-panel`);
+        if (targetPanel) {
+            targetPanel.classList.add('active');
+        }
+        
+        console.log('🩺 Switched to tool:', toolType);
+    }
+
+    initializeCalculators() {
+        // Handle calculator button clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.calculator-btn')) {
+                const calcType = e.target.closest('.calculator-btn').getAttribute('data-calc');
+                this.loadCalculator(calcType);
+            }
+        });
+    }
+
+    loadCalculator(calcType) {
+        const workspace = document.getElementById('calculator-workspace');
+        if (!workspace) return;
+
+        workspace.classList.add('active');
+        
+        switch (calcType) {
+            case 'bmi':
+                workspace.innerHTML = this.getBMICalculator();
+                break;
+            case 'chads2vasc':
+                workspace.innerHTML = this.getCHADS2VAScCalculator();
+                break;
+            case 'hasbled':
+                workspace.innerHTML = this.getHASBLEDCalculator();
+                break;
+            case 'gcs':
+                workspace.innerHTML = this.getGCSCalculator();
+                break;
+            case 'apache':
+                workspace.innerHTML = this.getAPACHECalculator();
+                break;
+            case 'wells':
+                workspace.innerHTML = this.getWellsCalculator();
+                break;
+            default:
+                workspace.innerHTML = '<p>Calculator not yet implemented</p>';
+        }
+        
+        console.log('🧮 Loaded calculator:', calcType);
+    }
+
+    getBMICalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>BMI Calculator</h4>
+                <div class="calc-input-group">
+                    <label>Weight (kg):</label>
+                    <input type="number" id="bmi-weight" placeholder="70" step="0.1">
+                </div>
+                <div class="calc-input-group">
+                    <label>Height (cm):</label>
+                    <input type="number" id="bmi-height" placeholder="175" step="0.1">
+                </div>
+                <button onclick="window.quizApp.calculateBMI()">Calculate</button>
+                <div id="bmi-result" class="calc-result"></div>
+                <div class="calc-reference">
+                    <small>
+                        <strong>BMI Categories:</strong><br>
+                        Underweight: &lt;18.5<br>
+                        Normal: 18.5-24.9<br>
+                        Overweight: 25-29.9<br>
+                        Obese: ≥30
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateBMI() {
+        const weight = parseFloat(document.getElementById('bmi-weight').value);
+        const height = parseFloat(document.getElementById('bmi-height').value) / 100; // Convert cm to m
+        
+        if (!weight || !height) {
+            document.getElementById('bmi-result').innerHTML = '<p class="error">Please enter valid weight and height</p>';
+            return;
+        }
+        
+        const bmi = weight / (height * height);
+        let category = '';
+        let color = '';
+        
+        if (bmi < 18.5) {
+            category = 'Underweight';
+            color = '#2196F3';
+        } else if (bmi < 25) {
+            category = 'Normal weight';
+            color = '#4CAF50';
+        } else if (bmi < 30) {
+            category = 'Overweight';
+            color = '#FF9800';
+        } else {
+            category = 'Obese';
+            color = '#F44336';
+        }
+        
+        document.getElementById('bmi-result').innerHTML = `
+            <div class="bmi-result-display">
+                <div class="bmi-value" style="color: ${color}">
+                    <strong>${bmi.toFixed(1)} kg/m²</strong>
+                </div>
+                <div class="bmi-category" style="color: ${color}">
+                    ${category}
+                </div>
+            </div>
+        `;
+    }
+
+    getCHADS2VAScCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>CHA₂DS₂-VASc Score</h4>
+                <p><small>Stroke risk assessment in atrial fibrillation</small></p>
+                
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="chads-chf"> Congestive heart failure (+1)</label>
+                    <label><input type="checkbox" id="chads-htn"> Hypertension (+1)</label>
+                    <label><input type="checkbox" id="chads-age75"> Age ≥75 years (+2)</label>
+                    <label><input type="checkbox" id="chads-diabetes"> Diabetes mellitus (+1)</label>
+                    <label><input type="checkbox" id="chads-stroke"> Stroke/TIA/thromboembolism (+2)</label>
+                    <label><input type="checkbox" id="chads-vascular"> Vascular disease (+1)</label>
+                    <label><input type="checkbox" id="chads-age65"> Age 65-74 years (+1)</label>
+                    <label><input type="checkbox" id="chads-female"> Female sex (+1)</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateCHADS2VASc()">Calculate Score</button>
+                <div id="chads-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateCHADS2VASc() {
+        let score = 0;
+        
+        if (document.getElementById('chads-chf').checked) score += 1;
+        if (document.getElementById('chads-htn').checked) score += 1;
+        if (document.getElementById('chads-age75').checked) score += 2;
+        if (document.getElementById('chads-diabetes').checked) score += 1;
+        if (document.getElementById('chads-stroke').checked) score += 2;
+        if (document.getElementById('chads-vascular').checked) score += 1;
+        if (document.getElementById('chads-age65').checked) score += 1;
+        if (document.getElementById('chads-female').checked) score += 1;
+        
+        let risk = '';
+        let recommendation = '';
+        let color = '';
+        
+        if (score === 0) {
+            risk = 'Low risk (0.2%/year)';
+            recommendation = 'No anticoagulation';
+            color = '#4CAF50';
+        } else if (score === 1) {
+            risk = 'Low-moderate risk (0.6%/year)';
+            recommendation = 'Consider anticoagulation';
+            color = '#FF9800';
+        } else {
+            risk = 'High risk (≥2.2%/year)';
+            recommendation = 'Anticoagulation recommended';
+            color = '#F44336';
+        }
+        
+        document.getElementById('chads-result').innerHTML = `
+            <div class="score-result">
+                <div class="score-value" style="color: ${color}">
+                    Score: <strong>${score}</strong>
+                </div>
+                <div class="score-risk">${risk}</div>
+                <div class="score-recommendation" style="color: ${color}">
+                    <strong>${recommendation}</strong>
+                </div>
+            </div>
+        `;
+    }
+
+    getHASBLEDCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>HAS-BLED Score</h4>
+                <p><small>Bleeding risk assessment in atrial fibrillation</small></p>
+                
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="hasbled-htn"> Hypertension (+1)</label>
+                    <label><input type="checkbox" id="hasbled-renal"> Abnormal renal function (+1)</label>
+                    <label><input type="checkbox" id="hasbled-liver"> Abnormal liver function (+1)</label>
+                    <label><input type="checkbox" id="hasbled-stroke"> Stroke history (+1)</label>
+                    <label><input type="checkbox" id="hasbled-bleeding"> Prior bleeding/predisposition (+1)</label>
+                    <label><input type="checkbox" id="hasbled-labile"> Labile INR (+1)</label>
+                    <label><input type="checkbox" id="hasbled-elderly"> Elderly (>65 years) (+1)</label>
+                    <label><input type="checkbox" id="hasbled-drugs"> Drugs/alcohol (+1)</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateHASBLED()">Calculate Score</button>
+                <div id="hasbled-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateHASBLED() {
+        let score = 0;
+        
+        if (document.getElementById('hasbled-htn').checked) score += 1;
+        if (document.getElementById('hasbled-renal').checked) score += 1;
+        if (document.getElementById('hasbled-liver').checked) score += 1;
+        if (document.getElementById('hasbled-stroke').checked) score += 1;
+        if (document.getElementById('hasbled-bleeding').checked) score += 1;
+        if (document.getElementById('hasbled-labile').checked) score += 1;
+        if (document.getElementById('hasbled-elderly').checked) score += 1;
+        if (document.getElementById('hasbled-drugs').checked) score += 1;
+        
+        let risk = '';
+        let recommendation = '';
+        let color = '';
+        
+        if (score <= 2) {
+            risk = 'Low bleeding risk';
+            recommendation = 'Anticoagulation usually safe';
+            color = '#4CAF50';
+        } else {
+            risk = 'High bleeding risk';
+            recommendation = 'Caution with anticoagulation - consider modifiable risk factors';
+            color = '#F44336';
+        }
+        
+        document.getElementById('hasbled-result').innerHTML = `
+            <div class="score-result">
+                <div class="score-value" style="color: ${color}">
+                    Score: <strong>${score}</strong>
+                </div>
+                <div class="score-risk">${risk}</div>
+                <div class="score-recommendation" style="color: ${color}">
+                    <strong>${recommendation}</strong>
+                </div>
+            </div>
+        `;
+    }
+
+    getGCSCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Glasgow Coma Scale</h4>
+                
+                <div class="calc-select-group">
+                    <label>Eye Opening:</label>
+                    <select id="gcs-eye">
+                        <option value="1">No eye opening (1)</option>
+                        <option value="2">Eye opening to pain (2)</option>
+                        <option value="3">Eye opening to verbal command (3)</option>
+                        <option value="4" selected>Eyes open spontaneously (4)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-select-group">
+                    <label>Verbal Response:</label>
+                    <select id="gcs-verbal">
+                        <option value="1">No verbal response (1)</option>
+                        <option value="2">Incomprehensible sounds (2)</option>
+                        <option value="3">Inappropriate words (3)</option>
+                        <option value="4">Confused (4)</option>
+                        <option value="5" selected>Oriented (5)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-select-group">
+                    <label>Motor Response:</label>
+                    <select id="gcs-motor">
+                        <option value="1">No motor response (1)</option>
+                        <option value="2">Extension to pain (2)</option>
+                        <option value="3">Flexion to pain (3)</option>
+                        <option value="4">Withdrawal from pain (4)</option>
+                        <option value="5">Localizes pain (5)</option>
+                        <option value="6" selected>Obeys commands (6)</option>
+                    </select>
+                </div>
+                
+                <button onclick="window.quizApp.calculateGCS()">Calculate GCS</button>
+                <div id="gcs-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateGCS() {
+        const eye = parseInt(document.getElementById('gcs-eye').value);
+        const verbal = parseInt(document.getElementById('gcs-verbal').value);
+        const motor = parseInt(document.getElementById('gcs-motor').value);
+        
+        const total = eye + verbal + motor;
+        
+        let severity = '';
+        let color = '';
+        
+        if (total <= 8) {
+            severity = 'Severe brain injury';
+            color = '#F44336';
+        } else if (total <= 12) {
+            severity = 'Moderate brain injury';
+            color = '#FF9800';
+        } else {
+            severity = 'Mild brain injury';
+            color = '#4CAF50';
+        }
+        
+        document.getElementById('gcs-result').innerHTML = `
+            <div class="gcs-result-display">
+                <div class="gcs-breakdown">
+                    Eye: ${eye} + Verbal: ${verbal} + Motor: ${motor}
+                </div>
+                <div class="gcs-total" style="color: ${color}">
+                    Total GCS: <strong>${total}/15</strong>
+                </div>
+                <div class="gcs-severity" style="color: ${color}">
+                    ${severity}
+                </div>
+            </div>
+        `;
+    }
+
+    getAPACHECalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>APACHE II Score</h4>
+                <p><small>Simplified version - ICU mortality prediction</small></p>
+                <p><em>Note: This is a complex score requiring multiple physiologic variables. This is a basic implementation.</em></p>
+                
+                <div class="calc-input-group">
+                    <label>Age:</label>
+                    <input type="number" id="apache-age" placeholder="65" min="0" max="120">
+                </div>
+                
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="apache-chronic"> Chronic health problems</label>
+                    <label><input type="checkbox" id="apache-emergency"> Emergency surgery</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateAPACHE()">Estimate Score</button>
+                <div id="apache-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small><strong>Note:</strong> Complete APACHE II requires 12 physiologic variables, chronic health evaluation, and surgical status. This is a simplified version for educational purposes.</small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateAPACHE() {
+        const age = parseInt(document.getElementById('apache-age').value);
+        
+        if (!age) {
+            document.getElementById('apache-result').innerHTML = '<p class="error">Please enter age</p>';
+            return;
+        }
+        
+        let score = 0;
+        
+        // Age points
+        if (age >= 75) score += 6;
+        else if (age >= 65) score += 5;
+        else if (age >= 55) score += 3;
+        else if (age >= 45) score += 2;
+        
+        // Chronic health
+        if (document.getElementById('apache-chronic').checked) score += 5;
+        
+        // Emergency surgery
+        if (document.getElementById('apache-emergency').checked) score += 5;
+        
+        document.getElementById('apache-result').innerHTML = `
+            <div class="apache-result-display">
+                <div class="apache-partial">
+                    Partial Score: <strong>${score}</strong>
+                </div>
+                <div class="apache-note">
+                    <small>Complete APACHE II score requires additional physiologic variables (temperature, MAP, heart rate, respiratory rate, oxygenation, arterial pH, sodium, potassium, creatinine, hematocrit, WBC count, GCS)</small>
+                </div>
+            </div>
+        `;
+    }
+
+    getWellsCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Wells Score for PE</h4>
+                <p><small>Pulmonary embolism clinical probability</small></p>
+                
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="wells-clinical"> Clinical signs of DVT (+3)</label>
+                    <label><input type="checkbox" id="wells-likely"> PE as likely as alternative diagnosis (+3)</label>
+                    <label><input type="checkbox" id="wells-hr"> Heart rate >100 (+1.5)</label>
+                    <label><input type="checkbox" id="wells-immobility"> Immobilization/surgery in past 4 weeks (+1.5)</label>
+                    <label><input type="checkbox" id="wells-previous"> Previous DVT/PE (+1.5)</label>
+                    <label><input type="checkbox" id="wells-hemoptysis"> Hemoptysis (+1)</label>
+                    <label><input type="checkbox" id="wells-malignancy"> Malignancy (+1)</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateWells()">Calculate Score</button>
+                <div id="wells-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateWells() {
+        let score = 0;
+        
+        if (document.getElementById('wells-clinical').checked) score += 3;
+        if (document.getElementById('wells-likely').checked) score += 3;
+        if (document.getElementById('wells-hr').checked) score += 1.5;
+        if (document.getElementById('wells-immobility').checked) score += 1.5;
+        if (document.getElementById('wells-previous').checked) score += 1.5;
+        if (document.getElementById('wells-hemoptysis').checked) score += 1;
+        if (document.getElementById('wells-malignancy').checked) score += 1;
+        
+        let probability = '';
+        let recommendation = '';
+        let color = '';
+        
+        if (score <= 4) {
+            probability = 'Low probability (≤4)';
+            recommendation = 'D-dimer; if negative, PE unlikely';
+            color = '#4CAF50';
+        } else if (score <= 6) {
+            probability = 'Moderate probability (4-6)';
+            recommendation = 'Consider CT pulmonary angiogram';
+            color = '#FF9800';
+        } else {
+            probability = 'High probability (>6)';
+            recommendation = 'CT pulmonary angiogram recommended';
+            color = '#F44336';
+        }
+        
+        document.getElementById('wells-result').innerHTML = `
+            <div class="wells-result-display">
+                <div class="wells-score" style="color: ${color}">
+                    Score: <strong>${score}</strong>
+                </div>
+                <div class="wells-probability">${probability}</div>
+                <div class="wells-recommendation" style="color: ${color}">
+                    <strong>${recommendation}</strong>
+                </div>
+            </div>
+        `;
+    }
+
+    // Drug Reference Functions
+    loadDrugReference() {
+        const drugDatabase = {
+            'acetaminophen': {
+                name: 'Acetaminophen (Paracetamol)',
+                class: 'Analgesic, Antipyretic',
+                mechanism: 'Inhibits COX enzymes centrally',
+                dosing: 'Adults: 325-1000mg q4-6h (max 4g/day). Pediatric: 10-15mg/kg q4-6h',
+                contraindications: 'Severe hepatic impairment, hypersensitivity',
+                interactions: 'Warfarin (↑ INR), chronic alcohol use (↑ hepatotoxicity)',
+                monitoring: 'Liver function with prolonged use or overdose',
+                pregnancy: 'Category B - Safe in pregnancy'
+            },
+            'amoxicillin': {
+                name: 'Amoxicillin',
+                class: 'Beta-lactam antibiotic (Penicillin)',
+                mechanism: 'Inhibits bacterial cell wall synthesis',
+                dosing: 'Adults: 500mg q8h or 875mg q12h. Pediatric: 25-50mg/kg/day divided q8-12h',
+                contraindications: 'Penicillin allergy, severe renal impairment',
+                interactions: 'Methotrexate (↑ toxicity), oral contraceptives (↓ efficacy)',
+                monitoring: 'Signs of allergic reaction, C. diff colitis',
+                pregnancy: 'Category B - Safe in pregnancy'
+            },
+            'atorvastatin': {
+                name: 'Atorvastatin',
+                class: 'HMG-CoA reductase inhibitor (Statin)',
+                mechanism: 'Inhibits cholesterol synthesis',
+                dosing: 'Adults: 10-80mg daily in evening',
+                contraindications: 'Active liver disease, pregnancy, breastfeeding',
+                interactions: 'Warfarin (↑ INR), cyclosporine (↑ statin levels)',
+                monitoring: 'Liver enzymes, CK, lipid panel',
+                pregnancy: 'Category X - Contraindicated'
+            },
+            'metformin': {
+                name: 'Metformin',
+                class: 'Biguanide antidiabetic',
+                mechanism: 'Decreases hepatic glucose production, improves insulin sensitivity',
+                dosing: 'Adults: Start 500mg BID, max 2550mg/day divided',
+                contraindications: 'eGFR <30, acute heart failure, severe liver disease',
+                interactions: 'Contrast dye (hold 48h), alcohol (↑ lactic acidosis risk)',
+                monitoring: 'Renal function, B12 levels, lactic acid',
+                pregnancy: 'Category B - Generally safe'
+            },
+            'lisinopril': {
+                name: 'Lisinopril',
+                class: 'ACE inhibitor',
+                mechanism: 'Inhibits angiotensin-converting enzyme',
+                dosing: 'Adults: 5-40mg daily',
+                contraindications: 'Pregnancy, bilateral renal artery stenosis, angioedema history',
+                interactions: 'NSAIDs (↓ efficacy), potassium supplements (hyperkalemia)',
+                monitoring: 'Blood pressure, renal function, potassium',
+                pregnancy: 'Category D - Contraindicated'
+            },
+            'levothyroxine': {
+                name: 'Levothyroxine',
+                class: 'Thyroid hormone replacement',
+                mechanism: 'Synthetic T4 hormone replacement',
+                dosing: 'Adults: 1.6mcg/kg/day, adjust based on TSH',
+                contraindications: 'Untreated adrenal insufficiency, acute MI',
+                interactions: 'Iron, calcium (↓ absorption), warfarin (↑ effect)',
+                monitoring: 'TSH, T4, cardiac symptoms',
+                pregnancy: 'Category A - Safe, may need dose increase'
+            }
+        };
+        
+        const container = document.getElementById('drug-reference-container');
+        container.innerHTML = `
+            <div class="search-container">
+                <input type="text" id="drug-search" placeholder="Search medications...">
+                <div id="drug-search-results"></div>
+            </div>
+            <div class="drug-categories">
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('all')">All Drugs</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('antibiotics')">Antibiotics</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('cardiovascular')">Cardiovascular</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('endocrine')">Endocrine</button>
+            </div>
+            <div id="drug-list"></div>
+        `;
+        
+        const searchInput = document.getElementById('drug-search');
+        searchInput.addEventListener('input', () => this.searchDrugs(drugDatabase));
+        this.drugDatabase = drugDatabase;
+        this.showDrugCategory('all');
+    }
+
+    searchDrugs(drugDatabase) {
+        const query = document.getElementById('drug-search').value.toLowerCase();
+        const resultsContainer = document.getElementById('drug-search-results');
+        
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+        
+        const matches = Object.keys(drugDatabase).filter(drug => 
+            drug.toLowerCase().includes(query) || 
+            drugDatabase[drug].name.toLowerCase().includes(query) ||
+            drugDatabase[drug].class.toLowerCase().includes(query)
+        );
+        
+        if (matches.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-results">No medications found</div>';
+            return;
+        }
+        
+        resultsContainer.innerHTML = matches.map(drug => `
+            <div class="drug-result" onclick="window.quizApp.showDrugDetail('${drug}')">
+                <div class="drug-name">${drugDatabase[drug].name}</div>
+                <div class="drug-class">${drugDatabase[drug].class}</div>
+            </div>
+        `).join('');
+    }
+    
+    showDrugCategory(category) {
+        const drugDatabase = this.drugDatabase;
+        const drugList = document.getElementById('drug-list');
+        let drugs = Object.keys(drugDatabase);
+        
+        if (category === 'antibiotics') {
+            drugs = drugs.filter(drug => drugDatabase[drug].class.toLowerCase().includes('antibiotic'));
+        } else if (category === 'cardiovascular') {
+            drugs = drugs.filter(drug => 
+                drugDatabase[drug].class.toLowerCase().includes('statin') ||
+                drugDatabase[drug].class.toLowerCase().includes('ace inhibitor')
+            );
+        } else if (category === 'endocrine') {
+            drugs = drugs.filter(drug => 
+                drugDatabase[drug].class.toLowerCase().includes('antidiabetic') ||
+                drugDatabase[drug].class.toLowerCase().includes('thyroid')
+            );
+        }
+        
+        drugList.innerHTML = drugs.map(drug => `
+            <div class="drug-card" onclick="window.quizApp.showDrugDetail('${drug}')">
+                <div class="drug-name">${drugDatabase[drug].name}</div>
+                <div class="drug-class">${drugDatabase[drug].class}</div>
+            </div>
+        `).join('');
+    }
+    
+    showDrugDetail(drugKey) {
+        const drug = this.drugDatabase[drugKey];
+        const container = document.getElementById('drug-reference-container');
+        
+        container.innerHTML = `
+            <button class="back-btn" onclick="window.quizApp.loadDrugReference()">← Back to Drug List</button>
+            <div class="drug-detail">
+                <h3>${drug.name}</h3>
+                <div class="drug-info">
+                    <div class="info-section">
+                        <h4>Classification</h4>
+                        <p>${drug.class}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Mechanism of Action</h4>
+                        <p>${drug.mechanism}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Dosing</h4>
+                        <p>${drug.dosing}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Contraindications</h4>
+                        <p>${drug.contraindications}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Drug Interactions</h4>
+                        <p>${drug.interactions}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Monitoring</h4>
+                        <p>${drug.monitoring}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Pregnancy Category</h4>
+                        <p>${drug.pregnancy}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Lab Values Functions
+    loadLabValues() {
+        const labDatabase = {
+            'cbc': {
+                name: 'Complete Blood Count (CBC)',
+                values: {
+                    'WBC': { normal: '4.5-11.0 × 10³/μL', low: 'Immunosuppression, viral infection', high: 'Infection, leukemia, stress' },
+                    'RBC': { normal: 'M: 4.7-6.1, F: 4.2-5.4 × 10⁶/μL', low: 'Anemia, bleeding', high: 'Polycythemia, dehydration' },
+                    'Hemoglobin': { normal: 'M: 14-18, F: 12-16 g/dL', low: 'Anemia, bleeding', high: 'Polycythemia, COPD' },
+                    'Hematocrit': { normal: 'M: 42-52%, F: 37-47%', low: 'Anemia, overhydration', high: 'Dehydration, polycythemia' },
+                    'Platelets': { normal: '150-450 × 10³/μL', low: 'Bleeding risk, ITP', high: 'Thrombocytosis, malignancy' }
+                }
+            },
+            'bmp': {
+                name: 'Basic Metabolic Panel (BMP)',
+                values: {
+                    'Glucose': { normal: '70-100 mg/dL (fasting)', low: 'Hypoglycemia, insulin excess', high: 'Diabetes, stress, steroids' },
+                    'BUN': { normal: '7-20 mg/dL', low: 'Liver disease, malnutrition', high: 'Renal failure, dehydration' },
+                    'Creatinine': { normal: 'M: 0.7-1.3, F: 0.6-1.1 mg/dL', low: 'Low muscle mass', high: 'Renal failure, dehydration' },
+                    'Sodium': { normal: '136-145 mEq/L', low: 'Hyponatremia, SIADH', high: 'Dehydration, diabetes insipidus' },
+                    'Potassium': { normal: '3.5-5.0 mEq/L', low: 'Diuretics, diarrhea', high: 'Renal failure, ACE inhibitors' },
+                    'Chloride': { normal: '98-107 mEq/L', low: 'Vomiting, diuretics', high: 'Dehydration, hypernatremia' },
+                    'CO2': { normal: '22-29 mEq/L', low: 'Metabolic acidosis', high: 'Metabolic alkalosis' }
+                }
+            },
+            'lft': {
+                name: 'Liver Function Tests (LFT)',
+                values: {
+                    'ALT': { normal: 'M: 10-40, F: 7-35 U/L', low: 'Rarely significant', high: 'Hepatitis, liver damage' },
+                    'AST': { normal: 'M: 10-40, F: 9-32 U/L', low: 'Rarely significant', high: 'Liver/muscle damage, MI' },
+                    'Alkaline Phosphatase': { normal: '44-147 U/L', low: 'Hypothyroidism', high: 'Liver disease, bone disease' },
+                    'Total Bilirubin': { normal: '0.3-1.2 mg/dL', low: 'Rarely significant', high: 'Hemolysis, liver disease' },
+                    'Albumin': { normal: '3.5-5.0 g/dL', low: 'Liver disease, malnutrition', high: 'Dehydration' },
+                    'PT/INR': { normal: 'PT: 11-13 sec, INR: 0.8-1.1', low: 'Hypercoagulable state', high: 'Liver disease, warfarin' }
+                }
+            },
+            'lipids': {
+                name: 'Lipid Panel',
+                values: {
+                    'Total Cholesterol': { normal: '<200 mg/dL', low: 'Malnutrition, hyperthyroid', high: 'CAD risk, familial hypercholesterolemia' },
+                    'LDL': { normal: '<100 mg/dL (optimal)', low: 'Over-treatment', high: 'CAD risk, diabetes' },
+                    'HDL': { normal: 'M: >40, F: >50 mg/dL', low: 'CAD risk, metabolic syndrome', high: 'Cardioprotective' },
+                    'Triglycerides': { normal: '<150 mg/dL', low: 'Malnutrition', high: 'Pancreatitis risk, diabetes' }
+                }
+            }
+        };
+        
+        const container = document.getElementById('lab-values-container');
+        container.innerHTML = `
+            <div class="search-container">
+                <input type="text" id="lab-search" placeholder="Search lab values...">
+                <div id="lab-search-results"></div>
+            </div>
+            <div class="lab-categories">
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('all')">All Labs</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('cbc')">CBC</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('bmp')">Chemistry</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('lft')">Liver</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('lipids')">Lipids</button>
+            </div>
+            <div id="lab-list"></div>
+        `;
+        
+        const searchInput = document.getElementById('lab-search');
+        searchInput.addEventListener('input', () => this.searchLabValues(labDatabase));
+        this.labDatabase = labDatabase;
+        this.showLabCategory('all');
+    }
+
+    searchLabValues(labDatabase) {
+        const query = document.getElementById('lab-search').value.toLowerCase();
+        const resultsContainer = document.getElementById('lab-search-results');
+        
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+        
+        const matches = [];
+        Object.keys(labDatabase).forEach(panel => {
+            if (labDatabase[panel].name.toLowerCase().includes(query)) {
+                matches.push({ type: 'panel', key: panel, name: labDatabase[panel].name });
+            }
+            Object.keys(labDatabase[panel].values).forEach(test => {
+                if (test.toLowerCase().includes(query)) {
+                    matches.push({ type: 'test', panel: panel, key: test, name: test });
+                }
+            });
+        });
+        
+        if (matches.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-results">No lab values found</div>';
+            return;
+        }
+        
+        resultsContainer.innerHTML = matches.map(match => `
+            <div class="lab-result" onclick="${match.type === 'panel' ? `window.quizApp.showLabPanel('${match.key}')` : `window.quizApp.showLabTest('${match.panel}', '${match.key}')`}">
+                <div class="lab-name">${match.name}</div>
+                <div class="lab-type">${match.type === 'panel' ? 'Lab Panel' : 'Individual Test'}</div>
+            </div>
+        `).join('');
+    }
+    
+    showLabCategory(category) {
+        const labDatabase = this.labDatabase;
+        const labList = document.getElementById('lab-list');
+        let panels = Object.keys(labDatabase);
+        
+        if (category !== 'all') {
+            panels = panels.filter(panel => panel === category);
+        }
+        
+        labList.innerHTML = panels.map(panel => `
+            <div class="lab-card" onclick="window.quizApp.showLabPanel('${panel}')">
+                <div class="lab-panel-name">${labDatabase[panel].name}</div>
+                <div class="lab-test-count">${Object.keys(labDatabase[panel].values).length} tests</div>
+            </div>
+        `).join('');
+    }
+    
+    showLabPanel(panelKey) {
+        const panel = this.labDatabase[panelKey];
+        const container = document.getElementById('lab-values-container');
+        
+        const testsHtml = Object.entries(panel.values).map(([test, data]) => `
+            <div class="lab-test" onclick="window.quizApp.showLabTest('${panelKey}', '${test}')">
+                <div class="test-name">${test}</div>
+                <div class="test-normal">${data.normal}</div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = `
+            <button class="back-btn" onclick="window.quizApp.loadLabValues()">← Back to Lab Categories</button>
+            <div class="lab-panel-detail">
+                <h3>${panel.name}</h3>
+                <div class="lab-tests">
+                    ${testsHtml}
+                </div>
+            </div>
+        `;
+    }
+    
+    showLabTest(panelKey, testKey) {
+        const test = this.labDatabase[panelKey].values[testKey];
+        const container = document.getElementById('lab-values-container');
+        
+        container.innerHTML = `
+            <button class="back-btn" onclick="window.quizApp.showLabPanel('${panelKey}')">← Back to ${this.labDatabase[panelKey].name}</button>
+            <div class="lab-test-detail">
+                <h3>${testKey}</h3>
+                <div class="test-info">
+                    <div class="info-section">
+                        <h4>Normal Range</h4>
+                        <p>${test.normal}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Low Values</h4>
+                        <p>${test.low}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>High Values</h4>
+                        <p>${test.high}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Clinical Guidelines Functions  
+    loadGuidelines() {
+        const guidelinesDatabase = {
+            'hypertension': {
+                title: 'Hypertension Management (ACC/AHA 2017)',
+                category: 'Cardiovascular',
+                stages: {
+                    'Normal': 'SBP <120 AND DBP <80 mmHg',
+                    'Elevated': 'SBP 120-129 AND DBP <80 mmHg',
+                    'Stage 1': 'SBP 130-139 OR DBP 80-89 mmHg',
+                    'Stage 2': 'SBP ≥140 OR DBP ≥90 mmHg'
+                },
+                treatment: {
+                    'Elevated': 'Lifestyle modifications only',
+                    'Stage 1': 'Lifestyle + medication if CVD risk ≥10% or DM/CKD',
+                    'Stage 2': 'Lifestyle + combination therapy (ACE-I/ARB + CCB or thiazide)'
+                },
+                lifestyle: 'Weight loss, DASH diet, sodium restriction (<2.3g/day), exercise, alcohol moderation'
+            },
+            'diabetes': {
+                title: 'Type 2 Diabetes Management (ADA 2024)',
+                category: 'Endocrine',
+                targets: {
+                    'HbA1c': '<7% (individualize 6.5-8%)',
+                    'Preprandial glucose': '80-130 mg/dL',
+                    'Postprandial glucose': '<180 mg/dL',
+                    'Blood pressure': '<130/80 mmHg',
+                    'LDL': '<100 mg/dL (<70 if CVD)'
+                },
+                firstLine: 'Metformin + lifestyle modifications',
+                secondLine: 'Add SGLT2-i, GLP-1 RA, DPP-4i, insulin, or SU based on patient factors',
+                cvd: 'SGLT2-i or GLP-1 RA with proven CV benefit if established CVD'
+            },
+            'copd': {
+                title: 'COPD Management (GOLD 2023)',
+                category: 'Pulmonary',
+                stages: {
+                    'GOLD 1': 'FEV1 ≥80% predicted',
+                    'GOLD 2': 'FEV1 50-79% predicted',
+                    'GOLD 3': 'FEV1 30-49% predicted',
+                    'GOLD 4': 'FEV1 <30% predicted'
+                },
+                groups: {
+                    'Group A': 'Low symptoms, low risk (mMRC 0-1, CAT <10, 0-1 exacerbation)',
+                    'Group B': 'High symptoms, low risk (mMRC ≥2, CAT ≥10, 0-1 exacerbation)',
+                    'Group E': 'Any symptoms, high risk (≥2 exacerbations or ≥1 hospitalization)'
+                },
+                treatment: {
+                    'Group A': 'Bronchodilator (SABA or LABA or LAMA)',
+                    'Group B': 'LABA + LAMA',
+                    'Group E': 'LABA + LAMA ± ICS (if eosinophils >300 or frequent exacerbations)'
+                }
+            }
+        };
+        
+        const container = document.getElementById('guidelines-container');
+        container.innerHTML = `
+            <div class="search-container">
+                <input type="text" id="guidelines-search" placeholder="Search guidelines...">
+                <div id="guidelines-search-results"></div>
+            </div>
+            <div class="guidelines-categories">
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('all')">All Guidelines</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('cardiovascular')">Cardiovascular</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('endocrine')">Endocrine</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('pulmonary')">Pulmonary</button>
+            </div>
+            <div id="guidelines-list"></div>
+        `;
+        
+        const searchInput = document.getElementById('guidelines-search');
+        searchInput.addEventListener('input', () => this.searchGuidelines(guidelinesDatabase));
+        this.guidelinesDatabase = guidelinesDatabase;
+        this.showGuidelinesCategory('all');
+    }
+
+    searchGuidelines(guidelinesDatabase) {
+        const query = document.getElementById('guidelines-search').value.toLowerCase();
+        const resultsContainer = document.getElementById('guidelines-search-results');
+        
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+        
+        const matches = Object.keys(guidelinesDatabase).filter(guideline => 
+            guidelinesDatabase[guideline].title.toLowerCase().includes(query) ||
+            guidelinesDatabase[guideline].category.toLowerCase().includes(query) ||
+            guideline.toLowerCase().includes(query)
+        );
+        
+        if (matches.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-results">No guidelines found</div>';
+            return;
+        }
+        
+        resultsContainer.innerHTML = matches.map(guideline => `
+            <div class="guideline-result" onclick="window.quizApp.showGuidelineDetail('${guideline}')">
+                <div class="guideline-title">${guidelinesDatabase[guideline].title}</div>
+                <div class="guideline-category">${guidelinesDatabase[guideline].category}</div>
+            </div>
+        `).join('');
+    }
+    
+    showGuidelinesCategory(category) {
+        const guidelinesDatabase = this.guidelinesDatabase;
+        const guidelinesList = document.getElementById('guidelines-list');
+        let guidelines = Object.keys(guidelinesDatabase);
+        
+        if (category !== 'all') {
+            guidelines = guidelines.filter(guideline => 
+                guidelinesDatabase[guideline].category.toLowerCase() === category
+            );
+        }
+        
+        guidelinesList.innerHTML = guidelines.map(guideline => `
+            <div class="guideline-card" onclick="window.quizApp.showGuidelineDetail('${guideline}')">
+                <div class="guideline-title">${guidelinesDatabase[guideline].title}</div>
+                <div class="guideline-category">${guidelinesDatabase[guideline].category}</div>
+            </div>
+        `).join('');
+    }
+    
+    showGuidelineDetail(guidelineKey) {
+        const guideline = this.guidelinesDatabase[guidelineKey];
+        const container = document.getElementById('guidelines-container');
+        
+        let contentHtml = `
+            <button class="back-btn" onclick="window.quizApp.loadGuidelines()">← Back to Guidelines</button>
+            <div class="guideline-detail">
+                <h3>${guideline.title}</h3>
+        `;
+        
+        if (guideline.stages) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>Stages/Classification</h4>
+                    ${Object.entries(guideline.stages).map(([stage, description]) => `
+                        <p><strong>${stage}:</strong> ${description}</p>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.groups) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>Patient Groups</h4>
+                    ${Object.entries(guideline.groups).map(([group, description]) => `
+                        <p><strong>${group}:</strong> ${description}</p>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.targets) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>Treatment Targets</h4>
+                    ${Object.entries(guideline.targets).map(([target, value]) => `
+                        <p><strong>${target}:</strong> ${value}</p>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.treatment) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>Treatment Recommendations</h4>
+                    ${Object.entries(guideline.treatment).map(([stage, treatment]) => `
+                        <p><strong>${stage}:</strong> ${treatment}</p>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.firstLine) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>First-line Therapy</h4>
+                    <p>${guideline.firstLine}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.secondLine) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>Second-line Options</h4>
+                    <p>${guideline.secondLine}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.lifestyle) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>Lifestyle Modifications</h4>
+                    <p>${guideline.lifestyle}</p>
+                </div>
+            `;
+        }
+        
+        contentHtml += `</div>`;
+        container.innerHTML = contentHtml;
+    }
+
+    // Differential Diagnosis Functions
+    loadDifferentialDx() {
+        const ddxDatabase = {
+            'chest-pain': {
+                title: 'Chest Pain',
+                category: 'Cardiovascular/Pulmonary',
+                presentations: {
+                    'Acute coronary syndrome': {
+                        features: 'Crushing, substernal, radiates to arm/jaw, diaphoresis, dyspnea',
+                        tests: 'ECG, troponins, CXR',
+                        urgency: 'Emergency'
+                    },
+                    'Pulmonary embolism': {
+                        features: 'Sudden onset, pleuritic, dyspnea, tachycardia, risk factors',
+                        tests: 'Wells score, D-dimer, CTPA, V/Q scan',
+                        urgency: 'Emergency'
+                    },
+                    'Pneumothorax': {
+                        features: 'Sudden onset, pleuritic, dyspnea, decreased breath sounds',
+                        tests: 'CXR, CT chest',
+                        urgency: 'Urgent'
+                    },
+                    'Aortic dissection': {
+                        features: 'Tearing, severe, radiates to back, pulse deficits',
+                        tests: 'CTA chest, TEE, MRI',
+                        urgency: 'Emergency'
+                    },
+                    'GERD': {
+                        features: 'Burning, postprandial, positional, antacid relief',
+                        tests: 'Clinical, PPI trial, EGD if alarming features',
+                        urgency: 'Non-urgent'
+                    },
+                    'Costochondritis': {
+                        features: 'Sharp, localized, reproducible with palpation',
+                        tests: 'Clinical diagnosis, rule out cardiac causes',
+                        urgency: 'Non-urgent'
+                    }
+                }
+            },
+            'shortness-of-breath': {
+                title: 'Shortness of Breath (Dyspnea)',
+                category: 'Pulmonary/Cardiovascular',
+                presentations: {
+                    'Heart failure': {
+                        features: 'Exertional dyspnea, orthopnea, PND, edema, JVD',
+                        tests: 'BNP/NT-proBNP, echo, CXR, ECG',
+                        urgency: 'Urgent'
+                    },
+                    'Asthma exacerbation': {
+                        features: 'Wheezing, cough, chest tightness, trigger exposure',
+                        tests: 'Peak flow, ABG if severe, CXR',
+                        urgency: 'Urgent'
+                    },
+                    'COPD exacerbation': {
+                        features: 'Increased dyspnea, cough, sputum production, smoking history',
+                        tests: 'ABG, CXR, sputum culture',
+                        urgency: 'Urgent'
+                    },
+                    'Pneumonia': {
+                        features: 'Fever, cough, purulent sputum, pleuritic pain',
+                        tests: 'CXR, CBC, blood cultures, sputum culture',
+                        urgency: 'Urgent'
+                    },
+                    'Anxiety/Panic': {
+                        features: 'Acute onset, palpitations, diaphoresis, sense of doom',
+                        tests: 'Rule out organic causes first',
+                        urgency: 'Non-urgent'
+                    }
+                }
+            },
+            'abdominal-pain': {
+                title: 'Abdominal Pain',
+                category: 'Gastroenterology/Surgery',
+                presentations: {
+                    'Appendicitis': {
+                        features: 'Periumbilical → RLQ pain, fever, nausea, McBurney point',
+                        tests: 'CBC, CT abdomen, ultrasound',
+                        urgency: 'Emergency'
+                    },
+                    'Cholecystitis': {
+                        features: 'RUQ pain, Murphy sign, fat intolerance, fever',
+                        tests: 'Ultrasound, HIDA scan, LFTs',
+                        urgency: 'Urgent'
+                    },
+                    'Pancreatitis': {
+                        features: 'Epigastric pain radiating to back, nausea, vomiting',
+                        tests: 'Lipase, amylase, CT abdomen',
+                        urgency: 'Urgent'
+                    },
+                    'Bowel obstruction': {
+                        features: 'Crampy pain, nausea, vomiting, distension, constipation',
+                        tests: 'CT abdomen, abdominal X-ray',
+                        urgency: 'Emergency'
+                    },
+                    'Gastroenteritis': {
+                        features: 'Crampy pain, diarrhea, nausea, vomiting',
+                        tests: 'Clinical, stool studies if severe',
+                        urgency: 'Non-urgent'
+                    }
+                }
+            }
+        };
+        
+        const container = document.getElementById('differential-dx-container');
+        container.innerHTML = `
+            <div class="search-container">
+                <input type="text" id="ddx-search" placeholder="Search symptoms or diagnoses...">
+                <div id="ddx-search-results"></div>
+            </div>
+            <div class="ddx-categories">
+                <button class="category-btn" onclick="window.quizApp.showDdxCategory('all')">All Symptoms</button>
+                <button class="category-btn" onclick="window.quizApp.showDdxCategory('cardiovascular')">CV/Pulm</button>
+                <button class="category-btn" onclick="window.quizApp.showDdxCategory('gastroenterology')">GI/Surgery</button>
+            </div>
+            <div id="ddx-list"></div>
+        `;
+        
+        const searchInput = document.getElementById('ddx-search');
+        searchInput.addEventListener('input', () => this.searchDdx(ddxDatabase));
+        this.ddxDatabase = ddxDatabase;
+        this.showDdxCategory('all');
+    }
+
+    searchDdx(ddxDatabase) {
+        const query = document.getElementById('ddx-search').value.toLowerCase();
+        const resultsContainer = document.getElementById('ddx-search-results');
+        
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+        
+        const matches = [];
+        Object.keys(ddxDatabase).forEach(symptom => {
+            if (ddxDatabase[symptom].title.toLowerCase().includes(query) ||
+                ddxDatabase[symptom].category.toLowerCase().includes(query)) {
+                matches.push({ type: 'symptom', key: symptom, name: ddxDatabase[symptom].title });
+            }
+            Object.keys(ddxDatabase[symptom].presentations).forEach(dx => {
+                if (dx.toLowerCase().includes(query)) {
+                    matches.push({ type: 'diagnosis', symptom: symptom, key: dx, name: dx });
+                }
+            });
+        });
+        
+        if (matches.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-results">No results found</div>';
+            return;
+        }
+        
+        resultsContainer.innerHTML = matches.map(match => `
+            <div class="ddx-result" onclick="${match.type === 'symptom' ? `window.quizApp.showDdxDetail('${match.key}')` : `window.quizApp.showDiagnosisDetail('${match.symptom}', '${match.key}')`}">
+                <div class="ddx-name">${match.name}</div>
+                <div class="ddx-type">${match.type === 'symptom' ? 'Symptom Complex' : 'Diagnosis'}</div>
+            </div>
+        `).join('');
+    }
+    
+    showDdxCategory(category) {
+        const ddxDatabase = this.ddxDatabase;
+        const ddxList = document.getElementById('ddx-list');
+        let symptoms = Object.keys(ddxDatabase);
+        
+        if (category !== 'all') {
+            symptoms = symptoms.filter(symptom => 
+                ddxDatabase[symptom].category.toLowerCase().includes(category)
+            );
+        }
+        
+        ddxList.innerHTML = symptoms.map(symptom => `
+            <div class="ddx-card" onclick="window.quizApp.showDdxDetail('${symptom}')">
+                <div class="ddx-title">${ddxDatabase[symptom].title}</div>
+                <div class="ddx-category">${ddxDatabase[symptom].category}</div>
+                <div class="ddx-count">${Object.keys(ddxDatabase[symptom].presentations).length} differentials</div>
+            </div>
+        `).join('');
+    }
+    
+    showDdxDetail(symptomKey) {
+        const symptom = this.ddxDatabase[symptomKey];
+        const container = document.getElementById('differential-dx-container');
+        
+        const presentationsHtml = Object.entries(symptom.presentations).map(([dx, data]) => `
+            <div class="ddx-item ${data.urgency.toLowerCase()}" onclick="window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}')">
+                <div class="ddx-diagnosis">${dx}</div>
+                <div class="ddx-urgency ${data.urgency.toLowerCase()}">${data.urgency}</div>
+                <div class="ddx-features">${data.features}</div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = `
+            <button class="back-btn" onclick="window.quizApp.loadDifferentialDx()">← Back to Symptoms</button>
+            <div class="ddx-detail">
+                <h3>${symptom.title}</h3>
+                <p class="ddx-category">${symptom.category}</p>
+                <h4>Differential Diagnoses:</h4>
+                <div class="ddx-presentations">
+                    ${presentationsHtml}
+                </div>
+            </div>
+        `;
+    }
+    
+    showDiagnosisDetail(symptomKey, dxKey) {
+        const diagnosis = this.ddxDatabase[symptomKey].presentations[dxKey];
+        const container = document.getElementById('differential-dx-container');
+        
+        container.innerHTML = `
+            <button class="back-btn" onclick="window.quizApp.showDdxDetail('${symptomKey}')">← Back to ${this.ddxDatabase[symptomKey].title}</button>
+            <div class="diagnosis-detail">
+                <h3>${dxKey}</h3>
+                <div class="diagnosis-info">
+                    <div class="info-section">
+                        <h4>Clinical Features</h4>
+                        <p>${diagnosis.features}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Diagnostic Tests</h4>
+                        <p>${diagnosis.tests}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Urgency Level</h4>
+                        <p class="urgency-level ${diagnosis.urgency.toLowerCase()}">${diagnosis.urgency}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Override switchMedicalTool to load content
+    switchMedicalTool(toolType) {
+        const toolPanels = document.querySelectorAll('.tool-panel');
+        
+        // Hide all panels
+        toolPanels.forEach(panel => {
+            panel.classList.remove('active');
+        });
+        
+        // Show selected panel
+        const targetPanel = document.getElementById(`${toolType}-panel`);
+        if (targetPanel) {
+            targetPanel.classList.add('active');
+        }
+        
+        // Load content for the selected tool
+        switch(toolType) {
+            case 'drug-reference':
+                this.loadDrugReference();
+                break;
+            case 'lab-values':
+                this.loadLabValues();
+                break;
+            case 'guidelines':
+                this.loadGuidelines();
+                break;
+            case 'differential-dx':
+                this.loadDifferentialDx();
+                break;
+        }
+        
+        console.log('🩺 Switched to tool:', toolType);
     }
 
     setFontSize(size) {
