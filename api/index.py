@@ -951,6 +951,38 @@ def favicon():
         # Return a simple 1x1 transparent PNG if favicon doesn't exist
         return '', 204
 
+@app.route('/test-medical-tools')
+def test_medical_tools():
+    """Test endpoint to verify medical tools elements are present"""
+    try:
+        # Read the main template
+        template_path = os.path.join(app.template_folder, 'index.html')
+        with open(template_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Check for key medical tools elements
+        tests = {
+            'medical-tools-toggle': 'id="medical-tools-toggle"' in content,
+            'medical-tools-panel': 'id="medical-tools-panel"' in content,
+            'calculator-panel': 'id="calculator-panel"' in content,
+            'calculator-buttons': 'data-calc="bmi"' in content,
+            'nav-buttons': 'data-tool="calculators"' in content,
+            'drug-panel': 'id="drug-panel"' in content,
+            'lab-panel': 'id="lab-panel"' in content
+        }
+        
+        return jsonify({
+            'status': 'success',
+            'tests': tests,
+            'all_passed': all(tests.values())
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
+
 # This is what Vercel will use as the serverless function
 # Don't modify this part
 if __name__ == '__main__':

@@ -1210,6 +1210,21 @@
             color: #ffd60a;
         }
         
+        /* Loading Message Styling */
+        .loading-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            color: #8e8e93;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        [data-theme="dark"] .loading-message {
+            color: #aeaeb2;
+        }
+        
         .calc-input-group label {
             display: block;
             font-size: 14px;
@@ -2541,33 +2556,9 @@
         <div class="tools-content">
             <!-- Drug Reference Panel -->
             <div id="drug-panel" class="tool-panel active">
-                <div class="search-container">
-                    <input type="text" id="drug-search" placeholder="Search medications..." class="tool-search">
-                    <button id="drug-search-btn">🔍</button>
-                </div>
-                <div class="drug-categories">
-                    <button class="category-btn" data-category="all">All</button>
-                    <button class="category-btn" data-category="cardiac">Cardiac</button>
-                    <button class="category-btn" data-category="antibiotics">Antibiotics</button>
-                    <button class="category-btn" data-category="diabetes">Diabetes</button>
-                    <button class="category-btn" data-category="analgesics">Analgesics</button>
-                </div>
-                <div id="drug-results" class="tool-results">
-                    <div class="drug-item" data-drug="metformin">
-                        <h4>Metformin</h4>
-                        <p class="drug-class">Biguanide</p>
-                        <p class="drug-indication">Type 2 diabetes</p>
-                    </div>
-                    <div class="drug-item" data-drug="aspirin">
-                        <h4>Aspirin</h4>
-                        <p class="drug-class">NSAID/Antiplatelet</p>
-                        <p class="drug-indication">CAD prevention, pain</p>
-                    </div>
-                    <div class="drug-item" data-drug="lisinopril">
-                        <h4>Lisinopril</h4>
-                        <p class="drug-class">ACE Inhibitor</p>
-                        <p class="drug-indication">Hypertension, heart failure</p>
-                    </div>
+                <div id="drug-reference-container">
+                    <!-- Content loaded dynamically by JavaScript -->
+                    <div class="loading-message">📊 Loading drug reference...</div>
                 </div>
             </div>
             
@@ -2606,19 +2597,81 @@
             
             <!-- Lab Values Panel -->
             <div id="lab-panel" class="tool-panel">
-                <div class="search-container">
-                    <input type="text" id="lab-search" placeholder="Search lab values..." class="tool-search">
-                    <button id="lab-search-btn">🔍</button>
-                </div>
-                <div class="lab-categories">
-                    <button class="category-btn" data-category="all">All</button>
-                    <button class="category-btn" data-category="chemistry">Chemistry</button>
-                    <button class="category-btn" data-category="hematology">Hematology</button>
-                    <button class="category-btn" data-category="cardiac">Cardiac</button>
-                    <button class="category-btn" data-category="liver">Liver</button>
-                    <button class="category-btn" data-category="kidney">Kidney</button>
+                <div id="lab-values-container">
+                    <!-- Content loaded dynamically by JavaScript -->
+                    <div class="loading-message">📊 Loading lab values...</div>
                 </div>
                 <div id="lab-results" class="tool-results">
+                    <div class="lab-item">
+                        <h4>Hemoglobin</h4>
+                        <div class="lab-ranges">
+                            <p>Male: 13.5-17.5 g/dL</p>
+                            <p>Female: 12.0-16.0 g/dL</p>
+                        </div>
+                        <p class="lab-significance">Low: Anemia investigation needed</p>
+                    </div>
+                    <div class="lab-item">
+                        <h4>Creatinine</h4>
+                        <div class="lab-ranges">
+                            <p>Male: 0.7-1.3 mg/dL</p>
+                            <p>Female: 0.6-1.1 mg/dL</p>
+                        </div>
+                        <p class="lab-significance">Kidney function indicator</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Guidelines Panel -->
+            <div id="guidelines-panel" class="tool-panel">
+                <div class="search-container">
+                    <input type="text" id="guideline-search" placeholder="Search guidelines..." class="tool-search">
+                    <button id="guideline-search-btn">🔍</button>
+                </div>
+                <div class="guideline-categories">
+                    <button class="category-btn" data-category="all">All</button>
+                    <button class="category-btn" data-category="cardiac">Cardiac</button>
+                    <button class="category-btn" data-category="diabetes">Diabetes</button>
+                    <button class="category-btn" data-category="hypertension">HTN</button>
+                    <button class="category-btn" data-category="emergency">Emergency</button>
+                </div>
+                <div id="guideline-results" class="tool-results">
+                    <div class="guideline-item">
+                        <h4>Hypertension Management</h4>
+                        <p class="guideline-source">AHA/ACC 2017</p>
+                        <p class="guideline-summary">Target: &lt;130/80 mmHg for most adults</p>
+                    </div>
+                    <div class="guideline-item">
+                        <h4>Type 2 Diabetes</h4>
+                        <p class="guideline-source">ADA 2023</p>
+                        <p class="guideline-summary">HbA1c target: &lt;7% for most adults</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Differential Diagnosis Panel -->
+            <div id="differential-panel" class="tool-panel">
+                <div class="search-container">
+                    <input type="text" id="differential-search" placeholder="Search symptoms..." class="tool-search">
+                    <button id="differential-search-btn">🔍</button>
+                </div>
+                <div class="symptom-categories">
+                    <button class="category-btn" data-category="all">All</button>
+                    <button class="category-btn" data-category="chest-pain">Chest Pain</button>
+                    <button class="category-btn" data-category="dyspnea">Dyspnea</button>
+                    <button class="category-btn" data-category="abdominal">Abdominal</button>
+                    <button class="category-btn" data-category="neurologic">Neuro</button>
+                </div>
+                <div id="differential-results" class="tool-results">
+                    <div class="differential-item">
+                        <h4>Acute Chest Pain</h4>
+                        <div class="differential-list">
+                            <span class="dx-item urgent">MI</span>
+                            <span class="dx-item urgent">PE</span>
+                            <span class="dx-item urgent">Aortic Dissection</span>
+                            <span class="dx-item">Angina</span>
+                            <span class="dx-item">GERD</span>
+                            <span class="dx-item">Costochondritis</span>
+                        </div>
                     <div class="lab-item">
                         <h4>Hemoglobin</h4>
                         <div class="lab-ranges">

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medical Tools Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>Medical Tools Debug Test</h1>
+    <div id="status-container"></div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            document.getElementById('status-container').appendChild(div);
+        }
+        
+        // Test basic functionality
+        log('Starting medical tools debug test...');
+        
+        // Test if we can connect to the Flask app
+        fetch('http://127.0.0.1:5000')
+            .then(response => {
+                if (response.ok) {
+                    log('✅ Flask app is responding', 'success');
+                    return response.text();
+                } else {
+                    log('❌ Flask app returned error: ' + response.status, 'error');
+                }
+            })
+            .then(html => {
+                if (html) {
+                    // Check if medical tools elements exist
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    const medicalToolsPanel = doc.getElementById('medical-tools-panel');
+                    const toolNavBtns = doc.querySelectorAll('.tool-nav-btn');
+                    const calculatorPanel = doc.getElementById('calculator-panel');
+                    const calculatorBtns = doc.querySelectorAll('.calculator-btn');
+                    
+                    if (medicalToolsPanel) {
+                        log('✅ Medical tools panel found in HTML', 'success');
+                    } else {
+                        log('❌ Medical tools panel NOT found in HTML', 'error');
+                    }
+                    
+                    if (toolNavBtns.length > 0) {
+                        log(`✅ Found ${toolNavBtns.length} navigation buttons`, 'success');
+                    } else {
+                        log('❌ No navigation buttons found', 'error');
+                    }
+                    
+                    if (calculatorPanel) {
+                        log('✅ Calculator panel found in HTML', 'success');
+                    } else {
+                        log('❌ Calculator panel NOT found in HTML', 'error');
+                    }
+                    
+                    if (calculatorBtns.length > 0) {
+                        log(`✅ Found ${calculatorBtns.length} calculator buttons`, 'success');
+                    } else {
+                        log('❌ No calculator buttons found', 'error');
+                    }
+                }
+            })
+            .catch(error => {
+                log('❌ Error connecting to Flask app: ' + error.message, 'error');
+            });
+    </script>
+</body>
+</html>

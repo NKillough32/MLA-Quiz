@@ -33,6 +33,7 @@ class MLAQuizApp {
     }
     
     init() {
+        console.log('🚀 Starting app initialization...');
         this.bindEvents();
         this.loadQuizzes();
         
@@ -40,7 +41,9 @@ class MLAQuizApp {
         this.initializeDarkMode();
         this.initializeFontSize();
         this.initializeQuizLength();
+        console.log('🩺 About to initialize medical tools...');
         this.initializeMedicalTools();
+        console.log('✅ App initialization complete');
     }
     
     bindEvents() {
@@ -2101,16 +2104,33 @@ class MLAQuizApp {
 
     initializeMedicalTools() {
         // Medical tools panel functionality
+        console.log('🩺 Initializing medical tools...');
         const toolsToggle = document.getElementById('medical-tools-toggle');
         const toolsPanel = document.getElementById('medical-tools-panel');
         const toolsClose = document.getElementById('tools-close-btn');
         const toolNavBtns = document.querySelectorAll('.tool-nav-btn');
         const toolPanels = document.querySelectorAll('.tool-panel');
 
+        console.log('🩺 Elements found:', {
+            toolsToggle: !!toolsToggle,
+            toolsPanel: !!toolsPanel,
+            toolsClose: !!toolsClose,
+            toolNavBtns: toolNavBtns.length,
+            toolPanels: toolPanels.length
+        });
+
         // Toggle panel open/close
         if (toolsToggle) {
             toolsToggle.addEventListener('click', () => {
+                const wasOpen = toolsPanel.classList.contains('open');
                 toolsPanel.classList.toggle('open');
+                
+                // Initialize drug reference on first open
+                if (!wasOpen && !this.medicalToolsInitialized) {
+                    this.loadDrugReference();
+                    this.medicalToolsInitialized = true;
+                }
+                
                 console.log('🩺 Medical tools panel toggled');
             });
         }
@@ -2147,23 +2167,6 @@ class MLAQuizApp {
         this.initializeCalculators();
         
         console.log('🩺 Medical tools initialized');
-    }
-
-    switchMedicalTool(toolType) {
-        const toolPanels = document.querySelectorAll('.tool-panel');
-        
-        // Hide all panels
-        toolPanels.forEach(panel => {
-            panel.classList.remove('active');
-        });
-        
-        // Show selected panel
-        const targetPanel = document.getElementById(`${toolType}-panel`);
-        if (targetPanel) {
-            targetPanel.classList.add('active');
-        }
-        
-        console.log('🩺 Switched to tool:', toolType);
     }
 
     initializeCalculators() {
@@ -4106,14 +4109,34 @@ class MLAQuizApp {
     // Override switchMedicalTool to load content
     switchMedicalTool(toolType) {
         const toolPanels = document.querySelectorAll('.tool-panel');
+        const navButtons = document.querySelectorAll('.tool-nav-btn');
+        
+        // Remove active class from all nav buttons
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked nav button
+        const activeNavBtn = document.querySelector(`[data-tool="${toolType}"]`);
+        if (activeNavBtn) {
+            activeNavBtn.classList.add('active');
+        }
         
         // Hide all panels
         toolPanels.forEach(panel => {
             panel.classList.remove('active');
         });
         
+        // Map navigation data-tool values to actual panel IDs
+        const panelIdMap = {
+            'drug-reference': 'drug-panel',
+            'calculators': 'calculator-panel',
+            'lab-values': 'lab-panel',
+            'guidelines': 'guidelines-panel',
+            'differential-dx': 'differential-panel'
+        };
+        
         // Show selected panel
-        const targetPanel = document.getElementById(`${toolType}-panel`);
+        const panelId = panelIdMap[toolType] || `${toolType}-panel`;
+        const targetPanel = document.getElementById(panelId);
         if (targetPanel) {
             targetPanel.classList.add('active');
         }
@@ -4122,6 +4145,10 @@ class MLAQuizApp {
         switch(toolType) {
             case 'drug-reference':
                 this.loadDrugReference();
+                break;
+            case 'calculators':
+                // Initialize calculator grid - no additional loading needed
+                console.log('🧮 Calculators panel activated');
                 break;
             case 'lab-values':
                 this.loadLabValues();
@@ -4134,7 +4161,7 @@ class MLAQuizApp {
                 break;
         }
         
-        console.log('🩺 Switched to tool:', toolType);
+        console.log('🩺 Switched to tool:', toolType, 'Panel ID:', panelId);
     }
 
     setFontSize(size) {
