@@ -552,42 +552,71 @@
         }
         
         /* Quiz Length Selection Styling */
+        .quiz-length-btn {
+            padding: 12px 8px;
+            border: 2px solid #e5e5ea;
+            border-radius: 8px;
+            background: white;
+            color: #1c1c1e;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-family: inherit;
+        }
+        
+        .quiz-length-btn .btn-number {
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        
+        .quiz-length-btn .btn-description {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+        
         .quiz-length-btn:hover {
-            border-color: #007AFF !important;
-            background: #f0f8ff !important;
-            color: #007AFF !important;
+            border-color: #007AFF;
+            background: #f0f8ff;
+            color: #007AFF;
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
         }
         
         .quiz-length-btn.active {
-            border-color: #007AFF !important;
-            background: #007AFF !important;
-            color: white !important;
+            border-color: #007AFF;
+            background: #007AFF;
+            color: white;
             box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
         }
         
+        .quiz-length-btn.active .btn-description {
+            opacity: 0.9;
+        }
+        
         .quiz-length-btn.active:hover {
-            background: #0056cc !important;
-            border-color: #0056cc !important;
+            background: #0056cc;
+            border-color: #0056cc;
         }
         
         [data-theme="dark"] .quiz-length-btn {
-            background: var(--bg-secondary) !important;
-            color: var(--text-primary) !important;
-            border-color: var(--border-color) !important;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
         }
         
         [data-theme="dark"] .quiz-length-btn:hover {
-            border-color: var(--button-bg) !important;
-            background: var(--bg-tertiary) !important;
-            color: var(--button-bg) !important;
+            border-color: var(--button-bg);
+            background: var(--bg-tertiary);
+            color: var(--button-bg);
         }
         
         [data-theme="dark"] .quiz-length-btn.active {
-            background: var(--button-bg) !important;
-            border-color: var(--button-bg) !important;
-            color: white !important;
+            background: var(--button-bg);
+            border-color: var(--button-bg);
+            color: white;
         }
         
         @media (max-width: 480px) {
@@ -597,7 +626,7 @@
             }
             
             .quiz-length-btn {
-                padding: 10px 12px !important;
+                padding: 10px 12px;
             }
         }
         
@@ -1562,19 +1591,19 @@
                     <p style="font-size: 15px; color: #8e8e93; margin: 0 0 16px 0;">Choose how many questions you want to practice</p>
                     
                     <div class="quiz-length-options" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                        <button class="quiz-length-btn active" data-length="20" style="padding: 12px 8px; border: 2px solid #007AFF; border-radius: 8px; background: #f0f8ff; color: #007AFF; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;">
-                            <div style="font-size: 18px; font-weight: bold;">20</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Quick Practice</div>
+                        <button class="quiz-length-btn active" data-length="20">
+                            <div class="btn-number">20</div>
+                            <div class="btn-description">Quick Practice</div>
                         </button>
                         
-                        <button class="quiz-length-btn" data-length="100" style="padding: 12px 8px; border: 2px solid #e5e5ea; border-radius: 8px; background: white; color: #1c1c1e; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;">
-                            <div style="font-size: 18px; font-weight: bold;">100</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Standard Test</div>
+                        <button class="quiz-length-btn" data-length="100">
+                            <div class="btn-number">100</div>
+                            <div class="btn-description">Standard Test</div>
                         </button>
                         
-                        <button class="quiz-length-btn" data-length="all" style="padding: 12px 8px; border: 2px solid #e5e5ea; border-radius: 8px; background: white; color: #1c1c1e; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;">
-                            <div style="font-size: 18px; font-weight: bold;">ALL</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Full Practice</div>
+                        <button class="quiz-length-btn" data-length="all">
+                            <div class="btn-number">ALL</div>
+                            <div class="btn-description">Full Practice</div>
                         </button>
                     </div>
                     
