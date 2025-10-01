@@ -2145,8 +2145,10 @@ class MLAQuizApp {
         // Close panel when clicking outside
         document.addEventListener('click', (e) => {
             if (toolsPanel && toolsPanel.classList.contains('open')) {
+                // Don't close if clicking inside the panel content area
                 if (!toolsPanel.contains(e.target) && !toolsToggle.contains(e.target)) {
                     toolsPanel.classList.remove('open');
+                    console.log('🩺 Medical tools panel closed (clicked outside)');
                 }
             }
         });
@@ -3156,11 +3158,11 @@ class MLAQuizApp {
                 <div id="lab-search-results"></div>
             </div>
             <div class="lab-categories">
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('all')">All Labs</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('cbc')">CBC</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('bmp')">Chemistry</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('lft')">Liver</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('lipids')">Lipids</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('cbc'); event.stopPropagation();">CBC</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('bmp'); event.stopPropagation();">Chemistry</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('lft'); event.stopPropagation();">Liver</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('lipids'); event.stopPropagation();">Lipids</button>
             </div>
             <div id="lab-list"></div>
         `;
@@ -3199,7 +3201,7 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(match => `
-            <div class="lab-result" onclick="${match.type === 'panel' ? `window.quizApp.showLabPanel('${match.key}')` : `window.quizApp.showLabTest('${match.panel}', '${match.key}')`}">
+            <div class="lab-result" onclick="${match.type === 'panel' ? `console.log('🧪 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('🧪 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
                 <div class="lab-name">${match.name}</div>
                 <div class="lab-type">${match.type === 'panel' ? 'Lab Panel' : 'Individual Test'}</div>
             </div>
@@ -3216,7 +3218,7 @@ class MLAQuizApp {
         }
         
         labList.innerHTML = panels.map(panel => `
-            <div class="lab-card" onclick="window.quizApp.showLabPanel('${panel}')">
+            <div class="lab-card" onclick="console.log('🧪 Lab card clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
                 <div class="lab-panel-name">${labDatabase[panel].name}</div>
                 <div class="lab-test-count">${Object.keys(labDatabase[panel].values).length} tests</div>
             </div>
@@ -3224,18 +3226,19 @@ class MLAQuizApp {
     }
     
     showLabPanel(panelKey) {
+        console.log('🧪 Opening lab panel:', panelKey);
         const panel = this.labDatabase[panelKey];
         const container = document.getElementById('lab-values-container');
         
         const testsHtml = Object.entries(panel.values).map(([test, data]) => `
-            <div class="lab-test" onclick="window.quizApp.showLabTest('${panelKey}', '${test}')">
+            <div class="lab-test" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
                 <div class="test-name">${test}</div>
                 <div class="test-normal">${data.normal}</div>
             </div>
         `).join('');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.loadLabValues()">← Back to Lab Categories</button>
+            <button class="back-btn" onclick="window.quizApp.loadLabValues(); event.stopPropagation();">← Back to Lab Categories</button>
             <div class="lab-panel-detail">
                 <h3>${panel.name}</h3>
                 <div class="lab-tests">
@@ -3246,11 +3249,12 @@ class MLAQuizApp {
     }
     
     showLabTest(panelKey, testKey) {
+        console.log('🧪 Opening lab test detail:', panelKey, testKey);
         const test = this.labDatabase[panelKey].values[testKey];
         const container = document.getElementById('lab-values-container');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.showLabPanel('${panelKey}')">← Back to ${this.labDatabase[panelKey].name}</button>
+            <button class="back-btn" onclick="window.quizApp.showLabPanel('${panelKey}'); event.stopPropagation();">← Back to ${this.labDatabase[panelKey].name}</button>
             <div class="lab-test-detail">
                 <h3>📊 ${testKey}</h3>
                 <div class="test-info">
