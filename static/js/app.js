@@ -39,6 +39,7 @@ class MLAQuizApp {
         // Initialize new features
         this.initializeDarkMode();
         this.initializeFontSize();
+        this.initializeQuizLength();
     }
     
     bindEvents() {
@@ -71,14 +72,18 @@ class MLAQuizApp {
         
         // Quiz length selection
         document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('quiz-length-btn')) {
-                this.selectQuizLength(e.target);
+            // Check if the clicked element or its parent is a quiz length button
+            const lengthBtn = e.target.closest('.quiz-length-btn');
+            if (lengthBtn) {
+                this.selectQuizLength(lengthBtn);
             }
         });
     }
 
     // Quiz length selection methods
     selectQuizLength(button) {
+        console.log('🎯 Quiz length button clicked:', button);
+        
         // Remove active class from all buttons
         document.querySelectorAll('.quiz-length-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -91,13 +96,18 @@ class MLAQuizApp {
         const length = button.getAttribute('data-length');
         this.selectedQuizLength = length === 'all' ? 'all' : parseInt(length);
         
+        console.log('🎯 Selected quiz length:', this.selectedQuizLength);
+        
         // Update info text
         this.updateQuizLengthInfo();
     }
     
     updateQuizLengthInfo() {
         const infoEl = document.getElementById('quiz-length-info');
-        if (!infoEl) return;
+        if (!infoEl) {
+            console.log('🎯 Quiz length info element not found');
+            return;
+        }
         
         let message = '';
         if (this.selectedQuizLength === 'all') {
@@ -109,6 +119,7 @@ class MLAQuizApp {
         }
         
         infoEl.textContent = message;
+        console.log('🎯 Updated quiz length info:', message);
     }
     
     filterQuestionsByLength(questions) {
@@ -2023,6 +2034,21 @@ class MLAQuizApp {
         
         // Add font size controls
         this.addFontSizeControls();
+    }
+
+    initializeQuizLength() {
+        // Set up initial quiz length selection
+        setTimeout(() => {
+            this.updateQuizLengthInfo();
+            
+            // Ensure the default (20) button is marked as active
+            const defaultButton = document.querySelector('.quiz-length-btn[data-length="20"]');
+            if (defaultButton && !defaultButton.classList.contains('active')) {
+                defaultButton.classList.add('active');
+            }
+            
+            console.log('🎯 Quiz length initialized:', this.selectedQuizLength);
+        }, 100);
     }
 
     setFontSize(size) {
