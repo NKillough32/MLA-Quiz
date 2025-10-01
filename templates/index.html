@@ -290,6 +290,7 @@
             --button-bg: #007AFF;
             --danger-bg: #ff3b30;
             --success-bg: #34c759;
+            --haptic-flash: 0;
         }
         
         [data-theme="dark"] {
@@ -1468,6 +1469,24 @@
                 max-width: 600px;
                 margin: 0 auto;
             }
+        }
+        
+        /* Haptic visual feedback */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, var(--haptic-flash));
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.1s ease;
+        }
+        
+        [data-theme="dark"] body::before {
+            background: rgba(0, 0, 0, var(--haptic-flash));
         }
         
         /* Safe Area Support for iPhone */

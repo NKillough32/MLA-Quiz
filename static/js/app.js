@@ -512,10 +512,8 @@ class MLAQuizApp {
                     startPos = { x: touch.clientX, y: touch.clientY };
                     
                     pressTimer = setTimeout(() => {
-                        // Maximum haptic feedback - single strong vibration
-                        if (navigator.vibrate) {
-                            navigator.vibrate(500); // Maximum single vibration
-                        }
+                        // Enhanced haptic feedback for long press
+                        this.performHapticFeedback('heavy');
                         this.toggleRuledOut(question.id, index);
                     }, 800); // Longer delay for more reliable detection
                     
@@ -572,6 +570,9 @@ class MLAQuizApp {
     selectOption(optionIndex) {
         const questionId = this.questions[this.currentQuestionIndex].id;
         this.answers[questionId] = optionIndex;
+        
+        // Haptic feedback for selection
+        this.performHapticFeedback('selection');
         
         // Update UI - both old and new classes for compatibility
         document.querySelectorAll('.option').forEach((opt, index) => {
@@ -631,28 +632,71 @@ class MLAQuizApp {
         }
     }
     
-    performHapticFeedback() {
-        // Standardized haptic feedback with fallbacks
-        if (navigator.vibrate) {
+    performHapticFeedback(type = 'light') {
+        // Enhanced haptic feedback with Android support
+        console.log('🔊 Attempting haptic feedback:', type);
+        
+        // Check for modern haptic API first (Android Chrome)
+        if (window.navigator && navigator.vibrate) {
             try {
-                // Primary pattern: strong-pause-strong for clear feedback
-                navigator.vibrate([80, 40, 80]);
+                let pattern;
+                switch (type) {
+                    case 'success':
+                        pattern = [100, 50, 100]; // Double tap for success
+                        break;
+                    case 'error':
+                        pattern = [200, 100, 200, 100, 200]; // Triple tap for error
+                        break;
+                    case 'selection':
+                        pattern = [50]; // Single short for selection
+                        break;
+                    case 'heavy':
+                        pattern = [500]; // Long vibration for long press
+                        break;
+                    default:
+                        pattern = [80, 40, 80]; // Default light feedback
+                }
+                
+                navigator.vibrate(pattern);
+                console.log('🔊 Vibration triggered:', pattern);
+                return true;
             } catch (error) {
-                console.log('Vibration not supported or failed');
+                console.log('🔊 Vibration failed:', error);
             }
         }
         
-        // Fallback: Audio feedback (optional)
-        // You could add a subtle audio cue here if needed
+        // Check for iOS haptic feedback
+        if (window.navigator && navigator.platform && navigator.platform.includes('iPhone')) {
+            try {
+                // iOS doesn't support vibrate() but we can try other methods
+                if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
+                    // This is iOS 13+ with permission-based haptics
+                    console.log('🔊 iOS haptic feedback attempted');
+                }
+            } catch (error) {
+                console.log('🔊 iOS haptic feedback failed:', error);
+            }
+        }
         
-        // Visual feedback (brief highlight)
+        // Visual feedback fallback for all devices
+        this.performVisualFeedback(type);
+        
+        return false;
+    }
+    
+    performVisualFeedback(type = 'light') {
         try {
-            document.documentElement.style.setProperty('--haptic-flash', '1');
+            const intensity = type === 'heavy' ? '0.3' : '0.15';
+            const duration = type === 'heavy' ? 150 : 100;
+            
+            document.documentElement.style.setProperty('--haptic-flash', intensity);
             setTimeout(() => {
                 document.documentElement.style.setProperty('--haptic-flash', '0');
-            }, 100);
+            }, duration);
+            
+            console.log('🔊 Visual feedback applied:', type);
         } catch (error) {
-            // Ignore visual feedback errors
+            console.log('🔊 Visual feedback failed:', error);
         }
     }
     
@@ -696,6 +740,9 @@ class MLAQuizApp {
         
         // Show feedback
         this.showFeedback(isCorrect, correctAnswer);
+        
+        // Haptic feedback based on answer correctness
+        this.performHapticFeedback(isCorrect ? 'success' : 'error');
         
         // Show explanation if available
         this.showExplanation(currentQuestion.explanations);
