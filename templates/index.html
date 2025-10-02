@@ -2566,42 +2566,55 @@
             <div id="calculator-panel" class="tool-panel">
                 <div class="calculator-grid">
                     <button class="calculator-btn" data-calc="bmi">
+                        <div class="calc-icon">⚖️</div>
                         <div class="calc-name">BMI Calculator</div>
                     </button>
                     <button class="calculator-btn" data-calc="chads2vasc">
+                        <div class="calc-icon">💗</div>
                         <div class="calc-name">CHA2DS2-VASc</div>
                     </button>
                     <button class="calculator-btn" data-calc="hasbled">
+                        <div class="calc-icon">🩸</div>
                         <div class="calc-name">HAS-BLED</div>
                     </button>
                     <button class="calculator-btn" data-calc="gcs">
+                        <div class="calc-icon">🧠</div>
                         <div class="calc-name">Glasgow Coma</div>
                     </button>
                     <button class="calculator-btn" data-calc="apache">
+                        <div class="calc-icon">🏥</div>
                         <div class="calc-name">APACHE II</div>
                     </button>
                     <button class="calculator-btn" data-calc="wells">
+                        <div class="calc-icon">🫁</div>
                         <div class="calc-name">Wells PE Score</div>
                     </button>
                     <button class="calculator-btn" data-calc="qrisk">
+                        <div class="calc-icon">📊</div>
                         <div class="calc-name">QRISK3</div>
                     </button>
                     <button class="calculator-btn" data-calc="madders">
+                        <div class="calc-icon">🧮</div>
                         <div class="calc-name">MADDERS</div>
                     </button>
                     <button class="calculator-btn" data-calc="mews">
+                        <div class="calc-icon">⚡</div>
                         <div class="calc-name">MEWS</div>
                     </button>
                     <button class="calculator-btn" data-calc="crb65">
+                        <div class="calc-icon">🦠</div>
                         <div class="calc-name">CRB-65</div>
                     </button>
                     <button class="calculator-btn" data-calc="rockall">
+                        <div class="calc-icon">🩸</div>
                         <div class="calc-name">Rockall Score</div>
                     </button>
                     <button class="calculator-btn" data-calc="child-pugh">
+                        <div class="calc-icon">🫀</div>
                         <div class="calc-name">Child-Pugh</div>
                     </button>
                     <button class="calculator-btn" data-calc="ottawa-ankle">
+                        <div class="calc-icon">🦴</div>
                         <div class="calc-name">Ottawa Ankle</div>
                     </button>
                 </div>
@@ -2658,33 +2671,8 @@
                     <button class="category-btn" data-category="abdominal">Abdominal</button>
                     <button class="category-btn" data-category="neurologic">Neuro</button>
                 </div>
-                <div id="differential-results" class="tool-results">
-                    <div class="differential-item">
-                        <h4>Acute Chest Pain</h4>
-                        <div class="differential-list">
-                            <span class="dx-item urgent">MI</span>
-                            <span class="dx-item urgent">PE</span>
-                            <span class="dx-item urgent">Aortic Dissection</span>
-                            <span class="dx-item">Angina</span>
-                            <span class="dx-item">GERD</span>
-                            <span class="dx-item">Costochondritis</span>
-                        </div>
-                    <div class="lab-item">
-                        <h4>Hemoglobin</h4>
-                        <div class="lab-ranges">
-                            <p>Male: 13.5-17.5 g/dL</p>
-                            <p>Female: 12.0-16.0 g/dL</p>
-                        </div>
-                        <p class="lab-significance">Low: Anemia investigation needed</p>
-                    </div>
-                    <div class="lab-item">
-                        <h4>Creatinine</h4>
-                        <div class="lab-ranges">
-                            <p>Male: 0.7-1.3 mg/dL</p>
-                            <p>Female: 0.6-1.1 mg/dL</p>
-                        </div>
-                        <p class="lab-significance">Kidney function indicator</p>
-                    </div>
+                <div id="differential-dx-container" class="tool-results">
+                    <!-- Dynamic differential diagnosis content loads here -->
                 </div>
             </div>
             

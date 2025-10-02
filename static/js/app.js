@@ -4286,7 +4286,7 @@ class MLAQuizApp {
             }
         };
         
-        const container = document.getElementById('differential-panel');
+        const container = document.getElementById('differential-dx-container');
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="ddx-search" placeholder="Search symptoms or diagnoses...">
