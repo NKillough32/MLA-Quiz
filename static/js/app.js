@@ -4103,9 +4103,10 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(match => `
-            <button class="lab-result-btn" onclick="${match.type === 'panel' ? `console.log('🧪 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('🧪 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
-                <div class="lab-name">${match.name}</div>
-                <div class="lab-type">${match.type === 'panel' ? 'Lab Panel' : 'Individual Test'}</div>
+            <button class="calculator-btn" onclick="${match.type === 'panel' ? `console.log('🧪 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('🧪 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
+                <div class="calc-icon">${match.type === 'panel' ? '📊' : '🧪'}</div>
+                <div class="calc-name">${match.name}</div>
+                <div class="tool-count">${match.type === 'panel' ? 'Lab Panel' : 'Individual Test'}</div>
             </button>
         `).join('');
     }
@@ -4120,8 +4121,9 @@ class MLAQuizApp {
         }
         
         labList.innerHTML = panels.map(panel => `
-            <button class="medical-tool-btn" onclick="console.log('🧪 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
-                <div class="tool-name">${labDatabase[panel].name}</div>
+            <button class="calculator-btn" onclick="console.log('🧪 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
+                <div class="calc-icon">📊</div>
+                <div class="calc-name">${labDatabase[panel].name}</div>
                 <div class="tool-count">${Object.keys(labDatabase[panel].values).length} tests</div>
             </button>
         `).join('');
@@ -4133,8 +4135,9 @@ class MLAQuizApp {
         const container = document.getElementById('lab-values-container');
         
         const testsHtml = Object.entries(panel.values).map(([test, data]) => `
-            <button class="medical-tool-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
-                <div class="tool-name">${test}</div>
+            <button class="calculator-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
+                <div class="calc-icon">🧪</div>
+                <div class="calc-name">${test}</div>
                 <div class="tool-count">${data.normal}</div>
             </button>
         `).join('');
