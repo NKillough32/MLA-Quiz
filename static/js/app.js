@@ -2206,6 +2206,27 @@ class MLAQuizApp {
             case 'wells':
                 workspace.innerHTML = this.getWellsCalculator();
                 break;
+            case 'qrisk':
+                workspace.innerHTML = this.getQRISKCalculator();
+                break;
+            case 'madders':
+                workspace.innerHTML = this.getMADDERSCalculator();
+                break;
+            case 'mews':
+                workspace.innerHTML = this.getMEWSCalculator();
+                break;
+            case 'crb65':
+                workspace.innerHTML = this.getCRB65Calculator();
+                break;
+            case 'rockall':
+                workspace.innerHTML = this.getRockallCalculator();
+                break;
+            case 'child-pugh':
+                workspace.innerHTML = this.getChildPughCalculator();
+                break;
+            case 'ottawa-ankle':
+                workspace.innerHTML = this.getOttawaAnkleCalculator();
+                break;
             default:
                 workspace.innerHTML = '<p>Calculator not yet implemented</p>';
         }
@@ -2612,117 +2633,655 @@ class MLAQuizApp {
         `;
     }
 
+    getQRISKCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>QRISK3 Calculator</h4>
+                <p><small>10-year cardiovascular disease risk assessment</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Age:</label>
+                    <input type="number" id="qrisk-age" placeholder="50" min="25" max="85">
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="radio" name="qrisk-sex" value="male"> Male</label>
+                    <label><input type="radio" name="qrisk-sex" value="female"> Female</label>
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="qrisk-smoking"> Current smoker</label>
+                    <label><input type="checkbox" id="qrisk-diabetes"> Diabetes</label>
+                    <label><input type="checkbox" id="qrisk-copd"> COPD</label>
+                    <label><input type="checkbox" id="qrisk-af"> Atrial fibrillation</label>
+                    <label><input type="checkbox" id="qrisk-ckd"> Chronic kidney disease</label>
+                    <label><input type="checkbox" id="qrisk-ra"> Rheumatoid arthritis</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateQRISK()">Calculate Risk</button>
+                <div id="qrisk-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateQRISK() {
+        const age = parseInt(document.getElementById('qrisk-age').value) || 0;
+        const sex = document.querySelector('input[name="qrisk-sex"]:checked')?.value;
+        
+        if (!age || !sex) {
+            document.getElementById('qrisk-result').innerHTML = '<p style="color: red;">Please fill in age and sex</p>';
+            return;
+        }
+
+        let score = 0;
+        if (age >= 65) score += 2;
+        else if (age >= 55) score += 1;
+        
+        if (sex === 'male') score += 1;
+        if (document.getElementById('qrisk-smoking').checked) score += 2;
+        if (document.getElementById('qrisk-diabetes').checked) score += 2;
+        if (document.getElementById('qrisk-copd').checked) score += 1;
+        if (document.getElementById('qrisk-af').checked) score += 1;
+        if (document.getElementById('qrisk-ckd').checked) score += 1;
+        if (document.getElementById('qrisk-ra').checked) score += 1;
+
+        let risk = Math.min(score * 2.5 + (age - 40) * 0.3, 50);
+        let riskLevel = '';
+        let color = '';
+        let recommendation = '';
+
+        if (risk < 10) {
+            riskLevel = 'Low risk';
+            color = '#4CAF50';
+            recommendation = 'Lifestyle advice, reassess in 5 years';
+        } else if (risk < 20) {
+            riskLevel = 'Medium risk';
+            color = '#FF9800';
+            recommendation = 'Consider statin therapy, lifestyle modification';
+        } else {
+            riskLevel = 'High risk';
+            color = '#F44336';
+            recommendation = 'Statin therapy recommended, aggressive lifestyle changes';
+        }
+
+        document.getElementById('qrisk-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>10-year CV risk: ${risk.toFixed(1)}%</strong><br>
+                <strong>${riskLevel}</strong><br>
+                ${recommendation}
+            </div>
+        `;
+    }
+
+    getMADDERSCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>MADDERS Score</h4>
+                <p><small>Delirium assessment tool</small></p>
+                
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="madders-memory"> Memory impairment</label>
+                    <label><input type="checkbox" id="madders-attention"> Attention deficit</label>
+                    <label><input type="checkbox" id="madders-disorientation"> Disorientation</label>
+                    <label><input type="checkbox" id="madders-delusions"> Delusions/hallucinations</label>
+                    <label><input type="checkbox" id="madders-emotional"> Emotional lability</label>
+                    <label><input type="checkbox" id="madders-reversal"> Sleep-wake reversal</label>
+                    <label><input type="checkbox" id="madders-symptoms"> Symptom fluctuation</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateMADDERS()">Calculate Score</button>
+                <div id="madders-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateMADDERS() {
+        let score = 0;
+        
+        if (document.getElementById('madders-memory').checked) score += 1;
+        if (document.getElementById('madders-attention').checked) score += 1;
+        if (document.getElementById('madders-disorientation').checked) score += 1;
+        if (document.getElementById('madders-delusions').checked) score += 1;
+        if (document.getElementById('madders-emotional').checked) score += 1;
+        if (document.getElementById('madders-reversal').checked) score += 1;
+        if (document.getElementById('madders-symptoms').checked) score += 1;
+
+        let interpretation = '';
+        let color = '';
+
+        if (score === 0) {
+            interpretation = 'No delirium';
+            color = '#4CAF50';
+        } else if (score <= 2) {
+            interpretation = 'Possible subsyndromal delirium';
+            color = '#FF9800';
+        } else if (score <= 4) {
+            interpretation = 'Probable delirium';
+            color = '#F44336';
+        } else {
+            interpretation = 'Definite delirium';
+            color = '#D32F2F';
+        }
+
+        document.getElementById('madders-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>MADDERS Score: ${score}/7</strong><br>
+                <strong>${interpretation}</strong>
+            </div>
+        `;
+    }
+
+    getMEWSCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>MEWS (Modified Early Warning Score)</h4>
+                <p><small>Early warning score for clinical deterioration</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Systolic BP (mmHg):</label>
+                    <input type="number" id="mews-sbp" placeholder="120">
+                </div>
+                <div class="calc-input-group">
+                    <label>Heart Rate (bpm):</label>
+                    <input type="number" id="mews-hr" placeholder="80">
+                </div>
+                <div class="calc-input-group">
+                    <label>Respiratory Rate (breaths/min):</label>
+                    <input type="number" id="mews-rr" placeholder="16">
+                </div>
+                <div class="calc-input-group">
+                    <label>Temperature (°C):</label>
+                    <input type="number" id="mews-temp" placeholder="36.5" step="0.1">
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="mews-neuro"> Neurological concern (AVPU < Alert)</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateMEWS()">Calculate MEWS</button>
+                <div id="mews-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateMEWS() {
+        const sbp = parseInt(document.getElementById('mews-sbp').value) || 0;
+        const hr = parseInt(document.getElementById('mews-hr').value) || 0;
+        const rr = parseInt(document.getElementById('mews-rr').value) || 0;
+        const temp = parseFloat(document.getElementById('mews-temp').value) || 0;
+        const neuro = document.getElementById('mews-neuro').checked;
+
+        let score = 0;
+
+        // Systolic BP scoring
+        if (sbp < 70) score += 3;
+        else if (sbp < 80) score += 2;
+        else if (sbp < 100) score += 1;
+        else if (sbp > 199) score += 2;
+
+        // Heart rate scoring
+        if (hr < 40) score += 2;
+        else if (hr < 50) score += 1;
+        else if (hr > 129) score += 3;
+        else if (hr > 109) score += 2;
+        else if (hr > 99) score += 1;
+
+        // Respiratory rate scoring
+        if (rr < 9) score += 2;
+        else if (rr > 29) score += 3;
+        else if (rr > 24) score += 2;
+        else if (rr > 20) score += 1;
+
+        // Temperature scoring
+        if (temp < 35) score += 2;
+        else if (temp > 38.4) score += 2;
+
+        // Neurological scoring
+        if (neuro) score += 3;
+
+        let risk = '';
+        let color = '';
+        let action = '';
+
+        if (score === 0) {
+            risk = 'Low risk';
+            color = '#4CAF50';
+            action = 'Continue routine monitoring';
+        } else if (score <= 2) {
+            risk = 'Low-medium risk';
+            color = '#FFC107';
+            action = 'Increase monitoring frequency';
+        } else if (score <= 4) {
+            risk = 'Medium risk';
+            color = '#FF9800';
+            action = 'Consider medical review';
+        } else {
+            risk = 'High risk';
+            color = '#F44336';
+            action = 'Urgent medical review required';
+        }
+
+        document.getElementById('mews-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>MEWS Score: ${score}</strong><br>
+                <strong>${risk}</strong><br>
+                ${action}
+            </div>
+        `;
+    }
+
+    getCRB65Calculator() {
+        return `
+            <div class="calculator-form">
+                <h4>CRB-65 Score</h4>
+                <p><small>Community-acquired pneumonia severity assessment</small></p>
+                
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="crb-confusion"> Confusion (AMT ≤8)</label>
+                    <label><input type="checkbox" id="crb-rr"> Respiratory rate ≥30/min</label>
+                    <label><input type="checkbox" id="crb-bp"> Systolic BP <90 or Diastolic BP ≤60</label>
+                    <label><input type="checkbox" id="crb-age"> Age ≥65 years</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateCRB65()">Calculate Score</button>
+                <div id="crb65-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateCRB65() {
+        let score = 0;
+        
+        if (document.getElementById('crb-confusion').checked) score += 1;
+        if (document.getElementById('crb-rr').checked) score += 1;
+        if (document.getElementById('crb-bp').checked) score += 1;
+        if (document.getElementById('crb-age').checked) score += 1;
+
+        let mortality = '';
+        let management = '';
+        let color = '';
+
+        if (score === 0) {
+            mortality = '<1% 30-day mortality';
+            management = 'Home treatment';
+            color = '#4CAF50';
+        } else if (score === 1) {
+            mortality = '2.7% 30-day mortality';
+            management = 'Home treatment or short hospital stay';
+            color = '#FFC107';
+        } else if (score === 2) {
+            mortality = '6.8% 30-day mortality';
+            management = 'Hospital treatment';
+            color = '#FF9800';
+        } else if (score >= 3) {
+            mortality = '14% 30-day mortality';
+            management = 'Hospital treatment (consider ICU)';
+            color = '#F44336';
+        }
+
+        document.getElementById('crb65-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>CRB-65 Score: ${score}/4</strong><br>
+                <strong>${mortality}</strong><br>
+                <strong>Management: ${management}</strong>
+            </div>
+        `;
+    }
+
+    getRockallCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Rockall Score</h4>
+                <p><small>Upper GI bleeding risk stratification</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Age:</label>
+                    <select id="rockall-age">
+                        <option value="0"><60 years (0 points)</option>
+                        <option value="1">60-79 years (1 point)</option>
+                        <option value="2">≥80 years (2 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Shock:</label>
+                    <select id="rockall-shock">
+                        <option value="0">No shock (0 points)</option>
+                        <option value="1">Tachycardia (1 point)</option>
+                        <option value="2">Hypotension (2 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Comorbidity:</label>
+                    <select id="rockall-comorbid">
+                        <option value="0">None (0 points)</option>
+                        <option value="2">Cardiac failure, IHD (2 points)</option>
+                        <option value="3">Renal/liver failure, malignancy (3 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Diagnosis:</label>
+                    <select id="rockall-diagnosis">
+                        <option value="0">Mallory-Weiss tear (0 points)</option>
+                        <option value="1">Other diagnosis (1 point)</option>
+                        <option value="2">Malignancy of upper GI tract (2 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Stigmata of bleeding:</label>
+                    <select id="rockall-stigmata">
+                        <option value="0">None/dark spot (0 points)</option>
+                        <option value="2">Blood in upper GI tract/clot/visible vessel (2 points)</option>
+                    </select>
+                </div>
+                
+                <button onclick="window.quizApp.calculateRockall()">Calculate Score</button>
+                <div id="rockall-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateRockall() {
+        let score = 0;
+        
+        score += parseInt(document.getElementById('rockall-age').value) || 0;
+        score += parseInt(document.getElementById('rockall-shock').value) || 0;
+        score += parseInt(document.getElementById('rockall-comorbid').value) || 0;
+        score += parseInt(document.getElementById('rockall-diagnosis').value) || 0;
+        score += parseInt(document.getElementById('rockall-stigmata').value) || 0;
+
+        let risk = '';
+        let mortality = '';
+        let rebleed = '';
+        let color = '';
+
+        if (score <= 2) {
+            risk = 'Low risk';
+            mortality = '<0.2% mortality';
+            rebleed = '5% rebleeding risk';
+            color = '#4CAF50';
+        } else if (score <= 4) {
+            risk = 'Intermediate risk';
+            mortality = '5.6% mortality';
+            rebleed = '11% rebleeding risk';
+            color = '#FF9800';
+        } else {
+            risk = 'High risk';
+            mortality = '24.6% mortality';
+            rebleed = '25% rebleeding risk';
+            color = '#F44336';
+        }
+
+        document.getElementById('rockall-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>Rockall Score: ${score}</strong><br>
+                <strong>${risk}</strong><br>
+                ${mortality}<br>
+                ${rebleed}
+            </div>
+        `;
+    }
+
+    getChildPughCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Child-Pugh Score</h4>
+                <p><small>Liver function assessment in cirrhosis</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Bilirubin (μmol/L):</label>
+                    <select id="cp-bilirubin">
+                        <option value="1"><34 (1 point)</option>
+                        <option value="2">34-50 (2 points)</option>
+                        <option value="3">>50 (3 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Albumin (g/L):</label>
+                    <select id="cp-albumin">
+                        <option value="1">>35 (1 point)</option>
+                        <option value="2">28-35 (2 points)</option>
+                        <option value="3"><28 (3 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>INR:</label>
+                    <select id="cp-inr">
+                        <option value="1"><1.7 (1 point)</option>
+                        <option value="2">1.7-2.3 (2 points)</option>
+                        <option value="3">>2.3 (3 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Ascites:</label>
+                    <select id="cp-ascites">
+                        <option value="1">None (1 point)</option>
+                        <option value="2">Slight (2 points)</option>
+                        <option value="3">Moderate/severe (3 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Encephalopathy:</label>
+                    <select id="cp-enceph">
+                        <option value="1">None (1 point)</option>
+                        <option value="2">Grade 1-2 (2 points)</option>
+                        <option value="3">Grade 3-4 (3 points)</option>
+                    </select>
+                </div>
+                
+                <button onclick="window.quizApp.calculateChildPugh()">Calculate Score</button>
+                <div id="cp-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateChildPugh() {
+        let score = 0;
+        
+        score += parseInt(document.getElementById('cp-bilirubin').value) || 0;
+        score += parseInt(document.getElementById('cp-albumin').value) || 0;
+        score += parseInt(document.getElementById('cp-inr').value) || 0;
+        score += parseInt(document.getElementById('cp-ascites').value) || 0;
+        score += parseInt(document.getElementById('cp-enceph').value) || 0;
+
+        let grade = '';
+        let survival = '';
+        let color = '';
+
+        if (score <= 6) {
+            grade = 'Child-Pugh A';
+            survival = '100% 1-year survival, 85% 2-year survival';
+            color = '#4CAF50';
+        } else if (score <= 9) {
+            grade = 'Child-Pugh B';
+            survival = '81% 1-year survival, 57% 2-year survival';
+            color = '#FF9800';
+        } else {
+            grade = 'Child-Pugh C';
+            survival = '45% 1-year survival, 35% 2-year survival';
+            color = '#F44336';
+        }
+
+        document.getElementById('cp-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>Score: ${score} points</strong><br>
+                <strong>${grade}</strong><br>
+                ${survival}
+            </div>
+        `;
+    }
+
+    getOttawaAnkleCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Ottawa Ankle Rules</h4>
+                <p><small>Determine need for ankle/foot X-ray after injury</small></p>
+                
+                <h5>Ankle X-ray required if:</h5>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="ottawa-ankle-pain"> Bone tenderness at posterior edge/tip of lateral malleolus</label>
+                    <label><input type="checkbox" id="ottawa-ankle-medial"> Bone tenderness at posterior edge/tip of medial malleolus</label>
+                    <label><input type="checkbox" id="ottawa-ankle-walk"> Unable to bear weight both immediately and in ED (4 steps)</label>
+                </div>
+                
+                <h5>Foot X-ray required if:</h5>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="ottawa-foot-5th"> Bone tenderness at base of 5th metatarsal</label>
+                    <label><input type="checkbox" id="ottawa-foot-navicular"> Bone tenderness at navicular</label>
+                    <label><input type="checkbox" id="ottawa-foot-walk"> Unable to bear weight both immediately and in ED (4 steps)</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateOttawaAnkle()">Assess Need for X-ray</button>
+                <div id="ottawa-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateOttawaAnkle() {
+        const ankleIndicated = 
+            document.getElementById('ottawa-ankle-pain').checked ||
+            document.getElementById('ottawa-ankle-medial').checked ||
+            document.getElementById('ottawa-ankle-walk').checked;
+
+        const footIndicated = 
+            document.getElementById('ottawa-foot-5th').checked ||
+            document.getElementById('ottawa-foot-navicular').checked ||
+            document.getElementById('ottawa-foot-walk').checked;
+
+        let result = '';
+        let color = '';
+
+        if (ankleIndicated && footIndicated) {
+            result = '<strong>Both ankle AND foot X-rays indicated</strong>';
+            color = '#F44336';
+        } else if (ankleIndicated) {
+            result = '<strong>Ankle X-ray indicated</strong>';
+            color = '#F44336';
+        } else if (footIndicated) {
+            result = '<strong>Foot X-ray indicated</strong>';
+            color = '#F44336';
+        } else {
+            result = '<strong>No X-rays indicated</strong><br>99% sensitivity for excluding fractures';
+            color = '#4CAF50';
+        }
+
+        document.getElementById('ottawa-result').innerHTML = `
+            <div style="color: ${color}">
+                ${result}
+            </div>
+        `;
+    }
+
     // Drug Reference Functions
     loadDrugReference() {
         const drugDatabase = {
-            'acetaminophen': {
-                name: 'Acetaminophen (Paracetamol)',
+            'paracetamol': {
+                name: 'Paracetamol',
                 class: 'Analgesic, Antipyretic',
                 mechanism: 'Inhibits COX enzymes centrally, affects prostaglandin synthesis in hypothalamus',
-                dosing: 'Adults: 325-1000mg q4-6h (max 4g/day). Pediatric: 10-15mg/kg q4-6h (max 75mg/kg/day)',
-                contraindications: 'Severe hepatic impairment, hypersensitivity, chronic alcoholism',
-                interactions: 'Warfarin (↑ INR), chronic alcohol use (↑ hepatotoxicity), phenytoin (↑ metabolism)',
-                monitoring: 'Liver function with prolonged use, serum levels in overdose',
-                pregnancy: 'Category B - Safe in pregnancy, preferred analgesic',
-                sideEffects: 'Rare: hepatotoxicity, skin reactions (SJS/TEN), nephrotoxicity with chronic use',
-                pharmacokinetics: 'Onset: 30-60min, Peak: 1-3h, Half-life: 2-3h, Metabolism: hepatic (CYP2E1)',
-                clinicalPearls: 'No anti-inflammatory effect. Safer than NSAIDs in elderly. Overdose antidote: N-acetylcysteine',
-                maxDose: 'Adults: 4g/day, Elderly: 3g/day. Lower in hepatic impairment'
+                dosing: 'Adults: 500mg-1g every 4-6 hours (max 4g/24h). Children: 15mg/kg every 4-6 hours (max 60mg/kg/24h)',
+                contraindications: 'Severe hepatic impairment, hypersensitivity to paracetamol',
+                interactions: 'Warfarin (↑ INR with regular use), carbamazepine (↑ hepatotoxicity risk), chronic alcohol (↑ hepatotoxicity)',
+                monitoring: 'Liver function with prolonged use, paracetamol levels in overdose',
+                pregnancy: 'Safe - preferred analgesic and antipyretic in pregnancy',
+                sideEffects: 'Hepatotoxicity (overdose), very rarely serious skin reactions (SJS/TEN)',
+                pharmacokinetics: 'Onset: 30min, Peak: 1h, Half-life: 2h, Metabolism: hepatic conjugation',
+                clinicalPearls: 'First-line analgesic in UK. No anti-inflammatory effect. Overdose antidote: N-acetylcysteine. Safe in asthma',
+                indication: 'Pain relief, fever reduction. Safe alternative to NSAIDs'
             },
             'amoxicillin': {
                 name: 'Amoxicillin',
                 class: 'Beta-lactam antibiotic (Aminopenicillin)',
                 mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
-                dosing: 'Adults: 500mg q8h or 875mg q12h. Severe infections: 1g q8h. Pediatric: 25-50mg/kg/day divided q8-12h',
-                contraindications: 'Penicillin allergy, infectious mononucleosis (rash risk)',
-                interactions: 'Methotrexate (↑ toxicity), oral contraceptives (↓ efficacy), probenecid (↑ levels)',
-                monitoring: 'Signs of allergic reaction, C. difficile colitis, renal function',
-                pregnancy: 'Category B - Safe in pregnancy',
-                sideEffects: 'GI upset, diarrhea, rash (especially with EBV), C. diff colitis, hypersensitivity',
-                pharmacokinetics: 'Onset: 1h, Peak: 1-2h, Half-life: 1.3h, Excretion: renal (80%)',
-                clinicalPearls: 'Broad spectrum. Good oral bioavailability. Adjust dose in renal impairment',
-                coverage: 'Gram-positive: Strep, some Staph. Gram-negative: E. coli, H. influenzae. Not: MRSA, Pseudomonas'
+                dosing: 'Adults: 500mg TDS or 1g BD. Severe infections: 1g TDS. Children: 40-90mg/kg daily in 2-3 divided doses',
+                contraindications: 'Penicillin allergy, infectious mononucleosis (high rash risk)',
+                interactions: 'Methotrexate (↑ toxicity), combined oral contraceptive (↓ efficacy), probenecid (↑ levels)',
+                monitoring: 'Signs of allergic reaction, C. difficile-associated diarrhoea, renal function in severe illness',
+                pregnancy: 'Safe - suitable for use in pregnancy',
+                sideEffects: 'GI upset, diarrhoea, rash (especially with EBV), CDAD, hypersensitivity reactions',
+                pharmacokinetics: 'Onset: 1h, Peak: 1-2h, Half-life: 1h, Excretion: mainly renal',
+                clinicalPearls: 'Broad spectrum penicillin. Good oral bioavailability. Reduce dose in severe renal impairment (CrCl <30)',
+                coverage: 'Gram-positive: Streptococci, some Staphylococci. Gram-negative: E. coli, H. influenzae. No MRSA/Pseudomonas cover'
             },
             'atorvastatin': {
                 name: 'Atorvastatin',
                 class: 'HMG-CoA reductase inhibitor (Statin)',
                 mechanism: 'Competitively inhibits HMG-CoA reductase, rate-limiting enzyme in cholesterol synthesis',
-                dosing: 'Adults: Start 10-20mg daily, titrate q4-6 weeks. Range: 10-80mg daily. Take in evening',
-                contraindications: 'Active liver disease, pregnancy, breastfeeding, unexplained ↑ transaminases',
-                interactions: 'CYP3A4 inhibitors (↑ statin levels), warfarin (↑ INR), digoxin (↑ levels)',
-                monitoring: 'Lipid panel (6-8 weeks), ALT/AST baseline and PRN, CK if muscle symptoms',
-                pregnancy: 'Category X - Contraindicated (teratogenic)',
-                sideEffects: 'Myalgia (5-10%), hepatotoxicity (<1%), rhabdomyolysis (rare), new-onset diabetes',
-                pharmacokinetics: 'Peak: 1-2h, Half-life: 14h, Metabolism: CYP3A4, Active metabolites',
-                clinicalPearls: 'Most potent statin. Long half-life allows morning dosing. Pleiotropic effects beyond lipids',
-                targets: 'LDL reduction: 30-60%. Also ↓ triglycerides, ↑ HDL. Goal LDL <100 (<70 if high risk)'
+                dosing: 'Adults: Start 20mg daily, usual dose 20-80mg daily. High-intensity: 40-80mg daily. Take any time of day',
+                contraindications: 'Active liver disease, pregnancy, breastfeeding, unexplained persistent ↑ ALT/AST',
+                interactions: 'Ciclosporin (↑ statin levels), warfarin (↑ INR), digoxin (↑ levels), grapefruit juice',
+                monitoring: 'LFTs before treatment and at 3 months, lipids at 3 months, CK if muscle symptoms',
+                pregnancy: 'Contraindicated - stop 3 months before conception',
+                sideEffects: 'Myalgia (common), hepatotoxicity (rare), rhabdomyolysis (very rare), new-onset diabetes (slight ↑)',
+                pharmacokinetics: 'Peak: 1-2h, Half-life: 14h, Metabolism: CYP3A4, active metabolites',
+                clinicalPearls: 'High-intensity statin. NICE preferred high-intensity option. Can take any time due to long half-life',
+                targets: 'Primary prevention: 20mg daily. Secondary prevention: 80mg daily. Target >40% LDL-C reduction'
             },
             'metformin': {
                 name: 'Metformin',
                 class: 'Biguanide antidiabetic',
-                mechanism: 'Decreases hepatic glucose production, improves peripheral insulin sensitivity, ↓ glucose absorption',
-                dosing: 'Adults: Start 500mg BID with meals, titrate weekly by 500mg. Max: 2550mg/day. Extended-release: once daily',
-                contraindications: 'eGFR <30, acute heart failure, severe liver disease, alcohol abuse, contrast procedures',
-                interactions: 'Contrast dye (hold 48h), alcohol (↑ lactic acidosis), carbonic anhydrase inhibitors',
-                monitoring: 'Renal function q6mo, B12 levels annually, lactic acid if symptoms, A1C q3mo',
-                pregnancy: 'Category B - Generally safe, may use in gestational diabetes',
-                sideEffects: 'GI upset (25%), diarrhea, metallic taste, B12 deficiency, lactic acidosis (<1/100,000)',
-                pharmacokinetics: 'Peak: 2-3h, Half-life: 5h, No metabolism, Excretion: renal unchanged',
-                clinicalPearls: 'First-line T2DM. Weight neutral/loss. Cardiovascular benefits. Start low, go slow for GI tolerance',
-                efficacy: 'A1C reduction: 1-2%. FPG reduction: 60-80 mg/dL. No hypoglycemia as monotherapy'
+                mechanism: 'Decreases hepatic glucose production, improves peripheral insulin sensitivity, ↓ intestinal glucose absorption',
+                dosing: 'Standard-release: Start 500mg BD with meals, increase weekly. Max 1g BD. Modified-release: Start 500mg OD, max 2g OD',
+                contraindications: 'eGFR <30, acute conditions with tissue hypoxia, severe heart failure, alcohol dependence',
+                interactions: 'Iodinated contrast media (stop 48h before), alcohol (↑ lactic acidosis risk), diuretics (dehydration risk)',
+                monitoring: 'HbA1c every 3-6 months, eGFR annually (6-monthly if ≥45), vitamin B12 annually',
+                pregnancy: 'Safe - may be used in gestational diabetes and PCOS',
+                sideEffects: 'GI upset (30%), diarrhoea, metallic taste, vitamin B12 deficiency, lactic acidosis (very rare)',
+                pharmacokinetics: 'Peak: 2-3h, Half-life: 6h, No metabolism, Excretion: renal unchanged',
+                clinicalPearls: 'First-line T2DM in UK. Weight neutral/modest loss. Cardiovascular benefits. Take with food to ↓ GI effects',
+                efficacy: 'HbA1c reduction: 11-22mmol/mol (1-2%). Does not cause hypoglycaemia as monotherapy'
             },
-            'lisinopril': {
-                name: 'Lisinopril',
-                class: 'Angiotensin-Converting Enzyme (ACE) inhibitor',
-                mechanism: 'Inhibits ACE, preventing conversion of angiotensin I to II, ↓ aldosterone secretion',
-                dosing: 'HTN: Start 5-10mg daily, titrate to 10-40mg daily. HF: Start 2.5-5mg daily, titrate to 20-40mg daily',
-                contraindications: 'Pregnancy, bilateral renal artery stenosis, angioedema history, hyperkalemia >5.5',
-                interactions: 'NSAIDs (↓ efficacy, ↑ nephrotoxicity), K+ supplements (hyperkalemia), lithium (↑ levels)',
-                monitoring: 'Blood pressure, renal function, potassium (baseline, 1-2 weeks, then periodic)',
-                pregnancy: 'Category D - Contraindicated (teratogenic: oligohydramnios, IUGR)',
-                sideEffects: 'Dry cough (10-15%), hyperkalemia, angioedema (<1%), hypotension, renal impairment',
-                pharmacokinetics: 'Onset: 1h, Peak: 6-8h, Half-life: 12h, No metabolism, Excretion: renal',
-                clinicalPearls: 'Renoprotective in diabetes. Cardioprotective post-MI. Cough more common in women/Asians',
-                indications: 'HTN, HF, post-MI, diabetic nephropathy. Proven mortality benefit in HF and post-MI'
+            'ramipril': {
+                name: 'Ramipril',
+                class: 'ACE inhibitor',
+                mechanism: 'Inhibits ACE, preventing conversion of angiotensin I to II, reducing aldosterone secretion',
+                dosing: 'Hypertension: Start 1.25-2.5mg daily, usual 2.5-5mg daily, max 10mg daily. Heart failure: Start 1.25mg daily, target 10mg daily',
+                contraindications: 'Pregnancy, bilateral renal artery stenosis, angioedema history, hyperkalaemia >5.5mmol/L',
+                interactions: 'NSAIDs (↓ antihypertensive effect, ↑ nephrotoxicity), potassium supplements (hyperkalaemia), lithium (↑ levels)',
+                monitoring: 'eGFR and potassium baseline, 1-2 weeks after starting/dose change, then annually',
+                pregnancy: 'Contraindicated - teratogenic (oligohydramnios, IUGR, renal dysgenesis)',
+                sideEffects: 'Dry cough (10-15%), hyperkalaemia, acute kidney injury, angioedema (rare), hypotension',
+                pharmacokinetics: 'Prodrug activated hepatically, Half-life: 13-17h, Excretion: renal and biliary',
+                clinicalPearls: 'Most commonly prescribed ACE inhibitor in UK. Renoprotective in diabetes. Stop immediately if pregnant',
+                indication: 'Hypertension, heart failure, post-MI, diabetic nephropathy, primary prevention in high CV risk'
             },
             'levothyroxine': {
-                name: 'Levothyroxine (T4)',
+                name: 'Levothyroxine',
                 class: 'Thyroid hormone replacement',
-                mechanism: 'Synthetic T4 hormone, converted to active T3 in peripheral tissues',
-                dosing: 'Adults: 1.6mcg/kg/day (healthy), 1.0mcg/kg/day (elderly/cardiac disease). Adjust by TSH',
-                contraindications: 'Untreated adrenal insufficiency, acute MI, hyperthyroidism',
-                interactions: 'Iron/calcium (↓ absorption by 4h), warfarin (↑ effect), phenytoin (↑ metabolism)',
-                monitoring: 'TSH q6-8 weeks until stable, then annually. Free T4 if central hypothyroidism',
-                pregnancy: 'Category A - Safe, increase dose 25-50% in pregnancy. Critical for fetal development',
-                sideEffects: 'Overtreatment: palpitations, insomnia, tremor, weight loss, heat intolerance, osteoporosis',
-                pharmacokinetics: 'Peak: 2-4h, Half-life: 7 days, Steady state: 6-8 weeks, Metabolism: peripheral deiodination',
-                clinicalPearls: 'Take on empty stomach 30-60min before breakfast. Consistent timing crucial. Long half-life allows missed doses',
-                targets: 'TSH: 0.5-2.5 mIU/L (general), 2.5-3.0 (pregnancy), <2.0 (elderly). Adjust dose by 25-50mcg'
+                mechanism: 'Synthetic L-thyroxine (T4) hormone, converted to active T3 in peripheral tissues',
+                dosing: 'Adults <50yrs: 1.6micrograms/kg daily. >50yrs or cardiac disease: 25-50micrograms daily, increase by 25-50micrograms every 3-4 weeks',
+                contraindications: 'Untreated adrenal insufficiency, acute myocardial infarction, thyrotoxicosis',
+                interactions: 'Iron/calcium (take 4h apart), warfarin (↑ anticoagulant effect), carbamazepine (↑ metabolism)',
+                monitoring: 'TSH every 6-8 weeks until stable, then annually. Free T4 if pituitary disease suspected',
+                pregnancy: 'Safe - essential in pregnancy. Increase dose by 25-50micrograms. Monitor TSH each trimester',
+                sideEffects: 'Over-replacement: palpitations, insomnia, tremor, weight loss, heat intolerance, AF, osteoporosis',
+                pharmacokinetics: 'Peak: 2-4h, Half-life: 7 days, Steady state: 6-8 weeks',
+                clinicalPearls: 'Take on empty stomach 30-60min before breakfast. Consistent brand/timing. TSH target 0.5-2.5mU/L',
+                indication: 'Primary hypothyroidism, secondary hypothyroidism, thyroid cancer (TSH suppression)'
             },
             'simvastatin': {
                 name: 'Simvastatin',
                 class: 'HMG-CoA reductase inhibitor (Statin)',
-                mechanism: 'Inhibits cholesterol synthesis, upregulates LDL receptors',
-                dosing: 'Adults: 10-40mg daily in evening. Max: 40mg (80mg restricted due to myopathy risk)',
-                contraindications: 'Active liver disease, pregnancy, strong CYP3A4 inhibitors',
-                interactions: 'Strong CYP3A4 inhibitors contraindicated. Moderate inhibitors: max 10-20mg',
-                monitoring: 'Lipids, LFTs, CK if symptoms',
-                pregnancy: 'Category X - Contraindicated',
-                sideEffects: 'Myopathy risk higher than other statins, especially at 80mg dose',
-                clinicalPearls: 'Generic available. Higher myopathy risk than atorvastatin. 80mg dose avoided'
+                mechanism: 'Inhibits HMG-CoA reductase, reducing cholesterol synthesis, upregulates LDL receptors',
+                dosing: 'Start 10-20mg at night, usual dose 40mg daily, max 80mg daily (restricted to patients on 80mg for ≥12 months)',
+                contraindications: 'Active liver disease, pregnancy, breastfeeding, concurrent use of strong CYP3A4 inhibitors',
+                interactions: 'Amlodipine (max 20mg simvastatin), diltiazem (max 20mg), warfarin (↑ INR), grapefruit juice (avoid large amounts)',
+                monitoring: 'LFTs before treatment, lipids at 3 months, CK if muscle symptoms',
+                pregnancy: 'Contraindicated - teratogenic risk',
+                sideEffects: 'Myalgia, elevated LFTs (rare), rhabdomyolysis (very rare), new-onset diabetes (slight ↑)',
+                pharmacokinetics: 'Prodrug, extensive first-pass metabolism, Half-life: 2h, active metabolites',
+                clinicalPearls: 'Most cost-effective statin in UK. Take at night. 80mg dose requires specialist monitoring due to interactions',
+                indication: 'Hypercholesterolaemia, mixed dyslipidaemia, cardiovascular disease prevention'
             },
             'amlodipine': {
                 name: 'Amlodipine',
                 class: 'Dihydropyridine calcium channel blocker',
-                mechanism: 'Blocks L-type calcium channels in vascular smooth muscle, causing vasodilation',
-                dosing: 'Adults: Start 2.5-5mg daily, max 10mg daily. Elderly: start 2.5mg daily',
-                contraindications: 'Hypersensitivity, severe aortic stenosis',
-                interactions: 'CYP3A4 inhibitors (↑ levels), simvastatin (limit dose)',
-                monitoring: 'Blood pressure, heart rate, peripheral edema',
-                pregnancy: 'Category C - Use if benefit outweighs risk',
-                sideEffects: 'Peripheral edema (7-11%), flushing, dizziness, fatigue, gum hyperplasia',
-                pharmacokinetics: 'Peak: 6-12h, Half-life: 35-50h, Metabolism: hepatic',
-                clinicalPearls: 'Long half-life allows once daily dosing. Lower incidence of reflex tachycardia. Peripheral edema not fluid overload'
+                mechanism: 'Blocks L-type calcium channels in vascular smooth muscle and myocardium, causing vasodilation',
+                dosing: 'Hypertension: Start 5mg daily, max 10mg daily. Elderly/hepatic impairment: start 2.5mg daily',
+                contraindications: 'Hypersensitivity, unstable angina, significant aortic stenosis',
+                interactions: 'Simvastatin (limit simvastatin to 20mg), CYP3A4 inhibitors (monitor for hypotension)',
+                monitoring: 'Blood pressure, heart rate, signs of fluid retention, ankle oedema',
+                pregnancy: 'Avoid unless essential - limited safety data',
+                sideEffects: 'Ankle oedema (dose-related), flushing, dizziness, fatigue, gingival hyperplasia (rare)',
+                pharmacokinetics: 'Peak: 6-12h, Half-life: 35-50h, Hepatic metabolism via CYP3A4',
+                clinicalPearls: 'Long half-life allows once daily dosing. Ankle oedema not due to fluid retention. Preferred CCB in UK',
+                indication: 'Hypertension, stable angina. Often used as add-on therapy'
             },
             'ramipril': {
                 name: 'Ramipril',
@@ -2808,61 +3367,89 @@ class MLAQuizApp {
                 clinicalPearls: 'Blue inhaler. If using >3x/week, need preventer. Spacer improves delivery',
                 indication: 'Asthma, COPD, hyperkalemia (nebulised), premature labour'
             },
-            'metformin': {
-                name: 'Metformin',
-                class: 'Biguanide antidiabetic',
-                mechanism: 'Reduces hepatic glucose production, increases insulin sensitivity',
-                dosing: 'Start 500mg BD with meals, increase weekly. Max 2g daily (1g BD)',
-                contraindications: 'eGFR <30, severe heart failure, shock, alcohol abuse',
-                interactions: 'Contrast media (stop 48h before), alcohol (↑ lactate), diuretics',
-                monitoring: 'HbA1c, eGFR, vitamin B12 (annual)',
-                pregnancy: 'Safe - may be used in gestational diabetes',
-                sideEffects: 'GI upset (30%), metallic taste, vitamin B12 deficiency, lactic acidosis (rare)',
-                pharmacokinetics: 'No metabolism, renal excretion, Half-life: 6h',
-                clinicalPearls: 'First-line T2DM in UK. Take with food. Stop if acute illness/dehydration',
-                indication: 'Type 2 diabetes, PCOS, gestational diabetes'
+            'bendroflumethiazide': {
+                name: 'Bendroflumethiazide',
+                class: 'Thiazide-like diuretic',
+                mechanism: 'Inhibits sodium-chloride cotransporter in distal convoluted tubule',
+                dosing: 'Hypertension: 2.5mg daily (morning). Oedema: 5-10mg daily initially, then reduce to maintenance',
+                contraindications: 'Anuria, severe renal/hepatic impairment, hypersensitivity to sulfonamides, symptomatic hyperuricaemia',
+                interactions: 'Lithium (↑ toxicity), digoxin (hypokalaemia ↑ toxicity), NSAIDs (↓ antihypertensive effect)',
+                monitoring: 'U&Es, glucose, uric acid, blood pressure. Monitor electrolytes 4-6 weeks after starting',
+                pregnancy: 'Avoid - may cause neonatal thrombocytopenia and electrolyte disturbance',
+                sideEffects: 'Hyponatraemia, hypokalaemia, hyperuricaemia, glucose intolerance, impotence, postural hypotension',
+                pharmacokinetics: 'Onset: 2h, Peak: 4-6h, Duration: 12-18h, Renal excretion',
+                clinicalPearls: 'Most common thiazide in UK. Take in morning to avoid nocturia. 2.5mg usually sufficient for BP control',
+                indication: 'Hypertension (usually as add-on), mild heart failure, oedema'
             },
-            'simvastatin': {
-                name: 'Simvastatin',
-                class: 'HMG-CoA reductase inhibitor (Statin)',
-                mechanism: 'Inhibits cholesterol synthesis, upregulates LDL receptors',
-                dosing: 'Start 10-20mg at night, usual 40mg, max 80mg (restricted use)',
-                contraindications: 'Active liver disease, pregnancy, breastfeeding',
-                interactions: 'Amlodipine (max 20mg simvastatin), warfarin (↑ INR), grapefruit juice',
-                monitoring: 'LFTs before treatment, lipids at 3 months, CK if muscle symptoms',
-                pregnancy: 'Contraindicated - teratogenic',
-                sideEffects: 'Myalgia, elevated LFTs, rhabdomyolysis (rare), diabetes (slight ↑ risk)',
-                pharmacokinetics: 'Prodrug, extensive first-pass metabolism, Half-life: 2h',
-                clinicalPearls: 'Cheapest statin in UK. Take at night. 80mg dose has interaction restrictions',
-                indication: 'Hypercholesterolemia, cardiovascular disease prevention'
+            'bisoprolol': {
+                name: 'Bisoprolol',
+                class: 'Cardioselective β1-adrenoreceptor antagonist',
+                mechanism: 'Selective β1-adrenoreceptor blockade, reducing heart rate, contractility and cardiac output',
+                dosing: 'Hypertension: Start 5mg daily, max 20mg daily. Heart failure: Start 1.25mg daily, titrate slowly to max 10mg daily',
+                contraindications: 'Severe asthma, uncontrolled heart failure, severe bradycardia, 2nd/3rd degree heart block, cardiogenic shock',
+                interactions: 'Verapamil/diltiazem (risk of heart block), insulin (may mask hypoglycaemia), NSAIDs (↓ antihypertensive effect)',
+                monitoring: 'Heart rate, blood pressure, signs of heart failure exacerbation, glucose (diabetics)',
+                pregnancy: 'Use only if essential - may cause fetal bradycardia, hypoglycaemia, IUGR',
+                sideEffects: 'Fatigue, dizziness, bradycardia, cold extremities, erectile dysfunction, sleep disturbances',
+                pharmacokinetics: 'Half-life: 10-12h, Bioavailability: 80%, 50% renal excretion',
+                clinicalPearls: 'Preferred β-blocker in UK guidelines. β1-selective but selectivity lost at high doses. Withdraw gradually',
+                indication: 'Hypertension, heart failure, post-MI, stable angina'
             },
-            'paracetamol': {
-                name: 'Paracetamol',
-                class: 'Analgesic, Antipyretic',
-                mechanism: 'Inhibits COX enzymes centrally, affects prostaglandin synthesis',
-                dosing: 'Adults: 500mg-1g QDS (max 4g/24h). Children: 15mg/kg QDS (max 60mg/kg/24h)',
-                contraindications: 'Severe hepatic impairment, chronic alcohol abuse',
-                interactions: 'Warfarin (↑ INR with regular use), carbamazepine (↑ metabolism)',
-                monitoring: 'Liver function with chronic use, paracetamol levels in overdose',
-                pregnancy: 'Safe - preferred analgesic in pregnancy',
-                sideEffects: 'Hepatotoxicity (overdose), very rarely skin reactions',
-                pharmacokinetics: 'Onset: 30min, Peak: 1h, Half-life: 2h, Hepatic metabolism',
-                clinicalPearls: 'Most common analgesic in UK. No anti-inflammatory effect. Overdose: N-acetylcysteine antidote',
-                indication: 'Pain, fever. First-line analgesic in most conditions'
+            'omeprazole': {
+                name: 'Omeprazole',
+                class: 'Proton pump inhibitor (PPI)',
+                mechanism: 'Irreversibly inhibits gastric H+/K+-ATPase (proton pump), reducing gastric acid production',
+                dosing: 'GORD: 20mg daily for 4-8 weeks. Peptic ulcer: 20mg daily for 4-8 weeks. H.pylori eradication: 20mg BD with antibiotics',
+                contraindications: 'Hypersensitivity to PPIs, patients with known osteoporosis (relative)',
+                interactions: 'Clopidogrel (↓ antiplatelet effect), warfarin (may ↑ INR), atazanavir (↓ absorption)',
+                monitoring: 'Magnesium levels with long-term use, vitamin B12 annually, review need for continued treatment',
+                pregnancy: 'Safe - no increased risk of congenital malformations',
+                sideEffects: 'Headache, GI upset, hypomagnesaemia (long-term), C.diff risk, possible fracture risk',
+                pharmacokinetics: 'Onset: 1h, Peak effect: 2h, Duration: up to 72h, CYP2C19 metabolism',
+                clinicalPearls: 'First PPI available OTC in UK. Take 30-60min before food. Step down therapy when appropriate',
+                indication: 'GORD, peptic ulcer disease, H.pylori eradication, stress ulcer prophylaxis'
+            },
+            'prednisolone': {
+                name: 'Prednisolone',
+                class: 'Corticosteroid (glucocorticoid)',
+                mechanism: 'Synthetic glucocorticoid with potent anti-inflammatory and immunosuppressive effects',
+                dosing: 'Acute conditions: 30-60mg daily initially, then reduce. Maintenance: 2.5-15mg daily. Always reduce gradually',
+                contraindications: 'Systemic infection (unless covering with antimicrobials), live vaccines, recent surgery',
+                interactions: 'Warfarin (variable effects), NSAIDs (↑ GI bleeding risk), live vaccines (↓ immune response)',
+                monitoring: 'Blood glucose, blood pressure, bone density (if >3 months), weight, mood changes',
+                pregnancy: 'Use if essential - possible increased risk of cleft palate if used in first trimester',
+                sideEffects: 'Weight gain, mood changes, osteoporosis, diabetes, Cushing\'s syndrome, increased infection risk',
+                pharmacokinetics: 'Well absorbed orally, Half-life: 12-36h, Hepatic metabolism',
+                clinicalPearls: 'Never stop abruptly after >3 weeks use. Take with food. Consider bone protection if prolonged use',
+                indication: 'Severe asthma, COPD exacerbation, inflammatory arthritis, severe allergic reactions, autoimmune conditions'
+            },
+            'salbutamol': {
+                name: 'Salbutamol',
+                class: 'Short-acting β2-adrenoreceptor agonist (SABA)',
+                mechanism: 'Selective β2-adrenoreceptor agonist causing smooth muscle relaxation and bronchodilation',
+                dosing: 'MDI: 100-200micrograms PRN (max 800micrograms/day). Nebuliser: 2.5-5mg up to QDS. Acute severe asthma: 5mg nebulised',
+                contraindications: 'Hypersensitivity. Caution in cardiovascular disease, diabetes, hyperthyroidism',
+                interactions: 'β-blockers (antagonism), digoxin (hypokalaemia may ↑ toxicity), theophylline (↑ toxicity risk)',
+                monitoring: 'Peak flow, symptom relief, heart rate, potassium levels (high-dose nebulised)',
+                pregnancy: 'Safe - preferred bronchodilator in pregnancy and breastfeeding',
+                sideEffects: 'Fine tremor, palpitations, headache, muscle cramps, hypokalaemia (high doses)',
+                pharmacokinetics: 'Inhaled onset: 5min, Peak: 15-30min, Duration: 3-5h',
+                clinicalPearls: 'Blue reliever inhaler. Use with spacer device. If needed >3x/week, requires preventer therapy',
+                indication: 'Asthma, COPD, acute bronchospasm, premature labour (tocolysis), hyperkalaemia (nebulised)'
             },
             'ibuprofen': {
                 name: 'Ibuprofen',
                 class: 'Non-steroidal anti-inflammatory drug (NSAID)',
-                mechanism: 'Non-selective COX inhibitor, reducing prostaglandin synthesis',
-                dosing: 'Adults: 400mg TDS-QDS (max 2.4g daily). Children: 20-30mg/kg daily in divided doses',
-                contraindications: 'PUD, severe heart failure, CKD, pregnancy (3rd trimester)',
-                interactions: 'ACE inhibitors (↓ efficacy), warfarin (↑ bleeding), lithium (↑ levels)',
-                monitoring: 'Renal function, blood pressure, signs of GI bleeding',
-                pregnancy: 'Avoid 3rd trimester - may cause oligohydramnios, premature ductus closure',
-                sideEffects: 'GI bleeding, acute kidney injury, hypertension, fluid retention',
-                pharmacokinetics: 'Onset: 30min, Peak: 1-2h, Half-life: 2-4h',
-                clinicalPearls: 'Most common NSAID in UK. Take with food. Lowest effective dose for shortest time',
-                indication: 'Pain, inflammation, fever. Particularly musculoskeletal conditions'
+                mechanism: 'Non-selective cyclooxygenase (COX) inhibitor, reducing prostaglandin synthesis',
+                dosing: 'Adults: 400mg TDS-QDS with food (max 2.4g daily). Children >6 months: 20-30mg/kg daily in 3-4 divided doses',
+                contraindications: 'Active peptic ulceration, severe heart failure, severe renal impairment, pregnancy (3rd trimester)',
+                interactions: 'ACE inhibitors (↓ antihypertensive effect), warfarin (↑ bleeding risk), lithium (↑ toxicity), methotrexate (↑ toxicity)',
+                monitoring: 'Renal function, blood pressure, signs of GI bleeding, fluid retention',
+                pregnancy: 'Avoid in 3rd trimester - risk of oligohydramnios and premature closure of ductus arteriosus',
+                sideEffects: 'GI bleeding/perforation, acute kidney injury, fluid retention, hypertension, bronchospasm (aspirin-sensitive asthma)',
+                pharmacokinetics: 'Onset: 30min, Peak: 1-2h, Half-life: 2-4h, Hepatic metabolism',
+                clinicalPearls: 'Most widely used NSAID in UK. Always take with food. Use lowest effective dose for shortest time',
+                indication: 'Pain and inflammation, particularly musculoskeletal conditions, fever, dysmenorrhoea'
             }
         };
         
