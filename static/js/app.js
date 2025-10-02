@@ -2733,10 +2733,10 @@ class MLAQuizApp {
                 <div id="drug-search-results"></div>
             </div>
             <div class="drug-categories">
-                <button class="category-btn" onclick="window.quizApp.showDrugCategory('all')">All Drugs</button>
-                <button class="category-btn" onclick="window.quizApp.showDrugCategory('antibiotics')">Antibiotics</button>
-                <button class="category-btn" onclick="window.quizApp.showDrugCategory('cardiovascular')">Cardiovascular</button>
-                <button class="category-btn" onclick="window.quizApp.showDrugCategory('endocrine')">Endocrine</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('all'); event.stopPropagation();">All Drugs</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('antibiotics'); event.stopPropagation();">Antibiotics</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('endocrine'); event.stopPropagation();">Endocrine</button>
             </div>
             <div id="drug-list"></div>
         `;
@@ -2768,7 +2768,7 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(drug => `
-            <div class="drug-result" onclick="window.quizApp.showDrugDetail('${drug}')">
+            <div class="drug-result" onclick="console.log('💊 Drug search result clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
                 <div class="drug-name">${drugDatabase[drug].name}</div>
                 <div class="drug-class">${drugDatabase[drug].class}</div>
             </div>
@@ -2795,7 +2795,7 @@ class MLAQuizApp {
         }
         
         drugList.innerHTML = drugs.map(drug => `
-            <div class="drug-card" onclick="window.quizApp.showDrugDetail('${drug}')">
+            <div class="drug-card" onclick="console.log('💊 Drug card clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
                 <div class="drug-name">${drugDatabase[drug].name}</div>
                 <div class="drug-class">${drugDatabase[drug].class}</div>
             </div>
@@ -2807,7 +2807,7 @@ class MLAQuizApp {
         const container = document.getElementById('drug-reference-container');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.loadDrugReference()">← Back to Drug List</button>
+            <button class="back-btn" onclick="window.quizApp.loadDrugReference(); event.stopPropagation();">← Back to Drug List</button>
             <div class="drug-detail">
                 <h3>${drug.name}</h3>
                 <div class="drug-info">
@@ -3201,10 +3201,10 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(match => `
-            <div class="lab-result" onclick="${match.type === 'panel' ? `console.log('🧪 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('🧪 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
+            <button class="lab-result-btn" onclick="${match.type === 'panel' ? `console.log('🧪 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('🧪 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
                 <div class="lab-name">${match.name}</div>
                 <div class="lab-type">${match.type === 'panel' ? 'Lab Panel' : 'Individual Test'}</div>
-            </div>
+            </button>
         `).join('');
     }
     
@@ -3218,10 +3218,10 @@ class MLAQuizApp {
         }
         
         labList.innerHTML = panels.map(panel => `
-            <div class="lab-card" onclick="console.log('🧪 Lab card clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
+            <button class="lab-card-btn" onclick="console.log('🧪 Lab card clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
                 <div class="lab-panel-name">${labDatabase[panel].name}</div>
                 <div class="lab-test-count">${Object.keys(labDatabase[panel].values).length} tests</div>
-            </div>
+            </button>
         `).join('');
     }
     
@@ -3231,10 +3231,10 @@ class MLAQuizApp {
         const container = document.getElementById('lab-values-container');
         
         const testsHtml = Object.entries(panel.values).map(([test, data]) => `
-            <div class="lab-test" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
+            <button class="lab-test-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
                 <div class="test-name">${test}</div>
                 <div class="test-normal">${data.normal}</div>
-            </div>
+            </button>
         `).join('');
         
         container.innerHTML = `
@@ -3462,17 +3462,17 @@ class MLAQuizApp {
             }
         };
         
-        const container = document.getElementById('guidelines-container');
+        const container = document.getElementById('guidelines-panel');
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="guidelines-search" placeholder="Search guidelines...">
                 <div id="guidelines-search-results"></div>
             </div>
             <div class="guidelines-categories">
-                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('all')">All Guidelines</button>
-                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('cardiovascular')">Cardiovascular</button>
-                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('endocrine')">Endocrine</button>
-                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('pulmonary')">Pulmonary</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">All Guidelines</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('endocrine'); event.stopPropagation();">Endocrine</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('pulmonary'); event.stopPropagation();">Pulmonary</button>
             </div>
             <div id="guidelines-list"></div>
         `;
@@ -3970,14 +3970,14 @@ class MLAQuizApp {
             }
         };
         
-        const container = document.getElementById('differential-dx-container');
+        const container = document.getElementById('differential-panel');
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="ddx-search" placeholder="Search symptoms or diagnoses...">
                 <div id="ddx-search-results"></div>
             </div>
             <div class="ddx-categories">
-                <button class="category-btn" onclick="window.quizApp.showDdxCategory('all')">All Symptoms</button>
+                <button class="category-btn" onclick="window.quizApp.showDdxCategory('all'); event.stopPropagation();">All Symptoms</button>
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('cardiovascular')">CV/Pulm</button>
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('gastroenterology')">GI/Surgery</button>
             </div>
