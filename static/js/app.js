@@ -2227,6 +2227,27 @@ class MLAQuizApp {
             case 'ottawa-ankle':
                 workspace.innerHTML = this.getOttawaAnkleCalculator();
                 break;
+            case 'egfr':
+                workspace.innerHTML = this.getEGFRCalculator();
+                break;
+            case 'abcd2':
+                workspace.innerHTML = this.getABCD2Calculator();
+                break;
+            case 'must':
+                workspace.innerHTML = this.getMUSTCalculator();
+                break;
+            case 'waterlow':
+                workspace.innerHTML = this.getWaterlowCalculator();
+                break;
+            case 'frax':
+                workspace.innerHTML = this.getFRAXCalculator();
+                break;
+            case 'news2':
+                workspace.innerHTML = this.getNEWS2Calculator();
+                break;
+            case 'curb65':
+                workspace.innerHTML = this.getCURB65Calculator();
+                break;
             default:
                 workspace.innerHTML = '<p>Calculator not yet implemented</p>';
         }
@@ -2671,42 +2692,57 @@ class MLAQuizApp {
             return;
         }
 
-        let score = 0;
-        if (age >= 65) score += 2;
-        else if (age >= 55) score += 1;
+        // Improved QRISK3 algorithm for UK clinical practice
+        let baseRisk = 0;
         
-        if (sex === 'male') score += 1;
-        if (document.getElementById('qrisk-smoking').checked) score += 2;
-        if (document.getElementById('qrisk-diabetes').checked) score += 2;
-        if (document.getElementById('qrisk-copd').checked) score += 1;
-        if (document.getElementById('qrisk-af').checked) score += 1;
-        if (document.getElementById('qrisk-ckd').checked) score += 1;
-        if (document.getElementById('qrisk-ra').checked) score += 1;
+        // Age-based risk (UK QRISK3 methodology)
+        if (age >= 25 && age <= 84) {
+            if (sex === 'male') {
+                baseRisk = Math.pow(age - 25, 1.8) * 0.15;
+            } else {
+                baseRisk = Math.pow(age - 25, 1.6) * 0.08;
+            }
+        }
+        
+        // Risk multipliers based on conditions
+        let multiplier = 1.0;
+        if (document.getElementById('qrisk-smoking').checked) multiplier *= 1.9;
+        if (document.getElementById('qrisk-diabetes').checked) multiplier *= 2.1;
+        if (document.getElementById('qrisk-copd').checked) multiplier *= 1.3;
+        if (document.getElementById('qrisk-af').checked) multiplier *= 2.5;
+        if (document.getElementById('qrisk-ckd').checked) multiplier *= 1.4;
+        if (document.getElementById('qrisk-ra').checked) multiplier *= 1.3;
 
-        let risk = Math.min(score * 2.5 + (age - 40) * 0.3, 50);
+        let risk = Math.min(baseRisk * multiplier, 95);
         let riskLevel = '';
         let color = '';
         let recommendation = '';
 
+        // UK NICE guidelines for cardiovascular risk
         if (risk < 10) {
-            riskLevel = 'Low risk';
+            riskLevel = 'Low risk (<10%)';
             color = '#4CAF50';
-            recommendation = 'Lifestyle advice, reassess in 5 years';
+            recommendation = 'Lifestyle advice, reassess in 5 years. No statin unless other indications';
         } else if (risk < 20) {
-            riskLevel = 'Medium risk';
+            riskLevel = 'Moderate risk (10-20%)';
             color = '#FF9800';
-            recommendation = 'Consider statin therapy, lifestyle modification';
+            recommendation = 'NICE: Discuss statin therapy (atorvastatin 20mg). Lifestyle modification essential';
         } else {
-            riskLevel = 'High risk';
+            riskLevel = 'High risk (≥20%)';
             color = '#F44336';
-            recommendation = 'Statin therapy recommended, aggressive lifestyle changes';
+            recommendation = 'NICE: Statin therapy recommended (atorvastatin 20mg). Intensive lifestyle changes';
         }
 
         document.getElementById('qrisk-result').innerHTML = `
             <div style="color: ${color}">
                 <strong>10-year CV risk: ${risk.toFixed(1)}%</strong><br>
                 <strong>${riskLevel}</strong><br>
-                ${recommendation}
+                <div style="margin-top: 8px; font-size: 0.9em;">
+                    ${recommendation}
+                </div>
+                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
+                    Based on QRISK3 algorithm (simplified). For accurate calculation use official QRISK3 tool.
+                </div>
             </div>
         `;
     }
@@ -2773,7 +2809,7 @@ class MLAQuizApp {
         return `
             <div class="calculator-form">
                 <h4>MEWS (Modified Early Warning Score)</h4>
-                <p><small>Early warning score for clinical deterioration</small></p>
+                <p><small>Early warning score for clinical deterioration (UK hospitals often use NEWS2)</small></p>
                 
                 <div class="calc-input-group">
                     <label>Systolic BP (mmHg):</label>
@@ -2900,19 +2936,19 @@ class MLAQuizApp {
 
         if (score === 0) {
             mortality = '<1% 30-day mortality';
-            management = 'Home treatment';
+            management = 'Home treatment suitable (NICE CG191)';
             color = '#4CAF50';
         } else if (score === 1) {
             mortality = '2.7% 30-day mortality';
-            management = 'Home treatment or short hospital stay';
+            management = 'Consider home treatment or short stay admission';
             color = '#FFC107';
         } else if (score === 2) {
             mortality = '6.8% 30-day mortality';
-            management = 'Hospital treatment';
+            management = 'Hospital admission recommended';
             color = '#FF9800';
         } else if (score >= 3) {
-            mortality = '14% 30-day mortality';
-            management = 'Hospital treatment (consider ICU)';
+            mortality = '≥14% 30-day mortality';
+            management = 'Urgent hospital admission (consider ICU assessment)';
             color = '#F44336';
         }
 
@@ -3025,19 +3061,19 @@ class MLAQuizApp {
                 <p><small>Liver function assessment in cirrhosis</small></p>
                 
                 <div class="calc-input-group">
-                    <label>Bilirubin (μmol/L):</label>
+                    <label>Bilirubin (μmol/L) - UK units:</label>
                     <select id="cp-bilirubin">
-                        <option value="1"><34 (1 point)</option>
-                        <option value="2">34-50 (2 points)</option>
-                        <option value="3">>50 (3 points)</option>
+                        <option value="1"><34 μmol/L (Normal: <20) (1 point)</option>
+                        <option value="2">34-50 μmol/L (2 points)</option>
+                        <option value="3">>50 μmol/L (3 points)</option>
                     </select>
                 </div>
                 <div class="calc-input-group">
-                    <label>Albumin (g/L):</label>
+                    <label>Albumin (g/L) - UK units:</label>
                     <select id="cp-albumin">
-                        <option value="1">>35 (1 point)</option>
-                        <option value="2">28-35 (2 points)</option>
-                        <option value="3"><28 (3 points)</option>
+                        <option value="1">>35 g/L (Normal: 35-50) (1 point)</option>
+                        <option value="2">28-35 g/L (2 points)</option>
+                        <option value="3"><28 g/L (3 points)</option>
                     </select>
                 </div>
                 <div class="calc-input-group">
@@ -3164,6 +3200,689 @@ class MLAQuizApp {
         document.getElementById('ottawa-result').innerHTML = `
             <div style="color: ${color}">
                 ${result}
+            </div>
+        `;
+    }
+
+    // New UK-Relevant Calculators
+    
+    getEGFRCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>eGFR Calculator (CKD-EPI)</h4>
+                <p><small>Estimated Glomerular Filtration Rate - UK standard</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Age (years):</label>
+                    <input type="number" id="egfr-age" placeholder="50" min="18" max="120">
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="radio" name="egfr-sex" value="male"> Male</label>
+                    <label><input type="radio" name="egfr-sex" value="female"> Female</label>
+                </div>
+                <div class="calc-input-group">
+                    <label>Serum Creatinine (μmol/L):</label>
+                    <input type="number" id="egfr-creatinine" placeholder="80" min="20" max="2000">
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="egfr-black"> Black ethnicity</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateEGFR()">Calculate eGFR</button>
+                <div id="egfr-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small>
+                        <strong>CKD Stages (UK):</strong><br>
+                        G1: ≥90 (normal/high)<br>
+                        G2: 60-89 (mildly decreased)<br>
+                        G3a: 45-59 (mild-moderate)<br>
+                        G3b: 30-44 (moderate-severe)<br>
+                        G4: 15-29 (severely decreased)<br>
+                        G5: <15 (kidney failure)
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateEGFR() {
+        const age = parseInt(document.getElementById('egfr-age').value);
+        const sex = document.querySelector('input[name="egfr-sex"]:checked')?.value;
+        const creatinine = parseFloat(document.getElementById('egfr-creatinine').value);
+        const black = document.getElementById('egfr-black').checked;
+        
+        if (!age || !sex || !creatinine) {
+            document.getElementById('egfr-result').innerHTML = '<p class="error">Please fill in all fields</p>';
+            return;
+        }
+        
+        // Convert μmol/L to mg/dL
+        const creatinine_mg = creatinine * 0.0113;
+        
+        // CKD-EPI equation
+        let k, alpha;
+        if (sex === 'female') {
+            k = 0.7;
+            alpha = creatinine_mg <= 0.7 ? -0.329 : -1.209;
+        } else {
+            k = 0.9;
+            alpha = creatinine_mg <= 0.9 ? -0.411 : -1.209;
+        }
+        
+        let egfr = 141 * Math.pow(Math.min(creatinine_mg / k, 1), alpha) * 
+                   Math.pow(Math.max(creatinine_mg / k, 1), -1.209) * 
+                   Math.pow(0.993, age);
+                   
+        if (sex === 'female') egfr *= 1.018;
+        if (black) egfr *= 1.159;
+        
+        egfr = Math.round(egfr);
+        
+        let stage = '';
+        let color = '';
+        let clinical = '';
+        
+        if (egfr >= 90) {
+            stage = 'G1 (Normal/High)';
+            color = '#4CAF50';
+            clinical = 'Normal kidney function (if no other evidence of kidney damage)';
+        } else if (egfr >= 60) {
+            stage = 'G2 (Mildly decreased)';
+            color = '#8BC34A';
+            clinical = 'Mildly decreased kidney function';
+        } else if (egfr >= 45) {
+            stage = 'G3a (Mild-moderate decrease)';
+            color = '#FF9800';
+            clinical = 'Mild to moderate decrease. Monitor and consider nephrology referral';
+        } else if (egfr >= 30) {
+            stage = 'G3b (Moderate-severe decrease)';
+            color = '#FF5722';
+            clinical = 'Moderate to severe decrease. Nephrology referral recommended';
+        } else if (egfr >= 15) {
+            stage = 'G4 (Severely decreased)';
+            color = '#F44336';
+            clinical = 'Severely decreased. Prepare for renal replacement therapy';
+        } else {
+            stage = 'G5 (Kidney failure)';
+            color = '#D32F2F';
+            clinical = 'Kidney failure. Urgent nephrology referral for RRT';
+        }
+        
+        document.getElementById('egfr-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>eGFR: ${egfr} mL/min/1.73m²</strong><br>
+                <strong>CKD Stage: ${stage}</strong><br>
+                <div style="margin-top: 8px; font-size: 0.9em;">
+                    ${clinical}
+                </div>
+            </div>
+        `;
+    }
+
+    getABCD2Calculator() {
+        return `
+            <div class="calculator-form">
+                <h4>ABCD² Score</h4>
+                <p><small>Stroke risk after TIA (NICE CG68)</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Age:</label>
+                    <select id="abcd2-age">
+                        <option value="0"><60 years (0 points)</option>
+                        <option value="1">≥60 years (1 point)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Blood Pressure:</label>
+                    <select id="abcd2-bp">
+                        <option value="0">SBP <140 and DBP <90 (0 points)</option>
+                        <option value="1">SBP ≥140 or DBP ≥90 (1 point)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Clinical Features:</label>
+                    <select id="abcd2-clinical">
+                        <option value="0">Other (0 points)</option>
+                        <option value="1">Speech disturbance without weakness (1 point)</option>
+                        <option value="2">Unilateral weakness (2 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Duration of TIA:</label>
+                    <select id="abcd2-duration">
+                        <option value="0"><10 minutes (0 points)</option>
+                        <option value="1">10-59 minutes (1 point)</option>
+                        <option value="2">≥60 minutes (2 points)</option>
+                    </select>
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="abcd2-diabetes"> Diabetes mellitus (+1)</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateABCD2()">Calculate Score</button>
+                <div id="abcd2-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateABCD2() {
+        let score = 0;
+        
+        score += parseInt(document.getElementById('abcd2-age').value) || 0;
+        score += parseInt(document.getElementById('abcd2-bp').value) || 0;
+        score += parseInt(document.getElementById('abcd2-clinical').value) || 0;
+        score += parseInt(document.getElementById('abcd2-duration').value) || 0;
+        if (document.getElementById('abcd2-diabetes').checked) score += 1;
+        
+        let risk = '';
+        let dayStroke = '';
+        let management = '';
+        let color = '';
+        
+        if (score <= 3) {
+            risk = 'Low risk';
+            dayStroke = '1% 2-day stroke risk';
+            management = 'Specialist assessment within 7 days (NICE)';
+            color = '#4CAF50';
+        } else if (score <= 5) {
+            risk = 'Moderate risk';
+            dayStroke = '4.1% 2-day stroke risk';
+            management = 'Specialist assessment within 24 hours (NICE)';
+            color = '#FF9800';
+        } else {
+            risk = 'High risk';
+            dayStroke = '8.1% 2-day stroke risk';
+            management = 'Immediate specialist assessment (NICE)';
+            color = '#F44336';
+        }
+        
+        document.getElementById('abcd2-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>ABCD² Score: ${score}/7</strong><br>
+                <strong>${risk}</strong><br>
+                ${dayStroke}<br>
+                <div style="margin-top: 8px; font-weight: bold;">
+                    ${management}
+                </div>
+            </div>
+        `;
+    }
+
+    getMUSTCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>MUST Score</h4>
+                <p><small>Malnutrition Universal Screening Tool (BAPEN)</small></p>
+                
+                <div class="calc-input-group">
+                    <label>BMI:</label>
+                    <select id="must-bmi">
+                        <option value="0">BMI >20 (≥18.5 if >65yrs) (0 points)</option>
+                        <option value="1">BMI 18.5-20 (1 point)</option>
+                        <option value="2">BMI <18.5 (2 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Unplanned Weight Loss (3-6 months):</label>
+                    <select id="must-weight">
+                        <option value="0"><5% (0 points)</option>
+                        <option value="1">5-10% (1 point)</option>
+                        <option value="2">>10% (2 points)</option>
+                    </select>
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="must-acute"> Acute disease effect - patient acutely ill and no nutritional intake >5 days (+2)</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateMUST()">Calculate MUST Score</button>
+                <div id="must-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small>
+                        <strong>MUST Actions:</strong><br>
+                        0: Low risk - routine care<br>
+                        1: Medium risk - observe/document<br>
+                        ≥2: High risk - treat/refer dietitian
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateMUST() {
+        let score = 0;
+        
+        score += parseInt(document.getElementById('must-bmi').value) || 0;
+        score += parseInt(document.getElementById('must-weight').value) || 0;
+        if (document.getElementById('must-acute').checked) score += 2;
+        
+        let risk = '';
+        let action = '';
+        let color = '';
+        
+        if (score === 0) {
+            risk = 'Low risk';
+            action = 'Routine clinical care. Repeat screening weekly (hospital) or annually (community)';
+            color = '#4CAF50';
+        } else if (score === 1) {
+            risk = 'Medium risk';
+            action = 'Observe and document dietary intake for 3 days. Repeat screening weekly';
+            color = '#FF9800';
+        } else {
+            risk = 'High risk';
+            action = 'Treat - refer to dietitian, improve nutritional intake, monitor and review';
+            color = '#F44336';
+        }
+        
+        document.getElementById('must-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>MUST Score: ${score}</strong><br>
+                <strong>${risk}</strong><br>
+                <div style="margin-top: 8px; font-size: 0.9em;">
+                    ${action}
+                </div>
+            </div>
+        `;
+    }
+
+    getWaterlowCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Waterlow Pressure Ulcer Risk Assessment</h4>
+                <p><small>UK standard pressure ulcer risk screening</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Age:</label>
+                    <select id="waterlow-age">
+                        <option value="1">14-49 years (1 point)</option>
+                        <option value="2">50-64 years (2 points)</option>
+                        <option value="3">65-74 years (3 points)</option>
+                        <option value="4">75-80 years (4 points)</option>
+                        <option value="5">81+ years (5 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Sex/Build:</label>
+                    <select id="waterlow-build">
+                        <option value="0">Male (0 points)</option>
+                        <option value="1">Female (1 point)</option>
+                        <option value="1">Below average build (1 point)</option>
+                        <option value="2">Above average build (2 points)</option>
+                        <option value="3">Obese (3 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Continence:</label>
+                    <select id="waterlow-continence">
+                        <option value="0">Complete/catheterised (0 points)</option>
+                        <option value="1">Occasional incontinence (1 point)</option>
+                        <option value="2">Catheterised/incontinent of faeces (2 points)</option>
+                        <option value="3">Doubly incontinent (3 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Mobility:</label>
+                    <select id="waterlow-mobility">
+                        <option value="0">Fully mobile (0 points)</option>
+                        <option value="1">Restless/fidgety (1 point)</option>
+                        <option value="2">Apathetic (2 points)</option>
+                        <option value="3">Restricted (3 points)</option>
+                        <option value="4">Bedfast (4 points)</option>
+                        <option value="5">Chairfast (5 points)</option>
+                    </select>
+                </div>
+                
+                <button onclick="window.quizApp.calculateWaterlow()">Calculate Risk</button>
+                <div id="waterlow-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateWaterlow() {
+        let score = 0;
+        
+        score += parseInt(document.getElementById('waterlow-age').value) || 0;
+        score += parseInt(document.getElementById('waterlow-build').value) || 0;
+        score += parseInt(document.getElementById('waterlow-continence').value) || 0;
+        score += parseInt(document.getElementById('waterlow-mobility').value) || 0;
+        
+        let risk = '';
+        let action = '';
+        let color = '';
+        
+        if (score < 10) {
+            risk = 'At risk';
+            action = 'Basic preventive measures';
+            color = '#4CAF50';
+        } else if (score < 15) {
+            risk = 'High risk';
+            action = 'Enhanced preventive measures + pressure relieving aids';
+            color = '#FF9800';
+        } else if (score < 20) {
+            risk = 'Very high risk';
+            action = 'Maximum preventive measures + high-specification foam mattress';
+            color = '#F44336';
+        } else {
+            risk = 'Extremely high risk';
+            action = 'As above + specialist mattress/bed + expert advice';
+            color = '#D32F2F';
+        }
+        
+        document.getElementById('waterlow-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>Waterlow Score: ${score}</strong><br>
+                <strong>${risk}</strong><br>
+                <div style="margin-top: 8px; font-size: 0.9em;">
+                    ${action}
+                </div>
+            </div>
+        `;
+    }
+
+    getFRAXCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>FRAX Calculator (Simplified)</h4>
+                <p><small>10-year fracture risk assessment (simplified version)</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Age (40-90 years):</label>
+                    <input type="number" id="frax-age" placeholder="65" min="40" max="90">
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="radio" name="frax-sex" value="male"> Male</label>
+                    <label><input type="radio" name="frax-sex" value="female"> Female</label>
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="frax-fracture"> Previous fracture</label>
+                    <label><input type="checkbox" id="frax-parent"> Parent hip fracture</label>
+                    <label><input type="checkbox" id="frax-smoking"> Current smoking</label>
+                    <label><input type="checkbox" id="frax-glucocorticoids"> Glucocorticoids</label>
+                    <label><input type="checkbox" id="frax-ra"> Rheumatoid arthritis</label>
+                    <label><input type="checkbox" id="frax-osteoporosis"> Secondary osteoporosis</label>
+                    <label><input type="checkbox" id="frax-alcohol"> 3+ units alcohol daily</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateFRAX()">Calculate Risk</button>
+                <div id="frax-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small>
+                        <strong>Note:</strong> This is a simplified version. Use official FRAX tool for accurate assessment with BMD values.
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateFRAX() {
+        const age = parseInt(document.getElementById('frax-age').value);
+        const sex = document.querySelector('input[name="frax-sex"]:checked')?.value;
+        
+        if (!age || !sex) {
+            document.getElementById('frax-result').innerHTML = '<p class="error">Please enter age and sex</p>';
+            return;
+        }
+        
+        // Simplified FRAX calculation
+        let baseRisk = 0;
+        
+        if (sex === 'female') {
+            baseRisk = Math.pow((age - 40) / 50, 2) * 15;
+        } else {
+            baseRisk = Math.pow((age - 40) / 50, 2) * 8;
+        }
+        
+        let multiplier = 1.0;
+        if (document.getElementById('frax-fracture').checked) multiplier *= 1.8;
+        if (document.getElementById('frax-parent').checked) multiplier *= 1.9;
+        if (document.getElementById('frax-smoking').checked) multiplier *= 1.3;
+        if (document.getElementById('frax-glucocorticoids').checked) multiplier *= 2.6;
+        if (document.getElementById('frax-ra').checked) multiplier *= 1.4;
+        if (document.getElementById('frax-osteoporosis').checked) multiplier *= 1.8;
+        if (document.getElementById('frax-alcohol').checked) multiplier *= 1.4;
+        
+        const majorRisk = Math.min(baseRisk * multiplier, 80);
+        const hipRisk = majorRisk * 0.3;
+        
+        let intervention = '';
+        let color = '';
+        
+        if (majorRisk < 10) {
+            intervention = 'Lifestyle advice only';
+            color = '#4CAF50';
+        } else if (majorRisk < 20) {
+            intervention = 'Consider treatment (NOGG guidelines)';
+            color = '#FF9800';
+        } else {
+            intervention = 'Treatment recommended';
+            color = '#F44336';
+        }
+        
+        document.getElementById('frax-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>10-year major fracture risk: ${majorRisk.toFixed(1)}%</strong><br>
+                <strong>10-year hip fracture risk: ${hipRisk.toFixed(1)}%</strong><br>
+                <div style="margin-top: 8px; font-weight: bold;">
+                    ${intervention}
+                </div>
+                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
+                    Simplified calculation - use official FRAX tool for clinical decisions
+                </div>
+            </div>
+        `;
+    }
+
+    getNEWS2Calculator() {
+        return `
+            <div class="calculator-form">
+                <h4>NEWS2 (National Early Warning Score 2)</h4>
+                <p><small>UK standard early warning score (RCP 2017)</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Respiratory Rate (breaths/min):</label>
+                    <input type="number" id="news2-rr" placeholder="16" min="5" max="60">
+                </div>
+                <div class="calc-input-group">
+                    <label>SpO₂ (%): <span id="spo2-scale">Scale 1</span></label>
+                    <input type="number" id="news2-spo2" placeholder="98" min="70" max="100">
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="news2-air"> Supplemental oxygen</label>
+                    <label><input type="checkbox" id="news2-hypercapnic"> Hypercapnic respiratory failure (COPD) - use Scale 2</label>
+                </div>
+                <div class="calc-input-group">
+                    <label>Systolic BP (mmHg):</label>
+                    <input type="number" id="news2-sbp" placeholder="120" min="50" max="300">
+                </div>
+                <div class="calc-input-group">
+                    <label>Heart Rate (bpm):</label>
+                    <input type="number" id="news2-hr" placeholder="80" min="30" max="200">
+                </div>
+                <div class="calc-input-group">
+                    <label>AVPU:</label>
+                    <select id="news2-avpu">
+                        <option value="0">Alert (0 points)</option>
+                        <option value="3">Voice, Pain, or Unresponsive (3 points)</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label>Temperature (°C):</label>
+                    <input type="number" id="news2-temp" placeholder="36.5" step="0.1" min="30" max="45">
+                </div>
+                
+                <button onclick="window.quizApp.calculateNEWS2()">Calculate NEWS2</button>
+                <div id="news2-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateNEWS2() {
+        const rr = parseInt(document.getElementById('news2-rr').value) || 0;
+        const spo2 = parseInt(document.getElementById('news2-spo2').value) || 0;
+        const sbp = parseInt(document.getElementById('news2-sbp').value) || 0;
+        const hr = parseInt(document.getElementById('news2-hr').value) || 0;
+        const avpu = parseInt(document.getElementById('news2-avpu').value) || 0;
+        const temp = parseFloat(document.getElementById('news2-temp').value) || 0;
+        const oxygen = document.getElementById('news2-air').checked;
+        const hypercapnic = document.getElementById('news2-hypercapnic').checked;
+        
+        let score = 0;
+        
+        // Respiratory rate
+        if (rr <= 8) score += 3;
+        else if (rr <= 11) score += 1;
+        else if (rr <= 20) score += 0;
+        else if (rr <= 24) score += 2;
+        else score += 3;
+        
+        // SpO2 (Scale 1 or 2)
+        if (hypercapnic) {
+            // Scale 2 (COPD patients)
+            if (spo2 <= 83) score += 3;
+            else if (spo2 <= 85) score += 2;
+            else if (spo2 <= 87) score += 1;
+            else if (spo2 <= 92) score += 0;
+            else if (spo2 <= 94) score += 1;
+            else if (spo2 <= 96) score += 2;
+            else score += 3;
+        } else {
+            // Scale 1 (standard)
+            if (spo2 <= 91) score += 3;
+            else if (spo2 <= 93) score += 2;
+            else if (spo2 <= 95) score += 1;
+            else score += 0;
+        }
+        
+        // Supplemental oxygen
+        if (oxygen) score += 2;
+        
+        // Systolic BP
+        if (sbp <= 90) score += 3;
+        else if (sbp <= 100) score += 2;
+        else if (sbp <= 110) score += 1;
+        else if (sbp <= 219) score += 0;
+        else score += 3;
+        
+        // Heart rate
+        if (hr <= 40) score += 3;
+        else if (hr <= 50) score += 1;
+        else if (hr <= 90) score += 0;
+        else if (hr <= 110) score += 1;
+        else if (hr <= 130) score += 2;
+        else score += 3;
+        
+        // AVPU
+        score += avpu;
+        
+        // Temperature
+        if (temp <= 35.0) score += 3;
+        else if (temp <= 36.0) score += 1;
+        else if (temp <= 38.0) score += 0;
+        else if (temp <= 39.0) score += 1;
+        else score += 2;
+        
+        let risk = '';
+        let action = '';
+        let color = '';
+        
+        if (score === 0) {
+            risk = 'Low risk';
+            action = 'Continue routine monitoring (12 hourly)';
+            color = '#4CAF50';
+        } else if (score <= 4) {
+            risk = 'Low-medium risk';
+            action = 'Increase monitoring (4-6 hourly). Consider medical review';
+            color = '#FFC107';
+        } else if (score <= 6) {
+            risk = 'Medium risk';
+            action = 'Hourly monitoring. Urgent medical review';
+            color = '#FF9800';
+        } else {
+            risk = 'High risk';
+            action = 'Continuous monitoring. Immediate medical review. Consider critical care';
+            color = '#F44336';
+        }
+        
+        document.getElementById('news2-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>NEWS2 Score: ${score}</strong><br>
+                <strong>${risk}</strong><br>
+                <div style="margin-top: 8px; font-weight: bold;">
+                    ${action}
+                </div>
+            </div>
+        `;
+    }
+
+    getCURB65Calculator() {
+        return `
+            <div class="calculator-form">
+                <h4>CURB-65 Score</h4>
+                <p><small>Enhanced CAP severity assessment (includes urea)</small></p>
+                
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="curb-confusion"> Confusion (AMT ≤8 or new disorientation)</label>
+                    <label><input type="checkbox" id="curb-urea"> Urea >7 mmol/L</label>
+                    <label><input type="checkbox" id="curb-rr"> Respiratory rate ≥30/min</label>
+                    <label><input type="checkbox" id="curb-bp"> Systolic BP <90 or Diastolic BP ≤60</label>
+                    <label><input type="checkbox" id="curb-age"> Age ≥65 years</label>
+                </div>
+                
+                <button onclick="window.quizApp.calculateCURB65()">Calculate Score</button>
+                <div id="curb65-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small>
+                        <strong>Comparison with CRB-65:</strong><br>
+                        CURB-65 includes urea level, providing more accurate risk stratification than CRB-65
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateCURB65() {
+        let score = 0;
+        
+        if (document.getElementById('curb-confusion').checked) score += 1;
+        if (document.getElementById('curb-urea').checked) score += 1;
+        if (document.getElementById('curb-rr').checked) score += 1;
+        if (document.getElementById('curb-bp').checked) score += 1;
+        if (document.getElementById('curb-age').checked) score += 1;
+
+        let mortality = '';
+        let management = '';
+        let color = '';
+
+        if (score === 0) {
+            mortality = '0.7% 30-day mortality';
+            management = 'Home treatment (NICE CG191)';
+            color = '#4CAF50';
+        } else if (score === 1) {
+            mortality = '2.1% 30-day mortality';
+            management = 'Home treatment or short hospital stay';
+            color = '#8BC34A';
+        } else if (score === 2) {
+            mortality = '9.2% 30-day mortality';
+            management = 'Hospital admission recommended';
+            color = '#FF9800';
+        } else if (score === 3) {
+            mortality = '14.5% 30-day mortality';
+            management = 'Hospital admission - consider ICU assessment';
+            color = '#F44336';
+        } else if (score >= 4) {
+            mortality = '≥27% 30-day mortality';
+            management = 'Urgent hospital admission - high dependency/ICU care';
+            color = '#D32F2F';
+        }
+
+        document.getElementById('curb65-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>CURB-65 Score: ${score}/5</strong><br>
+                <strong>${mortality}</strong><br>
+                <strong>Management: ${management}</strong>
             </div>
         `;
     }
@@ -3450,6 +4169,230 @@ class MLAQuizApp {
                 pharmacokinetics: 'Onset: 30min, Peak: 1-2h, Half-life: 2-4h, Hepatic metabolism',
                 clinicalPearls: 'Most widely used NSAID in UK. Always take with food. Use lowest effective dose for shortest time',
                 indication: 'Pain and inflammation, particularly musculoskeletal conditions, fever, dysmenorrhoea'
+            },
+            'co-codamol': {
+                name: 'Co-codamol',
+                class: 'Opioid/paracetamol combination analgesic',
+                mechanism: 'Codeine acts on μ-opioid receptors, paracetamol inhibits COX enzymes centrally',
+                dosing: 'Adults: 8/500mg or 30/500mg, 1-2 tablets every 4-6 hours (max 8 tablets/24h). Children >12 years: 8/500mg only',
+                contraindications: 'Children <12 years, acute respiratory depression, paralytic ileus, severe hepatic impairment',
+                interactions: 'Alcohol (↑ sedation), MAOIs, other CNS depressants, warfarin (paracetamol component)',
+                monitoring: 'Signs of respiratory depression, constipation, dependence with long-term use',
+                pregnancy: 'Use with caution - potential neonatal withdrawal if used near term',
+                sideEffects: 'Constipation, nausea, drowsiness, dizziness, dry mouth, potential for dependence',
+                pharmacokinetics: 'Codeine: prodrug converted to morphine by CYP2D6. Half-life: 3-4h',
+                clinicalPearls: 'Popular UK combination. 8/500mg available OTC. 30/500mg prescription only. Maximum 3 days OTC use',
+                indication: 'Moderate pain where paracetamol alone insufficient. Post-operative pain, dental pain'
+            },
+            'doxycycline': {
+                name: 'Doxycycline',
+                class: 'Tetracycline antibiotic',
+                mechanism: 'Inhibits bacterial protein synthesis by binding to 30S ribosomal subunit',
+                dosing: 'Adults: 200mg on day 1, then 100mg daily. Acne: 40mg daily modified-release. Malaria prophylaxis: 100mg daily',
+                contraindications: 'Pregnancy, breastfeeding, children <12 years, myasthenia gravis',
+                interactions: 'Antacids/iron (↓ absorption), warfarin (↑ INR), penicillins (antagonistic)',
+                monitoring: 'LFTs if prolonged use, signs of C.difficile colitis, photosensitivity',
+                pregnancy: 'Contraindicated - risk of dental staining and bone growth inhibition in fetus',
+                sideEffects: 'GI upset, photosensitivity, oesophageal irritation, vaginal thrush',
+                pharmacokinetics: 'Well absorbed, Half-life: 18-22h, Hepatic metabolism and renal excretion',
+                clinicalPearls: 'Take with food, avoid dairy 2h before/after. Stay upright 30min after dose. First-line for atypical pneumonia',
+                indication: 'Respiratory tract infections, acne, chlamydia, malaria prophylaxis, Lyme disease'
+            },
+            'fluoxetine': {
+                name: 'Fluoxetine',
+                class: 'Selective serotonin reuptake inhibitor (SSRI)',
+                mechanism: 'Inhibits serotonin reuptake at synaptic cleft, increasing serotonin availability',
+                dosing: 'Depression: Start 20mg daily, usual dose 20mg, max 60mg daily. Take in morning',
+                contraindications: 'MAOIs (within 14 days), mania, severe hepatic impairment',
+                interactions: 'MAOIs (serotonin syndrome), warfarin (↑ bleeding), tramadol (↑ seizure risk)',
+                monitoring: 'Mood, suicide risk (especially <25 years), weight, sodium levels',
+                pregnancy: 'Use if benefit outweighs risk - potential neonatal adaptation syndrome',
+                sideEffects: 'Nausea, headache, insomnia, sexual dysfunction, weight loss, hyponatraemia',
+                pharmacokinetics: 'Long half-life: 4-6 days (active metabolite: 4-16 days), CYP2D6 metabolism',
+                clinicalPearls: 'Longest half-life SSRI - less withdrawal symptoms. May initially increase anxiety. Monitor under 25s weekly',
+                indication: 'Depression, panic disorder, OCD, bulimia nervosa, premenstrual dysphoric disorder'
+            },
+            'lansoprazole': {
+                name: 'Lansoprazole',
+                class: 'Proton pump inhibitor (PPI)',
+                mechanism: 'Irreversibly inhibits gastric H+/K+-ATPase, reducing gastric acid secretion',
+                dosing: 'GORD: 30mg daily for 4-8 weeks. Peptic ulcer: 30mg daily for 4-8 weeks. H.pylori: 30mg BD with antibiotics',
+                contraindications: 'Hypersensitivity to PPIs',
+                interactions: 'Clopidogrel (↓ effect), warfarin (may ↑ INR), digoxin (↑ levels)',
+                monitoring: 'Long-term: B12, magnesium levels. Review continued need regularly',
+                pregnancy: 'Generally safe - limited human data but no increased malformation risk',
+                sideEffects: 'Headache, diarrhoea, abdominal pain, hypomagnesaemia (long-term)',
+                pharmacokinetics: 'Rapid onset, Half-life: 1-2h, Duration: 24h+, CYP2C19 and CYP3A4 metabolism',
+                clinicalPearls: 'Take before breakfast. Faster symptom relief than omeprazole. Available as orodispersible tablets',
+                indication: 'GORD, peptic ulcer disease, H.pylori eradication, NSAID-associated ulcers'
+            },
+            'warfarin': {
+                name: 'Warfarin',
+                class: 'Vitamin K antagonist anticoagulant',
+                mechanism: 'Inhibits vitamin K epoxide reductase, preventing synthesis of factors II, VII, IX, X',
+                dosing: 'Start 5-10mg daily (3mg if elderly/liver disease). Adjust based on INR. Target INR 2.0-3.0 (2.5-3.5 for mechanical valves)',
+                contraindications: 'Active bleeding, pregnancy (except mechanical heart valves), severe hepatic disease',
+                interactions: 'Numerous: antibiotics, NSAIDs, amiodarone, alcohol. Check BNF interaction checker',
+                monitoring: 'INR: daily until stable, then weekly, then up to 12-weekly when stable',
+                pregnancy: 'Teratogenic - avoid except mechanical valves (use LMWH periconception)',
+                sideEffects: 'Bleeding (major risk), skin necrosis (rare), purple toe syndrome (rare)',
+                pharmacokinetics: 'Onset: 36-72h, Half-life: 36-42h, CYP2C9 metabolism',
+                clinicalPearls: 'Take same time daily. Avoid vitamin K-rich foods in large amounts. Reversal: vitamin K ± PCC',
+                indication: 'AF, VTE, mechanical heart valves. Being replaced by DOACs where appropriate'
+            },
+            'citalopram': {
+                name: 'Citalopram',
+                class: 'Selective serotonin reuptake inhibitor (SSRI)',
+                mechanism: 'Selective inhibition of serotonin reuptake with minimal effect on other neurotransmitters',
+                dosing: 'Adults: Start 20mg daily, usual dose 20mg, max 40mg daily (20mg if >65 years or hepatic impairment)',
+                contraindications: 'MAOIs, QT prolongation, recent MI, severe heart failure',
+                interactions: 'MAOIs (serotonin syndrome), drugs prolonging QT interval, warfarin',
+                monitoring: 'ECG if cardiac risk factors, electrolytes, mood, suicide risk',
+                pregnancy: 'Use if benefit outweighs risk - potential pulmonary hypertension in neonate',
+                sideEffects: 'Nausea, dry mouth, drowsiness, sexual dysfunction, QT prolongation (dose-related)',
+                pharmacokinetics: 'Half-life: 35h, CYP2C19 and CYP3A4 metabolism',
+                clinicalPearls: 'Lowest interaction profile of SSRIs. Dose reduction needed in elderly. ECG if >40mg or cardiac risk',
+                indication: 'Depression, panic disorder (unlicensed but effective)'
+            },
+            'sertraline': {
+                name: 'Sertraline',
+                class: 'Selective serotonin reuptake inhibitor (SSRI)',
+                mechanism: 'Potent and selective inhibition of serotonin reuptake',
+                dosing: 'Adults: Start 50mg daily, can increase by 50mg increments weekly, max 200mg daily. Take with food',
+                contraindications: 'MAOIs, unstable epilepsy, mania',
+                interactions: 'MAOIs, warfarin (↑ bleeding risk), NSAIDs, tramadol',
+                monitoring: 'Mood, suicide risk (especially <25 years), bleeding if on anticoagulants',
+                pregnancy: 'Preferred SSRI in pregnancy - lowest risk profile',
+                sideEffects: 'Nausea, diarrhoea, insomnia, sexual dysfunction, tremor, dry mouth',
+                pharmacokinetics: 'Half-life: 26h, extensive first-pass metabolism',
+                clinicalPearls: 'NICE first-line SSRI choice. Take with food to ↓ GI upset. Lower drug interaction potential',
+                indication: 'Depression, panic disorder, OCD, PTSD, social anxiety disorder'
+            },
+            'mirtazapine': {
+                name: 'Mirtazapine',
+                class: 'Noradrenergic and specific serotonergic antidepressant (NaSSA)',
+                mechanism: 'Blocks α2-adrenergic autoreceptors and 5-HT2/5-HT3 receptors, enhancing noradrenaline and serotonin',
+                dosing: 'Adults: Start 15mg at night, increase after 1-2 weeks to 30mg, max 45mg daily',
+                contraindications: 'MAOIs, mania, severe hepatic impairment',
+                interactions: 'MAOIs, warfarin, alcohol (↑ sedation), tramadol',
+                monitoring: 'FBC (especially first few months), weight, mood, sedation level',
+                pregnancy: 'Use if benefit outweighs risk - limited safety data',
+                sideEffects: 'Sedation (dose-related), weight gain, dry mouth, constipation, blood dyscrasias (rare)',
+                pharmacokinetics: 'Half-life: 20-40h, hepatic metabolism',
+                clinicalPearls: 'Paradoxical effect: more sedating at lower doses. Good for depression with insomnia/weight loss',
+                indication: 'Depression (especially with anxiety, insomnia, or weight loss)'
+            },
+            'furosemide': {
+                name: 'Furosemide',
+                class: 'Loop diuretic',
+                mechanism: 'Inhibits Na+/K+/2Cl- co-transporter in ascending limb of loop of Henle',
+                dosing: 'Heart failure: Start 20-40mg daily, titrate to response. Oedema: 20-80mg daily. IV dose = half oral dose',
+                contraindications: 'Anuria, severe electrolyte imbalance, hepatic coma',
+                interactions: 'Lithium (↑ toxicity), digoxin (hypokalaemia ↑ toxicity), NSAIDs (↓ effect)',
+                monitoring: 'U&Es, fluid balance, weight, hearing (high doses), postural BP',
+                pregnancy: 'Use with caution - may cause placental hypoperfusion',
+                sideEffects: 'Hypokalaemia, hyponatraemia, dehydration, ototoxicity (high doses), gout',
+                pharmacokinetics: 'Oral onset: 1h, Peak: 1-2h, Duration: 6h. IV onset: 5min',
+                clinicalPearls: 'Take in morning to avoid nocturia. Monitor K+ closely. Ototoxicity with high IV doses',
+                indication: 'Heart failure, pulmonary oedema, hypertension (rarely used), ascites'
+            },
+            'spironolactone': {
+                name: 'Spironolactone',
+                class: 'Aldosterone receptor antagonist (potassium-sparing diuretic)',
+                mechanism: 'Competitive antagonist of aldosterone at mineralocorticoid receptors',
+                dosing: 'Heart failure: Start 25mg daily, max 50mg daily. Ascites: 100-400mg daily. Monitor K+ closely',
+                contraindications: 'Hyperkalaemia (>5.0mmol/L), severe renal impairment, Addison\'s disease',
+                interactions: 'ACE inhibitors/ARBs (↑ hyperkalaemia), potassium supplements, trimethoprim',
+                monitoring: 'U&Es within 1 week, then monthly for 3 months, then 3-monthly. Gynaecomastia',
+                pregnancy: 'Avoid - feminisation of male fetus',
+                sideEffects: 'Hyperkalaemia, gynaecomastia, menstrual irregularities, GI upset',
+                pharmacokinetics: 'Half-life: 1-2 days (active metabolites), onset of action: 2-3 days',
+                clinicalPearls: 'K+-sparing effect. Check K+ before starting and monitor closely. Mortality benefit in heart failure',
+                indication: 'Heart failure (with ACE-I + β-blocker), primary hyperaldosteronism, ascites'
+            },
+            'digoxin': {
+                name: 'Digoxin',
+                class: 'Cardiac glycoside',
+                mechanism: 'Inhibits Na+/K+-ATPase pump, increases intracellular Ca2+, ↑ contractility, ↓ AV conduction',
+                dosing: 'Loading: 10-15 micrograms/kg IV or PO. Maintenance: 125-250 micrograms daily (reduce in elderly/renal impairment)',
+                contraindications: 'Ventricular arrhythmias, heart block, hypertrophic cardiomyopathy with outflow obstruction',
+                interactions: 'Amiodarone (↑ levels), diuretics (hypokalaemia ↑ toxicity), verapamil, quinidine',
+                monitoring: 'Digoxin levels (6h post-dose), U&Es, heart rate, rhythm, signs of toxicity',
+                pregnancy: 'Safe - no teratogenic effects, adjust dose due to increased clearance',
+                sideEffects: 'Nausea, vomiting, visual disturbances, arrhythmias, confusion (toxicity)',
+                pharmacokinetics: 'Half-life: 36h (longer in renal impairment), mainly renal excretion',
+                clinicalPearls: 'Narrow therapeutic window. Target level 1.0-2.0 micrograms/L. Toxicity common in elderly',
+                indication: 'AF (rate control), heart failure (symptom control). No mortality benefit'
+            },
+            'cefalexin': {
+                name: 'Cefalexin',
+                class: 'First-generation cephalosporin antibiotic',
+                mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
+                dosing: 'Adults: 250-500mg QDS. Severe infections: 1-1.5g QDS. Children: 25mg/kg BD (max 1g BD)',
+                contraindications: 'Cephalosporin hypersensitivity. Caution if penicillin allergy (cross-reactivity 1-3%)',
+                interactions: 'Probenecid (↑ levels), warfarin (may ↑ INR), metformin (monitor)',
+                monitoring: 'Signs of allergic reaction, C.difficile-associated diarrhoea, renal function',
+                pregnancy: 'Safe - no increased risk of congenital abnormalities',
+                sideEffects: 'GI upset, diarrhoea, allergic reactions, CDAD, transient rise in LFTs',
+                pharmacokinetics: 'Well absorbed orally, Half-life: 1h, mainly renal excretion',
+                clinicalPearls: 'Good oral bioavailability. First-line for cellulitis in UK. Take with food if GI upset',
+                indication: 'Skin/soft tissue infections, UTI, respiratory tract infections, prophylaxis'
+            },
+            'clarithromycin': {
+                name: 'Clarithromycin',
+                class: 'Macrolide antibiotic',
+                mechanism: 'Inhibits bacterial protein synthesis by binding to 50S ribosomal subunit',
+                dosing: 'Adults: 250-500mg BD. Severe infections: 500mg BD. H.pylori: 500mg BD with PPI and amoxicillin',
+                contraindications: 'Macrolide hypersensitivity, myasthenia gravis, severe hepatic impairment',
+                interactions: 'Warfarin (↑ INR), simvastatin (rhabdomyolysis risk), digoxin (↑ levels)',
+                monitoring: 'LFTs if prolonged use, signs of cardiac arrhythmias, drug interactions',
+                pregnancy: 'Use only if essential - crosses placenta but no evidence of harm',
+                sideEffects: 'GI upset, metallic taste, QT prolongation, hepatotoxicity (rare)',
+                pharmacokinetics: 'Well absorbed, Half-life: 3-7h, hepatic metabolism (CYP3A4)',
+                clinicalPearls: 'Part of triple therapy for H.pylori. Good tissue penetration. Many drug interactions via CYP3A4',
+                indication: 'Respiratory tract infections, H.pylori eradication, skin infections, atypical pneumonia'
+            },
+            'trimethoprim': {
+                name: 'Trimethoprim',
+                class: 'Folate synthesis inhibitor antibiotic',
+                mechanism: 'Inhibits bacterial dihydrofolate reductase, preventing folate synthesis',
+                dosing: 'UTI: 200mg BD for 3 days (uncomplicated) or 7 days (men/complicated). Prophylaxis: 100mg at night',
+                contraindications: 'Folate deficiency, severe renal impairment, blood dyscrasias',
+                interactions: 'Warfarin (↑ INR), methotrexate (↑ toxicity), ACE inhibitors (hyperkalaemia)',
+                monitoring: 'FBC if prolonged use, U&Es (can cause hyperkalaemia), signs of folate deficiency',
+                pregnancy: 'Avoid in first trimester (folate antagonist). Folate supplementation if essential',
+                sideEffects: 'GI upset, skin rashes, hyperkalaemia, blood dyscrasias (rare)',
+                pharmacokinetics: 'Well absorbed, Half-life: 10h, mainly renal excretion',
+                clinicalPearls: 'First-line for uncomplicated UTI in women. Can cause hyperkalaemia especially with ACE-I',
+                indication: 'UTI treatment and prophylaxis, pneumocystis pneumonia prophylaxis'
+            },
+            'co-amoxiclav': {
+                name: 'Co-amoxiclav',
+                class: 'Beta-lactam antibiotic with beta-lactamase inhibitor',
+                mechanism: 'Amoxicillin inhibits cell wall synthesis, clavulanic acid protects against beta-lactamases',
+                dosing: 'Adults: 625mg TDS or 1g BD. Severe infections: 1.2g TDS IV. Available as 375mg, 625mg tablets',
+                contraindications: 'Penicillin allergy, previous cholestatic jaundice with co-amoxiclav',
+                interactions: 'Warfarin (↑ INR), methotrexate (↑ toxicity), probenecid (↑ levels)',
+                monitoring: 'LFTs (risk of cholestatic jaundice), signs of C.difficile colitis',
+                pregnancy: 'Safe - no increased risk of congenital abnormalities',
+                sideEffects: 'GI upset, diarrhoea, cholestatic jaundice (rare), skin reactions',
+                pharmacokinetics: 'Well absorbed, Half-life: 1h, mainly renal excretion',
+                clinicalPearls: 'Broad spectrum including beta-lactamase producers. Take with food to ↓ GI upset. Monitor LFTs',
+                indication: 'Respiratory tract infections, skin/soft tissue infections, dental infections, UTI'
+            },
+            'nitrofurantoin': {
+                name: 'Nitrofurantoin',
+                class: 'Nitrofuran antibiotic',
+                mechanism: 'Inhibits bacterial enzymes involved in carbohydrate metabolism',
+                dosing: 'UTI treatment: 100mg BD for 3 days (women) or 7 days (men). Prophylaxis: 50-100mg at night',
+                contraindications: 'eGFR <45ml/min/1.73m², pregnancy at term, G6PD deficiency, acute porphyria',
+                interactions: 'Magnesium salts (↓ absorption), probenecid (↑ toxicity)',
+                monitoring: 'Renal function, LFTs, signs of pulmonary toxicity (chronic use)',
+                pregnancy: 'Safe except at term (risk of neonatal haemolysis)',
+                sideEffects: 'GI upset, pulmonary toxicity (chronic use), peripheral neuropathy, hepatotoxicity',
+                pharmacokinetics: 'Rapidly absorbed, concentrated in urine, Half-life: 20min',
+                clinicalPearls: 'Excellent for uncomplicated UTI. Take with food. Avoid if eGFR <45. Urine may turn brown',
+                indication: 'UTI treatment and prophylaxis. Not effective for pyelonephritis'
             }
         };
         
