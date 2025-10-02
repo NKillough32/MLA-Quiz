@@ -4368,7 +4368,7 @@ class MLAQuizApp {
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="guidelines-search" placeholder="Search guidelines...">
-                <div id="guidelines-search-results"></div>
+                <div id="guidelines-search-results" class="lab-grid"></div>
             </div>
             <div class="guidelines-categories">
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">All Guidelines</button>
@@ -4376,7 +4376,7 @@ class MLAQuizApp {
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('endocrine'); event.stopPropagation();">Endocrine</button>
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('pulmonary'); event.stopPropagation();">Pulmonary</button>
             </div>
-            <div id="guidelines-list"></div>
+            <div id="guidelines-list" class="lab-grid"></div>
         `;
         
         const searchInput = document.getElementById('guidelines-search');
@@ -4406,10 +4406,10 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(guideline => `
-            <div class="guideline-result" onclick="console.log('📋 Guideline search result clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
-                <div class="guideline-title">${guidelinesDatabase[guideline].title}</div>
-                <div class="guideline-category">${guidelinesDatabase[guideline].category}</div>
-            </div>
+            <button class="lab-value-btn" onclick="console.log('📋 Guideline search result clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
+                <div class="lab-name">${guidelinesDatabase[guideline].title}</div>
+                <div class="lab-count">${guidelinesDatabase[guideline].category}</div>
+            </button>
         `).join('');
     }
     
@@ -4425,9 +4425,9 @@ class MLAQuizApp {
         }
         
         guidelinesList.innerHTML = guidelines.map(guideline => `
-            <button class="medical-tool-btn" onclick="console.log('📋 Guideline card clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
-                <div class="tool-name">${guidelinesDatabase[guideline].title}</div>
-                <div class="tool-count">${guidelinesDatabase[guideline].category}</div>
+            <button class="lab-value-btn" onclick="console.log('📋 Guideline card clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
+                <div class="lab-name">${guidelinesDatabase[guideline].title}</div>
+                <div class="lab-count">${guidelinesDatabase[guideline].category}</div>
             </button>
         `).join('');
     }
@@ -4877,14 +4877,14 @@ class MLAQuizApp {
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="ddx-search" placeholder="Search symptoms or diagnoses...">
-                <div id="ddx-search-results"></div>
+                <div id="ddx-search-results" class="lab-grid"></div>
             </div>
             <div class="ddx-categories">
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('all'); event.stopPropagation();">All Symptoms</button>
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('cardiovascular'); event.stopPropagation();">CV/Pulm</button>
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('gastroenterology'); event.stopPropagation();">GI/Surgery</button>
             </div>
-            <div id="ddx-list"></div>
+            <div id="ddx-list" class="lab-grid"></div>
         `;
         
         const searchInput = document.getElementById('ddx-search');
@@ -4921,10 +4921,10 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(match => `
-            <div class="ddx-result" onclick="${match.type === 'symptom' ? `console.log('🔍 DDX search result clicked:', '${match.key}'); window.quizApp.showDdxDetail('${match.key}'); event.stopPropagation();` : `console.log('🔍 Diagnosis search result clicked:', '${match.key}'); window.quizApp.showDiagnosisDetail('${match.symptom}', '${match.key}'); event.stopPropagation();`}">
-                <div class="ddx-name">${match.name}</div>
-                <div class="ddx-type">${match.type === 'symptom' ? 'Symptom Complex' : 'Diagnosis'}</div>
-            </div>
+            <button class="lab-value-btn" onclick="${match.type === 'symptom' ? `console.log('🔍 DDX search result clicked:', '${match.key}'); window.quizApp.showDdxDetail('${match.key}'); event.stopPropagation();` : `console.log('🔍 Diagnosis search result clicked:', '${match.key}'); window.quizApp.showDiagnosisDetail('${match.symptom}', '${match.key}'); event.stopPropagation();`}">
+                <div class="lab-name">${match.name}</div>
+                <div class="lab-count">${match.type === 'symptom' ? 'Symptom Complex' : 'Diagnosis'}</div>
+            </button>
         `).join('');
     }
     
@@ -4940,9 +4940,9 @@ class MLAQuizApp {
         }
         
         ddxList.innerHTML = symptoms.map(symptom => `
-            <button class="medical-tool-btn" onclick="console.log('🔍 DDX card clicked:', '${symptom}'); window.quizApp.showDdxDetail('${symptom}'); event.stopPropagation();">
-                <div class="tool-name">${ddxDatabase[symptom].title}</div>
-                <div class="tool-count">${Object.keys(ddxDatabase[symptom].presentations).length} differentials</div>
+            <button class="lab-value-btn" onclick="console.log('🔍 DDX card clicked:', '${symptom}'); window.quizApp.showDdxDetail('${symptom}'); event.stopPropagation();">
+                <div class="lab-name">${ddxDatabase[symptom].title}</div>
+                <div class="lab-count">${Object.keys(ddxDatabase[symptom].presentations).length} differentials</div>
             </button>
         `).join('');
     }
