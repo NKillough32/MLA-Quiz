@@ -4196,174 +4196,337 @@ class MLAQuizApp {
     loadGuidelines() {
         const guidelinesDatabase = {
             'hypertension': {
-                title: 'Hypertension Management (ACC/AHA 2017)',
-                category: 'Cardiovascular',
-                evidenceLevel: 'Class I, Level A',
-                lastUpdated: '2017',
+                title: 'Hypertension Management (NICE NG136 2024)',
+                category: 'cardiovascular',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
                 stages: {
-                    'Normal': 'SBP <120 AND DBP <80 mmHg',
-                    'Elevated': 'SBP 120-129 AND DBP <80 mmHg',
-                    'Stage 1': 'SBP 130-139 OR DBP 80-89 mmHg',
-                    'Stage 2': 'SBP ≥140 OR DBP ≥90 mmHg',
-                    'Hypertensive Crisis': 'SBP >180 AND/OR DBP >120 mmHg'
+                    'Stage 1': 'Clinic BP ≥140/90 mmHg AND ABPM/HBPM ≥135/85 mmHg',
+                    'Stage 2': 'Clinic BP ≥160/100 mmHg AND ABPM/HBPM ≥150/95 mmHg',
+                    'Stage 3 (Severe)': 'Clinic systolic BP ≥180 mmHg OR clinic diastolic BP ≥120 mmHg'
                 },
                 treatment: {
-                    'Normal': 'Promote optimal lifestyle habits. Reassess in 1 year',
-                    'Elevated': 'Nonpharmacologic therapy. Reassess in 3-6 months',
-                    'Stage 1': 'Lifestyle + medication if ASCVD risk ≥10% or DM/CKD/CVD. Goal <130/80',
-                    'Stage 2': 'Lifestyle + combination therapy (ACE-I/ARB + CCB or thiazide). Goal <130/80',
-                    'Crisis': 'Immediate evaluation. Lower BP gradually over 24-48h unless end-organ damage'
+                    'Stage 1': 'Offer antihypertensive drug treatment if target organ damage, established CVD, renal disease, diabetes, or 10-year CVD risk ≥10%',
+                    'Stage 2': 'Offer antihypertensive drug treatment regardless of age',
+                    'Stage 3': 'Consider same-day specialist assessment. Immediate antihypertensive treatment'
                 },
-                lifestyle: 'Weight loss (1kg = 1mmHg), DASH diet, sodium <2.3g/day, exercise 150min/week, limit alcohol (M: ≤2 drinks, F: ≤1 drink)',
-                medications: {
-                    'First-line': 'ACE inhibitor, ARB, thiazide diuretic, CCB',
-                    'Combination': 'ACE-I/ARB + CCB, ACE-I/ARB + thiazide, CCB + thiazide',
-                    'Resistant': 'Add spironolactone 25-50mg daily after optimizing first-line agents'
-                },
-                monitoring: 'Home BP monitoring preferred. Office visits q1-3mo until goal, then q3-6mo',
-                contraindications: {
-                    'ACE-I/ARB': 'Pregnancy, hyperkalemia, bilateral RAS, angioedema',
-                    'Thiazides': 'Gout, hyponatremia, sulfa allergy',
-                    'CCB': 'Heart failure with reduced EF (non-DHP)',
-                    'Beta-blockers': 'Asthma, heart block, peripheral artery disease'
-                },
-                specialPopulations: {
-                    'Diabetes': 'Goal <130/80, prefer ACE-I/ARB for renoprotection',
-                    'CKD': 'Goal <130/80, prefer ACE-I/ARB, monitor K+ and Cr',
-                    'Elderly': 'Goal <130/80 if tolerated, start low and go slow',
-                    'Pregnancy': 'Goal <140/90, use labetalol, nifedipine, methyldopa'
-                }
-            },
-            'diabetes': {
-                title: 'Type 2 Diabetes Management (ADA 2024)',
-                category: 'Endocrine',
-                evidenceLevel: 'Evidence-based recommendations',
-                lastUpdated: '2024',
                 targets: {
-                    'HbA1c': '<7% (individualize 6.5-8% based on age, comorbidities, life expectancy)',
-                    'Preprandial glucose': '80-130 mg/dL',
-                    'Postprandial glucose': '<180 mg/dL',
-                    'Blood pressure': '<130/80 mmHg',
-                    'LDL cholesterol': '<100 mg/dL (<70 if ASCVD, <55 if very high risk)',
-                    'Triglycerides': '<150 mg/dL',
-                    'HDL': '>40 mg/dL (men), >50 mg/dL (women)'
+                    'General': '<140/90 mmHg clinic, <135/85 mmHg home/ABPM',
+                    'Over 80 years': '<150/90 mmHg clinic, <145/85 mmHg home/ABPM',
+                    'Diabetes': '<140/90 mmHg clinic, <135/85 mmHg home/ABPM (consider <130/80 if kidney, eye or cerebrovascular damage)'
                 },
                 algorithm: {
-                    'Initial': 'Metformin + comprehensive lifestyle intervention',
-                    'Dual therapy': 'Metformin + SGLT2-i (CKD/HF), GLP-1 RA (ASCVD/obesity), DPP-4i, SU, or insulin',
-                    'Triple therapy': 'Add third agent based on patient factors and A1C target',
-                    'Injectable': 'GLP-1 RA preferred over insulin when possible'
+                    'Step 1': 'ACE inhibitor (or ARB if ACE inhibitor not tolerated). Consider CCB for black African/Caribbean ancestry',
+                    'Step 2': 'ACE inhibitor + CCB OR ACE inhibitor + thiazide-like diuretic',
+                    'Step 3': 'ACE inhibitor + CCB + thiazide-like diuretic',
+                    'Step 4': 'Add low-dose spironolactone (if K+ ≤4.5mmol/L) OR alpha-blocker OR beta-blocker'
                 },
-                firstLine: 'Metformin 500mg BID, titrate to 2000mg daily or maximum tolerated dose',
-                secondLine: {
-                    'ASCVD': 'GLP-1 RA or SGLT2-i with proven CV benefit',
-                    'Heart failure': 'SGLT2-i (empagliflozin, dapagliflozin)',
-                    'CKD': 'SGLT2-i, finerenone if albuminuria',
-                    'Obesity': 'GLP-1 RA (semaglutide, liraglutide)',
-                    'Hypoglycemia risk': 'DPP-4 inhibitor',
-                    'Cost concern': 'Sulfonylurea (glyburide avoid in elderly)'
-                },
-                lifestyle: 'Medical nutrition therapy (150min exercise/week, 5-10% weight loss), diabetes self-management education',
-                monitoring: {
-                    'A1C': 'q3mo if not at goal, q6mo if stable at goal',
-                    'BP': 'Every visit',
-                    'Lipids': 'Annually or more frequently if not at goal',
-                    'Nephropathy': 'Annual eGFR and urine albumin/creatinine ratio',
-                    'Retinopathy': 'Annual dilated eye exam',
-                    'Neuropathy': 'Annual foot exam with monofilament'
-                },
-                complications: {
-                    'Microvascular': 'Retinopathy, nephropathy, neuropathy - prevented by glycemic control',
-                    'Macrovascular': 'CAD, stroke, PAD - prevented by comprehensive risk factor management',
-                    'Acute': 'DKA (rare in T2DM), HHS (elderly, precipitated by illness/dehydration)'
-                },
-                specialConsiderations: {
-                    'Elderly': 'Individualized A1C goals (7.5-8.5%), avoid hypoglycemia, assess cognitive function',
-                    'CKD': 'Adjust medications for eGFR, avoid metformin if eGFR <30',
-                    'Pregnancy': 'Preconception counseling, insulin preferred, A1C <6.5%'
+                lifestyle: 'Reduce salt intake to <6g/day, maintain healthy weight (BMI 20-25), exercise ≥150min/week moderate intensity, alcohol within recommended limits',
+                monitoring: 'Annual review. More frequent if treatment changes or poorly controlled. QRISK3 assessment',
+                specialPopulations: {
+                    'Pregnancy': 'Target <135/85 mmHg. First-line: labetalol. Alternatives: nifedipine, methyldopa',
+                    'Type 2 diabetes': 'ACE inhibitor or ARB first-line. Consider SGLT2 inhibitor',
+                    'CKD': 'ACE inhibitor or ARB first-line. Monitor eGFR and potassium'
                 }
             },
-            'copd': {
-                title: 'COPD Management (GOLD 2023)',
-                category: 'Pulmonary',
-                evidenceLevel: 'Evidence-based global strategy',
-                lastUpdated: '2023',
-                stages: {
-                    'GOLD 1 (Mild)': 'FEV1 ≥80% predicted',
-                    'GOLD 2 (Moderate)': 'FEV1 50-79% predicted',
-                    'GOLD 3 (Severe)': 'FEV1 30-49% predicted',
-                    'GOLD 4 (Very Severe)': 'FEV1 <30% predicted'
+            'diabetes-t2': {
+                title: 'Type 2 Diabetes Management (NICE NG28 2024)',
+                category: 'endocrine',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                targets: {
+                    'HbA1c': '48mmol/mol (6.5%) for adults on lifestyle/metformin only. 53mmol/mol (7.0%) for adults on any drug with hypoglycaemia risk',
+                    'Blood pressure': '<140/90 mmHg (or <130/80 mmHg if kidney, eye or cerebrovascular damage)',
+                    'Cholesterol': 'Primary prevention: 40% reduction in non-HDL cholesterol. Secondary prevention: non-HDL <2.5mmol/L'
                 },
-                assessment: {
-                    'mMRC': '0-1: less breathless, ≥2: more breathless',
-                    'CAT': '<10: less symptoms, ≥10: more symptoms',
-                    'Exacerbations': '0-1 not leading to hospitalization: low risk, ≥2 or ≥1 hospitalization: high risk'
+                algorithm: {
+                    'First-line': 'Standard-release metformin, titrate up to 2g daily (or maximum tolerated)',
+                    'Dual therapy': 'Metformin + DPP-4 inhibitor, pioglitazone, SU, or SGLT2 inhibitor',
+                    'Triple therapy': 'Metformin + 2 other antidiabetic drugs',
+                    'Insulin therapy': 'Consider if HbA1c >58mmol/mol (7.5%) on triple therapy'
                 },
-                groups: {
-                    'Group A': 'Low symptoms (mMRC 0-1, CAT <10), low risk (0-1 exacerbation not requiring hospitalization)',
-                    'Group B': 'High symptoms (mMRC ≥2, CAT ≥10), low risk (0-1 exacerbation not requiring hospitalization)',
-                    'Group E': 'Any symptoms, high risk (≥2 exacerbations or ≥1 hospitalization)'
+                firstLine: 'Metformin 500mg twice daily with meals, increase to 1g twice daily if tolerated',
+                secondLine: {
+                    'CVD established': 'SGLT2 inhibitor with proven CV benefit (empagliflozin, canagliflozin, dapagliflozin)',
+                    'Heart failure': 'SGLT2 inhibitor (empagliflozin or dapagliflozin)',
+                    'CKD': 'SGLT2 inhibitor if eGFR ≥30ml/min/1.73m²',
+                    'Standard approach': 'DPP-4 inhibitor, pioglitazone, sulfonylurea, or SGLT2 inhibitor'
+                },
+                monitoring: {
+                    'HbA1c': 'Every 3-6 months until stable, then 6-monthly',
+                    'Annual review': 'BMI, BP, cholesterol, kidney function, foot examination, retinal screening',
+                    'Diabetes complications': 'Annual diabetic eye screening, foot risk assessment'
+                },
+                lifestyle: 'Structured education programme (DESMOND). Weight management if BMI ≥25kg/m²',
+                complications: {
+                    'Diabetic kidney disease': 'ACE inhibitor or ARB. SGLT2 inhibitor if eGFR ≥30',
+                    'Retinopathy': 'Annual digital retinal screening. Refer if sight-threatening',
+                    'Neuropathy': 'Annual foot risk assessment. First-line neuropathic pain: amitriptyline, duloxetine, gabapentin, pregabalin'
+                }
+            },
+            'asthma': {
+                title: 'Asthma Management (NICE NG80 2024)',
+                category: 'pulmonary',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                diagnosis: {
+                    'Clinical features': 'Wheeze, breathlessness, chest tightness, cough. Symptoms worse at night/early morning',
+                    'Investigations': 'Fractional exhaled nitric oxide (FeNO) if available. Spirometry with bronchodilator reversibility',
+                    'FeNO levels': '<25 ppb: asthma less likely. 25-50 ppb: intermediate. >50 ppb: high probability of asthma'
                 },
                 treatment: {
-                    'Group A': 'Bronchodilator (SABA PRN or LABA or LAMA daily)',
-                    'Group B': 'LABA + LAMA combination',
-                    'Group E': 'LABA + LAMA ± ICS (if eosinophils >300 or recurrent exacerbations)'
+                    'Step 1': 'SABA reliever therapy PRN (salbutamol 100-200 micrograms)',
+                    'Step 2': 'Add low-dose ICS preventer (beclometasone 200-400 micrograms/day or equivalent)',
+                    'Step 3': 'MART (Maintenance and Reliever Therapy) with ICS/formoterol OR ICS + LABA',
+                    'Step 4': 'Increase ICS to moderate dose OR add LTRA (montelukast)',
+                    'Step 5': 'High-dose ICS OR additional therapies (theophylline, LAMA). Consider specialist referral'
                 },
-                medications: {
-                    'SABA': 'Albuterol 2-4 puffs q4-6h PRN',
-                    'LABA': 'Formoterol, salmeterol, indacaterol, olodaterol',
-                    'LAMA': 'Tiotropium, umeclidinium, glycopyrronium, aclidinium',
-                    'ICS': 'Consider if eosinophils >300 cells/μL or history of asthma',
-                    'Combinations': 'LABA/LAMA, LABA/ICS, LABA/LAMA/ICS (triple therapy)'
+                acute: {
+                    'Moderate': 'PEFR 50-75% best/predicted. Prednisolone 40-50mg daily for 5 days',
+                    'Severe': 'PEFR 33-50% best/predicted. Oxygen to maintain SpO2 94-98%. High-dose nebulised salbutamol',
+                    'Life-threatening': 'PEFR <33%. Silent chest, cyanosis, poor respiratory effort. IV magnesium sulfate, consider IV salbutamol'
+                },
+                monitoring: 'Annual asthma review. Assess inhaler technique, adherence, trigger avoidance',
+                inhalers: {
+                    'pMDI': 'Pressurised metered dose inhaler - requires coordination. Use spacer device',
+                    'DPI': 'Dry powder inhaler - breath-actuated, needs adequate inspiratory flow',
+                    'Spacer': 'Reduces oropharyngeal deposition, improves drug delivery to lungs'
+                },
+                triggers: 'House dust mite, pollen, pets, exercise, viral infections, occupational allergens, drugs (aspirin, beta-blockers)'
+            },
+            'copd': {
+                title: 'COPD Management (NICE NG115 2024)',
+                category: 'pulmonary',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                diagnosis: 'Post-bronchodilator FEV1/FVC ratio <0.7 confirms airflow obstruction',
+                stages: {
+                    'Stage 1 (Mild)': 'FEV1 ≥80% predicted',
+                    'Stage 2 (Moderate)': 'FEV1 50-79% predicted',
+                    'Stage 3 (Severe)': 'FEV1 30-49% predicted',
+                    'Stage 4 (Very severe)': 'FEV1 <30% predicted'
+                },
+                treatment: {
+                    'SABA/SAMA': 'Short-acting bronchodilator for breathlessness and exercise limitation',
+                    'LABA/LAMA': 'If symptoms persist. LAMA preferred if asthmatic features absent',
+                    'ICS': 'Consider adding ICS to LABA/LAMA if asthmatic features, eosinophilia, or steroid-responsive symptoms'
                 },
                 exacerbations: {
-                    'Mild': 'Increase bronchodilator use',
-                    'Moderate': 'Bronchodilators + oral corticosteroids (prednisone 40mg × 5 days)',
-                    'Severe': 'Hospitalization, IV corticosteroids, antibiotics if purulent sputum, O2 if hypoxemic'
+                    'Mild-moderate': 'Increase bronchodilator use. Consider prednisolone 30mg daily for 5 days',
+                    'Severe': 'Oral prednisolone + antibiotics if purulent sputum/clinical signs of pneumonia',
+                    'Very severe': 'Hospital admission. Consider NIV if pH 7.25-7.35, O2 with target SpO2 88-92%'
                 },
-                nonPharmacologic: {
-                    'Smoking cessation': 'Most important intervention, refer to cessation programs',
-                    'Pulmonary rehabilitation': 'Class I recommendation for all symptomatic patients',
-                    'Vaccinations': 'Annual influenza, pneumococcal (PCV20 or PCV15 + PPSV23)',
-                    'Oxygen therapy': 'Long-term if PaO2 ≤55mmHg or SaO2 ≤88%',
-                    'Surgery': 'Lung volume reduction, transplantation in selected patients'
-                },
-                monitoring: 'Spirometry annually, assess symptoms and exacerbations at each visit, review inhaler technique',
-                redFlags: 'Hemoptysis, unexplained weight loss, chest pain, rapid decline in FEV1 (>80mL/year)'
+                lifestyle: 'Smoking cessation (most important intervention). Pulmonary rehabilitation. Annual influenza vaccination. Pneumococcal vaccination',
+                monitoring: 'Annual review. MRC dyspnoea scale, exacerbation frequency, CAT score'
             },
-            'heartFailure': {
-                title: 'Heart Failure Management (AHA/ACC/HFSA 2022)',
-                category: 'Cardiovascular',
-                evidenceLevel: 'Class I recommendations',
-                lastUpdated: '2022',
+            'ckd': {
+                title: 'Chronic Kidney Disease (NICE NG203 2024)',
+                category: 'renal',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                stages: {
+                    'G1': 'eGFR ≥90 with kidney damage',
+                    'G2': 'eGFR 60-89 with kidney damage',
+                    'G3a': 'eGFR 45-59 (mild-moderate decrease)',
+                    'G3b': 'eGFR 30-44 (moderate-severe decrease)',
+                    'G4': 'eGFR 15-29 (severe decrease)',
+                    'G5': 'eGFR <15 (kidney failure)'
+                },
+                monitoring: {
+                    'G1-G2': 'Annual eGFR and ACR',
+                    'G3a': 'Annual eGFR and ACR',
+                    'G3b': '6-monthly eGFR and ACR',
+                    'G4-G5': '3-6 monthly eGFR and ACR. Prepare for RRT'
+                },
+                treatment: {
+                    'ACE inhibitor/ARB': 'If diabetes, hypertension, or ACR ≥3mg/mmol',
+                    'Statin': 'Atorvastatin 20mg for primary prevention of CVD',
+                    'Blood pressure': 'Target <140/90 mmHg (<130/80 if ACR >70mg/mmol)',
+                    'Mineral bone disease': 'Monitor calcium, phosphate, PTH, vitamin D'
+                },
+                referral: {
+                    'Immediate': 'AKI, eGFR <30, ACR >70mg/mmol, suspected renal artery stenosis',
+                    'Routine': 'eGFR 30-60 with progressive decline, ACR 30-70mg/mmol, hypertension difficult to control'
+                },
+                complications: 'Anaemia (Hb <110g/L), mineral bone disease, metabolic acidosis, cardiovascular disease'
+            },
+            'heart-failure': {
+                title: 'Heart Failure (NICE NG106 2024)',
+                category: 'cardiovascular',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                diagnosis: 'Clinical features + structural/functional cardiac abnormality. BNP >400pg/mL or NT-proBNP >2000pg/mL',
                 classification: {
-                    'HFrEF': 'LVEF ≤40% - reduced ejection fraction',
-                    'HFmrEF': 'LVEF 41-49% - mildly reduced ejection fraction',
-                    'HFpEF': 'LVEF ≥50% - preserved ejection fraction'
+                    'HFrEF': 'Heart failure with reduced ejection fraction (LVEF ≤40%)',
+                    'HFmrEF': 'Heart failure with mid-range ejection fraction (LVEF 41-49%)',
+                    'HFpEF': 'Heart failure with preserved ejection fraction (LVEF ≥50%)'
                 },
-                nyhaClass: {
-                    'Class I': 'No limitation of physical activity',
-                    'Class II': 'Slight limitation, comfortable at rest',
-                    'Class III': 'Marked limitation, comfortable only at rest',
-                    'Class IV': 'Unable to carry out physical activity without discomfort'
+                treatment: {
+                    'ACE inhibitor': 'First-line for HFrEF. Start ramipril 1.25mg twice daily, titrate to 5mg twice daily',
+                    'Beta-blocker': 'Add bisoprolol or carvedilol once ACE inhibitor established',
+                    'MRA': 'Add spironolactone if symptoms persist despite ACE inhibitor + beta-blocker',
+                    'ARB': 'If ACE inhibitor not tolerated. Candesartan or valsartan',
+                    'SGLT2 inhibitor': 'Consider dapagliflozin in HFrEF with diabetes or eGFR ≥25'
                 },
-                guidedMedicalTherapy: {
-                    'ACE-I/ARB/ARNI': 'First-line for HFrEF. ARNI preferred if tolerated',
-                    'Beta-blockers': 'Carvedilol, metoprolol succinate, or bisoprolol',
-                    'MRA': 'Spironolactone or eplerenone if eGFR >30 and K+ <5.0',
-                    'SGLT2-i': 'Dapagliflozin or empagliflozin regardless of diabetes status',
-                    'Diuretics': 'Loop diuretics for volume overload'
-                },
+                monitoring: 'U&Es within 1-2 weeks of starting/changing dose. Aim for target doses if tolerated',
                 deviceTherapy: {
-                    'ICD': 'Primary prevention if EF ≤35% despite 3 months optimal medical therapy',
-                    'CRT': 'QRS ≥150ms with LBBB pattern and EF ≤35%',
-                    'LVAD': 'Bridge to transplant or destination therapy'
+                    'ICD': 'Primary prevention if LVEF ≤35% despite 3 months optimal medical therapy',
+                    'CRT': 'If LVEF ≤35%, QRS ≥130ms, sinus rhythm, on optimal medical therapy'
                 },
-                lifestyle: 'Daily weights, fluid restriction 2L/day if severe, sodium <3g/day, exercise training',
-                monitoring: 'BNP/NT-proBNP, renal function, electrolytes, daily weights'
+                lifestyle: 'Daily weight monitoring. Fluid restriction if severe symptoms. Cardiac rehabilitation'
+            },
+            'af': {
+                title: 'Atrial Fibrillation (NICE NG196 2024)',
+                category: 'cardiovascular',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                types: {
+                    'Paroxysmal': 'Self-terminating within 7 days (usually <48 hours)',
+                    'Persistent': 'Lasts >7 days or requires cardioversion',
+                    'Long-standing persistent': '>12 months duration',
+                    'Permanent': 'Accepted long-term AF, no attempt at rhythm control'
+                },
+                rateControl: {
+                    'First-line': 'Beta-blocker or rate-limiting CCB (diltiazem, verapamil)',
+                    'Alternative': 'Digoxin (if sedentary or heart failure)',
+                    'Target': 'Resting heart rate <110 bpm (lenient control)',
+                    'Strict control': '<80 bpm if symptoms persist'
+                },
+                rhythmControl: {
+                    'Indications': 'Symptomatic AF despite rate control, younger patients, first presentation',
+                    'Cardioversion': 'If AF <48 hours or anticoagulated for ≥3 weeks',
+                    'Maintenance': 'Amiodarone, sotalol, flecainide (if no structural heart disease)'
+                },
+                anticoagulation: {
+                    'CHA₂DS₂-VASc': 'Calculate stroke risk. Anticoagulate if score ≥2 (men) or ≥3 (women)',
+                    'HAS-BLED': 'Assess bleeding risk but high score not contraindication',
+                    'DOAC': 'First-line: apixaban, dabigatran, edoxaban, rivaroxaban',
+                    'Warfarin': 'If DOAC contraindicated. Target INR 2.0-3.0'
+                },
+                monitoring: 'Annual review. Check for symptoms, pulse rate/rhythm, blood pressure, medication adherence'
+            },
+            'depression': {
+                title: 'Depression Management (NICE NG222 2024)',
+                category: 'mental-health',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                assessment: {
+                    'PHQ-9': 'Patient Health Questionnaire for severity assessment',
+                    'Mild': 'PHQ-9 score 5-9. Watchful waiting, self-help, brief interventions',
+                    'Moderate': 'PHQ-9 score 10-14. Psychological interventions or antidepressants',
+                    'Severe': 'PHQ-9 score 15-19. Antidepressants + psychological interventions'
+                },
+                psychological: {
+                    'First-line': 'CBT (individual or group), guided self-help, computerised CBT',
+                    'Alternatives': 'IPT (interpersonal therapy), counselling, mindfulness-based cognitive therapy'
+                },
+                pharmacological: {
+                    'First-line': 'SSRI (sertraline, citalopram, fluoxetine, paroxetine)',
+                    'Second-line': 'Different SSRI, SNRI (venlafaxine), mirtazapine',
+                    'Starting dose': 'Sertraline 50mg daily, citalopram 20mg daily'
+                },
+                monitoring: {
+                    'Initial': 'Review within 2 weeks of starting antidepressant',
+                    'Young people': 'Weekly for first month if <30 years old',
+                    'Ongoing': 'Every 2-4 weeks for first 3 months, then less frequently'
+                },
+                duration: 'Continue antidepressant for ≥6 months after remission. Consider longer if recurrent episodes',
+                riskFactors: 'Discontinuation symptoms, suicide risk (especially early treatment), drug interactions'
+            },
+            'obesity': {
+                title: 'Obesity Management (NICE NG189 2024)',
+                category: 'endocrine',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                classification: {
+                    'Overweight': 'BMI 25-29.9 kg/m²',
+                    'Obesity class I': 'BMI 30-34.9 kg/m²',
+                    'Obesity class II': 'BMI 35-39.9 kg/m²',
+                    'Obesity class III': 'BMI ≥40 kg/m²'
+                },
+                assessment: 'BMI, waist circumference, comorbidities (T2DM, hypertension, sleep apnoea), cardiovascular risk',
+                lifestyle: {
+                    'Diet': 'Calorie deficit 600kcal/day. Mediterranean-style, low-calorie, low-fat diets',
+                    'Exercise': 'Gradually increase to 150-300 minutes moderate intensity per week',
+                    'Behaviour': 'Goal setting, self-monitoring, cognitive restructuring'
+                },
+                pharmacotherapy: {
+                    'Orlistat': 'BMI ≥30 or ≥28 with comorbidities. 120mg three times daily with meals',
+                    'GLP-1 agonists': 'Specialist initiation. Liraglutide if specific criteria met',
+                    'Monitoring': 'Weight loss target ≥5% at 3 months, ≥10% at 6 months'
+                },
+                surgery: {
+                    'Criteria': 'BMI ≥40 or ≥35 with comorbidities. Failed non-surgical methods',
+                    'Options': 'Gastric bypass, sleeve gastrectomy, adjustable gastric band',
+                    'Follow-up': 'Lifelong specialist monitoring, nutritional supplements'
+                },
+                comorbidities: 'Screen for T2DM, hypertension, dyslipidaemia, sleep apnoea, NAFLD, osteoarthritis'
+            },
+            'stroke': {
+                title: 'Stroke Prevention & Management (NICE NG128 2024)',
+                category: 'neurological',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                prevention: {
+                    'Antiplatelet': 'Aspirin 75mg + dipyridamole 200mg twice daily for secondary prevention',
+                    'Anticoagulation': 'For AF: DOAC first-line (apixaban, rivaroxaban, dabigatran)',
+                    'Statin': 'Atorvastatin 80mg daily for secondary prevention',
+                    'Blood pressure': 'Target <130/80 mmHg. Start 2 weeks after acute stroke'
+                },
+                acute: {
+                    'Recognition': 'FAST (Face, Arms, Speech, Time) assessment',
+                    'Thrombolysis': 'Alteplase within 4.5 hours of symptom onset if eligible',
+                    'Thrombectomy': 'Within 6 hours for proximal anterior circulation occlusion',
+                    'Aspirin': '300mg daily for 2 weeks, then 75mg daily long-term'
+                },
+                rehabilitation: {
+                    'Early': 'Mobilisation within 24 hours if medically stable',
+                    'MDT': 'Physiotherapy, occupational therapy, speech therapy, dietician',
+                    'Goals': 'Functional independence, swallowing assessment, mood screening'
+                },
+                riskFactors: 'Hypertension, AF, diabetes, smoking, hyperlipidaemia, carotid stenosis, previous TIA/stroke',
+                monitoring: 'Annual review: BP, cholesterol, diabetes control, medication adherence, functional status'
+            },
+            'uti': {
+                title: 'Urinary Tract Infections (NICE NG109 2024)',
+                category: 'infectious-diseases',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                diagnosis: {
+                    'Uncomplicated UTI': 'Dysuria, frequency, urgency, suprapubic pain in healthy women',
+                    'Complicated UTI': 'Men, pregnant women, children, catheterised patients, immunocompromised',
+                    'Urine dipstick': 'Nitrites + leucocyte esterase positive. Blood may be present'
+                },
+                treatment: {
+                    'Uncomplicated cystitis': 'Nitrofurantoin 100mg twice daily for 3 days OR trimethoprim 200mg twice daily for 3 days',
+                    'Pyelonephritis': 'Ciprofloxacin 500mg twice daily for 7 days OR co-amoxiclav 500/125mg three times daily for 14 days',
+                    'Men': 'Trimethoprim 200mg twice daily for 7 days OR nitrofurantoin 100mg twice daily for 7 days',
+                    'Pregnancy': 'Nitrofurantoin 100mg twice daily for 7 days (avoid at term)'
+                },
+                recurrent: {
+                    'Definition': '≥3 UTIs in 12 months or ≥2 in 6 months',
+                    'Prevention': 'Post-coital prophylaxis, continuous prophylaxis, self-treatment',
+                    'Prophylaxis': 'Trimethoprim 100mg at night OR nitrofurantoin 50mg at night'
+                },
+                catheter: {
+                    'Symptomatic CAUTI': 'Treat with antibiotics based on local guidelines',
+                    'Asymptomatic bacteriuria': 'Do not treat unless immunocompromised or before invasive procedures'
+                },
+                advice: 'Adequate fluid intake, complete antibiotic course, cranberry products may help prevent recurrence'
             }
         };
-        
+
         const container = document.getElementById('guidelines-panel');
         container.innerHTML = `
             <div class="search-container">
@@ -4373,8 +4536,12 @@ class MLAQuizApp {
             <div class="guidelines-categories">
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">All Guidelines</button>
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
-                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('endocrine'); event.stopPropagation();">Endocrine</button>
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('pulmonary'); event.stopPropagation();">Pulmonary</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('endocrine'); event.stopPropagation();">Endocrine</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('renal'); event.stopPropagation();">Renal</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('mental-health'); event.stopPropagation();">Mental Health</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('neurological'); event.stopPropagation();">Neurological</button>
+                <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('infectious-diseases'); event.stopPropagation();">Infectious Diseases</button>
             </div>
             <div id="guidelines-list" class="lab-grid"></div>
         `;
