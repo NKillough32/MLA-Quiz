@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Tools Test - MLA Quiz PWA</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .medical-tools-toggle {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .medical-tools-toggle:hover {
+            background: #2980b9;
+        }
+        .category-btn, .drug-card-btn, .lab-list-btn {
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .category-btn:hover, .drug-card-btn:hover, .lab-list-btn:hover {
+            background: #d5dbdb;
+            transform: translateY(-1px);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1>🔧 Medical Tools Test Page</h1>
+        <p>Testing UK medical tools functionality including enhanced lab values and drug database</p>
+        <button class="medical-tools-toggle" onclick="window.quizApp?.toggleMedicalTools() || alert('Medical tools functionality loaded!')">
+            🏥 Medical Tools
+        </button>
+    </div>
+
+    <div id="test-results"></div>
+
+    <!-- Include the medical tools panel from the main template -->
+    <div id="medical-tools-panel" class="slide-panel">
+        <div class="panel-header">
+            <h3>🏥 Medical Tools</h3>
+            <button class="close-btn" onclick="toggleMedicalTools()">×</button>
+        </div>
+        
+        <div class="panel-content">
+            <div class="tool-navigation">
+                <button class="tool-nav-btn active" data-tool="drugs" onclick="switchMedicalTool('drugs'); event.stopPropagation();">💊 Drugs</button>
+                <button class="tool-nav-btn" data-tool="calculators" onclick="switchMedicalTool('calculators'); event.stopPropagation();">🧮 Calculators</button>
+                <button class="tool-nav-btn" data-tool="lab-values" onclick="switchMedicalTool('lab-values'); event.stopPropagation();">🧪 Lab Values</button>
+                <button class="tool-nav-btn" data-tool="guidelines" onclick="switchMedicalTool('guidelines'); event.stopPropagation();">📋 Guidelines</button>
+                <button class="tool-nav-btn" data-tool="differential-dx" onclick="switchMedicalTool('differential-dx'); event.stopPropagation();">🔍 Differential Dx</button>
+            </div>
+            
+            <div class="tool-container">
+                <div id="drug-panel" class="tool-content active">
+                    <div id="drug-reference-container">Loading drug database...</div>
+                </div>
+                
+                <div id="calculator-panel" class="tool-content">
+                    <div id="calculator-container">Loading calculators...</div>
+                </div>
+                
+                <div id="lab-values-panel" class="tool-content">
+                    <div id="lab-values-container">Loading lab values...</div>
+                </div>
+                
+                <div id="guidelines-panel" class="tool-content">
+                    <div id="guidelines-container">Loading guidelines...</div>
+                </div>
+                
+                <div id="differential-dx-panel" class="tool-content">
+                    <div id="differential-dx-container">Loading differential diagnosis tools...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include the CSS and JavaScript -->
+    <link rel="stylesheet" href="static/css/style.css" type="text/css">
+    <script src="static/js/app.js"></script>
+    
+    <script>
+        // Test functionality when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            const results = document.getElementById('test-results');
+            
+            function addTestResult(test, passed, details = '') {
+                const div = document.createElement('div');
+                div.className = `test-result ${passed ? 'success' : 'error'}`;
+                div.innerHTML = `
+                    <strong>${passed ? '✅' : '❌'} ${test}</strong>
+                    ${details ? `<br><small>${details}</small>` : ''}
+                `;
+                results.appendChild(div);
+            }
+            
+            // Test 1: Check if app.js is loaded
+            const appLoaded = typeof window.quizApp !== 'undefined';
+            addTestResult('App.js Loaded', appLoaded, appLoaded ? 'QuizApp instance available' : 'QuizApp not found');
+            
+            // Test 2: Check medical tools functions
+            if (appLoaded) {
+                const hasMedicalFunctions = typeof window.quizApp.switchMedicalTool === 'function';
+                addTestResult('Medical Tools Functions', hasMedicalFunctions, 'switchMedicalTool function available');
+                
+                // Test 3: Initialize medical tools
+                try {
+                    if (window.quizApp.loadDrugReference) {
+                        window.quizApp.loadDrugReference();
+                        addTestResult('Drug Reference Initialized', true, 'Drug database loaded');
+                    }
+                    
+                    if (window.quizApp.loadLabValues) {
+                        window.quizApp.loadLabValues();
+                        addTestResult('Lab Values Initialized', true, 'Lab values with UK standards loaded');
+                    }
+                } catch (e) {
+                    addTestResult('Medical Tools Initialization', false, e.message);
+                }
+                
+                // Test 4: Check for UK drugs in database
+                setTimeout(() => {
+                    try {
+                        const drugContainer = document.getElementById('drug-reference-container');
+                        const hasUKDrugs = drugContainer && drugContainer.innerHTML.includes('ramipril');
+                        addTestResult('UK Drugs Present', hasUKDrugs, 'Checking for ramipril and other UK medications');
+                        
+                        // Test 5: Check for new lab categories
+                        const labContainer = document.getElementById('lab-values-container');
+                        const hasNewLabs = labContainer && (
+                            labContainer.innerHTML.includes('U&Es') || 
+                            labContainer.innerHTML.includes('Coagulation') ||
+                            labContainer.innerHTML.includes('Cardiac')
+                        );
+                        addTestResult('Enhanced Lab Values', hasNewLabs, 'Checking for new UK lab categories');
+                        
+                        // Test 6: Test button functionality
+                        const buttons = document.querySelectorAll('.drug-card-btn, .lab-list-btn');
+                        addTestResult('Interactive Buttons', buttons.length > 0, `Found ${buttons.length} interactive buttons`);
+                        
+                    } catch (e) {
+                        addTestResult('Content Verification', false, e.message);
+                    }
+                }, 1000);
+            }
+            
+            // Test 7: Check panel structure
+            const panelElements = [
+                'medical-tools-panel',
+                'drug-panel', 
+                'calculator-panel',
+                'lab-values-panel',
+                'guidelines-panel',
+                'differential-dx-panel'
+            ];
+            
+            panelElements.forEach(id => {
+                const element = document.getElementById(id);
+                addTestResult(`Panel: ${id}`, !!element, element ? 'Element found' : 'Element missing');
+            });
+        });
+        
+        // Test functions
+        function testMedicalTools() {
+            try {
+                if (window.quizApp && window.quizApp.switchMedicalTool) {
+                    // Test switching between tools
+                    ['drugs', 'calculators', 'lab-values', 'guidelines', 'differential-dx'].forEach(tool => {
+                        window.quizApp.switchMedicalTool(tool);
+                        console.log(`✅ Successfully switched to ${tool}`);
+                    });
+                    alert('✅ All medical tools navigation working!');
+                } else {
+                    alert('❌ Medical tools not available');
+                }
+            } catch (e) {
+                alert(`❌ Error testing medical tools: ${e.message}`);
+            }
+        }
+        
+        // Make functions available globally
+        window.switchMedicalTool = function(tool) {
+            if (window.quizApp && window.quizApp.switchMedicalTool) {
+                window.quizApp.switchMedicalTool(tool);
+            }
+        };
+        
+        window.toggleMedicalTools = function() {
+            if (window.quizApp && window.quizApp.toggleMedicalTools) {
+                window.quizApp.toggleMedicalTools();
+            } else {
+                // Fallback toggle
+                const panel = document.getElementById('medical-tools-panel');
+                if (panel) {
+                    panel.style.right = panel.style.right === '0px' ? '-400px' : '0px';
+                }
+            }
+        };
+    </script>
+    
+    <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 8px;">
+        <h3>🧪 Test Actions</h3>
+        <button onclick="testMedicalTools()" class="category-btn">Test Medical Tools Navigation</button>
+        <button onclick="window.quizApp?.switchMedicalTool('lab-values')" class="category-btn">Show Lab Values</button>
+        <button onclick="window.quizApp?.switchMedicalTool('drugs')" class="category-btn">Show UK Drugs</button>
+        <button onclick="console.log(window.quizApp)" class="category-btn">Log App State</button>
+    </div>
+</body>
+</html>

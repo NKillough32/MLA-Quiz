@@ -3288,6 +3288,175 @@ class MLAQuizApp {
                         clinicalSignificance: 'Most metabolically active hormone. May be normal in early hypothyroidism.'
                     }
                 }
+            },
+            'urea_electrolytes': {
+                name: 'Urea & Electrolytes (U&Es)',
+                values: {
+                    'Sodium': {
+                        normal: '135-145 mmol/L',
+                        low: 'SIADH, diuretics, heart failure, adrenal insufficiency, excess water intake',
+                        high: 'Dehydration, diabetes insipidus, excess salt intake, hyperaldosteronism',
+                        critical: '<125 or >155 mmol/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Hyponatremia: check osmolality. Rapid correction can cause central pontine myelinolysis.'
+                    },
+                    'Potassium': {
+                        normal: '3.5-5.0 mmol/L',
+                        low: 'Diuretics, diarrhea, hyperaldosteronism, poor intake, insulin therapy',
+                        high: 'ACE inhibitors, ARBs, renal failure, Addisons disease, acidosis',
+                        critical: '<2.5 or >6.5 mmol/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Life-threatening arrhythmias possible. Check ECG if abnormal. Hemolysis causes false elevation.'
+                    },
+                    'Urea': {
+                        normal: '2.5-6.5 mmol/L',
+                        low: 'Liver disease, pregnancy, low protein diet, overhydration',
+                        high: 'Dehydration, renal impairment, GI bleeding, high protein diet, catabolism',
+                        critical: '>30 mmol/L',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'Urea:creatinine ratio >100 suggests prerenal cause. Affected by protein metabolism.'
+                    },
+                    'Creatinine': {
+                        normal: 'M: 70-120 μmol/L, F: 50-100 μmol/L',
+                        low: 'Low muscle mass, pregnancy, amputation',
+                        high: 'Acute/chronic kidney disease, dehydration, muscle breakdown, some drugs',
+                        critical: '>500 μmol/L',
+                        ageVariations: 'Lower in elderly due to reduced muscle mass',
+                        clinicalSignificance: 'Used to calculate eGFR. More specific for kidney function than urea. Creatinine rise lags behind GFR fall.'
+                    },
+                    'eGFR': {
+                        normal: '>90 mL/min/1.73m²',
+                        low: 'Chronic kidney disease, acute kidney injury, dehydration',
+                        high: 'Hyperfiltration (early diabetes), young age',
+                        critical: '<15 mL/min/1.73m² (consider dialysis)',
+                        ageVariations: 'Declines ~1 mL/min/year after age 30',
+                        clinicalSignificance: 'CKD stages: G1(>90), G2(60-89), G3a(45-59), G3b(30-44), G4(15-29), G5(<15). Adjusted for ethnicity.'
+                    }
+                }
+            },
+            'coagulation': {
+                name: 'Coagulation Studies',
+                values: {
+                    'PT/INR': {
+                        normal: 'PT: 11-13 seconds, INR: 0.8-1.2',
+                        low: 'Thrombophilia, early liver disease',
+                        high: 'Warfarin therapy, liver disease, vitamin K deficiency, DIC',
+                        critical: 'INR >5.0 (bleeding risk)',
+                        ageVariations: 'Slight increase with age',
+                        clinicalSignificance: 'INR target 2-3 for most indications, 2.5-3.5 for mechanical valves. Reflects extrinsic pathway.'
+                    },
+                    'APTT': {
+                        normal: '25-35 seconds',
+                        low: 'Early DIC, thrombophilia',
+                        high: 'Heparin therapy, hemophilia, liver disease, lupus anticoagulant',
+                        critical: '>100 seconds',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Monitors unfractionated heparin therapy. Reflects intrinsic pathway. Ratio to control usually reported.'
+                    },
+                    'Fibrinogen': {
+                        normal: '2.0-4.0 g/L',
+                        low: 'DIC, liver disease, hyperfibrinolysis, inherited deficiency',
+                        high: 'Acute phase reaction, pregnancy, malignancy, smoking',
+                        critical: '<1.0 g/L',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'Acute phase protein. Low levels increase bleeding risk. Essential for clot formation.'
+                    },
+                    'D-dimer': {
+                        normal: '<0.5 mg/L',
+                        low: 'No clinical significance',
+                        high: 'VTE, DIC, malignancy, infection, pregnancy, surgery, advanced age',
+                        critical: '>10 mg/L',
+                        ageVariations: 'Increases with age (age×10 μg/L cutoff >50 years)',
+                        clinicalSignificance: 'High sensitivity, low specificity for VTE. Normal D-dimer excludes PE/DVT in low-risk patients.'
+                    }
+                }
+            },
+            'cardiac_markers': {
+                name: 'Cardiac Markers',
+                values: {
+                    'Troponin I': {
+                        normal: '<0.04 μg/L',
+                        low: 'No clinical significance',
+                        high: 'MI, myocarditis, PE, renal failure, sepsis, heart failure',
+                        critical: '>10× upper limit',
+                        ageVariations: 'May be slightly elevated in elderly',
+                        clinicalSignificance: 'Most specific for myocardial injury. Rise 3-6h, peak 12-24h, elevated 7-14 days. High-sensitivity assays available.'
+                    },
+                    'CK-MB': {
+                        normal: '<6.3 μg/L',
+                        low: 'No clinical significance',
+                        high: 'MI, myocarditis, cardiac surgery, skeletal muscle disease',
+                        critical: '>25 μg/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Less specific than troponin. Rise 3-6h, peak 12-24h, normalize 48-72h. Still used in some centers.'
+                    },
+                    'BNP': {
+                        normal: '<100 pg/mL',
+                        low: 'Heart failure unlikely',
+                        high: 'Heart failure, renal failure, PE, atrial fibrillation',
+                        critical: '>1000 pg/mL',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'Excellent negative predictive value for heart failure. NT-proBNP alternative with different cutoffs.'
+                    }
+                }
+            },
+            'inflammatory_markers': {
+                name: 'Inflammatory Markers',
+                values: {
+                    'CRP': {
+                        normal: '<3 mg/L',
+                        low: 'No active inflammation',
+                        high: 'Infection, inflammation, malignancy, tissue necrosis',
+                        critical: '>200 mg/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Acute phase protein. Rises within 6h, peaks 24-48h. Useful for monitoring treatment response.'
+                    },
+                    'ESR': {
+                        normal: 'M: <age/2, F: <(age+10)/2',
+                        low: 'Polycythemia, severe heart failure, hypofibrinogenemia',
+                        high: 'Infection, inflammation, malignancy, anemia, pregnancy',
+                        critical: '>100 mm/h',
+                        ageVariations: 'Increases significantly with age',
+                        clinicalSignificance: 'Non-specific. Takes days to change. Still useful in temporal arteritis, polymyalgia rheumatica.'
+                    },
+                    'Procalcitonin': {
+                        normal: '<0.1 μg/L',
+                        low: 'Viral infection, localized bacterial infection',
+                        high: 'Bacterial sepsis, severe bacterial infection',
+                        critical: '>10 μg/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'More specific for bacterial infection than CRP. Guides antibiotic duration. Useful in sepsis diagnosis.'
+                    }
+                }
+            },
+            'endocrine': {
+                name: 'Endocrine Tests',
+                values: {
+                    'HbA1c': {
+                        normal: '<42 mmol/mol (6.0%)',
+                        low: 'Hypoglycemia risk, recent blood loss',
+                        high: 'Diabetes mellitus, poor glycemic control',
+                        critical: '>75 mmol/mol (9.0%)',
+                        ageVariations: 'Target may be higher in elderly/frail',
+                        clinicalSignificance: 'Diabetes: ≥48 mmol/mol. Pre-diabetes: 42-47. Target usually <53 mmol/mol. Reflects 8-12 week average glucose.'
+                    },
+                    'Random Glucose': {
+                        normal: '3.5-7.8 mmol/L',
+                        low: 'Hypoglycemia, insulin excess, adrenal insufficiency',
+                        high: 'Diabetes, stress, steroids, acute illness',
+                        critical: '<2.2 or >22 mmol/L',
+                        ageVariations: 'Glucose tolerance decreases with age',
+                        clinicalSignificance: 'Random ≥11.1 mmol/L suggests diabetes if symptomatic. Fasting ≥7.0 mmol/L diagnostic for diabetes.'
+                    },
+                    'Cortisol (9am)': {
+                        normal: '200-700 nmol/L',
+                        low: 'Addisons disease, secondary adrenal insufficiency, exogenous steroids',
+                        high: 'Cushings syndrome, stress, depression, alcohol',
+                        critical: '<100 nmol/L (consider steroid replacement)',
+                        ageVariations: 'Peak in early morning, follows circadian rhythm',
+                        clinicalSignificance: 'Diurnal variation important. Low 9am cortisol needs synacthen test. Midnight cortisol for Cushings.'
+                    }
+                }
             }
         };
         
@@ -3303,6 +3472,12 @@ class MLAQuizApp {
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('bmp'); event.stopPropagation();">Chemistry</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('lft'); event.stopPropagation();">Liver</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('lipids'); event.stopPropagation();">Lipids</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('thyroid'); event.stopPropagation();">Thyroid</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('urea_electrolytes'); event.stopPropagation();">U&Es</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('coagulation'); event.stopPropagation();">Coagulation</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('cardiac_markers'); event.stopPropagation();">Cardiac</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('inflammatory_markers'); event.stopPropagation();">Inflammatory</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('endocrine'); event.stopPropagation();">Endocrine</button>
             </div>
             <div id="lab-list"></div>
         `;
