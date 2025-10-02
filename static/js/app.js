@@ -4051,7 +4051,7 @@ class MLAQuizApp {
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="lab-search" placeholder="Search lab values...">
-                <div id="lab-search-results"></div>
+                <div id="lab-search-results" class="lab-grid"></div>
             </div>
             <div class="lab-categories">
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
@@ -4066,7 +4066,7 @@ class MLAQuizApp {
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('inflammatory_markers'); event.stopPropagation();">Inflammatory</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('endocrine'); event.stopPropagation();">Endocrine</button>
             </div>
-            <div id="lab-list"></div>
+            <div id="lab-list" class="lab-grid"></div>
         `;
         
         const searchInput = document.getElementById('lab-search');
@@ -4103,10 +4103,9 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(match => `
-            <button class="calculator-btn" onclick="${match.type === 'panel' ? `console.log('🧪 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('🧪 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
-                <div class="calc-icon">${match.type === 'panel' ? '📊' : '🧪'}</div>
-                <div class="calc-name">${match.name}</div>
-                <div class="tool-count">${match.type === 'panel' ? 'Lab Panel' : 'Individual Test'}</div>
+            <button class="lab-value-btn" onclick="${match.type === 'panel' ? `console.log('🧪 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('🧪 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
+                <div class="lab-name">${match.name}</div>
+                <div class="lab-count">${match.type === 'panel' ? 'Lab Panel' : 'Individual Test'}</div>
             </button>
         `).join('');
     }
@@ -4121,10 +4120,9 @@ class MLAQuizApp {
         }
         
         labList.innerHTML = panels.map(panel => `
-            <button class="calculator-btn" onclick="console.log('🧪 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
-                <div class="calc-icon">📊</div>
-                <div class="calc-name">${labDatabase[panel].name}</div>
-                <div class="tool-count">${Object.keys(labDatabase[panel].values).length} tests</div>
+            <button class="lab-value-btn" onclick="console.log('🧪 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
+                <div class="lab-name">${labDatabase[panel].name}</div>
+                <div class="lab-count">${Object.keys(labDatabase[panel].values).length} tests</div>
             </button>
         `).join('');
     }
@@ -4135,10 +4133,9 @@ class MLAQuizApp {
         const container = document.getElementById('lab-values-container');
         
         const testsHtml = Object.entries(panel.values).map(([test, data]) => `
-            <button class="calculator-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
-                <div class="calc-icon">🧪</div>
-                <div class="calc-name">${test}</div>
-                <div class="tool-count">${data.normal}</div>
+            <button class="lab-value-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
+                <div class="lab-name">${test}</div>
+                <div class="lab-count">${data.normal}</div>
             </button>
         `).join('');
         
@@ -4146,7 +4143,7 @@ class MLAQuizApp {
             <button class="back-btn" onclick="window.quizApp.loadLabValues(); event.stopPropagation();">← Back to Lab Categories</button>
             <div class="lab-panel-detail">
                 <h3>${panel.name}</h3>
-                <div class="lab-tests">
+                <div class="lab-tests lab-grid">
                     ${testsHtml}
                 </div>
             </div>

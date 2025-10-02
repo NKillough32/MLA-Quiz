@@ -915,6 +915,60 @@
         [data-theme="dark"] .calc-name {
             color: var(--text-primary);
         }
+
+        /* Lab Value Buttons */
+        .lab-value-btn {
+            padding: 16px 12px;
+            background: #007AFF;
+            border: 1px solid #007AFF;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            color: white;
+        }
+        
+        .lab-value-btn:hover {
+            background: #0056d6;
+            border-color: #0056d6;
+            transform: translateY(-2px);
+        }
+        
+        .lab-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .lab-count {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        [data-theme="dark"] .lab-value-btn {
+            background: #0056d6;
+            border-color: #0056d6;
+        }
+        
+        [data-theme="dark"] .lab-value-btn:hover {
+            background: #003d99;
+            border-color: #003d99;
+        }
+
+        /* Lab Grid */
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .lab-grid {
+                grid-template-columns: 1fr;
+            }
+        }
         
         /* Calculator Workspace */
         .calculator-workspace {
