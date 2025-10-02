@@ -3533,9 +3533,9 @@ class MLAQuizApp {
         }
         
         labList.innerHTML = panels.map(panel => `
-            <button class="lab-list-btn" onclick="console.log('🧪 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
-                <span class="lab-panel-name">${labDatabase[panel].name}</span>
-                <span class="lab-test-count">${Object.keys(labDatabase[panel].values).length} tests</span>
+            <button class="medical-tool-btn" onclick="console.log('🧪 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
+                <div class="tool-name">${labDatabase[panel].name}</div>
+                <div class="tool-count">${Object.keys(labDatabase[panel].values).length} tests</div>
             </button>
         `).join('');
     }
@@ -3546,9 +3546,9 @@ class MLAQuizApp {
         const container = document.getElementById('lab-values-container');
         
         const testsHtml = Object.entries(panel.values).map(([test, data]) => `
-            <button class="lab-test-list-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
-                <span class="test-name">${test}</span>
-                <span class="test-normal">${data.normal}</span>
+            <button class="medical-tool-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
+                <div class="tool-name">${test}</div>
+                <div class="tool-count">${data.normal}</div>
             </button>
         `).join('');
         
@@ -3838,9 +3838,9 @@ class MLAQuizApp {
         }
         
         guidelinesList.innerHTML = guidelines.map(guideline => `
-            <button class="guideline-card-btn" onclick="console.log('📋 Guideline card clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
-                <div class="guideline-title">${guidelinesDatabase[guideline].title}</div>
-                <div class="guideline-category">${guidelinesDatabase[guideline].category}</div>
+            <button class="medical-tool-btn" onclick="console.log('📋 Guideline card clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
+                <div class="tool-name">${guidelinesDatabase[guideline].title}</div>
+                <div class="tool-count">${guidelinesDatabase[guideline].category}</div>
             </button>
         `).join('');
     }
@@ -4353,10 +4353,9 @@ class MLAQuizApp {
         }
         
         ddxList.innerHTML = symptoms.map(symptom => `
-            <button class="ddx-card-btn" onclick="console.log('🔍 DDX card clicked:', '${symptom}'); window.quizApp.showDdxDetail('${symptom}'); event.stopPropagation();">
-                <div class="ddx-title">${ddxDatabase[symptom].title}</div>
-                <div class="ddx-category">${ddxDatabase[symptom].category}</div>
-                <div class="ddx-count">${Object.keys(ddxDatabase[symptom].presentations).length} differentials</div>
+            <button class="medical-tool-btn" onclick="console.log('🔍 DDX card clicked:', '${symptom}'); window.quizApp.showDdxDetail('${symptom}'); event.stopPropagation();">
+                <div class="tool-name">${ddxDatabase[symptom].title}</div>
+                <div class="tool-count">${Object.keys(ddxDatabase[symptom].presentations).length} differentials</div>
             </button>
         `).join('');
     }
@@ -4366,12 +4365,12 @@ class MLAQuizApp {
         const container = document.getElementById('differential-dx-container');
         
         const presentationsHtml = Object.entries(symptom.presentations).map(([dx, data]) => `
-            <div class="ddx-item ${data.urgency.toLowerCase()}" onclick="window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}')">
+            <button class="ddx-item-btn ${data.urgency.toLowerCase()}" onclick="console.log('🔍 Diagnosis clicked:', '${dx}'); window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}'); event.stopPropagation();">
                 <div class="ddx-diagnosis">${dx}</div>
                 <div class="ddx-urgency ${data.urgency.toLowerCase()}">${data.urgency}</div>
                 <div class="ddx-features">${data.features.substring(0, 100)}...</div>
                 ${data.differentiatingFeatures ? `<div class="ddx-key-features">🔍 ${data.differentiatingFeatures.substring(0, 80)}...</div>` : ''}
-            </div>
+            </button>
         `).join('');
         
         container.innerHTML = `
