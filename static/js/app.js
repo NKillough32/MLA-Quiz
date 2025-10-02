@@ -2723,6 +2723,146 @@ class MLAQuizApp {
                 sideEffects: 'Peripheral edema (7-11%), flushing, dizziness, fatigue, gum hyperplasia',
                 pharmacokinetics: 'Peak: 6-12h, Half-life: 35-50h, Metabolism: hepatic',
                 clinicalPearls: 'Long half-life allows once daily dosing. Lower incidence of reflex tachycardia. Peripheral edema not fluid overload'
+            },
+            'ramipril': {
+                name: 'Ramipril',
+                class: 'ACE inhibitor',
+                mechanism: 'Inhibits ACE, reducing angiotensin II formation and aldosterone secretion',
+                dosing: 'HTN: Start 1.25-2.5mg daily, max 10mg daily. Heart failure: Start 1.25mg daily, target 10mg daily',
+                contraindications: 'Pregnancy, bilateral renal artery stenosis, angioedema history',
+                interactions: 'NSAIDs (↓ efficacy), potassium supplements (hyperkalemia), lithium (↑ levels)',
+                monitoring: 'eGFR, potassium, blood pressure. Check 1-2 weeks after initiation/dose change',
+                pregnancy: 'Contraindicated - teratogenic',
+                sideEffects: 'Dry cough (10%), hyperkalemia, acute kidney injury, angioedema (rare)',
+                pharmacokinetics: 'Prodrug activated in liver, Half-life: 13-17h, Excretion: renal',
+                clinicalPearls: 'Very common UK first-line ACE inhibitor. Renoprotective in diabetes. Stop if pregnant',
+                indication: 'Hypertension, heart failure, post-MI, diabetic nephropathy'
+            },
+            'bendroflumethiazide': {
+                name: 'Bendroflumethiazide',
+                class: 'Thiazide-like diuretic',
+                mechanism: 'Inhibits sodium-chloride cotransporter in distal convoluted tubule',
+                dosing: 'HTN: 2.5mg daily (morning). Oedema: 5-10mg daily initially, then reduce',
+                contraindications: 'Anuria, severe renal/hepatic impairment, hypersensitivity to sulfonamides',
+                interactions: 'Lithium (↑ levels), digoxin (hypokalemia ↑ toxicity), NSAIDs (↓ effect)',
+                monitoring: 'U&Es, glucose, uric acid, blood pressure',
+                pregnancy: 'Avoid - may cause neonatal thrombocytopenia',
+                sideEffects: 'Hyponatremia, hypokalemia, hyperuricemia, glucose intolerance, impotence',
+                pharmacokinetics: 'Onset: 2h, Peak: 4-6h, Duration: 12-18h',
+                clinicalPearls: 'Common UK thiazide. Take morning to avoid nocturia. 2.5mg often sufficient for BP',
+                indication: 'Hypertension, mild heart failure, oedema'
+            },
+            'bisoprolol': {
+                name: 'Bisoprolol',
+                class: 'Cardioselective beta-blocker',
+                mechanism: 'Selective β1-adrenoreceptor antagonist, reducing heart rate and contractility',
+                dosing: 'HTN: Start 5mg daily, max 20mg daily. Heart failure: Start 1.25mg daily, target 10mg daily',
+                contraindications: 'Severe asthma, uncontrolled heart failure, severe bradycardia, heart block',
+                interactions: 'Verapamil/diltiazem (AV block), insulin (masks hypoglycemia), NSAIDs',
+                monitoring: 'Heart rate, blood pressure, signs of heart failure',
+                pregnancy: 'Use if essential - may cause fetal bradycardia',
+                sideEffects: 'Fatigue, dizziness, bradycardia, cold extremities, impotence',
+                pharmacokinetics: 'Half-life: 10-12h, Bioavailability: 80%, Renal excretion: 50%',
+                clinicalPearls: 'Preferred β-blocker in UK guidelines. Cardioselective but not cardiospecific',
+                indication: 'Hypertension, heart failure, post-MI, angina'
+            },
+            'omeprazole': {
+                name: 'Omeprazole',
+                class: 'Proton pump inhibitor (PPI)',
+                mechanism: 'Irreversibly inhibits H+/K+-ATPase (proton pump) in gastric parietal cells',
+                dosing: 'GORD: 20mg daily. PUD: 20-40mg daily. H.pylori: 20mg BD with antibiotics',
+                contraindications: 'Hypersensitivity to PPIs',
+                interactions: 'Clopidogrel (↓ efficacy), warfarin (↑ INR), digoxin (↑ levels)',
+                monitoring: 'Vitamin B12, magnesium with long-term use. Review need regularly',
+                pregnancy: 'Generally safe - limited human data',
+                sideEffects: 'Headache, GI upset, increased infection risk, hypomagnesemia (long-term)',
+                pharmacokinetics: 'Onset: 1h, Peak: 2h, Duration: 72h, CYP2C19 metabolism',
+                clinicalPearls: 'First PPI available OTC in UK. Take 30min before food. Avoid long-term use without indication',
+                indication: 'GORD, peptic ulcer disease, H.pylori eradication, stress ulcer prophylaxis'
+            },
+            'prednisolone': {
+                name: 'Prednisolone',
+                class: 'Corticosteroid',
+                mechanism: 'Synthetic glucocorticoid with anti-inflammatory and immunosuppressive effects',
+                dosing: 'Acute: 30-60mg daily, then taper. Maintenance: 5-15mg daily. Always taper gradually',
+                contraindications: 'Systemic infection (unless life-threatening), live vaccines',
+                interactions: 'Warfarin (variable effect), NSAIDs (↑ GI bleeding), vaccines (↓ response)',
+                monitoring: 'Blood glucose, blood pressure, bone density, growth (children)',
+                pregnancy: 'Use if essential - may cause cleft palate (first trimester)',
+                sideEffects: 'Weight gain, mood changes, osteoporosis, diabetes, increased infection risk',
+                pharmacokinetics: 'Half-life: 12-36h, Oral bioavailability: 70%',
+                clinicalPearls: 'Never stop abruptly. Take with food. Common UK oral steroid. Consider bone protection',
+                indication: 'Asthma, COPD exacerbation, inflammatory conditions, autoimmune disease'
+            },
+            'salbutamol': {
+                name: 'Salbutamol',
+                class: 'Short-acting β2-agonist (SABA)',
+                mechanism: 'Selective β2-adrenoreceptor agonist causing bronchodilation',
+                dosing: 'Inhaler: 100-200mcg PRN, max 800mcg daily. Nebuliser: 2.5-5mg QDS',
+                contraindications: 'Hypersensitivity. Caution in cardiovascular disease, diabetes',
+                interactions: 'β-blockers (antagonistic), digoxin (hypokalemia), diuretics',
+                monitoring: 'Peak flow, symptoms, heart rate, potassium (high doses)',
+                pregnancy: 'Safe - drug of choice in pregnancy',
+                sideEffects: 'Tremor, palpitations, headache, hypokalemia (high doses)',
+                pharmacokinetics: 'Inhaled onset: 5min, Duration: 3-5h',
+                clinicalPearls: 'Blue inhaler. If using >3x/week, need preventer. Spacer improves delivery',
+                indication: 'Asthma, COPD, hyperkalemia (nebulised), premature labour'
+            },
+            'metformin': {
+                name: 'Metformin',
+                class: 'Biguanide antidiabetic',
+                mechanism: 'Reduces hepatic glucose production, increases insulin sensitivity',
+                dosing: 'Start 500mg BD with meals, increase weekly. Max 2g daily (1g BD)',
+                contraindications: 'eGFR <30, severe heart failure, shock, alcohol abuse',
+                interactions: 'Contrast media (stop 48h before), alcohol (↑ lactate), diuretics',
+                monitoring: 'HbA1c, eGFR, vitamin B12 (annual)',
+                pregnancy: 'Safe - may be used in gestational diabetes',
+                sideEffects: 'GI upset (30%), metallic taste, vitamin B12 deficiency, lactic acidosis (rare)',
+                pharmacokinetics: 'No metabolism, renal excretion, Half-life: 6h',
+                clinicalPearls: 'First-line T2DM in UK. Take with food. Stop if acute illness/dehydration',
+                indication: 'Type 2 diabetes, PCOS, gestational diabetes'
+            },
+            'simvastatin': {
+                name: 'Simvastatin',
+                class: 'HMG-CoA reductase inhibitor (Statin)',
+                mechanism: 'Inhibits cholesterol synthesis, upregulates LDL receptors',
+                dosing: 'Start 10-20mg at night, usual 40mg, max 80mg (restricted use)',
+                contraindications: 'Active liver disease, pregnancy, breastfeeding',
+                interactions: 'Amlodipine (max 20mg simvastatin), warfarin (↑ INR), grapefruit juice',
+                monitoring: 'LFTs before treatment, lipids at 3 months, CK if muscle symptoms',
+                pregnancy: 'Contraindicated - teratogenic',
+                sideEffects: 'Myalgia, elevated LFTs, rhabdomyolysis (rare), diabetes (slight ↑ risk)',
+                pharmacokinetics: 'Prodrug, extensive first-pass metabolism, Half-life: 2h',
+                clinicalPearls: 'Cheapest statin in UK. Take at night. 80mg dose has interaction restrictions',
+                indication: 'Hypercholesterolemia, cardiovascular disease prevention'
+            },
+            'paracetamol': {
+                name: 'Paracetamol',
+                class: 'Analgesic, Antipyretic',
+                mechanism: 'Inhibits COX enzymes centrally, affects prostaglandin synthesis',
+                dosing: 'Adults: 500mg-1g QDS (max 4g/24h). Children: 15mg/kg QDS (max 60mg/kg/24h)',
+                contraindications: 'Severe hepatic impairment, chronic alcohol abuse',
+                interactions: 'Warfarin (↑ INR with regular use), carbamazepine (↑ metabolism)',
+                monitoring: 'Liver function with chronic use, paracetamol levels in overdose',
+                pregnancy: 'Safe - preferred analgesic in pregnancy',
+                sideEffects: 'Hepatotoxicity (overdose), very rarely skin reactions',
+                pharmacokinetics: 'Onset: 30min, Peak: 1h, Half-life: 2h, Hepatic metabolism',
+                clinicalPearls: 'Most common analgesic in UK. No anti-inflammatory effect. Overdose: N-acetylcysteine antidote',
+                indication: 'Pain, fever. First-line analgesic in most conditions'
+            },
+            'ibuprofen': {
+                name: 'Ibuprofen',
+                class: 'Non-steroidal anti-inflammatory drug (NSAID)',
+                mechanism: 'Non-selective COX inhibitor, reducing prostaglandin synthesis',
+                dosing: 'Adults: 400mg TDS-QDS (max 2.4g daily). Children: 20-30mg/kg daily in divided doses',
+                contraindications: 'PUD, severe heart failure, CKD, pregnancy (3rd trimester)',
+                interactions: 'ACE inhibitors (↓ efficacy), warfarin (↑ bleeding), lithium (↑ levels)',
+                monitoring: 'Renal function, blood pressure, signs of GI bleeding',
+                pregnancy: 'Avoid 3rd trimester - may cause oligohydramnios, premature ductus closure',
+                sideEffects: 'GI bleeding, acute kidney injury, hypertension, fluid retention',
+                pharmacokinetics: 'Onset: 30min, Peak: 1-2h, Half-life: 2-4h',
+                clinicalPearls: 'Most common NSAID in UK. Take with food. Lowest effective dose for shortest time',
+                indication: 'Pain, inflammation, fever. Particularly musculoskeletal conditions'
             }
         };
         
@@ -3218,9 +3358,9 @@ class MLAQuizApp {
         }
         
         labList.innerHTML = panels.map(panel => `
-            <button class="lab-card-btn" onclick="console.log('🧪 Lab card clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
-                <div class="lab-panel-name">${labDatabase[panel].name}</div>
-                <div class="lab-test-count">${Object.keys(labDatabase[panel].values).length} tests</div>
+            <button class="lab-list-btn" onclick="console.log('🧪 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
+                <span class="lab-panel-name">${labDatabase[panel].name}</span>
+                <span class="lab-test-count">${Object.keys(labDatabase[panel].values).length} tests</span>
             </button>
         `).join('');
     }
@@ -3231,9 +3371,9 @@ class MLAQuizApp {
         const container = document.getElementById('lab-values-container');
         
         const testsHtml = Object.entries(panel.values).map(([test, data]) => `
-            <button class="lab-test-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
-                <div class="test-name">${test}</div>
-                <div class="test-normal">${data.normal}</div>
+            <button class="lab-test-list-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
+                <span class="test-name">${test}</span>
+                <span class="test-normal">${data.normal}</span>
             </button>
         `).join('');
         
@@ -3504,7 +3644,7 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(guideline => `
-            <div class="guideline-result" onclick="window.quizApp.showGuidelineDetail('${guideline}')">
+            <div class="guideline-result" onclick="console.log('📋 Guideline search result clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
                 <div class="guideline-title">${guidelinesDatabase[guideline].title}</div>
                 <div class="guideline-category">${guidelinesDatabase[guideline].category}</div>
             </div>
@@ -3523,16 +3663,17 @@ class MLAQuizApp {
         }
         
         guidelinesList.innerHTML = guidelines.map(guideline => `
-            <div class="guideline-card" onclick="window.quizApp.showGuidelineDetail('${guideline}')">
+            <button class="guideline-card-btn" onclick="console.log('📋 Guideline card clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
                 <div class="guideline-title">${guidelinesDatabase[guideline].title}</div>
                 <div class="guideline-category">${guidelinesDatabase[guideline].category}</div>
-            </div>
+            </button>
         `).join('');
     }
     
     showGuidelineDetail(guidelineKey) {
+        console.log('📋 Opening guideline detail:', guidelineKey);
         const guideline = this.guidelinesDatabase[guidelineKey];
-        const container = document.getElementById('guidelines-container');
+        const container = document.getElementById('guidelines-panel');
         
         let contentHtml = `
             <button class="back-btn" onclick="window.quizApp.loadGuidelines()">← Back to Guidelines</button>
@@ -3978,8 +4119,8 @@ class MLAQuizApp {
             </div>
             <div class="ddx-categories">
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('all'); event.stopPropagation();">All Symptoms</button>
-                <button class="category-btn" onclick="window.quizApp.showDdxCategory('cardiovascular')">CV/Pulm</button>
-                <button class="category-btn" onclick="window.quizApp.showDdxCategory('gastroenterology')">GI/Surgery</button>
+                <button class="category-btn" onclick="window.quizApp.showDdxCategory('cardiovascular'); event.stopPropagation();">CV/Pulm</button>
+                <button class="category-btn" onclick="window.quizApp.showDdxCategory('gastroenterology'); event.stopPropagation();">GI/Surgery</button>
             </div>
             <div id="ddx-list"></div>
         `;
@@ -4018,7 +4159,7 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(match => `
-            <div class="ddx-result" onclick="${match.type === 'symptom' ? `window.quizApp.showDdxDetail('${match.key}')` : `window.quizApp.showDiagnosisDetail('${match.symptom}', '${match.key}')`}">
+            <div class="ddx-result" onclick="${match.type === 'symptom' ? `console.log('🔍 DDX search result clicked:', '${match.key}'); window.quizApp.showDdxDetail('${match.key}'); event.stopPropagation();` : `console.log('🔍 Diagnosis search result clicked:', '${match.key}'); window.quizApp.showDiagnosisDetail('${match.symptom}', '${match.key}'); event.stopPropagation();`}">
                 <div class="ddx-name">${match.name}</div>
                 <div class="ddx-type">${match.type === 'symptom' ? 'Symptom Complex' : 'Diagnosis'}</div>
             </div>
@@ -4037,11 +4178,11 @@ class MLAQuizApp {
         }
         
         ddxList.innerHTML = symptoms.map(symptom => `
-            <div class="ddx-card" onclick="window.quizApp.showDdxDetail('${symptom}')">
+            <button class="ddx-card-btn" onclick="console.log('🔍 DDX card clicked:', '${symptom}'); window.quizApp.showDdxDetail('${symptom}'); event.stopPropagation();">
                 <div class="ddx-title">${ddxDatabase[symptom].title}</div>
                 <div class="ddx-category">${ddxDatabase[symptom].category}</div>
                 <div class="ddx-count">${Object.keys(ddxDatabase[symptom].presentations).length} differentials</div>
-            </div>
+            </button>
         `).join('');
     }
     
