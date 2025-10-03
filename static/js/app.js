@@ -4911,6 +4911,272 @@ class MLAQuizApp {
                 pharmacokinetics: 'Inhaled onset: 5min, Duration: 3-5h',
                 clinicalPearls: 'Blue inhaler. If using >3x/week, need preventer. Use spacer',
                 indication: 'Asthma, COPD, hyperkalaemia (nebulised)'
+            },
+            'alendronic acid': {
+                name: 'Alendronic Acid',
+                class: 'Bisphosphonate',
+                mechanism: 'Inhibits osteoclast-mediated bone resorption by binding to hydroxyapatite',
+                dosing: 'Osteoporosis: 70mg weekly on empty stomach. Paget\'s disease: 40mg daily for 6 months',
+                contraindications: 'Oesophageal abnormalities, hypocalcaemia, severe renal impairment',
+                interactions: 'Calcium/iron/antacids (↓ absorption - separate by 2h), NSAIDs (↑ GI irritation)',
+                monitoring: 'Calcium, phosphate, vitamin D levels. Dental health. Atypical fractures',
+                pregnancy: 'Avoid - crosses placenta and may affect fetal bone development',
+                sideEffects: 'Oesophageal irritation, osteonecrosis of jaw (rare), atypical fractures (rare)',
+                pharmacokinetics: 'Poor oral absorption (<1%), long bone half-life (10+ years)',
+                clinicalPearls: 'Take on empty stomach with full glass water. Stay upright 30min. Weekly dosing improves compliance',
+                indication: 'Osteoporosis treatment/prevention, Paget\'s disease, steroid-induced osteoporosis'
+            },
+            'zopiclone': {
+                name: 'Zopiclone',
+                class: 'Z-drug (non-benzodiazepine hypnotic)',
+                mechanism: 'Selective GABA-A receptor modulator at benzodiazepine binding site',
+                dosing: 'Adults: 7.5mg at bedtime. Elderly: 3.75mg. Max 4 weeks treatment',
+                contraindications: 'Severe respiratory insufficiency, myasthenia gravis, severe hepatic impairment',
+                interactions: 'Alcohol (↑ sedation), opioids (respiratory depression), CYP3A4 inhibitors',
+                monitoring: 'Sleep quality, daytime drowsiness, signs of dependence, memory problems',
+                pregnancy: 'Avoid - risk of withdrawal symptoms in neonate',
+                sideEffects: 'Metallic taste, daytime drowsiness, dependence, rebound insomnia, amnesia',
+                pharmacokinetics: 'Rapid absorption, half-life: 5h, hepatic metabolism',
+                clinicalPearls: 'Shorter course than benzodiazepines but still dependence risk. Distinctive metallic taste',
+                indication: 'Short-term insomnia (max 4 weeks). Second-line to sleep hygiene measures'
+            },
+            'vancomycin': {
+                name: 'Vancomycin',
+                class: 'Glycopeptide antibiotic',
+                mechanism: 'Inhibits bacterial cell wall synthesis by binding to D-alanyl-D-alanine terminals',
+                dosing: 'IV: 15-20mg/kg BD (adjust to levels). Oral: 125mg QDS for C.diff. Target trough 15-20mg/L',
+                contraindications: 'Hypersensitivity to glycopeptides',
+                interactions: 'Aminoglycosides (↑ nephrotoxicity), loop diuretics (↑ ototoxicity)',
+                monitoring: 'Trough levels, renal function, hearing, signs of red man syndrome',
+                pregnancy: 'Use if essential - crosses placenta but appears safe',
+                sideEffects: 'Red man syndrome, nephrotoxicity, ototoxicity, thrombophlebitis',
+                pharmacokinetics: 'Poor oral absorption (for systemic use), renal excretion, half-life: 6h',
+                clinicalPearls: 'MRSA first-line. Slow IV infusion to prevent red man syndrome. TDM essential',
+                indication: 'MRSA infections, serious Gram-positive infections, C.difficile colitis (oral)'
+            },
+            'ciprofloxacin': {
+                name: 'Ciprofloxacin',
+                class: 'Fluoroquinolone antibiotic',
+                mechanism: 'Inhibits bacterial DNA gyrase and topoisomerase IV',
+                dosing: 'UTI: 250-500mg BD. Complicated infections: 400mg BD IV. Take 2h before/6h after dairy',
+                contraindications: 'Epilepsy, G6PD deficiency, myasthenia gravis, children/pregnancy',
+                interactions: 'Warfarin (↑ INR), theophylline (↑ levels), dairy products (↓ absorption)',
+                monitoring: 'Tendon pain, CNS effects, QT interval, glucose (diabetics)',
+                pregnancy: 'Avoid - arthropathy risk in developing cartilage',
+                sideEffects: 'Tendon rupture, CNS effects, QT prolongation, photosensitivity, C.diff',
+                pharmacokinetics: 'Good tissue penetration, half-life: 4h, renal/hepatic excretion',
+                clinicalPearls: 'Broad spectrum but resistance increasing. Avoid dairy. Black box warning for tendons',
+                indication: 'UTI, respiratory infections, GI infections, anthrax prophylaxis'
+            },
+            'lidocaine': {
+                name: 'Lidocaine',
+                class: 'Local anaesthetic (amide type)',
+                mechanism: 'Blocks voltage-gated sodium channels, preventing nerve conduction',
+                dosing: 'Local infiltration: max 4.5mg/kg (7mg/kg with adrenaline). Topical: 2-5% preparations',
+                contraindications: 'Heart block, severe cardiac failure, hypersensitivity to amides',
+                interactions: 'Beta-blockers (↑ toxicity), cimetidine (↑ levels), class I antiarrhythmics',
+                monitoring: 'Signs of systemic toxicity, cardiac rhythm (IV use)',
+                pregnancy: 'Safe for local use - does not cross placenta significantly',
+                sideEffects: 'Local: burning, swelling. Systemic: CNS toxicity, cardiac arrhythmias',
+                pharmacokinetics: 'Rapid onset: 2-5min, duration: 1-3h, hepatic metabolism',
+                clinicalPearls: 'Most common local anaesthetic. Adrenaline prolongs duration. IV form for arrhythmias',
+                indication: 'Local anaesthesia, topical anaesthesia, ventricular arrhythmias (IV)'
+            },
+            'sildenafil': {
+                name: 'Sildenafil',
+                class: 'Phosphodiesterase type 5 inhibitor',
+                mechanism: 'Inhibits PDE5, increasing cGMP levels and causing smooth muscle relaxation',
+                dosing: 'Erectile dysfunction: 50mg 1h before sexual activity. Pulmonary hypertension: 20mg TDS',
+                contraindications: 'Nitrates, recent MI/stroke, severe hypotension, hereditary retinal disorders',
+                interactions: 'Nitrates (severe hypotension), alpha-blockers (hypotension), CYP3A4 inhibitors',
+                monitoring: 'Blood pressure, vision changes, priapism, cardiovascular status',
+                pregnancy: 'Not applicable for ED indication. Limited data for pulmonary hypertension',
+                sideEffects: 'Headache, flushing, dyspepsia, visual disturbances, priapism (rare)',
+                pharmacokinetics: 'Rapid absorption, peak: 1h, half-life: 4h, hepatic metabolism',
+                clinicalPearls: 'Never with nitrates. High-fat meals delay absorption. Seek help if erection >4h',
+                indication: 'Erectile dysfunction, pulmonary arterial hypertension'
+            },
+            'senna': {
+                name: 'Senna',
+                class: 'Stimulant laxative',
+                mechanism: 'Stimulates colonic motility by irritating enteric nervous system',
+                dosing: 'Adults: 15mg (2 tablets) at bedtime. Children >6y: 7.5mg. Max 4 tablets daily',
+                contraindications: 'Intestinal obstruction, acute abdominal conditions, severe dehydration',
+                interactions: 'Digoxin (hypokalaemia may ↑ toxicity), diuretics (↑ fluid loss)',
+                monitoring: 'Bowel movements, electrolyte balance with chronic use, abdominal pain',
+                pregnancy: 'Avoid in first trimester. Small amounts enter breast milk',
+                sideEffects: 'Abdominal cramps, diarrhoea, electrolyte imbalance (chronic use)',
+                pharmacokinetics: 'Onset: 6-12h, metabolised by colonic bacteria to active form',
+                clinicalPearls: 'Take at bedtime for morning effect. Avoid prolonged use (>1 week). Adequate fluid intake essential',
+                indication: 'Constipation, bowel preparation, opioid-induced constipation'
+            },
+            'lactulose': {
+                name: 'Lactulose',
+                class: 'Osmotic laxative',
+                mechanism: 'Non-absorbable disaccharide draws water into bowel lumen by osmosis',
+                dosing: 'Constipation: 15ml BD initially, adjust to 1-2 soft stools daily. Hepatic encephalopathy: 30-50ml TDS',
+                contraindications: 'Galactosaemia, intestinal obstruction',
+                interactions: 'Few significant interactions. May affect absorption of other oral medications',
+                monitoring: 'Bowel frequency, fluid balance, electrolytes (high doses)',
+                pregnancy: 'Safe - not systemically absorbed',
+                sideEffects: 'Flatulence, abdominal cramps, nausea, electrolyte disturbance (high doses)',
+                pharmacokinetics: 'Not absorbed in small bowel, metabolised by colonic bacteria',
+                clinicalPearls: 'Safe in pregnancy. Can take 2-3 days for effect. Useful in hepatic encephalopathy',
+                indication: 'Constipation, hepatic encephalopathy'
+            },
+            'sumatriptan': {
+                name: 'Sumatriptan',
+                class: 'Serotonin 5-HT1 receptor agonist (triptan)',
+                mechanism: 'Selective 5-HT1B/1D receptor agonist causing vasoconstriction and neuronal inhibition',
+                dosing: 'Subcutaneous: 6mg, may repeat after 1h. Oral: 50-100mg, may repeat after 2h. Max 300mg/24h',
+                contraindications: 'Ischaemic heart disease, cerebrovascular disease, uncontrolled hypertension',
+                interactions: 'MAOIs (avoid), SSRIs (serotonin syndrome risk), ergot alkaloids',
+                monitoring: 'Cardiovascular status, blood pressure, frequency of use (medication overuse headache)',
+                pregnancy: 'Avoid - limited safety data',
+                sideEffects: 'Injection site reactions, chest tightness, dizziness, fatigue, medication overuse headache',
+                pharmacokinetics: 'Rapid onset SC: 10-15min, Oral: 30min, half-life: 2h',
+                clinicalPearls: 'Most effective when taken early in attack. Limit to 2 days/week to avoid medication overuse',
+                indication: 'Acute migraine treatment, cluster headache (subcutaneous)'
+            },
+            'empagliflozin': {
+                name: 'Empagliflozin',
+                class: 'SGLT2 inhibitor',
+                mechanism: 'Inhibits sodium-glucose co-transporter 2 in proximal renal tubules',
+                dosing: 'Type 2 diabetes: 10mg daily, may increase to 25mg. Heart failure: 10mg daily',
+                contraindications: 'Type 1 diabetes, ketoacidosis, severe renal impairment (eGFR <30)',
+                interactions: 'Diuretics (↑ volume depletion), insulin (↑ hypoglycaemia risk)',
+                monitoring: 'eGFR, ketones if unwell, genital infections, volume status',
+                pregnancy: 'Avoid - limited safety data',
+                sideEffects: 'Genital infections, UTI, volume depletion, diabetic ketoacidosis (rare)',
+                pharmacokinetics: 'Long half-life: 12h, renal excretion, minimal drug interactions',
+                clinicalPearls: 'Cardiovascular benefits in diabetes. Stop during illness (sick day rules). Monitor for DKA',
+                indication: 'Type 2 diabetes, heart failure with reduced ejection fraction'
+            },
+            'clopidogrel': {
+                name: 'Clopidogrel',
+                class: 'ADP receptor antagonist (antiplatelet)',
+                mechanism: 'Irreversibly inhibits P2Y12 ADP receptor on platelets',
+                dosing: 'Acute coronary syndrome: 600mg loading dose, then 75mg daily. Stroke prevention: 75mg daily',
+                contraindications: 'Active bleeding, severe hepatic impairment',
+                interactions: 'Warfarin (↑ bleeding), PPIs (may ↓ efficacy), CYP2C19 inhibitors',
+                monitoring: 'Signs of bleeding, FBC, hepatic function',
+                pregnancy: 'Avoid - limited safety data, bleeding risk',
+                sideEffects: 'Bleeding, dyspepsia, rash, thrombotic thrombocytopenic purpura (rare)',
+                pharmacokinetics: 'Prodrug requiring CYP2C19 activation, irreversible platelet inhibition',
+                clinicalPearls: 'Dual antiplatelet therapy with aspirin post-ACS. Genetic testing for CYP2C19 variants',
+                indication: 'Acute coronary syndromes, stroke prevention, peripheral vascular disease'
+            },
+            'enoxaparin': {
+                name: 'Enoxaparin',
+                class: 'Low molecular weight heparin (LMWH)',
+                mechanism: 'Enhances antithrombin III activity, preferentially inhibiting factor Xa',
+                dosing: 'VTE prophylaxis: 40mg daily SC. VTE treatment: 1.5mg/kg daily or 1mg/kg BD SC',
+                contraindications: 'Active bleeding, thrombocytopenia, severe renal impairment',
+                interactions: 'Anticoagulants (↑ bleeding), NSAIDs (↑ bleeding), antiplatelets',
+                monitoring: 'Anti-Xa levels (if required), platelet count, signs of bleeding',
+                pregnancy: 'Safe - does not cross placenta. Preferred anticoagulant in pregnancy',
+                sideEffects: 'Bleeding, thrombocytopenia (HIT), injection site reactions, osteoporosis',
+                pharmacokinetics: 'Subcutaneous bioavailability 90%, half-life: 4-7h, renal excretion',
+                clinicalPearls: 'More predictable than unfractionated heparin. Pregnancy anticoagulant of choice',
+                indication: 'VTE prophylaxis/treatment, acute coronary syndromes, pregnancy anticoagulation'
+            },
+            'ipratropium': {
+                name: 'Ipratropium',
+                class: 'Short-acting muscarinic antagonist (SAMA)',
+                mechanism: 'Competitive antagonist of muscarinic receptors in bronchial smooth muscle',
+                dosing: 'MDI: 40mcg QDS. Nebuliser: 250-500mcg QDS. Acute exacerbation: 500mcg nebulised',
+                contraindications: 'Hypersensitivity to atropine or derivatives',
+                interactions: 'Other anticholinergics (↑ anticholinergic effects)',
+                monitoring: 'Bronchodilator response, anticholinergic side effects, eye symptoms',
+                pregnancy: 'Safe - minimal systemic absorption',
+                sideEffects: 'Dry mouth, cough, headache, paradoxical bronchospasm (rare)',
+                pharmacokinetics: 'Minimal systemic absorption, onset: 15min, duration: 3-6h',
+                clinicalPearls: 'Additive effect with beta-2 agonists. Avoid contact with eyes (glaucoma risk)',
+                indication: 'COPD, severe asthma (add-on therapy), acute exacerbations'
+            },
+            'lorazepam': {
+                name: 'Lorazepam',
+                class: 'Short-acting benzodiazepine',
+                mechanism: 'Enhances GABA-A receptor activity, increasing neuronal inhibition',
+                dosing: 'Anxiety: 1-4mg daily in divided doses. Status epilepticus: 4mg IV slowly',
+                contraindications: 'Respiratory depression, severe hepatic impairment, myasthenia gravis',
+                interactions: 'Alcohol (↑ sedation), opioids (respiratory depression), phenytoin',
+                monitoring: 'Respiratory function, sedation level, signs of dependence',
+                pregnancy: 'Avoid - risk of floppy baby syndrome, neonatal withdrawal',
+                sideEffects: 'Sedation, confusion (elderly), dependence, respiratory depression',
+                pharmacokinetics: 'Intermediate half-life: 10-20h, conjugated (safer in elderly)',
+                clinicalPearls: 'Shorter-acting than diazepam. Less affected by hepatic impairment. High dependence risk',
+                indication: 'Short-term anxiety, status epilepticus, premedication'
+            },
+            'olanzapine': {
+                name: 'Olanzapine',
+                class: 'Atypical antipsychotic',
+                mechanism: 'Dopamine D2, serotonin 5-HT2A receptor antagonist with multiple receptor activity',
+                dosing: 'Schizophrenia: Start 10mg daily, range 5-20mg. Bipolar: 15mg daily, adjust 5-20mg',
+                contraindications: 'Comatose states, severe CNS depression',
+                interactions: 'Alcohol (↑ sedation), carbamazepine (↓ olanzapine levels), smoking (↓ levels)',
+                monitoring: 'Weight, glucose, lipids, prolactin, FBC, LFTs, movement disorders',
+                pregnancy: 'Use only if essential - risk of extrapyramidal symptoms in neonate',
+                sideEffects: 'Weight gain, diabetes, dyslipidaemia, sedation, extrapyramidal effects (less than typical)',
+                pharmacokinetics: 'Half-life: 30h, hepatic metabolism, smoking increases clearance',
+                clinicalPearls: 'Lower EPS risk than haloperidol but significant metabolic effects. Regular monitoring essential',
+                indication: 'Schizophrenia, bipolar disorder (acute mania), treatment-resistant depression'
+            },
+            'hyoscine': {
+                name: 'Hyoscine Butylbromide',
+                class: 'Antimuscarinic antispasmodic',
+                mechanism: 'Competitive muscarinic receptor antagonist in smooth muscle',
+                dosing: 'Abdominal cramps: 20mg QDS. IBS: 10mg TDS. IV: 20mg (bowel obstruction)',
+                contraindications: 'Narrow-angle glaucoma, prostatic enlargement, myasthenia gravis',
+                interactions: 'Other anticholinergics (↑ effects), tricyclics (↑ anticholinergic effects)',
+                monitoring: 'Anticholinergic effects, bowel sounds, pain relief',
+                pregnancy: 'Safe - does not cross blood-brain barrier significantly',
+                sideEffects: 'Dry mouth, constipation, urinary retention, blurred vision',
+                pharmacokinetics: 'Poor CNS penetration, half-life: 5h, minimal systemic effects',
+                clinicalPearls: 'Brand name: Buscopan. Less CNS effects than atropine. Good for colicky pain',
+                indication: 'Abdominal cramps, IBS, renal/biliary colic, bowel obstruction (palliative)'
+            },
+            'loperamide': {
+                name: 'Loperamide',
+                class: 'Opioid receptor agonist (antidiarrheal)',
+                mechanism: 'Mu-opioid receptor agonist in gut, slows intestinal motility',
+                dosing: 'Acute diarrhoea: 4mg initially, then 2mg after each loose stool (max 16mg daily)',
+                contraindications: 'Acute dysentery, pseudomembranous colitis, ileus',
+                interactions: 'Few significant interactions due to poor systemic absorption',
+                monitoring: 'Stool frequency, signs of toxic megacolon, electrolyte balance',
+                pregnancy: 'Safe - minimal systemic absorption',
+                sideEffects: 'Constipation, abdominal cramps, dizziness, skin reactions',
+                pharmacokinetics: 'Poor systemic absorption, undergoes extensive first-pass metabolism',
+                clinicalPearls: 'Available OTC. Does not cross blood-brain barrier. Avoid in infectious diarrhoea',
+                indication: 'Symptomatic treatment of acute and chronic diarrhoea'
+            },
+            'quinine': {
+                name: 'Quinine',
+                class: 'Antimalarial agent',
+                mechanism: 'Interferes with parasitic DNA replication, affects calcium distribution in muscle',
+                dosing: 'Malaria: 600mg TDS for 7 days. Cramps: 200-300mg at bedtime (unlicensed)',
+                contraindications: 'Optic neuritis, tinnitus, myasthenia gravis, G6PD deficiency',
+                interactions: 'Warfarin (↑ INR), digoxin (↑ levels), mefloquine (↑ seizure risk)',
+                monitoring: 'Hearing, vision, blood glucose, cardiac rhythm, signs of cinchonism',
+                pregnancy: 'Use with caution - may cause thrombocytopenia in neonate',
+                sideEffects: 'Cinchonism (tinnitus, headache, nausea), hypoglycaemia, arrhythmias',
+                pharmacokinetics: 'Half-life: 18h in malaria (shorter in healthy), hepatic metabolism',
+                clinicalPearls: 'Unlicensed use for nocturnal cramps. Monitor for cinchonism. Resistance common',
+                indication: 'Complicated malaria, nocturnal leg cramps (second-line)'
+            },
+            'hydrocortisone': {
+                name: 'Hydrocortisone',
+                class: 'Topical corticosteroid (mild potency)',
+                mechanism: 'Anti-inflammatory glucocorticoid effects via cytoplasmic receptors',
+                dosing: 'Topical: Apply thinly BD-QDS. Oral: 20-30mg daily in divided doses',
+                contraindications: 'Viral skin infections, rosacea, perioral dermatitis (topical)',
+                interactions: 'Minimal with topical use. Oral form: similar to prednisolone',
+                monitoring: 'Skin atrophy with prolonged topical use, HPA axis suppression',
+                pregnancy: 'Safe topically. Oral use: similar precautions to prednisolone',
+                sideEffects: 'Topical: skin atrophy, striae. Oral: similar to other corticosteroids',
+                pharmacokinetics: 'Topical absorption varies by site. Oral: short half-life 8-12h',
+                clinicalPearls: 'Mildest topical steroid. Available OTC in low concentrations. Safe for face/children',
+                indication: 'Eczema, dermatitis, insect bites, adrenal insufficiency (oral)'
             }
         };
         
@@ -4922,6 +5188,7 @@ class MLAQuizApp {
             </div>
             <div class="drug-categories">
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('all'); event.stopPropagation();">All Drugs</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('alphabetical'); event.stopPropagation();">A-Z</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('antibiotics'); event.stopPropagation();">Antibiotics</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('endocrine'); event.stopPropagation();">Endocrine</button>
@@ -4955,6 +5222,9 @@ class MLAQuizApp {
             return;
         }
         
+        // Sort search results alphabetically by drug name
+        matches.sort((a, b) => drugDatabase[a].name.localeCompare(drugDatabase[b].name));
+        
         resultsContainer.innerHTML = matches.map(drug => `
             <div class="drug-result" onclick="console.log('💊 Drug search result clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
                 <div class="drug-name">${drugDatabase[drug].name}</div>
@@ -4968,18 +5238,34 @@ class MLAQuizApp {
         const drugList = document.getElementById('drug-list');
         let drugs = Object.keys(drugDatabase);
         
+        // Filter drugs by category
         if (category === 'antibiotics') {
-            drugs = drugs.filter(drug => drugDatabase[drug].class.toLowerCase().includes('antibiotic'));
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                return drugClass.includes('antibiotic') || drugClass.includes('penicillin') || 
+                       drugClass.includes('macrolide') || drugClass.includes('cephalosporin') ||
+                       drugClass.includes('quinolone') || drugClass.includes('tetracycline');
+            });
         } else if (category === 'cardiovascular') {
-            drugs = drugs.filter(drug => 
-                drugDatabase[drug].class.toLowerCase().includes('statin') ||
-                drugDatabase[drug].class.toLowerCase().includes('ace inhibitor')
-            );
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                return drugClass.includes('statin') || drugClass.includes('ace inhibitor') ||
+                       drugClass.includes('beta-blocker') || drugClass.includes('diuretic') ||
+                       drugClass.includes('calcium channel') || drugClass.includes('anticoagulant') ||
+                       drugClass.includes('antiplatelet') || drugClass.includes('angiotensin');
+            });
         } else if (category === 'endocrine') {
-            drugs = drugs.filter(drug => 
-                drugDatabase[drug].class.toLowerCase().includes('antidiabetic') ||
-                drugDatabase[drug].class.toLowerCase().includes('thyroid')
-            );
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                return drugClass.includes('antidiabetic') || drugClass.includes('thyroid') ||
+                       drugClass.includes('insulin') || drugClass.includes('sulfonylurea') ||
+                       drugClass.includes('metformin') || drugClass.includes('corticosteroid');
+            });
+        }
+        
+        // Sort alphabetically if requested or if "A-Z" category selected
+        if (category === 'alphabetical') {
+            drugs.sort((a, b) => drugDatabase[a].name.localeCompare(drugDatabase[b].name));
         }
         
         drugList.innerHTML = drugs.map(drug => `
