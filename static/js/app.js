@@ -2248,6 +2248,9 @@ class MLAQuizApp {
             case 'curb65':
                 workspace.innerHTML = this.getCURB65Calculator();
                 break;
+            case 'palliative':
+                workspace.innerHTML = this.getPalliativeCalculator();
+                break;
             default:
                 workspace.innerHTML = '<p>Calculator not yet implemented</p>';
         }
@@ -3887,6 +3890,342 @@ class MLAQuizApp {
         `;
     }
 
+    getPalliativeCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>🌸 Palliative Care Drug Calculator</h4>
+                <p><small>Morphine equivalents, breakthrough dosing, and symptom management</small></p>
+                
+                <div class="calc-section">
+                    <h5>📊 Opioid Conversion</h5>
+                    <div class="calc-input-group">
+                        <label>Current Opioid:</label>
+                        <select id="palliative-current-opioid">
+                            <option value="morphine-oral">Morphine (oral)</option>
+                            <option value="morphine-sc">Morphine (subcutaneous)</option>
+                            <option value="oxycodone-oral">Oxycodone (oral)</option>
+                            <option value="fentanyl-patch">Fentanyl (patch mcg/hr)</option>
+                            <option value="codeine">Codeine</option>
+                            <option value="tramadol">Tramadol</option>
+                            <option value="buprenorphine-patch">Buprenorphine (patch mcg/hr)</option>
+                        </select>
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Current Daily Dose (mg or mcg/hr for patches):</label>
+                        <input type="number" id="palliative-current-dose" placeholder="60" step="0.1">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Convert to:</label>
+                        <select id="palliative-target-opioid">
+                            <option value="morphine-oral">Morphine (oral)</option>
+                            <option value="morphine-sc">Morphine (subcutaneous)</option>
+                            <option value="oxycodone-oral">Oxycodone (oral)</option>
+                            <option value="fentanyl-patch">Fentanyl (patch mcg/hr)</option>
+                            <option value="diamorphine-sc">Diamorphine (subcutaneous)</option>
+                        </select>
+                    </div>
+                    <button onclick="window.quizApp.calculateOpioidConversion()">Convert Opioid</button>
+                    <div id="opioid-conversion-result" class="calc-result"></div>
+                </div>
+
+                <div class="calc-section">
+                    <h5>💉 Breakthrough Dosing</h5>
+                    <div class="calc-input-group">
+                        <label>Total Daily Morphine Equivalent (mg):</label>
+                        <input type="number" id="palliative-daily-morphine" placeholder="60" step="1">
+                    </div>
+                    <button onclick="window.quizApp.calculateBreakthroughDose()">Calculate Breakthrough</button>
+                    <div id="breakthrough-result" class="calc-result"></div>
+                </div>
+
+                <div class="calc-section">
+                    <h5>🤧 Anti-emetic Calculator</h5>
+                    <div class="calc-input-group">
+                        <label>Patient Weight (kg):</label>
+                        <input type="number" id="palliative-weight" placeholder="70" step="1">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Cause of Nausea:</label>
+                        <select id="palliative-nausea-cause">
+                            <option value="opioid">Opioid-induced</option>
+                            <option value="chemotherapy">Chemotherapy</option>
+                            <option value="bowel-obstruction">Bowel obstruction</option>
+                            <option value="raised-icp">Raised ICP</option>
+                            <option value="metabolic">Metabolic</option>
+                            <option value="vestibular">Vestibular</option>
+                        </select>
+                    </div>
+                    <button onclick="window.quizApp.calculateAntiemetic()">Recommend Anti-emetic</button>
+                    <div id="antiemetic-result" class="calc-result"></div>
+                </div>
+
+                <div class="calc-section">
+                    <h5>🫁 Respiratory Secretions</h5>
+                    <div class="calc-input-group">
+                        <label>Patient Weight (kg):</label>
+                        <input type="number" id="palliative-secretions-weight" placeholder="70" step="1">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Secretion Type:</label>
+                        <select id="palliative-secretion-type">
+                            <option value="bronchial">Bronchial secretions</option>
+                            <option value="salivary">Excessive salivation</option>
+                            <option value="death-rattle">Death rattle</option>
+                        </select>
+                    </div>
+                    <button onclick="window.quizApp.calculateSecretionManagement()">Calculate Doses</button>
+                    <div id="secretion-result" class="calc-result"></div>
+                </div>
+
+                <div class="calc-reference">
+                    <small>
+                        <strong>⚠️ Important Notes:</strong><br>
+                        • All doses are starting suggestions - titrate to effect<br>
+                        • Consider 25-50% dose reduction if frail/elderly<br>
+                        • Monitor for sedation and respiratory depression<br>
+                        • Seek specialist palliative care advice for complex cases<br>
+                        • These calculations are guidelines only
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateOpioidConversion() {
+        const currentOpioid = document.getElementById('palliative-current-opioid').value;
+        const currentDose = parseFloat(document.getElementById('palliative-current-dose').value) || 0;
+        const targetOpioid = document.getElementById('palliative-target-opioid').value;
+
+        if (currentDose === 0) {
+            document.getElementById('opioid-conversion-result').innerHTML = 
+                '<div style="color: #F44336;"><strong>Please enter current dose</strong></div>';
+            return;
+        }
+
+        // Conversion factors to oral morphine equivalents (mg)
+        const toMorphineFactors = {
+            'morphine-oral': 1,
+            'morphine-sc': 2,  // SC morphine is twice as potent as oral
+            'oxycodone-oral': 1.5,  // Oxycodone 1mg = 1.5mg morphine
+            'fentanyl-patch': 150,  // 1 mcg/hr fentanyl = 150mg oral morphine per day
+            'codeine': 0.1,  // Codeine 10mg = 1mg morphine
+            'tramadol': 0.1,  // Tramadol 10mg = 1mg morphine
+            'buprenorphine-patch': 75  // 1 mcg/hr buprenorphine = 75mg oral morphine per day
+        };
+
+        // Conversion factors from oral morphine equivalents
+        const fromMorphineFactors = {
+            'morphine-oral': 1,
+            'morphine-sc': 0.5,  // Oral to SC morphine
+            'oxycodone-oral': 0.67,  // Morphine to oxycodone
+            'fentanyl-patch': 0.0067,  // Morphine to fentanyl patch (1/150)
+            'diamorphine-sc': 0.33  // Oral morphine to SC diamorphine
+        };
+
+        // Convert current dose to morphine equivalents
+        const morphineEquivalent = currentDose * toMorphineFactors[currentOpioid];
+        
+        // Convert to target opioid
+        const targetDose = morphineEquivalent * fromMorphineFactors[targetOpioid];
+
+        let dosageForm = '';
+        let administration = '';
+        let frequency = '';
+
+        switch (targetOpioid) {
+            case 'morphine-oral':
+                dosageForm = 'mg oral';
+                administration = 'Give as modified-release BD or immediate-release 4-hourly';
+                frequency = targetDose <= 30 ? '5-10mg 4-hourly PRN' : Math.round(targetDose/6) + 'mg 4-hourly PRN';
+                break;
+            case 'morphine-sc':
+                dosageForm = 'mg subcutaneous';
+                administration = 'Via syringe driver over 24 hours or divided into 4-6 hourly doses';
+                frequency = Math.round(targetDose/6) + 'mg SC PRN (1/6 of daily dose)';
+                break;
+            case 'oxycodone-oral':
+                dosageForm = 'mg oral';
+                administration = 'Give as modified-release BD or immediate-release 4-hourly';
+                frequency = Math.round(targetDose/6) + 'mg 4-hourly PRN';
+                break;
+            case 'fentanyl-patch':
+                dosageForm = 'mcg/hr patch';
+                administration = 'Change patch every 72 hours';
+                frequency = 'Breakthrough: use fast-acting fentanyl products or oral morphine';
+                break;
+            case 'diamorphine-sc':
+                dosageForm = 'mg subcutaneous';
+                administration = 'Via syringe driver over 24 hours';
+                frequency = Math.round(targetDose/6) + 'mg SC PRN (1/6 of daily dose)';
+                break;
+        }
+
+        document.getElementById('opioid-conversion-result').innerHTML = `
+            <div style="color: #2196F3;">
+                <strong>Conversion Result:</strong><br>
+                <strong>Target Dose: ${Math.round(targetDose * 10) / 10} ${dosageForm}</strong><br>
+                <em>Administration:</em> ${administration}<br>
+                <em>Breakthrough:</em> ${frequency}<br><br>
+                <small style="color: #666;">
+                    ⚠️ Start at 75% of calculated dose and titrate to effect<br>
+                    Original: ${currentDose} ${currentOpioid.replace('-', ' ')} = ${Math.round(morphineEquivalent)} mg oral morphine equiv.
+                </small>
+            </div>
+        `;
+    }
+
+    calculateBreakthroughDose() {
+        const dailyMorphine = parseFloat(document.getElementById('palliative-daily-morphine').value) || 0;
+
+        if (dailyMorphine === 0) {
+            document.getElementById('breakthrough-result').innerHTML = 
+                '<div style="color: #F44336;"><strong>Please enter daily morphine equivalent</strong></div>';
+            return;
+        }
+
+        // Breakthrough dose is typically 1/6 of total daily dose
+        const breakthroughDose = Math.round(dailyMorphine / 6);
+        const scBreakthroughDose = Math.round(breakthroughDose / 2);
+
+        document.getElementById('breakthrough-result').innerHTML = `
+            <div style="color: #4CAF50;">
+                <strong>Breakthrough Dosing:</strong><br>
+                <strong>Oral Morphine:</strong> ${breakthroughDose}mg every 1-2 hours PRN<br>
+                <strong>SC Morphine:</strong> ${scBreakthroughDose}mg every 1-2 hours PRN<br>
+                <strong>Oxycodone:</strong> ${Math.round(breakthroughDose * 0.67)}mg every 1-2 hours PRN<br><br>
+                <em>Frequency:</em> Maximum 6 doses per 24 hours<br>
+                <em>Review:</em> If >2 breakthrough doses/day, consider increasing background dose<br><br>
+                <small style="color: #666;">
+                    💡 Rule: Breakthrough = 1/6 of total daily dose
+                </small>
+            </div>
+        `;
+    }
+
+    calculateAntiemetic() {
+        const weight = parseFloat(document.getElementById('palliative-weight').value) || 70;
+        const cause = document.getElementById('palliative-nausea-cause').value;
+
+        let firstLine = '';
+        let secondLine = '';
+        let notes = '';
+
+        switch (cause) {
+            case 'opioid':
+                firstLine = `<strong>Haloperidol:</strong> 0.5-1.5mg PO BD or 1.5-5mg SC/24h<br>
+                           <strong>Metoclopramide:</strong> 10mg TDS PO/SC (max 5 days)`;
+                secondLine = `<strong>Ondansetron:</strong> 4-8mg TDS<br>
+                            <strong>Levomepromazine:</strong> 6.25-25mg/24h SC`;
+                notes = 'Avoid metoclopramide if bowel obstruction suspected';
+                break;
+            case 'chemotherapy':
+                firstLine = `<strong>Ondansetron:</strong> 8mg BD PO or 8mg/24h SC<br>
+                           <strong>Dexamethasone:</strong> 8-12mg daily`;
+                secondLine = `<strong>Metoclopramide:</strong> 10mg TDS<br>
+                            <strong>Levomepromazine:</strong> 6.25-12.5mg/24h SC`;
+                notes = 'Consider NK1 antagonists for highly emetogenic chemotherapy';
+                break;
+            case 'bowel-obstruction':
+                firstLine = `<strong>Levomepromazine:</strong> 6.25-25mg/24h SC<br>
+                           <strong>Haloperidol:</strong> 2.5-10mg/24h SC`;
+                secondLine = `<strong>Octreotide:</strong> 300-600mcg/24h SC<br>
+                            <strong>Hyoscine butylbromide:</strong> 60-120mg/24h SC`;
+                notes = '⚠️ AVOID metoclopramide - may worsen colic';
+                break;
+            case 'raised-icp':
+                firstLine = `<strong>Dexamethasone:</strong> 8-16mg daily<br>
+                           <strong>Cyclizine:</strong> 50mg TDS PO or 150mg/24h SC`;
+                secondLine = `<strong>Levomepromazine:</strong> 6.25-12.5mg/24h SC`;
+                notes = 'Treat underlying cause. Consider mannitol if acute';
+                break;
+            case 'metabolic':
+                firstLine = `<strong>Haloperidol:</strong> 0.5-1.5mg BD PO or 2.5-5mg/24h SC<br>
+                           <strong>Metoclopramide:</strong> 10mg TDS`;
+                secondLine = `<strong>Ondansetron:</strong> 4-8mg TDS`;
+                notes = 'Correct reversible causes (hypercalcaemia, uraemia, etc.)';
+                break;
+            case 'vestibular':
+                firstLine = `<strong>Cyclizine:</strong> 50mg TDS PO or 150mg/24h SC<br>
+                           <strong>Prochlorperazine:</strong> 5-10mg TDS`;
+                secondLine = `<strong>Levomepromazine:</strong> 6.25-12.5mg/24h SC`;
+                notes = 'Consider cause: drugs, infection, vestibular disorders';
+                break;
+        }
+
+        document.getElementById('antiemetic-result').innerHTML = `
+            <div style="color: #2196F3;">
+                <strong>Recommended Anti-emetics for ${cause.replace('-', ' ')}:</strong><br><br>
+                <strong>First Line:</strong><br>
+                ${firstLine}<br><br>
+                <strong>Second Line:</strong><br>
+                ${secondLine}<br><br>
+                <em>Clinical Notes:</em> ${notes}<br><br>
+                <small style="color: #666;">
+                    ⚠️ Weight: ${weight}kg considered. Adjust doses for renal/hepatic impairment<br>
+                    💊 Can combine drugs with different mechanisms if single agent insufficient
+                </small>
+            </div>
+        `;
+    }
+
+    calculateSecretionManagement() {
+        const weight = parseFloat(document.getElementById('palliative-secretions-weight').value) || 70;
+        const secretionType = document.getElementById('palliative-secretion-type').value;
+
+        let primaryDrug = '';
+        let alternativeDrugs = '';
+        let nonPharmacological = '';
+
+        switch (secretionType) {
+            case 'bronchial':
+                primaryDrug = `<strong>Hyoscine hydrobromide:</strong><br>
+                             • 0.4-0.6mg SC TDS-QDS<br>
+                             • Or 1.2-2.4mg SC/24h via syringe driver<br>
+                             • Patches: 1mg/72h (change every 3 days)`;
+                alternativeDrugs = `<strong>Glycopyrronium:</strong> 200-400mcg SC TDS-QDS<br>
+                                  <strong>Atropine:</strong> 0.4-0.6mg SC QDS<br>
+                                  <strong>Hyoscine butylbromide:</strong> 20mg SC TDS (less CNS effects)`;
+                nonPharmacological = 'Positioning, gentle suction, reduce fluid intake';
+                break;
+            case 'salivary':
+                primaryDrug = `<strong>Glycopyrronium:</strong><br>
+                             • 200-400mcg SC TDS<br>
+                             • Or 800-1200mcg SC/24h via syringe driver`;
+                alternativeDrugs = `<strong>Hyoscine patches:</strong> 1mg/72h<br>
+                                  <strong>Atropine drops:</strong> 1% drops sublingually<br>
+                                  <strong>Amitriptyline:</strong> 25-75mg at night (if swallowing possible)`;
+                nonPharmacological = 'Frequent mouth care, suction, positioning';
+                break;
+            case 'death-rattle':
+                primaryDrug = `<strong>Hyoscine hydrobromide:</strong><br>
+                             • 0.4-0.6mg SC STAT, then every 4-8h PRN<br>
+                             • Or 1.2-2.4mg SC/24h continuous<br>
+                             • Start early - less effective once established`;
+                alternativeDrugs = `<strong>Glycopyrronium:</strong> 200-400mcg SC TDS<br>
+                                  <strong>Atropine:</strong> 0.6mg SC TDS<br>
+                                  <strong>Hyoscine butylbromide:</strong> 20mg SC TDS`;
+                nonPharmacological = 'Family education that this doesn\'t cause distress to patient, positioning';
+                break;
+        }
+
+        document.getElementById('secretion-result').innerHTML = `
+            <div style="color: #4CAF50;">
+                <strong>Management of ${secretionType.replace('-', ' ')}:</strong><br><br>
+                <strong>First Choice:</strong><br>
+                ${primaryDrug}<br><br>
+                <strong>Alternatives:</strong><br>
+                ${alternativeDrugs}<br><br>
+                <strong>Non-pharmacological:</strong><br>
+                ${nonPharmacological}<br><br>
+                <small style="color: #666;">
+                    💊 Weight: ${weight}kg - doses shown are standard adult doses<br>
+                    ⚠️ All anticholinergics can cause drowsiness, confusion, and dry mouth<br>
+                    🕒 Review effectiveness after 24-48 hours and adjust accordingly
+                </small>
+            </div>
+        `;
+    }
+
     // Drug Reference Functions
     loadDrugReference() {
         const drugDatabase = {
@@ -5499,6 +5838,188 @@ class MLAQuizApp {
                 pharmacokinetics: 'Onset 2-3 days for full effect. t½ 1h. Hepatic metabolism (CYP2C19)',
                 clinicalPearls: 'IV formulation available. Less drug interactions than omeprazole',
                 indication: 'GORD, peptic ulcer disease, H.pylori eradication, stress ulcer prophylaxis'
+            },
+            'loperamide': {
+                name: 'Loperamide',
+                class: 'Opioid antidiarrhoeal agent',
+                mechanism: 'Mu-opioid receptor agonist in GI tract, slows intestinal motility',
+                dosing: 'Adults: 4mg initially, then 2mg after each loose stool (max 16mg daily). Children >4 years: weight-based dosing',
+                contraindications: 'Acute dysentery, acute ulcerative colitis, bacterial enterocolitis, children <4 years',
+                interactions: 'P-glycoprotein inhibitors (↑ CNS effects), quinidine, ritonavir',
+                monitoring: 'Stool frequency, abdominal pain, signs of toxic megacolon',
+                pregnancy: 'Safe - limited systemic absorption, no increased malformation risk',
+                sideEffects: 'Constipation, abdominal cramps, drowsiness, dry mouth, nausea',
+                pharmacokinetics: 'Poor oral absorption, minimal CNS penetration, Half-life: 10-14h',
+                clinicalPearls: 'Available OTC (max 2 days). Does not cross blood-brain barrier at therapeutic doses',
+                indication: 'Acute diarrhoea, chronic diarrhoea, IBS with diarrhoea'
+            },
+            'domperidone': {
+                name: 'Domperidone',
+                class: 'Antiemetic (Dopamine antagonist)',
+                mechanism: 'Selective D2 receptor antagonist at CTZ, prokinetic effect on upper GI tract',
+                dosing: 'Adults: 10mg TDS before meals (max 30mg daily, 7 days maximum). Not for children <35kg',
+                contraindications: 'Cardiac conduction disorders, moderate-severe hepatic impairment, prolactinoma',
+                interactions: 'CYP3A4 inhibitors (↑ levels), QT-prolonging drugs, anticholinergics',
+                monitoring: 'ECG if cardiac risk factors, prolactin levels with prolonged use',
+                pregnancy: 'Use only if essential - limited safety data',
+                sideEffects: 'QT prolongation, galactorrhoea, gynaecomastia, extrapyramidal effects (rare)',
+                pharmacokinetics: 'Poor oral bioavailability 15%, Half-life: 7-9h, hepatic metabolism',
+                clinicalPearls: 'Restricted to 7 days max due to cardiac risks. Does not cross blood-brain barrier',
+                indication: 'Nausea and vomiting, gastroparesis, functional dyspepsia'
+            },
+            'cyclizine': {
+                name: 'Cyclizine',
+                class: 'Antihistamine antiemetic',
+                mechanism: 'H1 receptor antagonist with anticholinergic properties, acts on vestibular system',
+                dosing: 'Adults: 50mg TDS PO/IM/IV. Children 6-12 years: 25mg TDS. Motion sickness: 50mg 30min before travel',
+                contraindications: 'Severe heart failure, porphyria, known hypersensitivity',
+                interactions: 'CNS depressants (↑ sedation), anticholinergics (↑ effects), MAOIs',
+                monitoring: 'Sedation level, anticholinergic effects, cardiac function in elderly',
+                pregnancy: 'Safe for nausea in pregnancy - widely used and well-tolerated',
+                sideEffects: 'Drowsiness, dry mouth, blurred vision, constipation, urinary retention',
+                pharmacokinetics: 'Good oral absorption, Half-life: 20h, hepatic metabolism',
+                clinicalPearls: 'Excellent for motion sickness and vertigo. Less sedating than promethazine',
+                indication: 'Motion sickness, vertigo, nausea/vomiting, pregnancy sickness'
+            },
+            'hyoscine': {
+                name: 'Hyoscine (Scopolamine)',
+                class: 'Anticholinergic/Antimuscarinic',
+                mechanism: 'Competitive antagonist of muscarinic acetylcholine receptors',
+                dosing: 'Motion sickness: 0.3mg patch behind ear. Palliative care: 0.4-0.6mg SC/IV TDS-QDS',
+                contraindications: 'Narrow-angle glaucoma, prostatic enlargement, myasthenia gravis, intestinal obstruction',
+                interactions: 'Anticholinergic drugs (↑ effects), phenothiazines, tricyclics',
+                monitoring: 'Anticholinergic effects, confusion in elderly, respiratory secretions',
+                pregnancy: 'Safe - used for morning sickness. Category A in Australia',
+                sideEffects: 'Dry mouth, drowsiness, blurred vision, confusion, hallucinations',
+                pharmacokinetics: 'Crosses blood-brain barrier, Half-life: 4-8h, hepatic metabolism',
+                clinicalPearls: 'Patches for motion sickness. Excellent for respiratory secretions in palliative care',
+                indication: 'Motion sickness, excessive respiratory secretions, smooth muscle spasm'
+            },
+            'senna': {
+                name: 'Senna',
+                class: 'Stimulant laxative',
+                mechanism: 'Anthraquinone glycosides stimulate colonic peristalsis and inhibit water/electrolyte absorption',
+                dosing: 'Adults: 7.5-15mg at bedtime (sennosides). Children >6 years: 3.75-7.5mg at bedtime',
+                contraindications: 'Intestinal obstruction, inflammatory bowel disease, severe dehydration, appendicitis',
+                interactions: 'Cardiac glycosides (hypokalaemia ↑ toxicity), thiazide diuretics',
+                monitoring: 'Bowel movements, electrolyte balance with prolonged use, dependency',
+                pregnancy: 'Safe - category A. Does not increase malformation risk',
+                sideEffects: 'Abdominal cramps, hypokalaemia, melanosis coli (prolonged use), dependency',
+                pharmacokinetics: 'Prodrug activated by colonic bacteria, onset 8-12h',
+                clinicalPearls: 'Most widely used stimulant laxative in UK. Avoid prolonged use >1 week',
+                indication: 'Constipation, bowel preparation, opioid-induced constipation'
+            },
+            'lactulose': {
+                name: 'Lactulose',
+                class: 'Osmotic laxative',
+                mechanism: 'Non-absorbable disaccharide, osmotically active, acidifies colon reducing ammonia absorption',
+                dosing: 'Adults: 15ml BD initially, adjust to 1-2 soft stools daily. Hepatic encephalopathy: 30-50ml TDS',
+                contraindications: 'Galactosaemia, intestinal obstruction, fructose intolerance',
+                interactions: 'No significant drug interactions',
+                monitoring: 'Stool frequency/consistency, electrolyte balance, dehydration risk',
+                pregnancy: 'Safe - category B. Not absorbed systemically',
+                sideEffects: 'Flatulence, abdominal cramps, nausea, electrolyte disturbance (overdose)',
+                pharmacokinetics: 'Not absorbed in small intestine, fermented by colonic bacteria',
+                clinicalPearls: 'Safe in pregnancy and elderly. Takes 2-3 days for full effect. Sweet taste',
+                indication: 'Constipation, hepatic encephalopathy, preparation for procedures'
+            },
+            'cetirizine': {
+                name: 'Cetirizine',
+                class: 'Second-generation antihistamine (H1 antagonist)',
+                mechanism: 'Selective peripheral H1 receptor antagonist with minimal CNS penetration',
+                dosing: 'Adults: 10mg daily. Children 6-12 years: 5mg daily or 2.5mg BD. Children 2-6 years: 2.5mg daily',
+                contraindications: 'End-stage renal disease, hypersensitivity to cetirizine or hydroxyzine',
+                interactions: 'Minimal interactions due to limited metabolism. Alcohol (↑ sedation)',
+                monitoring: 'Sedation level (less than first-generation), renal function in elderly',
+                pregnancy: 'Safe - category B. No increased malformation risk',
+                sideEffects: 'Drowsiness (10%), dry mouth, headache, fatigue, GI upset',
+                pharmacokinetics: 'Good oral absorption, Half-life: 8-11h, 60% renal excretion unchanged',
+                clinicalPearls: 'Less sedating than chlorphenamine. Reduce dose in renal impairment. Available OTC',
+                indication: 'Allergic rhinitis, chronic urticaria, allergic conjunctivitis, atopic dermatitis'
+            },
+            'loratadine': {
+                name: 'Loratadine',
+                class: 'Second-generation antihistamine (H1 antagonist)',
+                mechanism: 'Selective peripheral H1 receptor antagonist, minimal CNS and anticholinergic effects',
+                dosing: 'Adults: 10mg daily. Children 2-12 years: 5mg daily (<30kg) or 10mg daily (>30kg)',
+                contraindications: 'Hypersensitivity to loratadine, severe hepatic impairment',
+                interactions: 'CYP3A4 inhibitors (ketoconazole, erythromycin) may ↑ levels but no clinical significance',
+                monitoring: 'Sedation level, effectiveness for allergic symptoms',
+                pregnancy: 'Safe - category B. Preferred antihistamine in pregnancy',
+                sideEffects: 'Headache, drowsiness (3%), dry mouth, fatigue, nervousness',
+                pharmacokinetics: 'Rapidly absorbed, Half-life: 8h (active metabolite 28h), hepatic metabolism',
+                clinicalPearls: 'Non-sedating antihistamine. Once daily dosing. Available OTC. No dose adjustment in renal disease',
+                indication: 'Allergic rhinitis, chronic idiopathic urticaria, allergic skin conditions'
+            },
+            'fexofenadine': {
+                name: 'Fexofenadine',
+                class: 'Second-generation antihistamine (H1 antagonist)',
+                mechanism: 'Selective peripheral H1 receptor antagonist with no CNS penetration',
+                dosing: 'Adults: 120mg daily (seasonal rhinitis) or 180mg daily (urticaria). Children 6-12 years: 30mg BD',
+                contraindications: 'Hypersensitivity to fexofenadine, severe renal impairment',
+                interactions: 'Antacids (↓ absorption), fruit juices may ↓ absorption',
+                monitoring: 'Effectiveness for allergic symptoms, minimal side effects',
+                pregnancy: 'Safe - category C. Limited human data but no animal teratogenicity',
+                sideEffects: 'Headache, drowsiness (2%), nausea, dyspepsia',
+                pharmacokinetics: 'Good oral absorption, Half-life: 14h, minimal metabolism, renal/biliary excretion',
+                clinicalPearls: 'Least sedating antihistamine. No cardiotoxicity. Take on empty stomach',
+                indication: 'Seasonal allergic rhinitis, chronic idiopathic urticaria, allergic skin conditions'
+            },
+            'montelukast': {
+                name: 'Montelukast',
+                class: 'Leukotriene receptor antagonist',
+                mechanism: 'Selective antagonist of cysteinyl leukotriene (CysLT1) receptors',
+                dosing: 'Adults: 10mg daily at bedtime. Children 6-14 years: 5mg daily. Children 2-5 years: 4mg daily',
+                contraindications: 'Hypersensitivity to montelukast, acute asthma attacks',
+                interactions: 'CYP2C8 inducers (rifampicin) may ↓ levels. CYP2C8/2C9 interactions possible',
+                monitoring: 'Asthma control, mood changes, neuropsychiatric symptoms, liver function',
+                pregnancy: 'Generally safe - category B. Continue if well controlled on treatment',
+                sideEffects: 'Headache, GI upset, neuropsychiatric effects (mood changes, sleep disturbances)',
+                pharmacokinetics: 'Rapid absorption, Half-life: 3-6h, extensive hepatic metabolism',
+                clinicalPearls: 'Add-on therapy in asthma step 3. Take at bedtime. Monitor for mood changes',
+                indication: 'Asthma prophylaxis, allergic rhinitis, exercise-induced bronchospasm'
+            },
+            'gabapentin': {
+                name: 'Gabapentin',
+                class: 'Anticonvulsant/Neuropathic pain agent',
+                mechanism: 'Binds to voltage-gated calcium channel α2δ subunit, reducing neurotransmitter release',
+                dosing: 'Neuropathic pain: Start 300mg daily, increase to 300mg TDS, max 3600mg daily in divided doses',
+                contraindications: 'Hypersensitivity to gabapentin',
+                interactions: 'Antacids (↓ absorption), opioids (↑ sedation), alcohol (↑ CNS depression)',
+                monitoring: 'Pain scores, mood changes, renal function, signs of abuse/dependence',
+                pregnancy: 'Use if benefit outweighs risk - category C. Potential teratogenic risk',
+                sideEffects: 'Drowsiness, dizziness, fatigue, peripheral oedema, weight gain, ataxia',
+                pharmacokinetics: 'Dose-dependent absorption, Half-life: 5-7h, renal excretion unchanged',
+                clinicalPearls: 'Gradual dose escalation needed. Reduce dose in renal impairment. Potential for abuse',
+                indication: 'Neuropathic pain, epilepsy, restless leg syndrome (unlicensed)'
+            },
+            'naproxen': {
+                name: 'Naproxen',
+                class: 'Non-steroidal anti-inflammatory drug (NSAID)',
+                mechanism: 'Non-selective COX inhibitor with longer half-life than other NSAIDs',
+                dosing: 'Adults: 250-500mg BD with food. Acute pain: 500mg initially, then 250mg TDS',
+                contraindications: 'Active peptic ulceration, severe heart failure, severe renal/hepatic impairment',
+                interactions: 'ACE inhibitors (↓ effect), warfarin (↑ bleeding), lithium (↑ toxicity)',
+                monitoring: 'Renal function, blood pressure, signs of GI bleeding, cardiovascular events',
+                pregnancy: 'Avoid in 3rd trimester. Use lowest dose for shortest time if essential',
+                sideEffects: 'GI bleeding, cardiovascular events, renal impairment, fluid retention',
+                pharmacokinetics: 'Good oral absorption, Half-life: 12-15h, hepatic metabolism',
+                clinicalPearls: 'Longer half-life allows BD dosing. Lower GI toxicity than some NSAIDs',
+                indication: 'Inflammatory conditions, musculoskeletal pain, dysmenorrhoea, acute gout'
+            },
+            'diclofenac': {
+                name: 'Diclofenac',
+                class: 'Non-steroidal anti-inflammatory drug (NSAID)',
+                mechanism: 'Potent non-selective COX inhibitor with good tissue penetration',
+                dosing: 'Oral: 50mg TDS or 75mg BD with food. Topical: apply TDS-QDS. Injection: 75mg IM',
+                contraindications: 'Active peptic ulceration, ischaemic heart disease, cerebrovascular disease',
+                interactions: 'ACE inhibitors, warfarin, ciclosporin, lithium, methotrexate',
+                monitoring: 'Cardiovascular risk, renal function, hepatic function, GI bleeding signs',
+                pregnancy: 'Avoid - particularly high cardiovascular risk. Category D in 3rd trimester',
+                sideEffects: 'Highest cardiovascular risk of NSAIDs, GI bleeding, hepatotoxicity',
+                pharmacokinetics: 'Good oral/topical absorption, Half-life: 1-2h, hepatic metabolism',
+                clinicalPearls: 'High cardiovascular risk - avoid in CVD. Topical form safer for musculoskeletal conditions',
+                indication: 'Acute musculoskeletal conditions, postoperative pain, topical for joint pain'
             }
         };
         
@@ -9989,12 +10510,11 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
     const container = document.getElementById('examination-container');
     
     const sectionsHtml = Object.entries(system.sections).map(([sectionKey, section]) => `
-        <button class="exam-section-btn" onclick="window.quizApp.showSectionDetail('${systemKey}', '${sectionKey}'); event.stopPropagation();">
-            <div class="section-name">${section.name}</div>
-            <div class="section-technique">🔍 ${section.technique.substring(0, 100)}...</div>
-            <div class="section-findings">
-                <span class="normal-tag">✅ Normal</span>
-                <span class="abnormal-tag">⚠️ ${Object.keys(section.abnormal).length} Abnormal findings</span>
+        <button class="lab-value-btn" onclick="window.quizApp.showSectionDetail('${systemKey}', '${sectionKey}'); event.stopPropagation();">
+            <div class="lab-name">${section.name}</div>
+            <div class="lab-range">🔍 ${section.technique.substring(0, 80)}...</div>
+            <div class="lab-count">
+                ✅ Normal | ⚠️ ${Object.keys(section.abnormal).length} Abnormal findings
             </div>
         </button>
     `).join('');
@@ -10009,7 +10529,7 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
                 <p>${system.approach}</p>
             </div>
             <h4>📋 Examination Sections:</h4>
-            <div class="exam-sections">
+            <div class="lab-grid">
                 ${sectionsHtml}
             </div>
         </div>
