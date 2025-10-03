@@ -2312,6 +2312,10 @@ class MLAQuizApp {
                 calculatorTitle = 'eGFR Calculator';
                 calculatorContent += this.getEGFRCalculator();
                 break;
+            case 'urea-creatinine':
+                calculatorTitle = 'Urea:Creatinine Ratio';
+                calculatorContent += this.getUreaCreatinineCalculator();
+                break;
             case 'abcd2':
                 calculatorTitle = 'ABCD² Score';
                 calculatorContent += this.getABCD2Calculator();
@@ -3435,6 +3439,36 @@ class MLAQuizApp {
         `;
     }
 
+    getUreaCreatinineCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Urea:Creatinine Ratio Calculator</h4>
+                <p><small>Assessment of kidney function and AKI classification</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Serum Urea (mmol/L):</label>
+                    <input type="number" id="urea-value" placeholder="7.0" min="1" max="50" step="0.1">
+                </div>
+                <div class="calc-input-group">
+                    <label>Serum Creatinine (μmol/L):</label>
+                    <input type="number" id="creatinine-value" placeholder="80" min="20" max="2000">
+                </div>
+                
+                <button onclick="window.quizApp.calculateUreaCreatinine()">Calculate Ratio</button>
+                <div id="urea-creatinine-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small>
+                        <strong>Normal Range:</strong> 10-20:1<br>
+                        <strong>Prerenal AKI:</strong> >20:1<br>
+                        <strong>Intrinsic renal AKI:</strong> <10:1<br>
+                        <strong>Post-renal AKI:</strong> Variable (often >20:1 initially)
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
     getABCD2Calculator() {
         return `
             <div class="calculator-form">
@@ -3477,6 +3511,58 @@ class MLAQuizApp {
                 
                 <button onclick="window.quizApp.calculateABCD2()">Calculate Score</button>
                 <div id="abcd2-result" class="calc-result"></div>
+            </div>
+        `;
+    }
+
+    calculateUreaCreatinine() {
+        const urea = parseFloat(document.getElementById('urea-value').value);
+        const creatinine = parseFloat(document.getElementById('creatinine-value').value);
+        
+        if (!urea || !creatinine) {
+            document.getElementById('urea-creatinine-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter both urea and creatinine values</strong></div>';
+            return;
+        }
+        
+        // Convert creatinine from μmol/L to mmol/L for ratio calculation
+        const creatinineMmol = creatinine / 1000;
+        
+        // Calculate urea:creatinine ratio
+        const ratio = urea / creatinineMmol;
+        
+        let interpretation = '';
+        let color = '';
+        let clinicalContext = '';
+        
+        if (ratio < 10) {
+            interpretation = 'Low ratio (<10:1)';
+            color = '#FF5722';
+            clinicalContext = 'Suggests intrinsic renal AKI (acute tubular necrosis, glomerulonephritis, interstitial nephritis)';
+        } else if (ratio <= 20) {
+            interpretation = 'Normal ratio (10-20:1)';
+            color = '#4CAF50';
+            clinicalContext = 'Normal kidney function or stable CKD';
+        } else if (ratio <= 40) {
+            interpretation = 'Elevated ratio (20-40:1)';
+            color = '#FF9800';
+            clinicalContext = 'Suggests prerenal AKI (dehydration, hypotension, heart failure) or early post-renal obstruction';
+        } else {
+            interpretation = 'Very high ratio (>40:1)';
+            color = '#F44336';
+            clinicalContext = 'Strongly suggests prerenal AKI or significant dehydration. Consider urgent fluid assessment.';
+        }
+        
+        document.getElementById('urea-creatinine-result').innerHTML = `
+            <div style="color: ${color}">
+                <strong>Urea:Creatinine Ratio: ${Math.round(ratio * 10) / 10}:1</strong><br>
+                <strong>${interpretation}</strong><br>
+                <div style="margin-top: 8px; font-size: 0.9em;">
+                    ${clinicalContext}
+                </div>
+                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
+                    Urea: ${urea} mmol/L | Creatinine: ${creatinine} μmol/L (${Math.round(creatinineMmol * 1000) / 1000} mmol/L)
+                </div>
             </div>
         `;
     }
