@@ -1011,6 +1011,211 @@
             color: #c62828;
         }
         
+        /* Clinical Triads Styling */
+        .triads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .triad-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .triad-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        [data-theme="dark"] .triad-card {
+            background: #2a2a2a;
+            border: 1px solid #444;
+        }
+
+        .triad-header h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .urgency-badge {
+            font-size: 0.7em;
+            padding: 4px 8px;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .condition-name {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        [data-theme="dark"] .condition-name {
+            color: #aaa;
+        }
+
+        .triad-components h4 {
+            margin: 12px 0 8px 0;
+            font-size: 1em;
+            color: #333;
+        }
+
+        [data-theme="dark"] .triad-components h4 {
+            color: #ddd;
+        }
+
+        .components-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .component-item {
+            background: #f0f8ff;
+            border: 1px solid #007AFF;
+            color: #007AFF;
+            padding: 4px 8px;
+            border-radius: 16px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .component-item {
+            background: #1a2332;
+            border-color: #4A90E2;
+            color: #4A90E2;
+        }
+
+        .triad-details {
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+        }
+
+        [data-theme="dark"] .triad-details {
+            border-top-color: #444;
+        }
+
+        .detail-section {
+            margin-bottom: 12px;
+        }
+
+        .detail-section h4 {
+            margin: 0 0 4px 0;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        [data-theme="dark"] .detail-section h4 {
+            color: #ddd;
+        }
+
+        .detail-section p {
+            margin: 0;
+            font-size: 0.85em;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        [data-theme="dark"] .detail-section p {
+            color: #bbb;
+        }
+
+        .uk-guidelines {
+            background: #f8f9ff;
+            padding: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #007AFF;
+        }
+
+        [data-theme="dark"] .uk-guidelines {
+            background: #1a1a2e;
+            border-left-color: #4A90E2;
+        }
+
+        .uk-guidelines h4 {
+            color: #007AFF !important;
+        }
+
+        [data-theme="dark"] .uk-guidelines h4 {
+            color: #4A90E2 !important;
+        }
+
+        .triad-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        [data-theme="dark"] .triad-categories {
+            border-bottom-color: #444;
+        }
+
+        .triad-categories .category-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 16px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .triad-categories .category-btn:hover {
+            background: #f0f8ff;
+            border-color: #007AFF;
+            color: #007AFF;
+        }
+
+        .triad-categories .category-btn.active {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: white;
+        }
+
+        [data-theme="dark"] .triad-categories .category-btn {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #ddd;
+        }
+
+        [data-theme="dark"] .triad-categories .category-btn:hover {
+            background: #1a2332;
+            border-color: #4A90E2;
+            color: #4A90E2;
+        }
+
+        [data-theme="dark"] .triad-categories .category-btn.active {
+            background: #4A90E2;
+            border-color: #4A90E2;
+            color: white;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        [data-theme="dark"] .no-results {
+            color: #aaa;
+        }
+        
         /* Mobile Responsive */
         @media (max-width: 480px) {
             .medical-tools-panel {
@@ -1028,6 +1233,40 @@
             
             .calculator-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            /* Triads mobile responsive */
+            .triads-grid {
+                grid-template-columns: 1fr;
+                padding: 12px;
+                gap: 12px;
+            }
+            
+            .triad-header h3 {
+                font-size: 1.1em;
+            }
+            
+            .urgency-badge {
+                font-size: 0.6em;
+            }
+            
+            .components-list {
+                gap: 4px;
+            }
+            
+            .component-item {
+                font-size: 0.8em;
+                padding: 3px 6px;
+            }
+            
+            .triad-categories {
+                padding: 12px;
+                gap: 6px;
+            }
+            
+            .triad-categories .category-btn {
+                font-size: 0.8em;
+                padding: 5px 10px;
             }
             
             .tool-nav-btn {
@@ -2605,6 +2844,7 @@
             <button class="tool-nav-btn" data-tool="lab-values">📊 Lab Values</button>
             <button class="tool-nav-btn" data-tool="guidelines">📋 Guidelines</button>
             <button class="tool-nav-btn" data-tool="differential-dx">🔍 Differential Dx</button>
+            <button class="tool-nav-btn" data-tool="triads">🔺 Clinical Triads</button>
         </div>
         
         <div class="tools-content">
@@ -2810,6 +3050,26 @@
                             <span class="dx-item">Costochondritis</span>
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Clinical Triads Panel -->
+            <div id="triads-panel" class="tool-panel">
+                <div class="search-container">
+                    <input type="text" id="triads-search" placeholder="Search triads..." class="tool-search">
+                    <button id="triads-search-btn">🔍</button>
+                </div>
+                <div class="triad-categories">
+                    <button class="category-btn" data-category="all">All</button>
+                    <button class="category-btn" data-category="cardiovascular">Cardiovascular</button>
+                    <button class="category-btn" data-category="respiratory">Respiratory</button>
+                    <button class="category-btn" data-category="neurologic">Neurologic</button>
+                    <button class="category-btn" data-category="emergency">Emergency</button>
+                    <button class="category-btn" data-category="infectious">Infectious</button>
+                </div>
+                <div id="triads-results" class="tool-results">
+                    <!-- Content loaded dynamically by JavaScript -->
+                    <div class="loading-message">🔍 Loading clinical triads...</div>
                 </div>
             </div>
         </div>

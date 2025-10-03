@@ -6149,7 +6149,8 @@ class MLAQuizApp {
             'calculators': 'calculator-panel',
             'lab-values': 'lab-panel',
             'guidelines': 'guidelines-panel',
-            'differential-dx': 'differential-panel'
+            'differential-dx': 'differential-panel',
+            'triads': 'triads-panel'
         };
         
         // Show selected panel
@@ -6176,6 +6177,9 @@ class MLAQuizApp {
                 break;
             case 'differential-dx':
                 this.loadDifferentialDx();
+                break;
+            case 'triads':
+                this.loadTriads();
                 break;
         }
         
@@ -6501,6 +6505,310 @@ document.addEventListener('DOMContentLoaded', () => {
     window.quizApp = new MLAQuizApp();
     console.log('🩺 QuizApp initialized and assigned to window.quizApp');
 });
+
+// Clinical Triads Database and Functions
+const clinicalTriads = {
+    // Cardiovascular Triads
+    'becks-triad': {
+        name: "Beck's Triad",
+        category: 'cardiovascular',
+        components: ['Elevated JVP', 'Muffled heart sounds', 'Hypotension'],
+        condition: 'Cardiac Tamponade',
+        mechanism: 'Pericardial compression limiting cardiac filling',
+        urgency: 'emergency',
+        clinicalSignificance: 'Diagnostic for cardiac tamponade - requires immediate pericardiocentesis',
+        ukGuidelines: 'Call cardiology immediately. Consider emergency pericardiocentesis if haemodynamically unstable'
+    },
+    'virchows-triad': {
+        name: "Virchow's Triad",
+        category: 'cardiovascular',
+        components: ['Hypercoagulability', 'Vascular wall injury', 'Venous stasis'],
+        condition: 'Venous Thromboembolism',
+        mechanism: 'Three factors predisposing to thrombosis',
+        urgency: 'high',
+        clinicalSignificance: 'Risk factors for VTE - guides anticoagulation decisions',
+        ukGuidelines: 'Use in conjunction with Wells score for VTE risk assessment (NICE CG144)'
+    },
+    'cushings-triad': {
+        name: "Cushing's Triad",
+        category: 'neurologic',
+        components: ['Hypertension', 'Bradycardia', 'Irregular respirations'],
+        condition: 'Raised Intracranial Pressure',
+        mechanism: 'Late signs of critically raised ICP',
+        urgency: 'emergency',
+        clinicalSignificance: 'Late and ominous sign of brain herniation',
+        ukGuidelines: 'Emergency neurosurgical referral. Consider mannitol/hypertonic saline'
+    },
+    'charcots-triad': {
+        name: "Charcot's Triad",
+        category: 'emergency',
+        components: ['Fever', 'Jaundice', 'Right upper quadrant pain'],
+        condition: 'Ascending Cholangitis',
+        mechanism: 'Bile duct obstruction with infection',
+        urgency: 'emergency',
+        clinicalSignificance: 'Biliary sepsis requiring urgent decompression',
+        ukGuidelines: 'IV antibiotics + urgent ERCP within 24-48h (BSG guidelines)'
+    },
+    'reynolds-pentad': {
+        name: "Reynolds' Pentad",
+        category: 'emergency',
+        components: ['Charcot\'s triad', 'Mental confusion', 'Shock'],
+        condition: 'Suppurative Cholangitis',
+        mechanism: 'Severe ascending cholangitis with sepsis',
+        urgency: 'emergency',
+        clinicalSignificance: 'More severe form of cholangitis with worse prognosis',
+        ukGuidelines: 'Immediate IV antibiotics, ITU consideration, urgent biliary decompression'
+    },
+    'whipples-triad': {
+        name: "Whipple's Triad",
+        category: 'endocrine',
+        components: ['Hypoglycaemic symptoms', 'Low glucose (<2.8mmol/L)', 'Symptom relief with glucose'],
+        condition: 'Hypoglycaemia',
+        mechanism: 'Confirms true hypoglycaemia vs pseudo-hypoglycaemia',
+        urgency: 'moderate',
+        clinicalSignificance: 'Establishes genuine hypoglycaemia requiring investigation',
+        ukGuidelines: 'Investigate underlying cause if recurrent (insulinoma, drugs, etc.)'
+    },
+    'kartageners-syndrome': {
+        name: "Kartagener's Syndrome",
+        category: 'respiratory',
+        components: ['Situs inversus', 'Chronic sinusitis', 'Bronchiectasis'],
+        condition: 'Primary Ciliary Dyskinesia',
+        mechanism: 'Genetic disorder affecting ciliary function',
+        urgency: 'low',
+        clinicalSignificance: 'Rare genetic condition requiring specialist management',
+        ukGuidelines: 'Refer to specialist respiratory centre for PCD testing'
+    },
+    'millers-fisher': {
+        name: "Miller Fisher Syndrome",
+        category: 'neurologic',
+        components: ['Ophthalmoplegia', 'Ataxia', 'Areflexia'],
+        condition: 'Miller Fisher Syndrome (GBS variant)',
+        mechanism: 'Autoimmune peripheral neuropathy variant',
+        urgency: 'high',
+        clinicalSignificance: 'Variant of Guillain-Barré syndrome',
+        ukGuidelines: 'Neurology referral, consider IVIG if severe (NICE CG188)'
+    },
+    'meningism-triad': {
+        name: 'Meningism Triad',
+        category: 'neurologic',
+        components: ['Neck stiffness', 'Photophobia', 'Headache'],
+        condition: 'Meningeal Irritation',
+        mechanism: 'Inflammation or irritation of meninges',
+        urgency: 'emergency',
+        clinicalSignificance: 'Suggests meningitis or subarachnoid haemorrhage',
+        ukGuidelines: 'Immediate antibiotics if bacterial meningitis suspected (NICE CG102)'
+    },
+    'malaria-triad': {
+        name: 'Malaria Triad',
+        category: 'infectious',
+        components: ['Fever', 'Rigors', 'Sweating'],
+        condition: 'Malaria',
+        mechanism: 'Cyclical pattern related to parasite lifecycle',
+        urgency: 'emergency',
+        clinicalSignificance: 'Classic pattern but not always present',
+        ukGuidelines: 'Urgent thick/thin films if travel history positive (PHE guidelines)'
+    },
+    'felty-syndrome': {
+        name: "Felty's Syndrome",
+        category: 'rheumatologic',
+        components: ['Rheumatoid arthritis', 'Neutropenia', 'Splenomegaly'],
+        condition: 'Felty\'s Syndrome',
+        mechanism: 'Severe RA with extra-articular manifestations',
+        urgency: 'moderate',
+        clinicalSignificance: 'Increased infection risk due to neutropenia',
+        ukGuidelines: 'Rheumatology referral, monitor for infections'
+    },
+    'multiple-endocrine-neoplasia-1': {
+        name: 'MEN 1 Syndrome',
+        category: 'endocrine',
+        components: ['Pituitary adenoma', 'Pancreatic islet tumours', 'Parathyroid hyperplasia'],
+        condition: 'Multiple Endocrine Neoplasia Type 1',
+        mechanism: 'Genetic syndrome affecting multiple endocrine organs',
+        urgency: 'moderate',
+        clinicalSignificance: 'Hereditary cancer syndrome requiring screening',
+        ukGuidelines: 'Genetic counselling and family screening (NICE guidance)'
+    }
+};
+
+// Initialize triads functionality within QuizApp class
+MLAQuizApp.prototype.loadTriads = function() {
+    const triadsResults = document.getElementById('triads-results');
+    if (!triadsResults) return;
+    
+    // Create search functionality
+    this.setupTriadsSearch();
+    
+    // Display all triads initially
+    this.displayTriads(Object.keys(clinicalTriads));
+};
+
+MLAQuizApp.prototype.setupTriadsSearch = function() {
+    const searchInput = document.getElementById('triads-search');
+    const searchBtn = document.getElementById('triads-search-btn');
+    const categoryBtns = document.querySelectorAll('.triad-categories .category-btn');
+    
+    // Search functionality
+    const performTriadsSearch = () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const activeCategory = document.querySelector('.triad-categories .category-btn.active')?.dataset.category || 'all';
+        
+        let filteredTriads = Object.keys(clinicalTriads);
+        
+        // Filter by category
+        if (activeCategory !== 'all') {
+            filteredTriads = filteredTriads.filter(triadId => 
+                clinicalTriads[triadId].category === activeCategory
+            );
+        }
+        
+        // Filter by search term
+        if (searchTerm) {
+            filteredTriads = filteredTriads.filter(triadId => {
+                const triad = clinicalTriads[triadId];
+                return (
+                    triad.name.toLowerCase().includes(searchTerm) ||
+                    triad.condition.toLowerCase().includes(searchTerm) ||
+                    triad.components.some(comp => comp.toLowerCase().includes(searchTerm))
+                );
+            });
+        }
+        
+        this.displayTriads(filteredTriads);
+    };
+    
+    // Event listeners
+    if (searchInput) {
+        searchInput.addEventListener('input', performTriadsSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performTriadsSearch();
+        });
+    }
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', performTriadsSearch);
+    }
+    
+    // Category buttons
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            performTriadsSearch();
+        });
+    });
+    
+    // Set 'all' as active initially
+    const allBtn = document.querySelector('.triad-categories .category-btn[data-category="all"]');
+    if (allBtn) allBtn.classList.add('active');
+};
+
+MLAQuizApp.prototype.displayTriads = function(triadIds) {
+    const triadsResults = document.getElementById('triads-results');
+    if (!triadsResults) return;
+    
+    if (triadIds.length === 0) {
+        triadsResults.innerHTML = `
+            <div class="no-results">
+                <h3>🔍 No triads found</h3>
+                <p>Try adjusting your search terms or category filter.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Sort triads by urgency (emergency first) then alphabetically
+    const urgencyOrder = { 'emergency': 0, 'high': 1, 'moderate': 2, 'low': 3 };
+    const sortedTriadIds = triadIds.sort((a, b) => {
+        const triadA = clinicalTriads[a];
+        const triadB = clinicalTriads[b];
+        
+        // First sort by urgency
+        const urgencyDiff = urgencyOrder[triadA.urgency] - urgencyOrder[triadB.urgency];
+        if (urgencyDiff !== 0) return urgencyDiff;
+        
+        // Then alphabetically
+        return triadA.name.localeCompare(triadB.name);
+    });
+    
+    const triadsHtml = sortedTriadIds.map(triadId => {
+        const triad = clinicalTriads[triadId];
+        return this.createTriadCard(triad);
+    }).join('');
+    
+    triadsResults.innerHTML = `
+        <div class="triads-grid">
+            ${triadsHtml}
+        </div>
+    `;
+    
+    console.log('🔺 Displayed triads:', triadIds.length);
+};
+
+MLAQuizApp.prototype.createTriadCard = function(triad) {
+    const urgencyColors = {
+        'emergency': '#D32F2F',
+        'high': '#F57C00',
+        'moderate': '#1976D2',
+        'low': '#388E3C'
+    };
+    
+    const urgencyIcons = {
+        'emergency': '🚨',
+        'high': '⚠️',
+        'moderate': 'ℹ️',
+        'low': '✅'
+    };
+    
+    const categoryIcons = {
+        'cardiovascular': '❤️',
+        'respiratory': '🫁',
+        'neurologic': '🧠',
+        'emergency': '🚨',
+        'infectious': '🦠',
+        'endocrine': '⚗️',
+        'rheumatologic': '🦴',
+        'psychiatric': '🧭'
+    };
+    
+    return `
+        <div class="triad-card" style="border-left: 4px solid ${urgencyColors[triad.urgency]}">
+            <div class="triad-header">
+                <h3>
+                    ${categoryIcons[triad.category] || '🔺'} ${triad.name}
+                    <span class="urgency-badge" style="background: ${urgencyColors[triad.urgency]}">
+                        ${urgencyIcons[triad.urgency]} ${triad.urgency.toUpperCase()}
+                    </span>
+                </h3>
+                <div class="condition-name">${triad.condition}</div>
+            </div>
+            
+            <div class="triad-components">
+                <h4>🔺 Classic Triad:</h4>
+                <div class="components-list">
+                    ${triad.components.map(comp => `<span class="component-item">${comp}</span>`).join('')}
+                </div>
+            </div>
+            
+            <div class="triad-details">
+                <div class="detail-section">
+                    <h4>🔬 Mechanism:</h4>
+                    <p>${triad.mechanism}</p>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>🎯 Clinical Significance:</h4>
+                    <p>${triad.clinicalSignificance}</p>
+                </div>
+                
+                <div class="detail-section uk-guidelines">
+                    <h4>🇬🇧 UK Guidelines:</h4>
+                    <p>${triad.ukGuidelines}</p>
+                </div>
+            </div>
+        </div>
+    `;
+};
 
 // Service Worker registration with better error handling
 if ('serviceWorker' in navigator) {
