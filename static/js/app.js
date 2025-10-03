@@ -5774,51 +5774,51 @@ class MLAQuizApp {
                 name: 'Complete Blood Count (CBC)',
                 values: {
                     'WBC': { 
-                        normal: '4.5-11.0 × 10³/μL', 
+                        normal: '4.0-11.0 × 10⁹/L', 
                         low: 'Immunosuppression, viral infection, autoimmune disease, chemotherapy', 
-                        high: 'Bacterial infection, leukemia, stress, tissue necrosis, smoking',
-                        critical: '<1.0 or >30 × 10³/μL',
-                        ageVariations: 'Newborn: 9-30, Child: 5-17, Adult: 4.5-11',
+                        high: 'Bacterial infection, leukaemia, stress, tissue necrosis, smoking',
+                        critical: '<1.0 or >30 × 10⁹/L',
+                        ageVariations: 'Neonate: 9-30, Child: 5-17, Adult: 4.0-11.0',
                         clinicalSignificance: 'Left shift suggests bacterial infection. Lymphocytosis in viral infections.'
                     },
                     'RBC': { 
-                        normal: 'M: 4.7-6.1, F: 4.2-5.4 × 10⁶/μL', 
-                        low: 'Anemia (iron deficiency, chronic disease, hemolysis), bleeding, kidney disease', 
-                        high: 'Polycythemia vera, dehydration, COPD, high altitude',
-                        critical: '<2.5 or >7.0 × 10⁶/μL',
-                        ageVariations: 'Newborn: 4.8-7.1, Child: 4.0-5.2',
-                        clinicalSignificance: 'Combined with Hgb/Hct for anemia classification. MCV helps determine type.'
+                        normal: 'M: 4.5-6.5, F: 3.8-5.8 × 10¹²/L', 
+                        low: 'Anaemia (iron deficiency, chronic disease, haemolysis), bleeding, kidney disease', 
+                        high: 'Polycythaemia vera, dehydration, COPD, high altitude',
+                        critical: '<2.5 or >7.0 × 10¹²/L',
+                        ageVariations: 'Neonate: 4.0-6.6, Child: 3.7-5.3',
+                        clinicalSignificance: 'Combined with Hb/Hct for anaemia classification. MCV helps determine type.'
                     },
-                    'Hemoglobin': { 
-                        normal: 'M: 14-18, F: 12-16 g/dL', 
-                        low: 'Anemia, bleeding, iron deficiency, chronic kidney disease', 
-                        high: 'Polycythemia, dehydration, COPD, smoking',
-                        critical: '<7.0 or >20 g/dL',
-                        ageVariations: 'Newborn: 14-24, Child: 11-16, Pregnancy: 11-13',
-                        clinicalSignificance: 'Best indicator of oxygen-carrying capacity. Transfusion threshold typically <7-8 g/dL.'
+                    'Haemoglobin': { 
+                        normal: 'M: 130-180 g/L, F: 115-165 g/L', 
+                        low: 'Anaemia, bleeding, iron deficiency, chronic kidney disease', 
+                        high: 'Polycythaemia, dehydration, COPD, smoking',
+                        critical: '<70 or >200 g/L',
+                        ageVariations: 'Neonate: 140-240, Child: 110-160, Pregnancy: 110-130',
+                        clinicalSignificance: 'Best indicator of oxygen-carrying capacity. Transfusion threshold typically <70-80 g/L.'
                     },
-                    'Hematocrit': { 
-                        normal: 'M: 42-52%, F: 37-47%', 
-                        low: 'Anemia, overhydration, pregnancy, bleeding', 
-                        high: 'Dehydration, polycythemia, COPD, diuretic use',
-                        critical: '<20% or >60%',
-                        ageVariations: 'Newborn: 42-75%, Child: 33-45%',
-                        clinicalSignificance: 'Rule of 3: Hct ≈ 3 × Hgb. Falsely elevated in dehydration.'
+                    'Haematocrit': { 
+                        normal: 'M: 0.40-0.52, F: 0.36-0.47', 
+                        low: 'Anaemia, overhydration, pregnancy, bleeding', 
+                        high: 'Dehydration, polycythaemia, COPD, diuretic use',
+                        critical: '<0.20 or >0.60',
+                        ageVariations: 'Neonate: 0.42-0.75, Child: 0.33-0.45',
+                        clinicalSignificance: 'Rule of 3: Hct ≈ 3 × Hb (in g/dL). Falsely elevated in dehydration.'
                     },
                     'Platelets': { 
-                        normal: '150-450 × 10³/μL', 
+                        normal: '150-450 × 10⁹/L', 
                         low: 'ITP, drug-induced, hypersplenism, viral infection, heparin', 
-                        high: 'Essential thrombocythemia, reactive (infection, malignancy), iron deficiency',
-                        critical: '<20 or >1000 × 10³/μL',
+                        high: 'Essential thrombocythaemia, reactive (infection, malignancy), iron deficiency',
+                        critical: '<20 or >1000 × 10⁹/L',
                         ageVariations: 'Consistent across ages',
-                        clinicalSignificance: 'Bleeding risk increases <50K. Spontaneous bleeding <10K. Thrombosis risk >1000K.'
+                        clinicalSignificance: 'Bleeding risk increases <50. Spontaneous bleeding <10. Thrombosis risk >1000.'
                     },
                     'MCV': {
-                        normal: '80-100 fL',
-                        low: 'Iron deficiency, thalassemia, chronic disease, lead poisoning',
+                        normal: '82-98 fL',
+                        low: 'Iron deficiency, thalassaemia, chronic disease, lead poisoning',
                         high: 'B12/folate deficiency, alcohol use, hypothyroidism, reticulocytosis',
                         critical: '<70 or >120 fL',
-                        ageVariations: 'Child: 70-90, Adult: 80-100',
+                        ageVariations: 'Child: 70-90, Adult: 82-98',
                         clinicalSignificance: 'Microcytic: iron studies. Macrocytic: B12/folate levels. Normocytic: chronic disease.'
                     }
                 }
@@ -5827,28 +5827,28 @@ class MLAQuizApp {
                 name: 'Basic Metabolic Panel (BMP)',
                 values: {
                     'Glucose': { 
-                        normal: '70-100 mg/dL (fasting), <140 random', 
-                        low: 'Hypoglycemia: insulin excess, liver disease, adrenal insufficiency, starvation', 
+                        normal: '3.9-5.6 mmol/L (fasting), <7.8 random', 
+                        low: 'Hypoglycaemia: insulin excess, liver disease, adrenal insufficiency, starvation', 
                         high: 'Diabetes, prediabetes, stress, steroids, pancreatic disease',
-                        critical: '<40 or >400 mg/dL',
-                        ageVariations: 'Child: 60-100, Adult: 70-100, Elderly: may be slightly higher',
-                        clinicalSignificance: 'Fasting >126 or random >200 suggests diabetes. HbA1c >6.5% diagnostic.'
+                        critical: '<2.2 or >22 mmol/L',
+                        ageVariations: 'Child: 3.3-5.6, Adult: 3.9-5.6, Elderly: may be slightly higher',
+                        clinicalSignificance: 'Fasting >7.0 or random >11.1 suggests diabetes. HbA1c >48 mmol/mol diagnostic.'
                     },
-                    'BUN': { 
-                        normal: '7-20 mg/dL', 
+                    'Urea': { 
+                        normal: '2.5-7.5 mmol/L', 
                         low: 'Liver disease, malnutrition, overhydration, low protein diet', 
                         high: 'Acute/chronic kidney disease, dehydration, GI bleeding, high protein diet',
-                        critical: '>100 mg/dL',
-                        ageVariations: 'Child: 5-18, Adult: 7-20, Elderly: may be elevated',
-                        clinicalSignificance: 'BUN:Cr ratio >20 suggests prerenal azotemia. <10 suggests liver disease.'
+                        critical: '>35 mmol/L',
+                        ageVariations: 'Child: 1.8-6.4, Adult: 2.5-7.5, Elderly: may be elevated',
+                        clinicalSignificance: 'Urea:Creatinine ratio >100:1 suggests prerenal azotemia. <40:1 suggests liver disease.'
                     },
                     'Creatinine': { 
-                        normal: 'M: 0.7-1.3, F: 0.6-1.1 mg/dL', 
+                        normal: 'M: 62-115 μmol/L, F: 53-97 μmol/L', 
                         low: 'Low muscle mass, malnutrition, pregnancy', 
                         high: 'Acute/chronic kidney disease, dehydration, muscle breakdown',
-                        critical: '>4.0 mg/dL or >3× baseline',
-                        ageVariations: 'Child: 0.3-0.7, Adult varies by muscle mass, Elderly: lower baseline',
-                        clinicalSignificance: 'Use eGFR for kidney function. 50% increase = AKI. Delayed rise after injury.'
+                        critical: '>354 μmol/L or >3× baseline',
+                        ageVariations: 'Child: 27-62, Adult varies by muscle mass, Elderly: lower baseline',
+                        clinicalSignificance: 'Use eGFR for kidney function. ≥26 μmol/L rise in 48h = AKI. Delayed rise after injury.'
                     },
                     'eGFR': {
                         normal: '>90 mL/min/1.73m²',
@@ -5859,36 +5859,36 @@ class MLAQuizApp {
                         clinicalSignificance: 'More accurate than creatinine alone. Adjust medications at <60. Nephrology referral <30.'
                     },
                     'Sodium': { 
-                        normal: '136-145 mEq/L', 
+                        normal: '135-145 mmol/L', 
                         low: 'SIADH, diuretics, heart failure, liver disease, hypothyroidism', 
                         high: 'Dehydration, diabetes insipidus, excess salt intake, hyperaldosteronism',
-                        critical: '<125 or >160 mEq/L',
+                        critical: '<125 or >160 mmol/L',
                         ageVariations: 'Consistent across ages',
-                        clinicalSignificance: 'Hyponatremia symptoms: confusion, seizures. Correct slowly (0.5-1 mEq/L/hr) to avoid osmotic demyelination.'
+                        clinicalSignificance: 'Hyponatraemia symptoms: confusion, seizures. Correct slowly (8-12 mmol/L/day) to avoid osmotic demyelination.'
                     },
                     'Potassium': { 
-                        normal: '3.5-5.0 mEq/L', 
-                        low: 'Diuretics, diarrhea, hyperaldosteronism, poor intake, alkalosis', 
-                        high: 'Kidney disease, ACE inhibitors, tissue breakdown, acidosis, hemolysis',
-                        critical: '<2.5 or >6.5 mEq/L',
+                        normal: '3.5-5.0 mmol/L', 
+                        low: 'Diuretics, diarrhoea, hyperaldosteronism, poor intake, alkalosis', 
+                        high: 'Kidney disease, ACE inhibitors, tissue breakdown, acidosis, haemolysis',
+                        critical: '<2.5 or >6.5 mmol/L',
                         ageVariations: 'Consistent across ages',
                         clinicalSignificance: 'Cardiac effects: peaked T-waves >6.5, paralysis >8.0. Replace cautiously in kidney disease.'
                     },
                     'Chloride': { 
-                        normal: '98-107 mEq/L', 
+                        normal: '98-107 mmol/L', 
                         low: 'Vomiting, diuretics, Addison disease, metabolic alkalosis', 
-                        high: 'Dehydration, hypernatremia, metabolic acidosis, diarrhea',
-                        critical: '<85 or >115 mEq/L',
+                        high: 'Dehydration, hypernatraemia, metabolic acidosis, diarrhoea',
+                        critical: '<85 or >115 mmol/L',
                         ageVariations: 'Consistent across ages',
-                        clinicalSignificance: 'Usually follows sodium. Anion gap = Na - (Cl + CO2). Normal gap: 8-12.'
+                        clinicalSignificance: 'Usually follows sodium. Anion gap = Na - (Cl + HCO3). Normal gap: 8-12.'
                     },
-                    'CO2': { 
-                        normal: '22-29 mEq/L', 
+                    'Bicarbonate': { 
+                        normal: '22-29 mmol/L', 
                         low: 'Metabolic acidosis (DKA, lactic acidosis, renal failure)', 
                         high: 'Metabolic alkalosis (vomiting, diuretics), respiratory acidosis',
-                        critical: '<15 or >35 mEq/L',
+                        critical: '<15 or >35 mmol/L',
                         ageVariations: 'Child: 20-28, Adult: 22-29',
-                        clinicalSignificance: 'Reflects bicarbonate level. Low CO2 with high anion gap suggests metabolic acidosis.'
+                        clinicalSignificance: 'Reflects bicarbonate level. Low HCO3 with high anion gap suggests metabolic acidosis.'
                     }
                 }
             },
@@ -5896,7 +5896,7 @@ class MLAQuizApp {
                 name: 'Liver Function Tests (LFT)',
                 values: {
                     'ALT': { 
-                        normal: 'M: 10-40, F: 7-35 U/L', 
+                        normal: 'M: 5-40 U/L, F: 5-35 U/L', 
                         low: 'Rarely clinically significant', 
                         high: 'Hepatocellular injury: hepatitis, drugs, alcohol, NASH, Wilson disease',
                         critical: '>1000 U/L (acute hepatic necrosis)',
@@ -5904,15 +5904,15 @@ class MLAQuizApp {
                         clinicalSignificance: 'More liver-specific than AST. ALT>AST suggests hepatocellular injury. Peak in acute hepatitis: 1000-5000.'
                     },
                     'AST': { 
-                        normal: 'M: 10-40, F: 9-32 U/L', 
+                        normal: 'M: 5-40 U/L, F: 5-35 U/L', 
                         low: 'Rarely clinically significant', 
-                        high: 'Liver/muscle damage, MI, hemolysis, alcohol use',
+                        high: 'Liver/muscle damage, MI, haemolysis, alcohol use',
                         critical: '>1000 U/L',
                         ageVariations: 'Child: 15-40, Adult varies by gender',
-                        clinicalSignificance: 'AST>ALT (ratio >2) suggests alcohol. Also elevated in muscle disease, MI, hemolysis.'
+                        clinicalSignificance: 'AST>ALT (ratio >2) suggests alcohol. Also elevated in muscle disease, MI, haemolysis.'
                     },
                     'Alkaline Phosphatase': { 
-                        normal: '44-147 U/L (adult)', 
+                        normal: '30-130 U/L (adult)', 
                         low: 'Hypothyroidism, malnutrition, Wilson disease', 
                         high: 'Cholestasis, bone disease, pregnancy, malignancy, Paget disease',
                         critical: '>5× upper limit',
@@ -5920,7 +5920,7 @@ class MLAQuizApp {
                         clinicalSignificance: 'Elevated with GGT suggests hepatic source. Isolated elevation: bone disease, pregnancy.'
                     },
                     'GGT': {
-                        normal: 'M: 9-50, F: 8-40 U/L',
+                        normal: 'M: 5-55 U/L, F: 5-35 U/L',
                         low: 'Rarely significant',
                         high: 'Alcohol use, cholestasis, drugs, NASH',
                         critical: '>10× upper limit',
@@ -5928,31 +5928,31 @@ class MLAQuizApp {
                         clinicalSignificance: 'Most sensitive for alcohol use. Helps differentiate hepatic vs. bone source of elevated ALP.'
                     },
                     'Total Bilirubin': { 
-                        normal: '0.3-1.2 mg/dL', 
+                        normal: '5-20 μmol/L', 
                         low: 'Rarely significant', 
-                        high: 'Hemolysis, liver disease, Gilbert syndrome, cholestasis',
-                        critical: '>20 mg/dL',
+                        high: 'Haemolysis, liver disease, Gilbert syndrome, cholestasis',
+                        critical: '>340 μmol/L',
                         ageVariations: 'Newborn: physiologic elevation first week',
-                        clinicalSignificance: 'Conjugated >2.0 suggests hepatic/post-hepatic cause. Unconjugated elevation: hemolysis, Gilbert.'
+                        clinicalSignificance: 'Conjugated >34 μmol/L suggests hepatic/post-hepatic cause. Unconjugated elevation: haemolysis, Gilbert.'
                     },
                     'Direct Bilirubin': {
-                        normal: '0.0-0.3 mg/dL',
+                        normal: '0-5 μmol/L',
                         low: 'Normal',
                         high: 'Hepatocellular injury, cholestasis, Dubin-Johnson syndrome',
-                        critical: '>15 mg/dL',
+                        critical: '>255 μmol/L',
                         ageVariations: 'Consistent across ages',
                         clinicalSignificance: 'Conjugated bilirubin. Elevation suggests hepatic processing defect or biliary obstruction.'
                     },
                     'Albumin': { 
-                        normal: '3.5-5.0 g/dL', 
+                        normal: '35-50 g/L', 
                         low: 'Liver disease, malnutrition, nephrotic syndrome, inflammation', 
                         high: 'Dehydration (rare)',
-                        critical: '<2.0 g/dL',
-                        ageVariations: 'Child: 3.4-4.8, Adult: 3.5-5.0, Elderly: may be lower',
+                        critical: '<20 g/L',
+                        ageVariations: 'Child: 34-48, Adult: 35-50, Elderly: may be lower',
                         clinicalSignificance: 'Half-life 20 days, reflects chronic liver function. Low albumin increases drug free fractions.'
                     },
                     'PT/INR': { 
-                        normal: 'PT: 11-13 sec, INR: 0.8-1.1', 
+                        normal: 'PT: 10-14 sec, INR: 0.9-1.2', 
                         low: 'Hypercoagulable state (rare)', 
                         high: 'Liver disease, warfarin, vitamin K deficiency, factor deficiencies',
                         critical: 'INR >5.0',
@@ -5965,34 +5965,34 @@ class MLAQuizApp {
                 name: 'Lipid Panel',
                 values: {
                     'Total Cholesterol': { 
-                        normal: '<200 mg/dL (desirable)', 
+                        normal: '<5.0 mmol/L (optimal)', 
                         low: 'Malnutrition, hyperthyroidism, liver disease, malabsorption', 
-                        high: 'Familial hypercholesterolemia, diabetes, hypothyroidism, diet',
+                        high: 'Familial hypercholesterolaemia, diabetes, hypothyroidism, diet',
                         critical: '>400 mg/dL',
                         ageVariations: 'Increases with age until menopause (women)',
                         clinicalSignificance: 'Borderline high: 200-239. High: ≥240. Less important than LDL for risk assessment.'
                     },
                     'LDL': { 
-                        normal: '<100 mg/dL (optimal), <70 (high risk)', 
+                        normal: '<2.6 mmol/L (optimal), <1.8 (high risk)', 
                         low: 'Overtreatment, malnutrition, hyperthyroidism', 
-                        high: 'Primary hyperlipidemia, diabetes, hypothyroidism, diet',
-                        critical: '>190 mg/dL',
+                        high: 'Primary hyperlipidaemia, diabetes, hypothyroidism, diet',
+                        critical: '>4.9 mmol/L',
                         ageVariations: 'Increases with age',
                         clinicalSignificance: 'Primary target for statin therapy. Goals: <70 (very high risk), <100 (high risk), <130 (moderate risk).'
                     },
                     'HDL': { 
-                        normal: 'M: >40, F: >50 mg/dL', 
+                        normal: 'M: >1.0 mmol/L, F: >1.3 mmol/L', 
                         low: 'Metabolic syndrome, diabetes, smoking, sedentary lifestyle', 
                         high: 'Cardioprotective, exercise, moderate alcohol, genetics',
-                        critical: '<25 mg/dL',
+                        critical: '<0.6 mmol/L',
                         ageVariations: 'Higher in premenopausal women',
                         clinicalSignificance: 'Low HDL major CAD risk factor. HDL >60 is negative risk factor (protective).'
                     },
                     'Triglycerides': { 
-                        normal: '<150 mg/dL', 
+                        normal: '<1.7 mmol/L', 
                         low: 'Malnutrition, hyperthyroidism', 
-                        high: 'Diabetes, alcohol, obesity, familial hypertriglyceridemia',
-                        critical: '>1000 mg/dL (pancreatitis risk)',
+                        high: 'Diabetes, alcohol, obesity, familial hypertriglyceridaemia',
+                        critical: '>11.3 mmol/L (pancreatitis risk)',
                         ageVariations: 'Increases with age',
                         clinicalSignificance: 'High: 200-499. Very high: ≥500. Pancreatitis risk >1000. Fasting required for accuracy.'
                     },
