@@ -7376,10 +7376,10 @@ class MLAQuizApp {
     showGuidelineDetail(guidelineKey) {
         console.log('📋 Opening guideline detail:', guidelineKey);
         const guideline = this.guidelinesDatabase[guidelineKey];
-        const container = document.getElementById('guidelines-panel');
+        const container = document.getElementById('guidelines-list');
         
         let contentHtml = `
-            <button class="back-btn" onclick="window.quizApp.loadGuidelines(); event.stopPropagation();">← Back to Guidelines</button>
+            <button class="back-btn" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">← Back to Guidelines</button>
             <div class="guideline-detail">
                 <h3>${guideline.title}</h3>
                 <div class="guideline-meta">
