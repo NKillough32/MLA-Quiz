@@ -2168,7 +2168,63 @@ class MLAQuizApp {
         // Initialize calculators
         this.initializeCalculators();
         
+        // Setup mobile back button behavior
+        this.setupMobileBackButton();
+        
         console.log('🩺 Medical tools initialized');
+    }
+
+    setupMobileBackButton() {
+        let medicalToolsOpen = false;
+        let currentTool = null;
+        
+        // Track when medical tools panel opens/closes
+        const toolsToggle = document.getElementById('medical-tools-toggle');
+        const toolsPanel = document.getElementById('medical-tools-panel');
+        
+        const openMedicalTools = () => {
+            medicalToolsOpen = true;
+            window.history.pushState({ medicalTools: true }, '', '');
+        };
+        
+        const closeMedicalTools = () => {
+            medicalToolsOpen = false;
+            currentTool = null;
+            if (toolsPanel) {
+                toolsPanel.classList.remove('active');
+            }
+        };
+        
+        // Track tool navigation
+        const originalSwitchTool = this.switchMedicalTool.bind(this);
+        this.switchMedicalTool = function(toolType) {
+            if (currentTool !== toolType) {
+                window.history.pushState({ medicalTools: true, tool: toolType }, '', '');
+                currentTool = toolType;
+            }
+            return originalSwitchTool(toolType);
+        };
+        
+        // Handle back button
+        window.addEventListener('popstate', (event) => {
+            if (medicalToolsOpen) {
+                event.preventDefault();
+                
+                if (event.state && event.state.tool && currentTool !== 'calculators') {
+                    // Go back to main tools view
+                    this.switchMedicalTool('calculators');
+                    currentTool = 'calculators';
+                } else {
+                    // Close medical tools
+                    closeMedicalTools();
+                }
+            }
+        });
+        
+        // Update event listeners
+        if (toolsToggle) {
+            toolsToggle.addEventListener('click', openMedicalTools);
+        }
     }
 
     initializeCalculators() {
@@ -2182,78 +2238,116 @@ class MLAQuizApp {
     }
 
     loadCalculator(calcType) {
-        const workspace = document.getElementById('calculator-workspace');
-        if (!workspace) return;
-
-        workspace.classList.add('active');
+        // Switch to dedicated calculator panel
+        this.switchMedicalTool('calculator-detail');
+        
+        const container = document.getElementById('calculator-detail-container');
+        if (!container) return;
+        
+        // Add back button and structured content
+        let calculatorContent = `
+            <div class="calculator-header">
+                <button class="back-btn" onclick="window.quizApp.switchMedicalTool('calculators'); event.stopPropagation();">← Back to Calculators</button>
+                <h3 id="calculator-title"></h3>
+            </div>
+            <div class="calculator-content">
+        `;
+        
+        let calculatorTitle = '';
         
         switch (calcType) {
             case 'bmi':
-                workspace.innerHTML = this.getBMICalculator();
+                calculatorTitle = 'BMI Calculator';
+                calculatorContent += this.getBMICalculator();
                 break;
             case 'chads2vasc':
-                workspace.innerHTML = this.getCHADS2VAScCalculator();
+                calculatorTitle = 'CHA₂DS₂-VASc Score';
+                calculatorContent += this.getCHADS2VAScCalculator();
                 break;
             case 'hasbled':
-                workspace.innerHTML = this.getHASBLEDCalculator();
+                calculatorTitle = 'HAS-BLED Score';
+                calculatorContent += this.getHASBLEDCalculator();
                 break;
             case 'gcs':
-                workspace.innerHTML = this.getGCSCalculator();
+                calculatorTitle = 'Glasgow Coma Scale';
+                calculatorContent += this.getGCSCalculator();
                 break;
             case 'apache':
-                workspace.innerHTML = this.getAPACHECalculator();
+                calculatorTitle = 'APACHE II Score';
+                calculatorContent += this.getAPACHECalculator();
                 break;
             case 'wells':
-                workspace.innerHTML = this.getWellsCalculator();
+                calculatorTitle = 'Wells Score for PE';
+                calculatorContent += this.getWellsCalculator();
                 break;
             case 'qrisk':
-                workspace.innerHTML = this.getQRISKCalculator();
+                calculatorTitle = 'QRISK3 Calculator';
+                calculatorContent += this.getQRISKCalculator();
                 break;
             case 'madders':
-                workspace.innerHTML = this.getMADDERSCalculator();
+                calculatorTitle = 'MADDERS Score';
+                calculatorContent += this.getMADDERSCalculator();
                 break;
             case 'mews':
-                workspace.innerHTML = this.getMEWSCalculator();
+                calculatorTitle = 'MEWS Score';
+                calculatorContent += this.getMEWSCalculator();
                 break;
             case 'crb65':
-                workspace.innerHTML = this.getCRB65Calculator();
+                calculatorTitle = 'CRB-65 Score';
+                calculatorContent += this.getCRB65Calculator();
                 break;
             case 'rockall':
-                workspace.innerHTML = this.getRockallCalculator();
+                calculatorTitle = 'Rockall Score';
+                calculatorContent += this.getRockallCalculator();
                 break;
             case 'child-pugh':
-                workspace.innerHTML = this.getChildPughCalculator();
+                calculatorTitle = 'Child-Pugh Score';
+                calculatorContent += this.getChildPughCalculator();
                 break;
             case 'ottawa-ankle':
-                workspace.innerHTML = this.getOttawaAnkleCalculator();
+                calculatorTitle = 'Ottawa Ankle Rules';
+                calculatorContent += this.getOttawaAnkleCalculator();
                 break;
             case 'egfr':
-                workspace.innerHTML = this.getEGFRCalculator();
+                calculatorTitle = 'eGFR Calculator';
+                calculatorContent += this.getEGFRCalculator();
                 break;
             case 'abcd2':
-                workspace.innerHTML = this.getABCD2Calculator();
+                calculatorTitle = 'ABCD² Score';
+                calculatorContent += this.getABCD2Calculator();
                 break;
             case 'must':
-                workspace.innerHTML = this.getMUSTCalculator();
+                calculatorTitle = 'MUST Score';
+                calculatorContent += this.getMUSTCalculator();
                 break;
             case 'waterlow':
-                workspace.innerHTML = this.getWaterlowCalculator();
+                calculatorTitle = 'Waterlow Score';
+                calculatorContent += this.getWaterlowCalculator();
                 break;
             case 'frax':
-                workspace.innerHTML = this.getFRAXCalculator();
+                calculatorTitle = 'FRAX Calculator';
+                calculatorContent += this.getFRAXCalculator();
                 break;
             case 'news2':
-                workspace.innerHTML = this.getNEWS2Calculator();
+                calculatorTitle = 'NEWS2 Score';
+                calculatorContent += this.getNEWS2Calculator();
                 break;
             case 'curb65':
-                workspace.innerHTML = this.getCURB65Calculator();
+                calculatorTitle = 'CURB-65 Score';
+                calculatorContent += this.getCURB65Calculator();
                 break;
             case 'palliative':
-                workspace.innerHTML = this.getPalliativeCalculator();
+                calculatorTitle = 'Palliative Care Calculator';
+                calculatorContent += this.getPalliativeCalculator();
                 break;
             default:
-                workspace.innerHTML = '<p>Calculator not yet implemented</p>';
+                calculatorTitle = 'Calculator';
+                calculatorContent += '<p>Calculator not found.</p>';
         }
+        
+        calculatorContent += '</div>';
+        calculatorContent = calculatorContent.replace('<h3 id="calculator-title"></h3>', `<h3 id="calculator-title">${calculatorTitle}</h3>`);
+        container.innerHTML = calculatorContent;
         
         console.log('🧮 Loaded calculator:', calcType);
     }
@@ -9017,6 +9111,8 @@ function handleEscapeKey(e) {
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.quizApp = new MLAQuizApp();
+    // Setup mobile back button override
+    window.quizApp.setupMobileBackButton();
     console.log('🩺 QuizApp initialized and assigned to window.quizApp');
 });
 
@@ -10520,7 +10616,7 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
     `).join('');
     
     container.innerHTML = `
-        <button class="back-btn" onclick="window.quizApp.loadExaminationGuide()">← Back to Examinations</button>
+        <button class="back-btn" onclick="window.quizApp.loadExaminationGuide(); event.stopPropagation();">← Back to Examinations</button>
         <div class="examination-detail">
             <h3>🩺 ${system.title}</h3>
             <p class="exam-category">📋 ${system.category}</p>
@@ -10549,7 +10645,7 @@ MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
     `).join('');
     
     container.innerHTML = `
-        <button class="back-btn" onclick="window.quizApp.showExaminationDetail('${systemKey}')">← Back to ${system.title}</button>
+        <button class="back-btn" onclick="window.quizApp.showExaminationDetail('${systemKey}'); event.stopPropagation();">← Back to ${system.title}</button>
         <div class="section-detail">
             <h3>🔍 ${section.name}</h3>
             <div class="technique-banner">
@@ -10577,6 +10673,36 @@ MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
             </div>` : ''}
         </div>
     `;
+};
+
+// Mobile back button override for medical tools
+MLAQuizApp.prototype.setupMobileBackButton = function() {
+    // Push initial state to enable back button override
+    if (window.history.state === null) {
+        window.history.pushState({ medicalToolsActive: false }, '', window.location.href);
+    }
+    
+    window.addEventListener('popstate', (event) => {
+        const currentTool = this.currentMedicalTool;
+        
+        // If we're in a medical tool panel, go back to main instead of browser back
+        if (currentTool && currentTool !== 'quiz') {
+            event.preventDefault();
+            
+            // If in a sub-panel, go back to parent tool
+            if (currentTool === 'calculator-detail') {
+                this.switchMedicalTool('calculators');
+            } else if (currentTool === 'examination-detail') {
+                this.switchMedicalTool('examinations');
+            } else {
+                // Go back to main quiz interface
+                this.switchMedicalTool('quiz');
+            }
+            
+            // Maintain history state
+            window.history.pushState({ medicalToolsActive: true }, '', window.location.href);
+        }
+    });
 };
 
 // Service Worker registration with better error handling
