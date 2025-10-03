@@ -8751,6 +8751,7 @@ class MLAQuizApp {
         const panelIdMap = {
             'drug-reference': 'drug-panel',
             'calculators': 'calculator-panel',
+            'calculator-detail': 'calculator-detail',
             'lab-values': 'lab-panel',
             'guidelines': 'guidelines-panel',
             'differential-dx': 'differential-panel',
@@ -8773,6 +8774,10 @@ class MLAQuizApp {
             case 'calculators':
                 // Initialize calculator grid - no additional loading needed
                 console.log('🧮 Calculators panel activated');
+                break;
+            case 'calculator-detail':
+                // Individual calculator panel - content loaded by loadCalculator
+                console.log('🧮 Calculator detail panel activated');
                 break;
             case 'lab-values':
                 this.loadLabValues();
@@ -10683,20 +10688,23 @@ MLAQuizApp.prototype.setupMobileBackButton = function() {
     }
     
     window.addEventListener('popstate', (event) => {
-        const currentTool = this.currentMedicalTool;
+        // Check active panel instead of stored variable
+        const activePanel = document.querySelector('.tool-panel.active');
+        const activePanelId = activePanel ? activePanel.id : null;
         
-        // If we're in a medical tool panel, go back to main instead of browser back
-        if (currentTool && currentTool !== 'quiz') {
+        // If we're in a medical tool panel, go back intelligently
+        if (activePanelId && activePanelId !== 'quiz-panel') {
             event.preventDefault();
             
             // If in a sub-panel, go back to parent tool
-            if (currentTool === 'calculator-detail') {
+            if (activePanelId === 'calculator-detail') {
                 this.switchMedicalTool('calculators');
-            } else if (currentTool === 'examination-detail') {
+            } else if (activePanelId === 'examination-panel') {
                 this.switchMedicalTool('examinations');
             } else {
-                // Go back to main quiz interface
-                this.switchMedicalTool('quiz');
+                // Go back to main quiz interface - but we need to handle this properly
+                // For now, stay in current panel to avoid breaking the app
+                console.log('🔙 Back button pressed in:', activePanelId);
             }
             
             // Maintain history state
