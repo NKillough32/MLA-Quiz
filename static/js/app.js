@@ -2451,23 +2451,35 @@ class MLAQuizApp {
         if (document.getElementById('chads-stroke').checked) score += 2;
         if (document.getElementById('chads-vascular').checked) score += 1;
         if (document.getElementById('chads-age65').checked) score += 1;
-        if (document.getElementById('chads-female').checked) score += 1;
+        
+        const isFemale = document.getElementById('chads-female').checked;
+        if (isFemale) score += 1;
         
         let risk = '';
         let recommendation = '';
         let color = '';
         
+        // Updated UK guidelines: sex-specific treatment recommendations
         if (score === 0) {
             risk = 'Low risk (0.2%/year)';
-            recommendation = 'No anticoagulation';
+            recommendation = 'No anticoagulation recommended';
             color = '#4CAF50';
         } else if (score === 1) {
-            risk = 'Low-moderate risk (0.6%/year)';
-            recommendation = 'Consider anticoagulation';
-            color = '#FF9800';
+            if (isFemale && score === 1) {
+                // Female with score 1 (sex alone) - special case
+                risk = 'Low-moderate risk (0.6%/year)';
+                recommendation = 'Female sex alone: generally no anticoagulation. Consider other risk factors';
+                color = '#FF9800';
+            } else {
+                // Male with score 1 or female with other risk factors
+                risk = 'Low-moderate risk (0.6%/year)';
+                recommendation = 'Consider anticoagulation (men ≥1 or women ≥2 with non-sex risk factors)';
+                color = '#FF9800';
+            }
         } else {
+            // Score ≥2
             risk = 'High risk (≥2.2%/year)';
-            recommendation = 'Anticoagulation recommended';
+            recommendation = 'Anticoagulation recommended unless contraindicated';
             color = '#F44336';
         }
         
@@ -2479,6 +2491,9 @@ class MLAQuizApp {
                 <div class="score-risk">${risk}</div>
                 <div class="score-recommendation" style="color: ${color}">
                     <strong>${recommendation}</strong>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
+                    Based on current UK guidelines. Consider individual bleeding risk (HAS-BLED).
                 </div>
             </div>
         `;
@@ -2759,7 +2774,7 @@ class MLAQuizApp {
                 
                 <div class="calc-input-group">
                     <label>Age:</label>
-                    <input type="number" id="qrisk-age" placeholder="50" min="25" max="85">
+                    <input type="number" id="qrisk-age" placeholder="50" min="25" max="84">
                 </div>
                 <div class="calc-checkbox-group">
                     <label><input type="radio" name="qrisk-sex" value="male"> Male</label>
@@ -2789,16 +2804,20 @@ class MLAQuizApp {
             return;
         }
 
+        // QRISK3 age validation (25-84 years as per NICE guidance)
+        if (age < 25 || age > 84) {
+            document.getElementById('qrisk-result').innerHTML = '<p style="color: red;">QRISK3 is validated for ages 25-84 years only</p>';
+            return;
+        }
+
         // Improved QRISK3 algorithm for UK clinical practice
         let baseRisk = 0;
         
         // Age-based risk (UK QRISK3 methodology)
-        if (age >= 25 && age <= 84) {
-            if (sex === 'male') {
-                baseRisk = Math.pow(age - 25, 1.8) * 0.15;
-            } else {
-                baseRisk = Math.pow(age - 25, 1.6) * 0.08;
-            }
+        if (sex === 'male') {
+            baseRisk = Math.pow(age - 25, 1.8) * 0.15;
+        } else {
+            baseRisk = Math.pow(age - 25, 1.6) * 0.08;
         }
         
         // Risk multipliers based on conditions
@@ -2815,19 +2834,19 @@ class MLAQuizApp {
         let color = '';
         let recommendation = '';
 
-        // UK NICE guidelines for cardiovascular risk
+        // Updated NICE guidelines for cardiovascular risk - softer recommendations with shared decision-making
         if (risk < 10) {
             riskLevel = 'Low risk (<10%)';
             color = '#4CAF50';
-            recommendation = 'Lifestyle advice, reassess in 5 years. No statin unless other indications';
+            recommendation = 'Lifestyle advice and reassess in 5 years. Statins not routinely recommended';
         } else if (risk < 20) {
             riskLevel = 'Moderate risk (10-20%)';
             color = '#FF9800';
-            recommendation = 'NICE: Discuss statin therapy (atorvastatin 20mg). Lifestyle modification essential';
+            recommendation = 'NICE: Consider offering statin therapy (atorvastatin 20mg) with shared decision-making. Discuss benefits and risks';
         } else {
             riskLevel = 'High risk (≥20%)';
             color = '#F44336';
-            recommendation = 'NICE: Statin therapy recommended (atorvastatin 20mg). Intensive lifestyle changes';
+            recommendation = 'NICE: Offer statin therapy (atorvastatin 20mg) with shared decision-making and lifestyle modification';
         }
 
         document.getElementById('qrisk-result').innerHTML = `
@@ -3306,8 +3325,8 @@ class MLAQuizApp {
     getEGFRCalculator() {
         return `
             <div class="calculator-form">
-                <h4>eGFR Calculator (CKD-EPI)</h4>
-                <p><small>Estimated Glomerular Filtration Rate - UK standard</small></p>
+                <h4>eGFR Calculator (CKD-EPI 2021)</h4>
+                <p><small>Estimated Glomerular Filtration Rate - UK standard (race-neutral equation)</small></p>
                 
                 <div class="calc-input-group">
                     <label>Age (years):</label>
@@ -3320,9 +3339,6 @@ class MLAQuizApp {
                 <div class="calc-input-group">
                     <label>Serum Creatinine (μmol/L):</label>
                     <input type="number" id="egfr-creatinine" placeholder="80" min="20" max="2000">
-                </div>
-                <div class="calc-checkbox-group">
-                    <label><input type="checkbox" id="egfr-black"> Black ethnicity</label>
                 </div>
                 
                 <button onclick="window.quizApp.calculateEGFR()">Calculate eGFR</button>
@@ -3347,7 +3363,6 @@ class MLAQuizApp {
         const age = parseInt(document.getElementById('egfr-age').value);
         const sex = document.querySelector('input[name="egfr-sex"]:checked')?.value;
         const creatinine = parseFloat(document.getElementById('egfr-creatinine').value);
-        const black = document.getElementById('egfr-black').checked;
         
         if (!age || !sex || !creatinine) {
             document.getElementById('egfr-result').innerHTML = '<p class="error">Please fill in all fields</p>';
@@ -3357,7 +3372,7 @@ class MLAQuizApp {
         // Convert μmol/L to mg/dL
         const creatinine_mg = creatinine * 0.0113;
         
-        // CKD-EPI equation
+        // CKD-EPI 2021 equation (race-neutral)
         let k, alpha;
         if (sex === 'female') {
             k = 0.7;
@@ -3372,7 +3387,7 @@ class MLAQuizApp {
                    Math.pow(0.993, age);
                    
         if (sex === 'female') egfr *= 1.018;
-        if (black) egfr *= 1.159;
+        // Race multiplier removed as per CKD-EPI 2021 recommendations
         
         egfr = Math.round(egfr);
         
@@ -3412,6 +3427,9 @@ class MLAQuizApp {
                 <strong>CKD Stage: ${stage}</strong><br>
                 <div style="margin-top: 8px; font-size: 0.9em;">
                     ${clinical}
+                </div>
+                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
+                    Using CKD-EPI 2021 race-neutral equation
                 </div>
             </div>
         `;
@@ -3474,23 +3492,19 @@ class MLAQuizApp {
         
         let risk = '';
         let dayStroke = '';
-        let management = '';
         let color = '';
         
         if (score <= 3) {
             risk = 'Low risk';
             dayStroke = '1% 2-day stroke risk';
-            management = 'Specialist assessment within 7 days (NICE)';
             color = '#4CAF50';
         } else if (score <= 5) {
             risk = 'Moderate risk';
             dayStroke = '4.1% 2-day stroke risk';
-            management = 'Specialist assessment within 24 hours (NICE)';
             color = '#FF9800';
         } else {
             risk = 'High risk';
             dayStroke = '8.1% 2-day stroke risk';
-            management = 'Immediate specialist assessment (NICE)';
             color = '#F44336';
         }
         
@@ -3499,8 +3513,11 @@ class MLAQuizApp {
                 <strong>ABCD² Score: ${score}/7</strong><br>
                 <strong>${risk}</strong><br>
                 ${dayStroke}<br>
-                <div style="margin-top: 8px; font-weight: bold;">
-                    ${management}
+                <div style="margin-top: 8px; font-weight: bold; color: #2196F3;">
+                    All suspected TIA → same-day specialist assessment (within 24h)
+                </div>
+                <div style="margin-top: 6px; font-size: 0.85em; color: #666;">
+                    Current UK guidance: ABCD² used for stroke risk stratification, not triage timing
                 </div>
             </div>
         `;
@@ -4096,15 +4113,15 @@ class MLAQuizApp {
             return;
         }
 
-        // Conversion factors to oral morphine equivalents (mg)
+        // Updated conversion factors to oral morphine equivalents (mg) - UK Faculty of Pain Medicine 2022
         const toMorphineFactors = {
             'morphine-oral': 1,
             'morphine-sc': 2,  // SC morphine is twice as potent as oral
             'oxycodone-oral': 1.5,  // Oxycodone 1mg = 1.5mg morphine
-            'fentanyl-patch': 150,  // 1 mcg/hr fentanyl = 150mg oral morphine per day
+            'fentanyl-patch': 100,  // UK guidance: 1 mcg/hr fentanyl = 100mg oral morphine per day (was 150)
             'codeine': 0.1,  // Codeine 10mg = 1mg morphine
             'tramadol': 0.1,  // Tramadol 10mg = 1mg morphine
-            'buprenorphine-patch': 75  // 1 mcg/hr buprenorphine = 75mg oral morphine per day
+            'buprenorphine-patch': 110  // UK guidance: 1 mcg/hr buprenorphine = 110mg oral morphine per day (was 75)
         };
 
         // Conversion factors from oral morphine equivalents
@@ -4112,15 +4129,16 @@ class MLAQuizApp {
             'morphine-oral': 1,
             'morphine-sc': 0.5,  // Oral to SC morphine
             'oxycodone-oral': 0.67,  // Morphine to oxycodone
-            'fentanyl-patch': 0.0067,  // Morphine to fentanyl patch (1/150)
+            'fentanyl-patch': 0.01,  // Morphine to fentanyl patch (1/100)
             'diamorphine-sc': 0.33  // Oral morphine to SC diamorphine
         };
 
         // Convert current dose to morphine equivalents
         const morphineEquivalent = currentDose * toMorphineFactors[currentOpioid];
         
-        // Convert to target opioid
-        const targetDose = morphineEquivalent * fromMorphineFactors[targetOpioid];
+        // Convert to target opioid with 25-50% dose reduction for safety
+        const fullTargetDose = morphineEquivalent * fromMorphineFactors[targetOpioid];
+        const reducedTargetDose = fullTargetDose * 0.75; // 25% reduction
 
         let dosageForm = '';
         let administration = '';
@@ -4130,17 +4148,17 @@ class MLAQuizApp {
             case 'morphine-oral':
                 dosageForm = 'mg oral';
                 administration = 'Give as modified-release BD or immediate-release 4-hourly';
-                frequency = targetDose <= 30 ? '5-10mg 4-hourly PRN' : Math.round(targetDose/6) + 'mg 4-hourly PRN';
+                frequency = reducedTargetDose <= 30 ? '5-10mg 4-hourly PRN' : Math.round(reducedTargetDose/6) + 'mg 4-hourly PRN';
                 break;
             case 'morphine-sc':
                 dosageForm = 'mg subcutaneous';
                 administration = 'Via syringe driver over 24 hours or divided into 4-6 hourly doses';
-                frequency = Math.round(targetDose/6) + 'mg SC PRN (1/6 of daily dose)';
+                frequency = Math.round(reducedTargetDose/6) + 'mg SC PRN (1/6 of daily dose)';
                 break;
             case 'oxycodone-oral':
                 dosageForm = 'mg oral';
                 administration = 'Give as modified-release BD or immediate-release 4-hourly';
-                frequency = Math.round(targetDose/6) + 'mg 4-hourly PRN';
+                frequency = Math.round(reducedTargetDose/6) + 'mg 4-hourly PRN';
                 break;
             case 'fentanyl-patch':
                 dosageForm = 'mcg/hr patch';
@@ -4150,19 +4168,23 @@ class MLAQuizApp {
             case 'diamorphine-sc':
                 dosageForm = 'mg subcutaneous';
                 administration = 'Via syringe driver over 24 hours';
-                frequency = Math.round(targetDose/6) + 'mg SC PRN (1/6 of daily dose)';
+                frequency = Math.round(reducedTargetDose/6) + 'mg SC PRN (1/6 of daily dose)';
                 break;
         }
 
         document.getElementById('opioid-conversion-result').innerHTML = `
             <div style="color: #2196F3;">
                 <strong>Conversion Result:</strong><br>
-                <strong>Target Dose: ${Math.round(targetDose * 10) / 10} ${dosageForm}</strong><br>
+                <strong>Target Dose: ${Math.round(reducedTargetDose * 10) / 10} ${dosageForm}</strong><br>
                 <em>Administration:</em> ${administration}<br>
                 <em>Breakthrough:</em> ${frequency}<br><br>
+                <div style="color: #FF5722; font-weight: bold; margin: 8px 0;">
+                    ⚠️ SAFETY: Start at 25-50% dose reduction and titrate carefully
+                </div>
                 <small style="color: #666;">
-                    ⚠️ Start at 75% of calculated dose and titrate to effect<br>
-                    Original: ${currentDose} ${currentOpioid.replace('-', ' ')} = ${Math.round(morphineEquivalent)} mg oral morphine equiv.
+                    Using UK Faculty of Pain Medicine conversion factors<br>
+                    Original: ${currentDose} ${currentOpioid.replace('-', ' ')} = ${Math.round(morphineEquivalent)} mg oral morphine equiv.<br>
+                    Full calculated dose: ${Math.round(fullTargetDose * 10) / 10} ${dosageForm} (reduced for safety)
                 </small>
             </div>
         `;
