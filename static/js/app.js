@@ -5177,6 +5177,328 @@ class MLAQuizApp {
                 pharmacokinetics: 'Topical absorption varies by site. Oral: short half-life 8-12h',
                 clinicalPearls: 'Mildest topical steroid. Available OTC in low concentrations. Safe for face/children',
                 indication: 'Eczema, dermatitis, insect bites, adrenal insufficiency (oral)'
+            },
+            'heparin': {
+                name: 'Heparin',
+                class: 'Anticoagulant (Unfractionated)',
+                mechanism: 'Binds to antithrombin III, enhancing inactivation of thrombin and factor Xa',
+                dosing: 'DVT/PE: Loading 80 units/kg IV, then 18 units/kg/h. Monitor APTT. Prophylaxis: 5000 units SC BD-TDS',
+                contraindications: 'Active bleeding, severe thrombocytopenia, previous HIT, severe liver disease',
+                interactions: 'Aspirin, warfarin (↑ bleeding risk), NSAIDS (↑ bleeding risk)',
+                monitoring: 'APTT (target 1.5-2.5x control), platelet count (HIT screening), signs of bleeding',
+                pregnancy: 'Safe - does not cross placenta. First-line anticoagulant in pregnancy',
+                sideEffects: 'Bleeding, HIT, osteoporosis (long-term), alopecia, skin necrosis',
+                pharmacokinetics: 'IV: immediate onset, t½ 1-2h. SC: onset 1-2h. Metabolism hepatic',
+                clinicalPearls: 'Monitor for HIT. Reverse with protamine. Use anti-Xa levels if APTT unreliable',
+                indication: 'DVT/PE treatment, ACS, AF, cardiac surgery, dialysis, stroke prevention'
+            },
+            'glyceryl-trinitrate': {
+                name: 'Glyceryl Trinitrate (GTN)',
+                class: 'Nitrate Vasodilator',
+                mechanism: 'Releases nitric oxide causing smooth muscle relaxation and vasodilation',
+                dosing: 'Angina: 400-800mcg SL PRN. IV: 10-200mcg/min. Topical: 2.5-5mg patches daily',
+                contraindications: 'Severe aortic stenosis, hypertrophic cardiomyopathy, PDE5 inhibitor use',
+                interactions: 'Sildenafil/PDE5 inhibitors (severe hypotension), alcohol (↑ hypotension)',
+                monitoring: 'Blood pressure, heart rate, headache severity, nitrate tolerance',
+                pregnancy: 'Use if benefits outweigh risks. Limited data but generally considered safe',
+                sideEffects: 'Headache, hypotension, flushing, dizziness, nitrate tolerance',
+                pharmacokinetics: 'SL: onset 2-5min, duration 30min. Patches: onset 30min, duration 12-14h',
+                clinicalPearls: 'Nitrate-free period needed to prevent tolerance. Keep tablets in original container',
+                indication: 'Angina, heart failure, hypertensive emergency, anal fissure'
+            },
+            'noradrenaline': {
+                name: 'Noradrenaline',
+                class: 'Sympathomimetic (Alpha/Beta agonist)',
+                mechanism: 'Potent α1 and moderate β1 agonist causing vasoconstriction and increased contractility',
+                dosing: 'IV infusion: 0.01-3mcg/kg/min via central line. Titrate to MAP >65mmHg',
+                contraindications: 'Hypovolemia (relative), pregnancy (unless life-threatening), peripheral vascular disease',
+                interactions: 'TCAs (↑ pressor response), MAOIs (↑ hypertensive crisis), halothane (arrhythmias)',
+                monitoring: 'Blood pressure, heart rate, urine output, peripheral perfusion, ECG',
+                pregnancy: 'Avoid unless life-threatening. May reduce uterine blood flow',
+                sideEffects: 'Hypertension, arrhythmias, peripheral ischemia, tissue necrosis (extravasation)',
+                pharmacokinetics: 'IV only. Onset immediate, duration 1-2min after stopping. Metabolized by COMT/MAO',
+                clinicalPearls: 'First-line vasopressor in septic shock. Give via central line. Have phentolamine ready',
+                indication: 'Septic shock, cardiogenic shock, severe hypotension, cardiac arrest'
+            },
+            'adenosine': {
+                name: 'Adenosine',
+                class: 'Antiarrhythmic (Purine nucleoside)',
+                mechanism: 'Blocks AV node conduction by activating adenosine A1 receptors',
+                dosing: 'Adult: 6mg IV bolus via large vein, then 12mg if needed, then 18mg. Pediatric: 0.1mg/kg',
+                contraindications: 'Asthma/COPD, 2nd/3rd degree heart block, sick sinus syndrome, WPW with AF',
+                interactions: 'Dipyridamole (↑ effect), theophylline (↓ effect), carbamazepine (↑ heart block)',
+                monitoring: 'Continuous ECG, blood pressure, respiratory status',
+                pregnancy: 'Safe - category C. Use if maternal benefit outweighs fetal risk',
+                sideEffects: 'Chest pain, dyspnea, flushing, transient AV block, bronchospasm',
+                pharmacokinetics: 'Very short half-life <10 seconds. Rapid cellular uptake and metabolism',
+                clinicalPearls: 'Give fast IV push followed by saline flush. Warn patient of chest discomfort',
+                indication: 'SVT termination, diagnostic test for broad complex tachycardia'
+            },
+            'magnesium-sulfate': {
+                name: 'Magnesium Sulfate',
+                class: 'Mineral supplement/Antiarrhythmic',
+                mechanism: 'Essential cofactor for enzymes, membrane stabilizer, calcium channel blocker',
+                dosing: 'Hypomagnesemia: 8mmol IV over 24h. Torsades: 8mmol IV over 10-15min. Eclampsia: 4g IV then 1g/h',
+                contraindications: 'Severe renal impairment, myasthenia gravis, heart block',
+                interactions: 'Digoxin (↓ efficacy), neuromuscular blockers (↑ paralysis), calcium channel blockers',
+                monitoring: 'Serum magnesium, reflexes, respiratory rate, urine output, renal function',
+                pregnancy: 'Safe and indicated for eclampsia/pre-eclampsia. Standard treatment',
+                sideEffects: 'Hypotension, respiratory depression, areflexia, cardiac arrest (overdose)',
+                pharmacokinetics: 'Onset 1-5min IV. Excreted unchanged by kidneys. t½ 3-4h',
+                clinicalPearls: 'Check reflexes before each dose. Have calcium gluconate ready as antidote',
+                indication: 'Eclampsia, torsades de pointes, hypomagnesemia, severe asthma'
+            },
+            'tranexamic-acid': {
+                name: 'Tranexamic Acid',
+                class: 'Antifibrinolytic',
+                mechanism: 'Lysine analog that inhibits plasminogen activation and plasmin activity',
+                dosing: 'Major bleeding: 1g IV over 10min, then 1g over 8h. Trauma: 1g IV then 1g over 8h within 3h',
+                contraindications: 'Active thromboembolic disease, history of seizures, subarachnoid hemorrhage',
+                interactions: 'Hormonal contraceptives (↑ thrombosis risk), factor IX complex concentrates',
+                monitoring: 'Signs of thrombosis, renal function, visual disturbances',
+                pregnancy: 'Generally safe. Used for postpartum hemorrhage. Category B',
+                sideEffects: 'Nausea, diarrhea, thrombosis (rare), seizures (high dose), visual disturbances',
+                pharmacokinetics: 'Peak 3h PO, 1h IV. 90% excreted unchanged in urine. t½ 2-3h',
+                clinicalPearls: 'Most effective within 3h of trauma. Reduces mortality in major bleeding',
+                indication: 'Major bleeding, trauma, menorrhagia, hereditary angioedema'
+            },
+            'calcium-gluconate': {
+                name: 'Calcium Gluconate',
+                class: 'Mineral replacement/Antidote',
+                mechanism: 'Provides calcium ions essential for cardiac, skeletal muscle function and nerve transmission',
+                dosing: 'Hypocalcemia: 10-20ml of 10% solution IV. Hyperkalemia: 10ml of 10% IV. Mg toxicity: 10-20ml IV',
+                contraindications: 'Hypercalcemia, calcium kidney stones, digoxin toxicity',
+                interactions: 'Digoxin (↑ toxicity), thiazides (↑ calcium), levothyroxine (↓ absorption)',
+                monitoring: 'Serum calcium, phosphate, magnesium, ECG, signs of extravasation',
+                pregnancy: 'Safe when clinically indicated. Essential mineral',
+                sideEffects: 'Hypercalcemia, tissue necrosis (extravasation), bradycardia, hypotension',
+                pharmacokinetics: 'IV: immediate effect. Calcium distributed to bones, excreted via kidneys',
+                clinicalPearls: 'Preferred over calcium chloride peripherally. Give slowly to avoid arrhythmias',
+                indication: 'Hypocalcemia, hyperkalemia, hypermagnesemia, calcium channel blocker overdose'
+            },
+            'ceftriaxone': {
+                name: 'Ceftriaxone',
+                class: 'Antibiotic (3rd generation cephalosporin)',
+                mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
+                dosing: 'Adult: 1-2g daily IV/IM. Severe infections: 2g BD. Meningitis: 2g BD. Max 4g/day',
+                contraindications: 'Hypersensitivity to cephalosporins, premature neonates, hyperbilirubinemia',
+                interactions: 'Calcium-containing solutions (precipitation), warfarin (↑ INR), probenecid (↑ levels)',
+                monitoring: 'Signs of infection resolution, renal function, LFTs, FBC, C.diff surveillance',
+                pregnancy: 'Safe - category B. Crosses placenta but no known teratogenic effects',
+                sideEffects: 'Diarrhea, rash, injection site reactions, gallbladder sludging, C.diff',
+                pharmacokinetics: 'Good tissue penetration including CSF. t½ 6-9h. 50% renal excretion',
+                clinicalPearls: 'Excellent CNS penetration. Once daily dosing. Avoid calcium solutions',
+                indication: 'Pneumonia, meningitis, sepsis, gonorrhea, cellulitis, intra-abdominal infections'
+            },
+            'gentamicin': {
+                name: 'Gentamicin',
+                class: 'Antibiotic (Aminoglycoside)',
+                mechanism: 'Inhibits bacterial protein synthesis by binding to 30S ribosomal subunit',
+                dosing: 'Adult: 5-7mg/kg daily IV/IM. Adjust for renal function. Monitor levels - trough <2mg/L',
+                contraindications: 'Myasthenia gravis, previous 8th nerve damage, severe renal impairment',
+                interactions: 'Loop diuretics (↑ ototoxicity), vancomycin (↑ nephrotoxicity), muscle relaxants',
+                monitoring: 'Renal function, hearing, balance, drug levels (peak/trough), urine output',
+                pregnancy: 'Avoid - category D. Risk of 8th cranial nerve damage to fetus',
+                sideEffects: 'Nephrotoxicity, ototoxicity (vestibular/auditory), neuromuscular blockade',
+                pharmacokinetics: 'Poor oral absorption. Good tissue penetration. t½ 2-3h. 95% renal excretion',
+                clinicalPearls: 'Once daily dosing preferred. Synergistic with beta-lactams. Monitor levels',
+                indication: 'Serious gram-negative infections, endocarditis, sepsis, UTI, pneumonia'
+            },
+            'benzylpenicillin': {
+                name: 'Benzylpenicillin',
+                class: 'Antibiotic (Penicillin)',
+                mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
+                dosing: 'Adult: 0.6-2.4g QDS IV/IM. Meningitis: 2.4g 4-hourly. Severe infections: up to 14.4g/day',
+                contraindications: 'Penicillin allergy, previous severe allergic reaction',
+                interactions: 'Probenecid (↑ levels), methotrexate (↑ toxicity), oral contraceptives (↓ efficacy)',
+                monitoring: 'Signs of infection resolution, allergic reactions, renal function if high dose',
+                pregnancy: 'Safe - category A. First-line for many infections in pregnancy',
+                sideEffects: 'Allergic reactions (rash to anaphylaxis), diarrhea, injection site reactions',
+                pharmacokinetics: 'Good tissue penetration. t½ 30min. Mainly renal excretion',
+                clinicalPearls: 'First-line for streptococcal infections. Give IV for serious infections',
+                indication: 'Meningitis, cellulitis, pneumonia, endocarditis, necrotizing fasciitis'
+            },
+            'clindamycin': {
+                name: 'Clindamycin',
+                class: 'Antibiotic (Lincosamide)',
+                mechanism: 'Inhibits bacterial protein synthesis by binding to 50S ribosomal subunit',
+                dosing: 'Adult: 150-450mg QDS PO or 0.6-2.7g daily IV in divided doses. Max 4.8g/day IV',
+                contraindications: 'Previous C.diff colitis, severe liver disease, lincomycin allergy',
+                interactions: 'Neuromuscular blockers (↑ paralysis), warfarin (↑ INR), ciclosporin',
+                monitoring: 'Diarrhea/C.diff symptoms, liver function, infection resolution',
+                pregnancy: 'Generally safe - category B. Limited placental transfer',
+                sideEffects: 'C.diff colitis, diarrhea, rash, metallic taste, liver dysfunction',
+                pharmacokinetics: 'Good tissue/bone penetration. t½ 2-3h. Hepatic metabolism',
+                clinicalPearls: 'Excellent bone penetration. High C.diff risk. Stop if diarrhea develops',
+                indication: 'Bone/joint infections, anaerobic infections, skin/soft tissue, dental infections'
+            },
+            'azithromycin': {
+                name: 'Azithromycin',
+                class: 'Antibiotic (Macrolide)',
+                mechanism: 'Inhibits bacterial protein synthesis by binding to 50S ribosomal subunit',
+                dosing: 'Adult: 500mg daily for 3 days PO or 500mg daily IV. Pneumonia: 500mg x 5 days',
+                contraindications: 'Macrolide allergy, severe liver disease, QT prolongation',
+                interactions: 'Warfarin (↑ INR), digoxin (↑ levels), simvastatin (↑ myopathy), QT drugs',
+                monitoring: 'QT interval, liver function, infection resolution, hearing (high dose)',
+                pregnancy: 'Safe - category B. First-line for chlamydia in pregnancy',
+                sideEffects: 'GI upset, QT prolongation, hepatotoxicity, hearing loss (rare)',
+                pharmacokinetics: 'Long tissue half-life 68h. Good intracellular penetration. Hepatic metabolism',
+                clinicalPearls: 'Once daily dosing. Good atypical coverage. Short course therapy',
+                indication: 'Atypical pneumonia, COPD exacerbations, chlamydia, URTI, skin infections'
+            },
+            'meropenem': {
+                name: 'Meropenem',
+                class: 'Antibiotic (Carbapenem)',
+                mechanism: 'Inhibits bacterial cell wall synthesis, stable to most beta-lactamases',
+                dosing: 'Adult: 0.5-1g TDS IV. Severe infections/meningitis: 2g TDS. Infuse over 15-30min',
+                contraindications: 'Carbapenem allergy, severe penicillin allergy (cross-reactivity)',
+                interactions: 'Probenecid (↑ levels), valproate (↓ seizure threshold), ganciclovir',
+                monitoring: 'Renal function, seizure activity, infection resolution, C.diff surveillance',
+                pregnancy: 'Safe - category B. Use when benefits outweigh risks',
+                sideEffects: 'Diarrhea, nausea, headache, seizures (high dose/renal impairment), C.diff',
+                pharmacokinetics: 'Excellent tissue penetration including CSF. t½ 1h. 70% renal excretion',
+                clinicalPearls: 'Broad spectrum including ESBL producers. Lower seizure risk than imipenem',
+                indication: 'Severe sepsis, complicated UTI, intra-abdominal infections, meningitis'
+            },
+            'piperacillin-tazobactam': {
+                name: 'Piperacillin-Tazobactam',
+                class: 'Antibiotic (Penicillin/Beta-lactamase inhibitor)',
+                mechanism: 'Piperacillin inhibits cell wall synthesis; tazobactam inhibits beta-lactamases',
+                dosing: 'Adult: 4.5g TDS IV over 30min. Severe infections: 4.5g QDS. Adjust for renal function',
+                contraindications: 'Penicillin allergy, severe beta-lactam allergy',
+                interactions: 'Probenecid (↑ levels), aminoglycosides (inactivation), warfarin (↑ INR)',
+                monitoring: 'Renal function, infection resolution, allergic reactions, C.diff surveillance',
+                pregnancy: 'Safe - category B. Use when clinically indicated',
+                sideEffects: 'Diarrhea, rash, phlebitis, electrolyte disturbances, C.diff colitis',
+                pharmacokinetics: 'Good tissue penetration. t½ 1h. 80% renal excretion unchanged',
+                clinicalPearls: 'Broad spectrum anti-pseudomonal. Common empirical choice for sepsis',
+                indication: 'Hospital-acquired pneumonia, complicated UTI, sepsis, neutropenic fever'
+            },
+            'metoclopramide': {
+                name: 'Metoclopramide',
+                class: 'Antiemetic/Prokinetic (Dopamine antagonist)',
+                mechanism: 'Blocks dopamine D2 receptors in CTZ and enhances GI motility',
+                dosing: 'Adult: 10mg TDS PO/IV/IM. Max 5 days treatment. Reduce dose in elderly/renal impairment',
+                contraindications: 'GI obstruction, perforation, pheochromocytoma, prolactinoma, Parkinson\'s disease',
+                interactions: 'Dopamine agonists (antagonism), CNS depressants, digoxin (↑ absorption)',
+                monitoring: 'Neurological symptoms (tardive dyskinesia), cardiac conduction, renal function',
+                pregnancy: 'Safe - category A. Commonly used for hyperemesis gravidarum',
+                sideEffects: 'Extrapyramidal effects, tardive dyskinesia, drowsiness, depression, galactorrhea',
+                pharmacokinetics: 'Onset 30min PO, 10min IV. t½ 4-6h. Hepatic metabolism, renal excretion',
+                clinicalPearls: 'Limit to 5 days to reduce tardive dyskinesia risk. Give procyclidine for dystonia',
+                indication: 'Nausea/vomiting, gastroparesis, migraine-associated nausea, postoperative nausea'
+            },
+            'ondansetron': {
+                name: 'Ondansetron',
+                class: 'Antiemetic (5-HT3 antagonist)',
+                mechanism: 'Selective antagonist of 5-HT3 receptors in CTZ and vagal afferents',
+                dosing: 'Adult: 4-8mg TDS PO/IV/IM. Chemotherapy: 8mg pre-chemo then 8mg BD. Max 32mg/day',
+                contraindications: 'Congenital long QT syndrome, severe hepatic impairment',
+                interactions: 'QT-prolonging drugs, apomorphine (severe hypotension), rifampicin (↓ efficacy)',
+                monitoring: 'QT interval (especially IV), constipation, liver function',
+                pregnancy: 'Generally safe - category B. Benefits usually outweigh risks',
+                sideEffects: 'Constipation, headache, QT prolongation, hypersensitivity reactions',
+                pharmacokinetics: 'Good oral bioavailability. t½ 3-6h. Hepatic metabolism (CYP3A4)',
+                clinicalPearls: 'Most effective for chemotherapy-induced nausea. Check QT with IV use',
+                indication: 'Chemotherapy-induced nausea, postoperative nausea, radiotherapy nausea'
+            },
+            'prochlorperazine': {
+                name: 'Prochlorperazine',
+                class: 'Antiemetic/Antipsychotic (Phenothiazine)',
+                mechanism: 'Blocks dopamine D2 receptors in CTZ and has anticholinergic effects',
+                dosing: 'Adult: 5-10mg TDS PO, 12.5mg IM, 25mg PR. Vertigo: 5mg TDS for 2 days then 5mg BD',
+                contraindications: 'CNS depression, bone marrow depression, pheochromocytoma, young children',
+                interactions: 'CNS depressants, anticholinergics, lithium (↑ extrapyramidal effects)',
+                monitoring: 'Extrapyramidal symptoms, blood counts, hepatic function, cardiac conduction',
+                pregnancy: 'Use with caution - category C. Potential extrapyramidal effects in neonate',
+                sideEffects: 'Extrapyramidal effects, sedation, anticholinergic effects, tardive dyskinesia',
+                pharmacokinetics: 'Good oral absorption. t½ 23h. Extensive hepatic metabolism',
+                clinicalPearls: 'Effective for vertigo and labyrinthitis. Avoid in Parkinson\'s disease',
+                indication: 'Nausea/vomiting, vertigo, migraine, schizophrenia (higher doses)'
+            },
+            'midazolam': {
+                name: 'Midazolam',
+                class: 'Benzodiazepine/Sedative',
+                mechanism: 'GABA-A receptor agonist causing CNS depression and amnesia',
+                dosing: 'Conscious sedation: 1-2.5mg IV slowly. Anaesthesia: 0.15-0.3mg/kg IV. Seizures: 0.2mg/kg IV/IM',
+                contraindications: 'Severe respiratory depression, acute narrow-angle glaucoma, myasthenia gravis',
+                interactions: 'CNS depressants (↑ sedation), CYP3A4 inhibitors (↑ levels), alcohol',
+                monitoring: 'Respiratory rate, oxygen saturation, blood pressure, level of consciousness',
+                pregnancy: 'Avoid - category D. Risk of floppy infant syndrome',
+                sideEffects: 'Respiratory depression, hypotension, amnesia, paradoxical agitation',
+                pharmacokinetics: 'Rapid onset 2-5min IV. t½ 1-4h. Hepatic metabolism (CYP3A4)',
+                clinicalPearls: 'Flumazenil antidote available. Titrate slowly. Have airway management ready',
+                indication: 'Conscious sedation, premedication, status epilepticus, ICU sedation'
+            },
+            'propofol': {
+                name: 'Propofol',
+                class: 'General Anaesthetic (Phenolic compound)',
+                mechanism: 'GABA-A receptor agonist causing rapid onset anaesthesia',
+                dosing: 'Induction: 1.5-2.5mg/kg IV. Maintenance: 4-12mg/kg/h IV. ICU sedation: 0.3-4mg/kg/h',
+                contraindications: 'Egg/soy allergy, children <16 years (prolonged use), severe cardiac failure',
+                interactions: 'CNS depressants (↑ effect), NO drug interactions metabolically',
+                monitoring: 'Blood pressure, respiratory rate, depth of anaesthesia, lipid levels (prolonged use)',
+                pregnancy: 'Safe for anaesthesia - category B. Crosses placenta rapidly',
+                sideEffects: 'Hypotension, respiratory depression, injection pain, propofol infusion syndrome',
+                pharmacokinetics: 'Rapid onset 40s, offset 5-10min. t½ 1-3h. Hepatic and extrahepatic metabolism',
+                clinicalPearls: 'Painful injection - use lidocaine. Quick recovery. Risk of PRIS with prolonged use',
+                indication: 'General anaesthesia induction/maintenance, ICU sedation, procedural sedation'
+            },
+            'ketamine': {
+                name: 'Ketamine',
+                class: 'Dissociative Anaesthetic/Analgesic',
+                mechanism: 'NMDA receptor antagonist causing dissociative anaesthesia and analgesia',
+                dosing: 'Anaesthesia: 1-2mg/kg IV, 4-6mg/kg IM. Analgesia: 0.1-0.3mg/kg IV. Depression: 0.5mg/kg',
+                contraindications: 'Severe hypertension, raised ICP, psychotic disorders, porphyria',
+                interactions: 'CNS depressants, sympathomimetics (↑ hypertension), theophylline',
+                monitoring: 'Blood pressure, heart rate, respiratory rate, emergence reactions',
+                pregnancy: 'Use with caution - category C. Limited data but appears relatively safe',
+                sideEffects: 'Emergence reactions, hallucinations, hypertension, tachycardia, laryngospasm',
+                pharmacokinetics: 'Rapid onset 1-2min IV. t½ 2-3h. Hepatic metabolism to active metabolites',
+                clinicalPearls: 'Maintains airway reflexes. Good for unstable patients. Pre-treat with benzodiazepine',
+                indication: 'Emergency anaesthesia, procedural sedation, severe asthma, treatment-resistant depression'
+            },
+            'bisoprolol': {
+                name: 'Bisoprolol',
+                class: 'Beta-1 Selective Blocker',
+                mechanism: 'Selective antagonist of cardiac beta-1 adrenoreceptors',
+                dosing: 'Heart failure: Start 1.25mg daily, titrate to 10mg daily. Hypertension: 5-10mg daily',
+                contraindications: 'Asthma, severe COPD, cardiogenic shock, severe bradycardia, severe heart failure',
+                interactions: 'Calcium channel blockers (↑ bradycardia), insulin (masks hypoglycemia), NSAIDs',
+                monitoring: 'Heart rate, blood pressure, signs of heart failure, renal function, glucose',
+                pregnancy: 'Use with caution - category C. Risk of IUGR and neonatal complications',
+                sideEffects: 'Bradycardia, hypotension, fatigue, cold extremities, bronchospasm',
+                pharmacokinetics: 'Good oral bioavailability. t½ 10-12h. 50% hepatic, 50% renal elimination',
+                clinicalPearls: 'Most cardioselective beta-blocker. Evidence-based for heart failure',
+                indication: 'Heart failure, post-MI, hypertension, angina, atrial fibrillation'
+            },
+            'pregabalin': {
+                name: 'Pregabalin',
+                class: 'Anticonvulsant/Neuropathic Pain Agent',
+                mechanism: 'Binds to voltage-gated calcium channels reducing excitatory neurotransmitter release',
+                dosing: 'Neuropathic pain: Start 75mg BD, titrate to 150-300mg BD. Epilepsy: 150-600mg daily',
+                contraindications: 'Hypersensitivity to pregabalin, galactose intolerance',
+                interactions: 'CNS depressants (↑ sedation), ACE inhibitors (↑ angioedema risk)',
+                monitoring: 'Renal function, weight gain, mood changes, visual disturbances',
+                pregnancy: 'Avoid - category C. Teratogenic in animal studies',
+                sideEffects: 'Sedation, dizziness, weight gain, peripheral edema, blurred vision',
+                pharmacokinetics: 'Good oral absorption. t½ 6h. 90% renal excretion unchanged',
+                clinicalPearls: 'Effective for neuropathic pain. Controlled drug. Gradual withdrawal needed',
+                indication: 'Neuropathic pain, epilepsy, generalized anxiety disorder, fibromyalgia'
+            },
+            'pantoprazole': {
+                name: 'Pantoprazole',
+                class: 'Proton Pump Inhibitor',
+                mechanism: 'Irreversibly inhibits gastric H+/K+-ATPase (proton pump)',
+                dosing: 'Adult: 40mg daily PO/IV. Severe GORD: 40mg BD. Zollinger-Ellison: up to 240mg daily',
+                contraindications: 'Hypersensitivity to PPIs, severe liver disease',
+                interactions: 'Clopidogrel (↓ efficacy), digoxin (↑ levels), ketoconazole (↓ absorption)',
+                monitoring: 'Magnesium levels (long-term), B12 levels, bone density, C.diff risk',
+                pregnancy: 'Generally safe - category B. Use if benefits outweigh risks',
+                sideEffects: 'Headache, diarrhea, hypomagnesemia, increased fracture risk, C.diff',
+                pharmacokinetics: 'Onset 2-3 days for full effect. t½ 1h. Hepatic metabolism (CYP2C19)',
+                clinicalPearls: 'IV formulation available. Less drug interactions than omeprazole',
+                indication: 'GORD, peptic ulcer disease, H.pylori eradication, stress ulcer prophylaxis'
             }
         };
         
@@ -5189,9 +5511,15 @@ class MLAQuizApp {
             <div class="drug-categories">
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('all'); event.stopPropagation();">All Drugs</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('alphabetical'); event.stopPropagation();">A-Z</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('analgesics'); event.stopPropagation();">Pain Management</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('antibiotics'); event.stopPropagation();">Antibiotics</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('mental-health'); event.stopPropagation();">Mental Health</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('respiratory'); event.stopPropagation();">Respiratory</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('endocrine'); event.stopPropagation();">Endocrine</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('emergency'); event.stopPropagation();">Emergency</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('gastro'); event.stopPropagation();">Gastro</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('neuro'); event.stopPropagation();">Neurological</button>
             </div>
             <div id="drug-list"></div>
         `;
@@ -5239,12 +5567,25 @@ class MLAQuizApp {
         let drugs = Object.keys(drugDatabase);
         
         // Filter drugs by category
-        if (category === 'antibiotics') {
+        if (category === 'analgesics') {
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                const drugName = drugDatabase[drug].name.toLowerCase();
+                return drugClass.includes('analgesic') || drugClass.includes('nsaid') || 
+                       drugClass.includes('opioid') || drugName.includes('paracetamol') ||
+                       drugName.includes('ibuprofen') || drugName.includes('morphine') ||
+                       drugName.includes('codeine') || drugName.includes('tramadol') ||
+                       drugName.includes('naproxen');
+            });
+        } else if (category === 'antibiotics') {
             drugs = drugs.filter(drug => {
                 const drugClass = drugDatabase[drug].class.toLowerCase();
                 return drugClass.includes('antibiotic') || drugClass.includes('penicillin') || 
                        drugClass.includes('macrolide') || drugClass.includes('cephalosporin') ||
-                       drugClass.includes('quinolone') || drugClass.includes('tetracycline');
+                       drugClass.includes('quinolone') || drugClass.includes('tetracycline') ||
+                       drugClass.includes('glycopeptide') || drugClass.includes('fluoroquinolone') ||
+                       drugClass.includes('carbapenem') || drugClass.includes('aminoglycoside') ||
+                       drugClass.includes('lincosamide') || drugClass.includes('beta-lactamase');
             });
         } else if (category === 'cardiovascular') {
             drugs = drugs.filter(drug => {
@@ -5252,14 +5593,85 @@ class MLAQuizApp {
                 return drugClass.includes('statin') || drugClass.includes('ace inhibitor') ||
                        drugClass.includes('beta-blocker') || drugClass.includes('diuretic') ||
                        drugClass.includes('calcium channel') || drugClass.includes('anticoagulant') ||
-                       drugClass.includes('antiplatelet') || drugClass.includes('angiotensin');
+                       drugClass.includes('antiplatelet') || drugClass.includes('angiotensin') ||
+                       drugClass.includes('cardiac') || drugClass.includes('antiarrhythmic') ||
+                       drugClass.includes('beta-1 selective') || drugClass.includes('nitrate');
+            });
+        } else if (category === 'mental-health') {
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                const drugName = drugDatabase[drug].name.toLowerCase();
+                return drugClass.includes('antidepressant') || drugClass.includes('ssri') ||
+                       drugClass.includes('anxiolytic') || drugClass.includes('antipsychotic') ||
+                       drugClass.includes('mood stabilizer') || drugClass.includes('benzodiazepine') ||
+                       drugClass.includes('sedative') || drugClass.includes('anaesthetic') ||
+                       drugName.includes('fluoxetine') || drugName.includes('citalopram') ||
+                       drugName.includes('sertraline') || drugName.includes('diazepam') ||
+                       drugName.includes('lithium') || drugName.includes('haloperidol') ||
+                       drugName.includes('lorazepam') || drugName.includes('olanzapine') ||
+                       drugName.includes('midazolam') || drugName.includes('propofol') ||
+                       drugName.includes('ketamine');
+            });
+        } else if (category === 'respiratory') {
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                const drugName = drugDatabase[drug].name.toLowerCase();
+                return drugClass.includes('bronchodilator') || drugClass.includes('corticosteroid') ||
+                       drugClass.includes('beta-2 agonist') || drugClass.includes('anticholinergic') ||
+                       drugClass.includes('leukotriene') || drugName.includes('salbutamol') ||
+                       drugName.includes('beclomethasone') || drugName.includes('salmeterol') ||
+                       drugName.includes('montelukast') || drugName.includes('theophylline') ||
+                       drugName.includes('ipratropium');
             });
         } else if (category === 'endocrine') {
             drugs = drugs.filter(drug => {
                 const drugClass = drugDatabase[drug].class.toLowerCase();
                 return drugClass.includes('antidiabetic') || drugClass.includes('thyroid') ||
                        drugClass.includes('insulin') || drugClass.includes('sulfonylurea') ||
-                       drugClass.includes('metformin') || drugClass.includes('corticosteroid');
+                       drugClass.includes('metformin') || drugClass.includes('corticosteroid') ||
+                       drugClass.includes('sglt2') || drugClass.includes('hormone');
+            });
+        } else if (category === 'emergency') {
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                const drugName = drugDatabase[drug].name.toLowerCase();
+                return drugClass.includes('emergency') || drugClass.includes('antidote') ||
+                       drugClass.includes('sympathomimetic') || drugClass.includes('local anaesthetic') ||
+                       drugClass.includes('anticoagulant') || drugClass.includes('antiarrhythmic') ||
+                       drugClass.includes('mineral') || drugClass.includes('antifibrinolytic') ||
+                       drugName.includes('adrenaline') || drugName.includes('epinephrine') ||
+                       drugName.includes('naloxone') || drugName.includes('atropine') ||
+                       drugName.includes('lidocaine') || drugName.includes('dexamethasone') ||
+                       drugName.includes('heparin') || drugName.includes('glyceryl') ||
+                       drugName.includes('noradrenaline') || drugName.includes('adenosine') ||
+                       drugName.includes('magnesium') || drugName.includes('tranexamic') ||
+                       drugName.includes('calcium');
+            });
+        } else if (category === 'gastro') {
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                const drugName = drugDatabase[drug].name.toLowerCase();
+                return drugClass.includes('proton pump') || drugClass.includes('antiemetic') ||
+                       drugClass.includes('laxative') || drugClass.includes('antidiarrhoeal') ||
+                       drugClass.includes('antispasmodic') || drugClass.includes('dopamine antagonist') ||
+                       drugClass.includes('5-ht3 antagonist') || drugClass.includes('phenothiazine') ||
+                       drugName.includes('lansoprazole') || drugName.includes('omeprazole') ||
+                       drugName.includes('domperidone') || drugName.includes('cyclizine') ||
+                       drugName.includes('senna') || drugName.includes('lactulose') ||
+                       drugName.includes('loperamide') || drugName.includes('hyoscine') ||
+                       drugName.includes('metoclopramide') || drugName.includes('ondansetron') ||
+                       drugName.includes('prochlorperazine') || drugName.includes('pantoprazole');
+            });
+        } else if (category === 'neuro') {
+            drugs = drugs.filter(drug => {
+                const drugClass = drugDatabase[drug].class.toLowerCase();
+                const drugName = drugDatabase[drug].name.toLowerCase();
+                return drugClass.includes('anticonvulsant') || drugClass.includes('antiepilep') ||
+                       drugClass.includes('neuropathic') || drugClass.includes('dopamine') ||
+                       drugClass.includes('triptan') || drugClass.includes('neuropathic pain') ||
+                       drugName.includes('gabapentin') || drugName.includes('phenytoin') ||
+                       drugName.includes('carbamazepine') || drugName.includes('levodopa') ||
+                       drugName.includes('sumatriptan') || drugName.includes('pregabalin');
             });
         }
         
