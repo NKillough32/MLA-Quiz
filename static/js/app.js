@@ -4092,7 +4092,7 @@ class MLAQuizApp {
 
         if (currentDose === 0) {
             document.getElementById('opioid-conversion-result').innerHTML = 
-                '<div style="color: #F44336;"><strong>Please enter current dose</strong></div>';
+                '<div class="calc-error"><strong>Please enter current dose</strong></div>';
             return;
         }
 
@@ -4173,7 +4173,7 @@ class MLAQuizApp {
 
         if (dailyMorphine === 0) {
             document.getElementById('breakthrough-result').innerHTML = 
-                '<div style="color: #F44336;"><strong>Please enter daily morphine equivalent</strong></div>';
+                '<div class="calc-error"><strong>Please enter daily morphine equivalent</strong></div>';
             return;
         }
 
@@ -4182,14 +4182,14 @@ class MLAQuizApp {
         const scBreakthroughDose = Math.round(breakthroughDose / 2);
 
         document.getElementById('breakthrough-result').innerHTML = `
-            <div style="color: #4CAF50;">
+            <div class="calc-success">
                 <strong>Breakthrough Dosing:</strong><br>
                 <strong>Oral Morphine:</strong> ${breakthroughDose}mg every 1-2 hours PRN<br>
                 <strong>SC Morphine:</strong> ${scBreakthroughDose}mg every 1-2 hours PRN<br>
                 <strong>Oxycodone:</strong> ${Math.round(breakthroughDose * 0.67)}mg every 1-2 hours PRN<br><br>
                 <em>Frequency:</em> Maximum 6 doses per 24 hours<br>
                 <em>Review:</em> If >2 breakthrough doses/day, consider increasing background dose<br><br>
-                <small style="color: #666;">
+                <small class="calc-note">
                     💡 Rule: Breakthrough = 1/6 of total daily dose
                 </small>
             </div>
@@ -4303,7 +4303,7 @@ class MLAQuizApp {
         }
 
         document.getElementById('secretion-result').innerHTML = `
-            <div style="color: #4CAF50;">
+            <div class="calc-success">
                 <strong>Management of ${secretionType.replace('-', ' ')}:</strong><br><br>
                 <strong>First Choice:</strong><br>
                 ${primaryDrug}<br><br>
@@ -4311,7 +4311,7 @@ class MLAQuizApp {
                 ${alternativeDrugs}<br><br>
                 <strong>Non-pharmacological:</strong><br>
                 ${nonPharmacological}<br><br>
-                <small style="color: #666;">
+                <small class="calc-note">
                     💊 Weight: ${weight}kg - doses shown are standard adult doses<br>
                     ⚠️ All anticholinergics can cause drowsiness, confusion, and dry mouth<br>
                     🕒 Review effectiveness after 24-48 hours and adjust accordingly
@@ -7379,7 +7379,7 @@ class MLAQuizApp {
         const container = document.getElementById('guidelines-panel');
         
         let contentHtml = `
-            <button class="back-btn" onclick="window.quizApp.loadGuidelines()">← Back to Guidelines</button>
+            <button class="back-btn" onclick="window.quizApp.loadGuidelines(); event.stopPropagation();">← Back to Guidelines</button>
             <div class="guideline-detail">
                 <h3>${guideline.title}</h3>
                 <div class="guideline-meta">
