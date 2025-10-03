@@ -8666,16 +8666,16 @@ class MLAQuizApp {
         const container = document.getElementById('differential-dx-container');
         
         const presentationsHtml = Object.entries(symptom.presentations).map(([dx, data]) => `
-            <button class="ddx-item-btn ${data.urgency.toLowerCase()}" onclick="console.log('🔍 Diagnosis clicked:', '${dx}'); window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}'); event.stopPropagation();">
-                <div class="ddx-diagnosis">${dx}</div>
-                <div class="ddx-urgency ${data.urgency.toLowerCase()}">${data.urgency}</div>
-                <div class="ddx-features">${data.features.substring(0, 100)}...</div>
-                ${data.differentiatingFeatures ? `<div class="ddx-key-features">🔍 ${data.differentiatingFeatures.substring(0, 80)}...</div>` : ''}
+            <button class="lab-value-btn ${data.urgency.toLowerCase()}" onclick="console.log('🔍 Diagnosis clicked:', '${dx}'); window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}'); event.stopPropagation();">
+                <div class="lab-name">${dx}</div>
+                <div class="lab-range ${data.urgency.toLowerCase()}">${data.urgency}</div>
+                <div class="lab-description">${data.features.substring(0, 100)}...</div>
+                ${data.differentiatingFeatures ? `<div class="lab-note">🔍 ${data.differentiatingFeatures.substring(0, 80)}...</div>` : ''}
             </button>
         `).join('');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.loadDifferentialDx()">← Back to Symptoms</button>
+            <button class="back-btn" onclick="window.quizApp.loadDifferentialDx(); event.stopPropagation();">← Back to Symptoms</button>
             <div class="ddx-detail">
                 <h3>🔍 ${symptom.title}</h3>
                 <p class="ddx-category">📋 ${symptom.category}</p>
@@ -8685,7 +8685,7 @@ class MLAQuizApp {
                     <p>${symptom.redFlags}</p>
                 </div>` : ''}
                 <h4>📋 Differential Diagnoses:</h4>
-                <div class="ddx-presentations">
+                <div class="lab-grid">
                     ${presentationsHtml}
                 </div>
             </div>
@@ -8697,7 +8697,7 @@ class MLAQuizApp {
         const container = document.getElementById('differential-dx-container');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.showDdxDetail('${symptomKey}')">← Back to ${this.ddxDatabase[symptomKey].title}</button>
+            <button class="back-btn" onclick="window.quizApp.showDdxDetail('${symptomKey}'); event.stopPropagation();">← Back to ${this.ddxDatabase[symptomKey].title}</button>
             <div class="diagnosis-detail">
                 <h3>🔍 ${dxKey}</h3>
                 <div class="urgency-banner ${diagnosis.urgency.toLowerCase()}">
