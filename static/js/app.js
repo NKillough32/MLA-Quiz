@@ -9159,6 +9159,740 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
                     clinicalPearls: 'Romberg tests proprioception - positive if worse with eyes closed'
                 }
             }
+        },
+        'mental-state': {
+            title: 'Mental State Examination',
+            category: 'psychiatric',
+            approach: 'Appearance → Behaviour → Speech → Mood → Thought → Perception → Cognition → Insight',
+            sections: {
+                'appearance': {
+                    name: 'Appearance and Behaviour',
+                    technique: 'Observe dress, hygiene, posture, facial expression, eye contact',
+                    normal: 'Appropriately dressed, good hygiene, normal posture, appropriate eye contact',
+                    abnormal: {
+                        'Self-neglect': 'Poor hygiene, inappropriate dress - depression, dementia, schizophrenia',
+                        'Agitation': 'Restlessness, pacing, fidgeting - anxiety, mania, drug withdrawal',
+                        'Psychomotor retardation': 'Slowed movements, reduced facial expression - depression',
+                        'Bizarre behaviour': 'Inappropriate actions - psychosis, dementia',
+                        'Poor eye contact': 'Depression, autism, social anxiety, cultural factors'
+                    },
+                    clinicalPearls: 'Note cultural considerations. Observe throughout interview'
+                },
+                'speech': {
+                    name: 'Speech Assessment',
+                    technique: 'Assess rate, volume, tone, fluency, content',
+                    normal: 'Normal rate, appropriate volume, coherent content',
+                    abnormal: {
+                        'Pressure of speech': 'Rapid, difficult to interrupt - mania, hyperthyroidism',
+                        'Poverty of speech': 'Reduced amount - depression, schizophrenia',
+                        'Flight of ideas': 'Rapid topic changes with logical connections - mania',
+                        'Circumstantial speech': 'Excessive unnecessary detail but reaches point - anxiety',
+                        'Word salad': 'Incoherent jumble of words - severe thought disorder'
+                    },
+                    clinicalPearls: 'Note both form (how they speak) and content (what they say)'
+                },
+                'mood-affect': {
+                    name: 'Mood and Affect',
+                    technique: 'Ask about mood, observe affect, assess congruence',
+                    normal: 'Euthymic mood, appropriate affect, mood-affect congruent',
+                    abnormal: {
+                        'Depression': 'Low mood, reduced interest, anhedonia, hopelessness',
+                        'Mania/Hypomania': 'Elevated mood, increased energy, decreased need for sleep',
+                        'Anxiety': 'Worry, tension, fear, physical symptoms',
+                        'Labile affect': 'Rapid mood changes - bipolar disorder, brain injury',
+                        'Flat affect': 'Reduced emotional expression - schizophrenia, depression'
+                    },
+                    clinicalPearls: 'Mood = sustained emotional state. Affect = observed emotional expression'
+                },
+                'thought': {
+                    name: 'Thought Assessment',
+                    technique: 'Assess thought form, content, and possession',
+                    normal: 'Logical, goal-directed thinking, no abnormal content',
+                    abnormal: {
+                        'Delusions': 'Fixed false beliefs - persecutory, grandiose, somatic',
+                        'Thought broadcasting': 'Belief thoughts can be heard by others',
+                        'Thought insertion': 'Belief thoughts put into mind by external force',
+                        'Obsessions': 'Intrusive, unwanted thoughts - OCD',
+                        'Suicidal ideation': 'Thoughts of self-harm - assess risk factors'
+                    },
+                    clinicalPearls: 'Always assess suicide risk. Distinguish overvalued ideas from delusions'
+                },
+                'perception': {
+                    name: 'Perceptual Abnormalities',
+                    technique: 'Ask about hallucinations, illusions, other perceptual disturbances',
+                    normal: 'No hallucinations or perceptual disturbances',
+                    abnormal: {
+                        'Auditory hallucinations': 'Hearing voices - schizophrenia, severe depression',
+                        'Visual hallucinations': 'Seeing things - delirium, dementia, substance use',
+                        'Command hallucinations': 'Voices giving orders - high risk, requires urgent assessment',
+                        'Illusions': 'Misperception of real stimuli - delirium, anxiety',
+                        'Depersonalization': 'Feeling detached from self - anxiety, depression'
+                    },
+                    clinicalPearls: 'Command hallucinations require immediate risk assessment'
+                },
+                'cognition': {
+                    name: 'Cognitive Assessment',
+                    technique: 'Test orientation, attention, memory, executive function',
+                    normal: 'Oriented x3, intact attention and memory',
+                    abnormal: {
+                        'Disorientation': 'Time first, then place, then person - delirium, dementia',
+                        'Poor concentration': 'Cannot sustain attention - depression, anxiety, ADHD',
+                        'Memory impairment': 'Short-term vs long-term - dementia, depression',
+                        'Confabulation': 'False memories to fill gaps - Korsakoff syndrome',
+                        'Poor insight': 'Lack awareness of illness - psychosis, dementia'
+                    },
+                    clinicalPearls: 'Use MMSE or MoCA for detailed assessment. Note pattern of deficits'
+                }
+            }
+        },
+        'thyroid': {
+            title: 'Thyroid Examination',
+            category: 'endocrine',
+            approach: 'General inspection → Neck inspection → Palpation → Auscultation → Functional assessment',
+            sections: {
+                'inspection': {
+                    name: 'Inspection',
+                    technique: 'Observe neck from front, look for swelling, scars, ask patient to swallow',
+                    normal: 'No visible swelling, symmetrical neck, moves with swallowing',
+                    abnormal: {
+                        'Goitre': 'Visible thyroid enlargement, moves with swallowing',
+                        'Thyroidectomy scar': 'Horizontal scar in lower neck - previous surgery',
+                        'Asymmetry': 'One-sided swelling - nodule, carcinoma',
+                        'Retrosternal extension': 'Goitre extending behind sternum',
+                        'Skin changes': 'Pretibial myxoedema in Graves disease'
+                    },
+                    clinicalPearls: 'Thyroid moves with swallowing unlike lymph nodes'
+                },
+                'palpation': {
+                    name: 'Palpation',
+                    technique: 'Palpate from behind, locate isthmus and lobes, assess size, consistency, nodules',
+                    normal: 'Barely palpable, soft, smooth, mobile',
+                    abnormal: {
+                        'Smooth enlargement': 'Graves disease, simple goitre, thyroiditis',
+                        'Multinodular goitre': 'Multiple nodules, irregular surface',
+                        'Single nodule': 'Solitary thyroid nodule - may be malignant',
+                        'Hard, fixed mass': 'Suspicious for carcinoma',
+                        'Tender thyroid': 'Thyroiditis (de Quervain, Hashimoto)'
+                    },
+                    clinicalPearls: 'Palpate during swallowing. Note consistency and mobility'
+                },
+                'lymph-nodes': {
+                    name: 'Lymph Node Assessment',
+                    technique: 'Palpate cervical, supraclavicular, and infraclavicular nodes',
+                    normal: 'No palpable lymphadenopathy',
+                    abnormal: {
+                        'Cervical lymphadenopathy': 'Thyroid carcinoma metastases',
+                        'Hard, fixed nodes': 'Malignant involvement',
+                        'Multiple enlarged nodes': 'Systemic disease, infection',
+                        'Supraclavicular nodes': 'Advanced malignancy',
+                        'Tender nodes': 'Infection, inflammation'
+                    },
+                    clinicalPearls: 'Always examine lymph nodes in thyroid examination'
+                },
+                'functional-signs': {
+                    name: 'Functional Assessment',
+                    technique: 'Look for signs of hyper/hypothyroidism',
+                    normal: 'No signs of thyroid dysfunction',
+                    abnormal: {
+                        'Hyperthyroid signs': 'Tremor, sweating, tachycardia, lid lag, exophthalmos',
+                        'Hypothyroid signs': 'Bradycardia, dry skin, slow reflexes, hoarse voice',
+                        'Graves ophthalmopathy': 'Lid retraction, proptosis, diplopia',
+                        'Thyroid acropachy': 'Finger clubbing in severe Graves disease',
+                        'Pretibial myxoedema': 'Thickened skin over shins in Graves'
+                    },
+                    clinicalPearls: 'Check pulse, reflexes, eyes. Lid lag = upper lid lags behind eyeball'
+                }
+            }
+        },
+        'lymph-nodes': {
+            title: 'Lymph Node Examination',
+            category: 'general',
+            approach: 'Systematic examination of all lymph node groups → Assess characteristics → Look for primary source',
+            sections: {
+                'head-neck': {
+                    name: 'Head and Neck Nodes',
+                    technique: 'Palpate preauricular, postauricular, occipital, tonsillar, submandibular, submental, cervical chain',
+                    normal: 'No palpable nodes or small (<1cm), soft, mobile nodes',
+                    abnormal: {
+                        'Cervical lymphadenopathy': 'URTI, EBV, CMV, toxoplasmosis, malignancy',
+                        'Virchow node': 'Left supraclavicular node - abdominal malignancy',
+                        'Tonsillar nodes': 'Throat infections, oral cavity malignancy',
+                        'Submandibular nodes': 'Dental infections, oral cavity pathology',
+                        'Postauricular nodes': 'Scalp infections, rubella'
+                    },
+                    clinicalPearls: 'Examine from behind patient. Note size, consistency, mobility'
+                },
+                'axillary': {
+                    name: 'Axillary Nodes',
+                    technique: 'Support patient arm, palpate central, anterior, posterior, infraclavicular, supraclavicular groups',
+                    normal: 'No palpable axillary lymphadenopathy',
+                    abnormal: {
+                        'Axillary lymphadenopathy': 'Breast carcinoma, lymphoma, arm/hand infections',
+                        'Fixed nodes': 'Malignant involvement, local invasion',
+                        'Matted nodes': 'Multiple nodes stuck together - infection, malignancy',
+                        'Supraclavicular nodes': 'Lung carcinoma, breast carcinoma metastases',
+                        'Infraclavicular nodes': 'Breast carcinoma, lung pathology'
+                    },
+                    clinicalPearls: 'Examine with patient seated, arm relaxed and supported'
+                },
+                'inguinal': {
+                    name: 'Inguinal Nodes',
+                    technique: 'Palpate horizontal and vertical groups, examine external genitalia',
+                    normal: 'Small, soft, mobile inguinal nodes may be normal',
+                    abnormal: {
+                        'Inguinal lymphadenopathy': 'STIs, genital infections, lower limb cellulitis',
+                        'Unilateral enlargement': 'Local pathology, malignancy',
+                        'Bilateral enlargement': 'Systemic disease, sexually transmitted infections',
+                        'Hard, fixed nodes': 'Metastatic disease from pelvic organs',
+                        'Tender nodes': 'Active infection, inflammation'
+                    },
+                    clinicalPearls: 'Small inguinal nodes often normal. Examine genitalia and lower limbs'
+                },
+                'generalized': {
+                    name: 'Generalized Assessment',
+                    technique: 'Examine all node groups, assess hepatosplenomegaly',
+                    normal: 'No generalized lymphadenopathy',
+                    abnormal: {
+                        'Generalized lymphadenopathy': 'Lymphoma, leukaemia, viral infections, autoimmune',
+                        'B symptoms': 'Fever, night sweats, weight loss - malignancy',
+                        'Hepatosplenomegaly': 'Lymphoma, leukaemia, chronic infections',
+                        'Waldeyer ring': 'Tonsillar involvement in lymphoma',
+                        'Mediastinal nodes': 'Lymphoma, lung carcinoma (CXR required)'
+                    },
+                    clinicalPearls: 'Note pattern: localized vs generalized. Always examine liver and spleen'
+                }
+            }
+        },
+        'skin': {
+            title: 'Skin Examination',
+            category: 'dermatology',
+            approach: 'General inspection → Systematic examination → Dermoscopy → Documentation',
+            sections: {
+                'inspection': {
+                    name: 'General Inspection',
+                    technique: 'Good lighting, expose skin systematically, note distribution pattern',
+                    normal: 'Normal skin colour, texture, temperature, no lesions',
+                    abnormal: {
+                        'Pallor': 'Anaemia, shock, vasospasm',
+                        'Cyanosis': 'Central (cardiorespiratory), peripheral (cold, poor circulation)',
+                        'Jaundice': 'Hepatic dysfunction, haemolysis, obstruction',
+                        'Erythema': 'Inflammation, infection, drug reactions',
+                        'Pigmentation changes': 'Vitiligo, melasma, post-inflammatory hyperpigmentation'
+                    },
+                    clinicalPearls: 'Use natural light when possible. Note symmetry and distribution'
+                },
+                'lesion-morphology': {
+                    name: 'Lesion Morphology',
+                    technique: 'Describe size, shape, colour, surface, borders, distribution',
+                    normal: 'Normal skin without pathological lesions',
+                    abnormal: {
+                        'Macule': 'Flat, <1cm - freckles, café-au-lait spots',
+                        'Papule': 'Raised, <1cm - seborrhoeic keratosis, naevi',
+                        'Nodule': 'Raised, >1cm - basal cell carcinoma, melanoma',
+                        'Vesicle': 'Fluid-filled, <1cm - herpes simplex, eczema',
+                        'Ulcer': 'Loss of epidermis - venous, arterial, neuropathic'
+                    },
+                    clinicalPearls: 'Use dermoscopy for pigmented lesions. Photograph for monitoring'
+                },
+                'suspicious-lesions': {
+                    name: 'Suspicious Lesions',
+                    technique: 'ABCDE assessment for melanoma, check for red flag features',
+                    normal: 'Benign-appearing lesions with regular features',
+                    abnormal: {
+                        'Melanoma (ABCDE)': 'Asymmetry, Border irregularity, Colour variation, Diameter >6mm, Evolving',
+                        'Basal cell carcinoma': 'Pearly, rolled edge, central ulceration, telangiectasia',
+                        'Squamous cell carcinoma': 'Scaly, hyperkeratotic, may ulcerate',
+                        'Actinic keratosis': 'Rough, scaly patches on sun-exposed areas',
+                        'Changing mole': 'Recent change in size, shape, colour, symptoms'
+                    },
+                    clinicalPearls: 'Ugly duckling sign - lesion different from others. 2-week rule for suspicious lesions'
+                },
+                'common-conditions': {
+                    name: 'Common Skin Conditions',
+                    technique: 'Recognize pattern and distribution of common dermatoses',
+                    normal: 'Healthy skin without inflammatory or infectious conditions',
+                    abnormal: {
+                        'Eczema': 'Dry, itchy, flexural distribution in adults',
+                        'Psoriasis': 'Well-demarcated plaques with silvery scale, extensor surfaces',
+                        'Acne': 'Comedones, papules, pustules on face, chest, back',
+                        'Cellulitis': 'Spreading erythema, warmth, tenderness, systemic upset',
+                        'Fungal infections': 'Scaling, well-demarcated border, KOH positive'
+                    },
+                    clinicalPearls: 'Note distribution pattern - helpful for diagnosis. Consider systemic causes'
+                }
+            }
+        },
+        'musculoskeletal': {
+            title: 'Musculoskeletal Examination',
+            category: 'orthopaedic',
+            approach: 'Look → Feel → Move → Special tests → Function',
+            sections: {
+                'inspection': {
+                    name: 'Inspection',
+                    technique: 'Observe posture, gait, deformity, swelling, muscle wasting',
+                    normal: 'Normal posture, no deformity, symmetrical muscle bulk',
+                    abnormal: {
+                        'Deformity': 'Angular (varus/valgus), rotational, fixed flexion',
+                        'Swelling': 'Joint effusion, soft tissue oedema, bony enlargement',
+                        'Muscle wasting': 'Disuse atrophy, neurological causes',
+                        'Scars': 'Previous surgery, trauma',
+                        'Skin changes': 'Erythema, warmth, rash'
+                    },
+                    clinicalPearls: 'Compare both sides. Expose joints above and below affected area'
+                },
+                'palpation': {
+                    name: 'Palpation',
+                    technique: 'Feel for tenderness, swelling, temperature, crepitus',
+                    normal: 'No tenderness, normal temperature, no swelling',
+                    abnormal: {
+                        'Joint line tenderness': 'Arthritis, meniscal tears',
+                        'Bony tenderness': 'Fracture, osteomyelitis',
+                        'Soft tissue swelling': 'Inflammation, infection, bleeding',
+                        'Crepitus': 'Osteoarthritis, fracture',
+                        'Warmth': 'Inflammation, infection, crystal arthropathy'
+                    },
+                    clinicalPearls: 'Watch patient face for signs of discomfort. Palpate systematically'
+                },
+                'movement': {
+                    name: 'Range of Movement',
+                    technique: 'Active then passive movement, compare to normal side',
+                    normal: 'Full range of movement, no pain',
+                    abnormal: {
+                        'Reduced range': 'Pain, stiffness, mechanical block, muscle weakness',
+                        'Painful arc': 'Shoulder impingement, rotator cuff pathology',
+                        'End-feel': 'Hard (bony), soft (muscle spasm), empty (pain)',
+                        'Instability': 'Ligament rupture, chronic dislocation',
+                        'Locking': 'Mechanical block - loose body, meniscal tear'
+                    },
+                    clinicalPearls: 'Active movement tests muscle power. Passive tests joint integrity'
+                },
+                'special-tests': {
+                    name: 'Special Tests',
+                    technique: 'Joint-specific tests for ligament integrity, impingement, instability',
+                    normal: 'Negative special tests, stable joints',
+                    abnormal: {
+                        'McMurray test': 'Positive in meniscal tears (knee)',
+                        'Anterior drawer': 'ACL rupture (knee), ankle instability',
+                        'Thomas test': 'Hip flexion contracture',
+                        'Schobers test': 'Reduced spinal flexion in ankylosing spondylitis',
+                        'Tinel/Phalen signs': 'Carpal tunnel syndrome'
+                    },
+                    clinicalPearls: 'Know specific tests for each joint. Practice technique for accuracy'
+                }
+            }
+        },
+        'ent-basic': {
+            title: 'Basic ENT Examination',
+            category: 'specialist',
+            approach: 'External inspection → Otoscopy → Hearing → Nose → Throat → Neck',
+            sections: {
+                'ears': {
+                    name: 'Ear Examination',
+                    technique: 'Inspect pinna, otoscopy (pull up and back in adults), hearing tests',
+                    normal: 'Normal pinna, clear tympanic membrane, intact hearing',
+                    abnormal: {
+                        'Otitis externa': 'Red, swollen ear canal, discharge, pain on movement',
+                        'Otitis media': 'Red, bulging tympanic membrane, fluid level',
+                        'Perforated drum': 'Hole in tympanic membrane, discharge',
+                        'Hearing loss': 'Conductive (wax, infection) vs sensorineural (age, noise)',
+                        'Vertigo': 'Dizziness, nystagmus, balance problems'
+                    },
+                    clinicalPearls: 'Use largest speculum that fits. Pull pinna up and back in adults'
+                },
+                'nose': {
+                    name: 'Nasal Examination',
+                    technique: 'External inspection, anterior rhinoscopy, test patency',
+                    normal: 'Patent nostrils, pink mucosa, no discharge',
+                    abnormal: {
+                        'Rhinitis': 'Swollen, red mucosa, discharge',
+                        'Polyps': 'Pale, grape-like swellings',
+                        'Deviated septum': 'Asymmetric nostrils, blocked airflow',
+                        'Epistaxis': 'Nosebleeds - anterior (Little area) vs posterior',
+                        'Anosmia': 'Loss of smell - viral, trauma, tumour'
+                    },
+                    clinicalPearls: 'Check airflow by occluding one nostril. Look for septal deviation'
+                },
+                'throat': {
+                    name: 'Throat Examination',
+                    technique: 'Inspect lips, teeth, tongue, throat with good light and tongue depressor',
+                    normal: 'Pink mucosa, white teeth, no lesions, symmetrical soft palate',
+                    abnormal: {
+                        'Tonsillitis': 'Red, swollen tonsils, exudate, lymphadenopathy',
+                        'Pharyngitis': 'Red throat, sore, may have exudate',
+                        'Oral thrush': 'White plaques on tongue, buccal mucosa',
+                        'Ulceration': 'Aphthous ulcers, viral, malignancy',
+                        'Dental problems': 'Caries, abscesses, poor hygiene'
+                    },
+                    clinicalPearls: 'Use torch and tongue depressor. Check for referred ear pain'
+                },
+                'neck': {
+                    name: 'Neck Examination',
+                    technique: 'Inspect for swelling, palpate lymph nodes, thyroid, salivary glands',
+                    normal: 'No swelling, no palpable lymph nodes, normal thyroid',
+                    abnormal: {
+                        'Lymphadenopathy': 'Infection, malignancy, systemic disease',
+                        'Thyroid swelling': 'Goitre, nodules, carcinoma',
+                        'Salivary gland swelling': 'Infection, stones, tumours',
+                        'Neck masses': 'Thyroglossal cyst, branchial cyst, lymphoma',
+                        'Torticollis': 'Muscle spasm, injury, infection'
+                    },
+                    clinicalPearls: 'Ask patient to swallow when examining thyroid. Palpate from behind'
+                }
+            }
+        },
+        'breast': {
+            title: 'Breast Examination',
+            category: 'primary-care',
+            approach: 'Inspection → Palpation → Lymph nodes → Teaching self-examination',
+            sections: {
+                'inspection': {
+                    name: 'Inspection',
+                    technique: 'Patient seated, arms by sides, then raised, then hands on hips',
+                    normal: 'Symmetrical breasts, no skin changes, normal nipples',
+                    abnormal: {
+                        'Asymmetry': 'Size difference, one breast higher - may be normal variant',
+                        'Skin dimpling': 'Peau d\'orange, tethering - suspicious for malignancy',
+                        'Nipple changes': 'Inversion, discharge, scaling - may indicate pathology',
+                        'Visible lump': 'Obvious mass, skin changes over lump',
+                        'Skin discoloration': 'Erythema, bruising, inflammatory changes'
+                    },
+                    clinicalPearls: 'Inspect in 3 positions: arms down, up, hands on hips. Look for symmetry'
+                },
+                'palpation': {
+                    name: 'Palpation',
+                    technique: 'Systematic palpation using pads of fingers, patient supine with arm behind head',
+                    normal: 'Soft breast tissue, no discrete lumps, normal nodularity',
+                    abnormal: {
+                        'Breast lump': 'Discrete mass - assess size, consistency, mobility, skin attachment',
+                        'Hard, fixed lump': 'Suspicious for malignancy - urgent referral',
+                        'Soft, mobile lump': 'Likely benign - fibroadenoma, cyst',
+                        'Skin tethering': 'Lump attached to skin - concerning feature',
+                        'Nipple discharge': 'Bloody, unilateral - requires investigation'
+                    },
+                    clinicalPearls: 'Use flat of fingers, not fingertips. Examine in clockwise manner'
+                },
+                'lymph-nodes': {
+                    name: 'Lymph Node Assessment',
+                    technique: 'Palpate axillary, supraclavicular, and infraclavicular nodes',
+                    normal: 'No palpable lymphadenopathy',
+                    abnormal: {
+                        'Axillary nodes': 'Most common site for breast cancer spread',
+                        'Supraclavicular nodes': 'Advanced disease, poor prognosis',
+                        'Fixed nodes': 'Malignant involvement likely',
+                        'Multiple nodes': 'Extensive nodal disease',
+                        'Tender nodes': 'May indicate infection or inflammation'
+                    },
+                    clinicalPearls: 'Always examine lymph nodes. Support patient\'s arm during examination'
+                },
+                'patient-education': {
+                    name: 'Self-Examination Teaching',
+                    technique: 'Teach monthly self-examination technique',
+                    normal: 'Patient understands technique and timing',
+                    abnormal: {
+                        'Poor technique': 'Inadequate examination method',
+                        'Infrequent checking': 'Not examining regularly',
+                        'Anxiety about findings': 'Excessive worry about normal changes',
+                        'Delayed presentation': 'Found lump but delayed seeking help',
+                        'Lack of awareness': 'Doesn\'t know what to look for'
+                    },
+                    clinicalPearls: 'Best time is week after menstruation. Emphasize normal cyclical changes'
+                }
+            }
+        },
+        'prostate': {
+            title: 'Prostate Examination',
+            category: 'primary-care',
+            approach: 'History → General examination → Digital rectal examination → Assessment',
+            sections: {
+                'preparation': {
+                    name: 'Preparation and Consent',
+                    technique: 'Explain procedure, obtain consent, position patient appropriately',
+                    normal: 'Patient consented and positioned comfortably',
+                    abnormal: {
+                        'Patient anxiety': 'Excessive worry about procedure - reassurance needed',
+                        'Positioning difficulties': 'Mobility issues, pain on positioning',
+                        'Incomplete consent': 'Patient not fully informed',
+                        'Cultural concerns': 'Religious or cultural objections',
+                        'Previous trauma': 'History of abuse or difficult examinations'
+                    },
+                    clinicalPearls: 'Left lateral position most common. Explain each step as you proceed'
+                },
+                'inspection': {
+                    name: 'Perianal Inspection',
+                    technique: 'Inspect perianal area before digital examination',
+                    normal: 'Normal perianal skin, no lesions',
+                    abnormal: {
+                        'Haemorrhoids': 'External piles, skin tags',
+                        'Anal fissure': 'Painful tear in anal margin',
+                        'Skin lesions': 'Warts, tumours, inflammatory conditions',
+                        'Discharge': 'Mucus, blood, pus from anus',
+                        'Prolapse': 'Rectal prolapse on straining'
+                    },
+                    clinicalPearls: 'Good lighting essential. Look for obvious pathology before palpation'
+                },
+                'digital-examination': {
+                    name: 'Digital Rectal Examination',
+                    technique: 'Lubricated finger, gentle insertion, systematic palpation of prostate',
+                    normal: 'Smooth, firm, symmetrical prostate, size of walnut',
+                    abnormal: {
+                        'Enlarged prostate': 'BPH - smooth, symmetrical enlargement',
+                        'Hard, irregular prostate': 'Suspicious for carcinoma - craggy, asymmetrical',
+                        'Tender prostate': 'Prostatitis - acute inflammation',
+                        'Nodules': 'Discrete lumps - may be malignant',
+                        'Fixed prostate': 'Advanced carcinoma with local invasion'
+                    },
+                    clinicalPearls: 'Assess size, consistency, symmetry, mobility. Note patient discomfort'
+                },
+                'assessment': {
+                    name: 'Clinical Assessment',
+                    technique: 'Correlate findings with symptoms and PSA if available',
+                    normal: 'Normal prostate examination, correlates with clinical picture',
+                    abnormal: {
+                        'LUTS symptoms': 'Lower urinary tract symptoms with enlarged prostate',
+                        'Elevated PSA': 'High PSA with abnormal examination - urgent referral',
+                        'Haematuria': 'Blood in urine with prostate abnormality',
+                        'Bone pain': 'Back pain with hard prostate - metastases?',
+                        'Weight loss': 'Constitutional symptoms with prostate mass'
+                    },
+                    clinicalPearls: 'PSA can be elevated 48hrs post-examination. Consider 2-week rule referral'
+                }
+            }
+        },
+        'eye': {
+            title: 'Eye Examination',
+            category: 'primary-care',
+            approach: 'Visual acuity → External inspection → Pupil examination → Fundoscopy',
+            sections: {
+                'visual-acuity': {
+                    name: 'Visual Acuity Testing',
+                    technique: 'Snellen chart at 6 metres, test each eye separately with/without glasses',
+                    normal: '6/6 vision in both eyes',
+                    abnormal: {
+                        'Reduced acuity': '6/9, 6/12, 6/18 etc - refractive error, pathology',
+                        'Sudden visual loss': 'Acute onset - retinal detachment, stroke, temporal arteritis',
+                        'Gradual visual loss': 'Cataracts, macular degeneration, glaucoma',
+                        'Cannot read top line': 'Count fingers, hand movements, light perception',
+                        'Metamorphopsia': 'Distorted vision - macular pathology'
+                    },
+                    clinicalPearls: 'Test with glasses on if worn. Pinhole improves refractive errors'
+                },
+                'external-examination': {
+                    name: 'External Eye Examination',
+                    technique: 'Inspect lids, conjunctiva, cornea, iris, pupils',
+                    normal: 'Clear cornea, white sclera, pink conjunctiva, normal lids',
+                    abnormal: {
+                        'Red eye': 'Conjunctivitis, episcleritis, scleritis, acute glaucoma',
+                        'Ptosis': 'Drooping eyelid - nerve palsy, muscle weakness',
+                        'Proptosis': 'Bulging eye - thyroid, orbital tumour',
+                        'Corneal opacity': 'Scar, infection, dystrophy',
+                        'Jaundice': 'Yellow sclera - liver disease, haemolysis'
+                    },
+                    clinicalPearls: 'Use good lighting. Look for asymmetry between eyes'
+                },
+                'pupil-examination': {
+                    name: 'Pupil Examination',
+                    technique: 'Test pupil size, shape, light reflex, accommodation',
+                    normal: 'Equal, round, reactive pupils (PEARL)',
+                    abnormal: {
+                        'Anisocoria': 'Unequal pupils - Horner syndrome, nerve palsy',
+                        'Fixed dilated pupil': 'No light reflex - nerve damage, drugs',
+                        'Relative afferent pupillary defect': 'RAPD - optic nerve pathology',
+                        'Irregular pupil': 'Trauma, previous surgery, inflammation',
+                        'Argyll Robertson pupil': 'Accommodates but doesn\'t react - neurosyphilis'
+                    },
+                    clinicalPearls: 'Swinging light test for RAPD. Note pupil size in light and dark'
+                },
+                'fundoscopy': {
+                    name: 'Fundoscopy',
+                    technique: 'Dilated pupils preferred, examine optic disc, macula, vessels',
+                    normal: 'Pink optic disc, clear vessels, normal macula',
+                    abnormal: {
+                        'Papilloedema': 'Swollen optic disc - raised intracranial pressure',
+                        'Diabetic retinopathy': 'Microaneurysms, haemorrhages, exudates',
+                        'Hypertensive retinopathy': 'AV nipping, flame haemorrhages',
+                        'Macular degeneration': 'Drusen, pigmentation, haemorrhage',
+                        'Retinal detachment': 'Grey, elevated retina'
+                    },
+                    clinicalPearls: 'Use mydriatics for better view. Examine red reflex first'
+                }
+            }
+        },
+        'diabetic-foot': {
+            title: 'Diabetic Foot Examination',
+            category: 'primary-care',
+            approach: 'Inspection → Vascular assessment → Neurological assessment → Risk stratification',
+            sections: {
+                'inspection': {
+                    name: 'Foot Inspection',
+                    technique: 'Examine both feet, between toes, soles, check footwear',
+                    normal: 'Intact skin, no deformity, appropriate footwear',
+                    abnormal: {
+                        'Ulceration': 'Open wounds, typically painless in neuropathy',
+                        'Callus formation': 'Thickened skin at pressure points',
+                        'Deformity': 'Clawing, hammer toes, Charcot arthropathy',
+                        'Skin changes': 'Dry skin, fissures, fungal infections',
+                        'Poor footwear': 'Ill-fitting shoes, inappropriate for diabetes'
+                    },
+                    clinicalPearls: 'Remove shoes and socks completely. Use mirror to check soles'
+                },
+                'vascular-assessment': {
+                    name: 'Vascular Assessment',
+                    technique: 'Palpate foot pulses, check capillary refill, assess skin temperature',
+                    normal: 'Palpable dorsalis pedis and posterior tibial pulses',
+                    abnormal: {
+                        'Absent pulses': 'Peripheral arterial disease',
+                        'Cold feet': 'Poor circulation, arterial insufficiency',
+                        'Prolonged capillary refill': '>2 seconds - poor perfusion',
+                        'Dependent rubor': 'Red feet when dependent - severe PAD',
+                        'Pallor on elevation': 'White feet when elevated - arterial disease'
+                    },
+                    clinicalPearls: 'Doppler may be needed if pulses not palpable. Check both feet'
+                },
+                'neurological-assessment': {
+                    name: 'Neurological Assessment',
+                    technique: 'Test vibration, pain, light touch, reflexes using monofilament',
+                    normal: 'Intact sensation to 10g monofilament, normal reflexes',
+                    abnormal: {
+                        'Loss of protective sensation': 'Cannot feel 10g monofilament',
+                        'Absent vibration sense': 'Tuning fork not felt - large fibre neuropathy',
+                        'Reduced pain sensation': 'Cannot feel pinprick',
+                        'Absent ankle reflexes': 'Peripheral neuropathy',
+                        'Motor neuropathy': 'Weakness, muscle wasting, deformity'
+                    },
+                    clinicalPearls: '10g monofilament is gold standard. Test multiple sites on each foot'
+                },
+                'risk-stratification': {
+                    name: 'Risk Assessment',
+                    technique: 'Categorize risk level based on findings, plan follow-up',
+                    normal: 'Low risk - normal sensation and circulation',
+                    abnormal: {
+                        'Low risk': 'No neuropathy, no PAD, no deformity',
+                        'Moderate risk': 'Neuropathy OR PAD OR deformity',
+                        'High risk': 'Neuropathy + PAD, or previous ulcer/amputation',
+                        'Active pathology': 'Current ulcer, infection, acute Charcot',
+                        'Urgent referral': 'Signs of infection, gangrene, acute ischaemia'
+                    },
+                    clinicalPearls: 'Annual screening for low risk, 3-6 monthly for high risk patients'
+                }
+            }
+        },
+        'blood-pressure': {
+            title: 'Blood Pressure Measurement',
+            category: 'primary-care',
+            approach: 'Preparation → Correct technique → Interpretation → Follow-up planning',
+            sections: {
+                'preparation': {
+                    name: 'Patient Preparation',
+                    technique: 'Patient seated, 5 minutes rest, correct cuff size, arm supported',
+                    normal: 'Patient relaxed, appropriate cuff size, correct positioning',
+                    abnormal: {
+                        'Incorrect cuff size': 'Too small (overestimates) or too large (underestimates)',
+                        'Poor positioning': 'Arm unsupported, wrong height, talking during measurement',
+                        'White coat effect': 'Elevated BP in medical setting only',
+                        'Recent caffeine/smoking': 'Temporary elevation in BP',
+                        'Full bladder': 'Can elevate BP readings'
+                    },
+                    clinicalPearls: 'Cuff should cover 80% of arm circumference. No talking during measurement'
+                },
+                'technique': {
+                    name: 'Measurement Technique',
+                    technique: 'Inflate 20mmHg above palpated systolic, deflate 2mmHg/second',
+                    normal: 'Clear Korotkoff sounds, consistent readings',
+                    abnormal: {
+                        'Auscultatory gap': 'Silent period between systolic and diastolic',
+                        'Irregular rhythm': 'Atrial fibrillation affects accuracy',
+                        'Very high BP': '>180/110 - needs urgent assessment',
+                        'Orthostatic hypotension': '>20mmHg drop on standing',
+                        'Inter-arm difference': '>20mmHg difference - vascular pathology'
+                    },
+                    clinicalPearls: 'Take 2-3 readings, 1 minute apart. Check both arms initially'
+                },
+                'interpretation': {
+                    name: 'Blood Pressure Categories',
+                    technique: 'Classify BP according to NICE guidelines',
+                    normal: 'Optimal <120/80, Normal <130/85',
+                    abnormal: {
+                        'High normal': '130-139/85-89 mmHg',
+                        'Stage 1 hypertension': '140-159/90-99 mmHg (home >135/85)',
+                        'Stage 2 hypertension': '160-179/100-109 mmHg (home >150/95)',
+                        'Stage 3 hypertension': '≥180/110 mmHg - severe, consider admission',
+                        'Isolated systolic hypertension': 'Systolic >140, diastolic <90'
+                    },
+                    clinicalPearls: 'ABPM/HBPM preferred for diagnosis. Clinic readings often higher'
+                },
+                'follow-up': {
+                    name: 'Follow-up Planning',
+                    technique: 'Plan appropriate monitoring and treatment based on risk',
+                    normal: 'Annual check for normal BP',
+                    abnormal: {
+                        'Newly diagnosed hypertension': 'Assess cardiovascular risk, consider treatment',
+                        'Uncontrolled hypertension': 'Review medications, lifestyle advice',
+                        'Resistant hypertension': 'Consider specialist referral',
+                        'Secondary hypertension': 'Young age, severe/resistant - investigate causes',
+                        'Accelerated hypertension': 'Papilloedema, AKI - emergency treatment'
+                    },
+                    clinicalPearls: 'QRisk3 calculator for cardiovascular risk assessment'
+                }
+            }
+        },
+        'gynaecological': {
+            title: 'Gynaecological Examination',
+            category: 'primary-care',
+            approach: 'Consent → Positioning → Inspection → Speculum → Bimanual → Documentation',
+            sections: {
+                'consent-preparation': {
+                    name: 'Consent and Preparation',
+                    technique: 'Explain procedure, obtain consent, chaperone present, correct positioning',
+                    normal: 'Patient consented, comfortable, appropriately positioned',
+                    abnormal: {
+                        'Inadequate consent': 'Patient not fully informed of procedure',
+                        'No chaperone': 'Required for intimate examinations',
+                        'Patient anxiety': 'Excessive worry, previous trauma',
+                        'Positioning difficulties': 'Mobility issues, pain',
+                        'Cultural concerns': 'Religious objections, modesty issues'
+                    },
+                    clinicalPearls: 'Always offer chaperone. Explain each step. Stop if patient requests'
+                },
+                'external-inspection': {
+                    name: 'External Inspection',
+                    technique: 'Inspect vulva, perineum, anus for abnormalities',
+                    normal: 'Normal vulval anatomy, no lesions, normal hair distribution',
+                    abnormal: {
+                        'Vulval lesions': 'Ulcers, warts, tumours, inflammatory conditions',
+                        'Discharge': 'Abnormal colour, consistency, odour',
+                        'Prolapse': 'Cystocoele, rectocoele, uterine prolapse',
+                        'Atrophic changes': 'Post-menopausal atrophy, dryness',
+                        'Trauma': 'Tears, bruising, signs of abuse'
+                    },
+                    clinicalPearls: 'Good lighting essential. Note any asymmetry or obvious pathology'
+                },
+                'speculum-examination': {
+                    name: 'Speculum Examination',
+                    technique: 'Insert appropriate speculum, visualize cervix, take samples if needed',
+                    normal: 'Normal cervix, no discharge, appropriate cervical os',
+                    abnormal: {
+                        'Cervical abnormalities': 'Erosion, polyps, suspicious lesions',
+                        'Abnormal discharge': 'Purulent, offensive, blood-stained',
+                        'Bleeding': 'Contact bleeding, intermenstrual bleeding',
+                        'Cervical motion tenderness': 'Pain on moving cervix - PID',
+                        'Uterine prolapse': 'Cervix visible at introitus'
+                    },
+                    clinicalPearls: 'Warm speculum. Insert at 45° angle. Cervical screening if due'
+                },
+                'bimanual-examination': {
+                    name: 'Bimanual Examination',
+                    technique: 'Two fingers in vagina, other hand on abdomen, assess uterus and adnexae',
+                    normal: 'Normal sized, mobile uterus, no adnexal masses',
+                    abnormal: {
+                        'Enlarged uterus': 'Pregnancy, fibroids, malignancy',
+                        'Fixed uterus': 'Endometriosis, malignancy, adhesions',
+                        'Adnexal masses': 'Ovarian cysts, tumours, ectopic pregnancy',
+                        'Tenderness': 'PID, ovarian pathology, endometriosis',
+                        'Irregular contour': 'Fibroids, malignancy'
+                    },
+                    clinicalPearls: 'Gentle technique. Warn patient before examination. Note any masses'
+                }
+            }
         }
     };
     
@@ -9166,7 +9900,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
     container.innerHTML = `
         <div class="search-container">
             <input type="text" id="examination-search" placeholder="Search examination techniques...">
-            <div id="examination-search-results" class="exam-grid"></div>
+            <div id="examination-search-results" class="lab-grid"></div>
         </div>
         <div class="examination-categories">
             <button class="category-btn" onclick="window.quizApp.showExaminationCategory('all'); event.stopPropagation();">All Systems</button>
@@ -9174,8 +9908,10 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
             <button class="category-btn" onclick="window.quizApp.showExaminationCategory('respiratory'); event.stopPropagation();">Respiratory</button>
             <button class="category-btn" onclick="window.quizApp.showExaminationCategory('abdominal'); event.stopPropagation();">Abdominal</button>
             <button class="category-btn" onclick="window.quizApp.showExaminationCategory('neurological'); event.stopPropagation();">Neurological</button>
+            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('ward-based'); event.stopPropagation();">Ward-Based</button>
+            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('primary-care'); event.stopPropagation();">Primary Care</button>
         </div>
-        <div id="examination-list" class="exam-grid"></div>
+        <div id="examination-list" class="lab-grid"></div>
     `;
     
     const searchInput = document.getElementById('examination-search');
@@ -9213,9 +9949,9 @@ MLAQuizApp.prototype.searchExamination = function(examinationDatabase) {
     }
     
     resultsContainer.innerHTML = matches.map(match => `
-        <button class="exam-card-btn" onclick="${match.type === 'system' ? `window.quizApp.showExaminationDetail('${match.key}'); event.stopPropagation();` : `window.quizApp.showSectionDetail('${match.system}', '${match.key}'); event.stopPropagation();`}">
-            <div class="exam-name">${match.name}</div>
-            <div class="exam-type">${match.type === 'system' ? 'System' : 'Technique'}</div>
+        <button class="lab-value-btn" onclick="${match.type === 'system' ? `console.log('🩺 Examination system clicked:', '${match.key}'); window.quizApp.showExaminationDetail('${match.key}'); event.stopPropagation();` : `console.log('🩺 Examination section clicked:', '${match.key}'); window.quizApp.showSectionDetail('${match.system}', '${match.key}'); event.stopPropagation();`}">
+            <div class="lab-name">${match.name}</div>
+            <div class="lab-count">${match.type === 'system' ? 'System' : 'Technique'}</div>
         </button>
     `).join('');
 };
@@ -9226,14 +9962,24 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
     let systems = Object.keys(examinationDatabase);
     
     if (category !== 'all') {
-        systems = systems.filter(system => system === category);
+        if (category === 'ward-based') {
+            systems = systems.filter(system => 
+                ['mental-state', 'thyroid', 'lymph-nodes', 'skin', 'musculoskeletal', 'ent-basic'].includes(system)
+            );
+        } else if (category === 'primary-care') {
+            systems = systems.filter(system => 
+                ['breast', 'prostate', 'eye', 'diabetic-foot', 'blood-pressure', 'gynaecological'].includes(system)
+            );
+        } else {
+            systems = systems.filter(system => examinationDatabase[system].category === category);
+        }
     }
     
     examinationList.innerHTML = systems.map(system => `
-        <button class="exam-card-btn" onclick="window.quizApp.showExaminationDetail('${system}'); event.stopPropagation();">
-            <div class="exam-name">${examinationDatabase[system].title}</div>
-            <div class="exam-count">${Object.keys(examinationDatabase[system].sections).length} sections</div>
-            <div class="exam-approach">📋 ${examinationDatabase[system].approach}</div>
+        <button class="lab-value-btn" onclick="console.log('🩺 Examination system clicked:', '${system}'); window.quizApp.showExaminationDetail('${system}'); event.stopPropagation();">
+            <div class="lab-name">${examinationDatabase[system].title}</div>
+            <div class="lab-count">${Object.keys(examinationDatabase[system].sections).length} sections</div>
+            <div class="lab-range">📋 ${examinationDatabase[system].approach}</div>
         </button>
     `).join('');
 };
