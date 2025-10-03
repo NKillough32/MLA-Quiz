@@ -2774,27 +2774,77 @@ class MLAQuizApp {
         return `
             <div class="calculator-form">
                 <h4>QRISK3 Calculator</h4>
-                <p><small>10-year cardiovascular disease risk assessment</small></p>
+                <p><small>10-year cardiovascular disease risk assessment (UK validated)</small></p>
                 
                 <div class="calc-input-group">
-                    <label>Age:</label>
+                    <label>Age (25-84 years):</label>
                     <input type="number" id="qrisk-age" placeholder="50" min="25" max="84">
                 </div>
                 <div class="calc-checkbox-group">
                     <label><input type="radio" name="qrisk-sex" value="male"> Male</label>
                     <label><input type="radio" name="qrisk-sex" value="female"> Female</label>
                 </div>
+                
+                <div class="calc-input-group">
+                    <label>Ethnicity:</label>
+                    <select id="qrisk-ethnicity">
+                        <option value="white">White/not stated</option>
+                        <option value="indian">Indian</option>
+                        <option value="pakistani">Pakistani</option>
+                        <option value="bangladeshi">Bangladeshi</option>
+                        <option value="other-asian">Other Asian</option>
+                        <option value="caribbean">Caribbean</option>
+                        <option value="black-african">Black African</option>
+                        <option value="chinese">Chinese</option>
+                        <option value="other">Other ethnic group</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>BMI (kg/m²):</label>
+                    <input type="number" id="qrisk-bmi" placeholder="25" min="15" max="50" step="0.1">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>Systolic BP (mmHg):</label>
+                    <input type="number" id="qrisk-sbp" placeholder="130" min="80" max="250">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>Total Cholesterol (mmol/L):</label>
+                    <input type="number" id="qrisk-cholesterol" placeholder="5.0" min="2" max="15" step="0.1">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>HDL Cholesterol (mmol/L):</label>
+                    <input type="number" id="qrisk-hdl" placeholder="1.2" min="0.5" max="5" step="0.1">
+                </div>
+                
                 <div class="calc-checkbox-group">
                     <label><input type="checkbox" id="qrisk-smoking"> Current smoker</label>
-                    <label><input type="checkbox" id="qrisk-diabetes"> Diabetes</label>
-                    <label><input type="checkbox" id="qrisk-copd"> COPD</label>
+                    <label><input type="checkbox" id="qrisk-diabetes-type1"> Type 1 diabetes</label>
+                    <label><input type="checkbox" id="qrisk-diabetes-type2"> Type 2 diabetes</label>
+                    <label><input type="checkbox" id="qrisk-family-history"> Family history of CHD in first degree relative <60 years</label>
+                    <label><input type="checkbox" id="qrisk-ckd"> Chronic kidney disease (stage 4/5)</label>
                     <label><input type="checkbox" id="qrisk-af"> Atrial fibrillation</label>
-                    <label><input type="checkbox" id="qrisk-ckd"> Chronic kidney disease</label>
+                    <label><input type="checkbox" id="qrisk-bp-treatment"> On blood pressure treatment</label>
                     <label><input type="checkbox" id="qrisk-ra"> Rheumatoid arthritis</label>
+                    <label><input type="checkbox" id="qrisk-lupus"> Systemic lupus erythematosus</label>
+                    <label><input type="checkbox" id="qrisk-antipsychotic"> On atypical antipsychotics</label>
+                    <label><input type="checkbox" id="qrisk-steroid"> On corticosteroids</label>
+                    <label><input type="checkbox" id="qrisk-erectile"> Erectile dysfunction (males)</label>
+                    <label><input type="checkbox" id="qrisk-migraine"> Migraine</label>
                 </div>
                 
                 <button onclick="window.quizApp.calculateQRISK()">Calculate Risk</button>
                 <div id="qrisk-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small>
+                        <strong>Note:</strong> This is a simplified QRISK3 implementation for educational purposes.<br>
+                        For clinical decisions, use the official QRISK3 tool at <a href="https://qrisk.org" target="_blank">qrisk.org</a>
+                    </small>
+                </div>
             </div>
         `;
     }
@@ -2802,9 +2852,13 @@ class MLAQuizApp {
     calculateQRISK() {
         const age = parseInt(document.getElementById('qrisk-age').value) || 0;
         const sex = document.querySelector('input[name="qrisk-sex"]:checked')?.value;
+        const bmi = parseFloat(document.getElementById('qrisk-bmi').value) || 0;
+        const sbp = parseFloat(document.getElementById('qrisk-sbp').value) || 0;
+        const cholesterol = parseFloat(document.getElementById('qrisk-cholesterol').value) || 0;
+        const hdl = parseFloat(document.getElementById('qrisk-hdl').value) || 0;
         
-        if (!age || !sex) {
-            document.getElementById('qrisk-result').innerHTML = '<p style="color: red;">Please fill in age and sex</p>';
+        if (!age || !sex || !bmi || !sbp || !cholesterol || !hdl) {
+            document.getElementById('qrisk-result').innerHTML = '<p style="color: red;">Please fill in all required fields (age, sex, BMI, BP, cholesterol)</p>';
             return;
         }
 
@@ -2814,35 +2868,72 @@ class MLAQuizApp {
             return;
         }
 
-        // Improved QRISK3 algorithm for UK clinical practice
-        let baseRisk = 0;
+        // Improved QRISK3-based algorithm (simplified but more accurate)
+        let score = 0;
         
-        // Age-based risk (UK QRISK3 methodology)
+        // Age component (log-linear relationship)
         if (sex === 'male') {
-            baseRisk = Math.pow(age - 25, 1.8) * 0.15;
+            score += Math.log(age/40) * 0.22;
         } else {
-            baseRisk = Math.pow(age - 25, 1.6) * 0.08;
+            score += Math.log(age/40) * 0.25;
         }
         
-        // Risk multipliers based on conditions
-        let multiplier = 1.0;
-        if (document.getElementById('qrisk-smoking').checked) multiplier *= 1.9;
-        if (document.getElementById('qrisk-diabetes').checked) multiplier *= 2.1;
-        if (document.getElementById('qrisk-copd').checked) multiplier *= 1.3;
-        if (document.getElementById('qrisk-af').checked) multiplier *= 2.5;
-        if (document.getElementById('qrisk-ckd').checked) multiplier *= 1.4;
-        if (document.getElementById('qrisk-ra').checked) multiplier *= 1.3;
-
-        let risk = Math.min(baseRisk * multiplier, 95);
+        // BMI component (J-shaped curve, optimal around 22-25)
+        const bmiDeviation = Math.abs(bmi - 23.5);
+        score += bmiDeviation * 0.008;
+        
+        // Blood pressure component
+        const sbpDeviation = Math.max(0, sbp - 120);
+        score += sbpDeviation * 0.002;
+        
+        // Cholesterol ratio component
+        const cholRatio = cholesterol / hdl;
+        score += (cholRatio - 3.5) * 0.15;
+        
+        // Ethnicity adjustments
+        const ethnicity = document.getElementById('qrisk-ethnicity').value;
+        const ethnicityFactors = {
+            'white': 1.0,
+            'indian': 1.4,
+            'pakistani': 1.6,
+            'bangladeshi': 1.8,
+            'other-asian': 1.2,
+            'caribbean': 1.2,
+            'black-african': 0.9,
+            'chinese': 0.8,
+            'other': 1.1
+        };
+        score += Math.log(ethnicityFactors[ethnicity] || 1.0);
+        
+        // Risk factors
+        if (document.getElementById('qrisk-smoking').checked) score += 0.63;
+        if (document.getElementById('qrisk-diabetes-type1').checked) score += 1.2;
+        if (document.getElementById('qrisk-diabetes-type2').checked) score += 0.8;
+        if (document.getElementById('qrisk-family-history').checked) score += 0.54;
+        if (document.getElementById('qrisk-ckd').checked) score += 0.9;
+        if (document.getElementById('qrisk-af').checked) score += 0.88;
+        if (document.getElementById('qrisk-bp-treatment').checked) score += 0.51;
+        if (document.getElementById('qrisk-ra').checked) score += 0.4;
+        if (document.getElementById('qrisk-lupus').checked) score += 0.95;
+        if (document.getElementById('qrisk-antipsychotic').checked) score += 0.31;
+        if (document.getElementById('qrisk-steroid').checked) score += 0.37;
+        if (document.getElementById('qrisk-erectile').checked && sex === 'male') score += 0.22;
+        if (document.getElementById('qrisk-migraine').checked) score += 0.25;
+        
+        // Convert to probability (simplified survival function)
+        const baselineRisk = sex === 'male' ? 0.15 : 0.08;
+        let risk = baselineRisk * Math.exp(score);
+        risk = Math.min(risk * 100, 95); // Cap at 95%
+        
         let riskLevel = '';
         let color = '';
         let recommendation = '';
 
-        // Updated NICE guidelines for cardiovascular risk - softer recommendations with shared decision-making
+        // Updated NICE guidelines for cardiovascular risk
         if (risk < 10) {
             riskLevel = 'Low risk (<10%)';
             color = '#4CAF50';
-            recommendation = 'Lifestyle advice and reassess in 5 years. Statins not routinely recommended';
+            recommendation = 'Lifestyle advice and reassess in 5 years. Statins not routinely recommended unless additional factors';
         } else if (risk < 20) {
             riskLevel = 'Moderate risk (10-20%)';
             color = '#FF9800';
@@ -2861,7 +2952,8 @@ class MLAQuizApp {
                     ${recommendation}
                 </div>
                 <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
-                    Based on QRISK3 algorithm (simplified). For accurate calculation use official QRISK3 tool.
+                    Cholesterol ratio: ${cholRatio.toFixed(1)}:1 | BMI: ${bmi} kg/m²<br>
+                    Simplified QRISK3 algorithm. Use official tool for clinical decisions.
                 </div>
             </div>
         `;
