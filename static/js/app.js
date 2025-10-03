@@ -2359,7 +2359,7 @@ class MLAQuizApp {
     getBMICalculator() {
         return `
             <div class="calculator-form">
-                <h4>BMI Calculator</h4>
+                <h4>BMI & Waist Circumference Calculator</h4>
                 <div class="calc-input-group">
                     <label>Weight (kg):</label>
                     <input type="number" id="bmi-weight" placeholder="70" step="0.1">
@@ -2368,15 +2368,30 @@ class MLAQuizApp {
                     <label>Height (cm):</label>
                     <input type="number" id="bmi-height" placeholder="175" step="0.1">
                 </div>
+                <div class="calc-input-group">
+                    <label>Waist Circumference (cm) - Optional:</label>
+                    <input type="number" id="bmi-waist" placeholder="85" step="0.1">
+                </div>
+                <div class="calc-input-group">
+                    <label>Ethnicity:</label>
+                    <select id="bmi-ethnicity">
+                        <option value="european">European/Caucasian</option>
+                        <option value="asian">Asian (Chinese, Japanese, South Asian)</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="calc-checkbox-group">
+                    <label><input type="radio" name="bmi-sex" value="male"> Male</label>
+                    <label><input type="radio" name="bmi-sex" value="female"> Female</label>
+                </div>
                 <button onclick="window.quizApp.calculateBMI()">Calculate</button>
                 <div id="bmi-result" class="calc-result"></div>
                 <div class="calc-reference">
                     <small>
-                        <strong>BMI Categories:</strong><br>
-                        Underweight: &lt;18.5<br>
-                        Normal: 18.5-24.9<br>
-                        Overweight: 25-29.9<br>
-                        Obese: ≥30
+                        <strong>BMI Categories (WHO):</strong><br>
+                        Underweight: &lt;18.5 | Normal: 18.5-24.9<br>
+                        Overweight: 25-29.9 | Obese: ≥30<br>
+                        <strong>Asian populations:</strong> Overweight ≥23, Obese ≥27.5
                     </small>
                 </div>
             </div>
@@ -2386,6 +2401,9 @@ class MLAQuizApp {
     calculateBMI() {
         const weight = parseFloat(document.getElementById('bmi-weight').value);
         const height = parseFloat(document.getElementById('bmi-height').value) / 100; // Convert cm to m
+        const waist = parseFloat(document.getElementById('bmi-waist').value);
+        const ethnicity = document.getElementById('bmi-ethnicity').value;
+        const sex = document.querySelector('input[name="bmi-sex"]:checked')?.value;
         
         if (!weight || !height) {
             document.getElementById('bmi-result').innerHTML = '<p class="error">Please enter valid weight and height</p>';
@@ -2395,28 +2413,93 @@ class MLAQuizApp {
         const bmi = weight / (height * height);
         let category = '';
         let color = '';
+        let healthRisk = '';
+        
+        // Ethnic-specific BMI thresholds
+        let overweightThreshold = 25;
+        let obeseThreshold = 30;
+        
+        if (ethnicity === 'asian') {
+            overweightThreshold = 23;
+            obeseThreshold = 27.5;
+        }
         
         if (bmi < 18.5) {
             category = 'Underweight';
             color = '#2196F3';
-        } else if (bmi < 25) {
+            healthRisk = 'Increased risk: nutritional deficiency, osteoporosis, immune dysfunction';
+        } else if (bmi < overweightThreshold) {
             category = 'Normal weight';
             color = '#4CAF50';
-        } else if (bmi < 30) {
+            healthRisk = 'Optimal health risk profile';
+        } else if (bmi < obeseThreshold) {
             category = 'Overweight';
             color = '#FF9800';
-        } else {
-            category = 'Obese';
+            healthRisk = 'Increased risk: diabetes, cardiovascular disease, sleep apnoea';
+        } else if (bmi < 35) {
+            category = 'Obese Class I';
             color = '#F44336';
+            healthRisk = 'High risk: diabetes, CVD, stroke, certain cancers';
+        } else if (bmi < 40) {
+            category = 'Obese Class II';
+            color = '#D32F2F';
+            healthRisk = 'Very high risk: consider bariatric surgery consultation';
+        } else {
+            category = 'Obese Class III';
+            color = '#B71C1C';
+            healthRisk = 'Extremely high risk: urgent weight management, consider bariatric surgery';
+        }
+        
+        // Waist circumference assessment
+        let waistAssessment = '';
+        if (waist && sex) {
+            let waistRisk = '';
+            let waistColor = '#4CAF50';
+            
+            if (sex === 'male') {
+                if (waist >= 102) {
+                    waistRisk = 'Very high risk';
+                    waistColor = '#F44336';
+                } else if (waist >= 94) {
+                    waistRisk = 'Increased risk';
+                    waistColor = '#FF9800';
+                } else {
+                    waistRisk = 'Low risk';
+                }
+            } else {
+                if (waist >= 88) {
+                    waistRisk = 'Very high risk';
+                    waistColor = '#F44336';
+                } else if (waist >= 80) {
+                    waistRisk = 'Increased risk';
+                    waistColor = '#FF9800';
+                } else {
+                    waistRisk = 'Low risk';
+                }
+            }
+            
+            waistAssessment = `
+                <div style="margin-top: 8px; padding: 6px; background: #f5f5f5; border-radius: 4px;">
+                    <strong>Waist Circumference:</strong> ${waist} cm<br>
+                    <span style="color: ${waistColor}; font-weight: bold;">${waistRisk}</span> for metabolic complications
+                </div>
+            `;
         }
         
         document.getElementById('bmi-result').innerHTML = `
             <div class="bmi-result-display">
-                <div class="bmi-value" style="color: ${color}">
-                    <strong>${bmi.toFixed(1)} kg/m²</strong>
+                <div class="bmi-value" style="color: ${color}; font-size: 1.2em;">
+                    <strong>BMI: ${bmi.toFixed(1)} kg/m²</strong>
                 </div>
-                <div class="bmi-category" style="color: ${color}">
+                <div class="bmi-category" style="color: ${color}; font-weight: bold; margin: 4px 0;">
                     ${category}
+                </div>
+                <div style="margin-top: 8px; font-size: 0.9em; color: #666;">
+                    ${healthRisk}
+                </div>
+                ${waistAssessment}
+                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
+                    ${ethnicity === 'asian' ? 'Using Asian-specific BMI thresholds' : 'Using WHO BMI thresholds'}
                 </div>
             </div>
         `;
@@ -2539,27 +2622,47 @@ class MLAQuizApp {
         if (document.getElementById('hasbled-drugs').checked) score += 1;
         
         let risk = '';
+        let bleedingRate = '';
         let recommendation = '';
+        let modifiableFactors = '';
         let color = '';
         
         if (score <= 2) {
             risk = 'Low bleeding risk';
-            recommendation = 'Anticoagulation usually safe';
+            bleedingRate = '0.9-2.4% per year';
+            recommendation = 'Anticoagulation generally safe - benefits likely outweigh bleeding risk';
             color = '#4CAF50';
+            modifiableFactors = 'Continue regular monitoring. Address any modifiable factors.';
+        } else if (score === 3) {
+            risk = 'Moderate bleeding risk';
+            bleedingRate = '3.7% per year';
+            recommendation = 'Anticoagulation possible but requires caution - regular monitoring essential';
+            color = '#FF9800';
+            modifiableFactors = 'Review modifiable factors: alcohol intake, drug interactions, INR stability';
         } else {
             risk = 'High bleeding risk';
-            recommendation = 'Caution with anticoagulation - consider modifiable risk factors';
+            bleedingRate = '8.7-12.5% per year';
+            recommendation = 'Consider alternatives to anticoagulation or enhanced monitoring';
             color = '#F44336';
+            modifiableFactors = 'Priority: Address modifiable factors (alcohol, drugs, BP control, INR stability)';
         }
         
         document.getElementById('hasbled-result').innerHTML = `
             <div class="score-result">
                 <div class="score-value" style="color: ${color}">
-                    Score: <strong>${score}</strong>
+                    HAS-BLED Score: <strong>${score}/9</strong>
                 </div>
-                <div class="score-risk">${risk}</div>
-                <div class="score-recommendation" style="color: ${color}">
-                    <strong>${recommendation}</strong>
+                <div class="score-risk" style="color: ${color}; font-weight: bold;">
+                    ${risk} (${bleedingRate})
+                </div>
+                <div class="score-recommendation" style="margin-top: 8px;">
+                    <strong>Recommendation:</strong> ${recommendation}
+                </div>
+                <div style="margin-top: 8px; font-size: 0.9em; color: #666;">
+                    <strong>Action:</strong> ${modifiableFactors}
+                </div>
+                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
+                    Note: HAS-BLED should not be used alone to exclude anticoagulation but to identify patients requiring closer monitoring
                 </div>
             </div>
         `;
