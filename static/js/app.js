@@ -3637,16 +3637,18 @@ class MLAQuizApp {
     getUreaCreatinineCalculator() {
         return `
             <div class="calculator-form">
-                <h4>Urea:Creatinine Ratio Calculator</h4>
-                <p><small>Assessment of kidney function and AKI classification</small></p>
+                <h4>Urea:Creatinine Ratio Calculator (UK Standards)</h4>
+                <p><small>Assessment of kidney function and AKI classification (NICE/KDIGO guidelines)</small></p>
                 
                 <div class="calc-input-group">
                     <label>Serum Urea (mmol/L):</label>
                     <input type="number" id="urea-value" placeholder="7.0" min="1" max="50" step="0.1">
+                    <small>Normal range: 2.5-7.5 mmol/L</small>
                 </div>
                 <div class="calc-input-group">
                     <label>Serum Creatinine (μmol/L):</label>
                     <input type="number" id="creatinine-value" placeholder="80" min="20" max="2000">
+                    <small>Normal range: 60-110 μmol/L (men), 45-90 μmol/L (women)</small>
                 </div>
                 
                 <button onclick="window.quizApp.calculateUreaCreatinine()">Calculate Ratio</button>
@@ -3654,10 +3656,12 @@ class MLAQuizApp {
                 
                 <div class="calc-reference">
                     <small>
-                        <strong>Normal Range:</strong> 10-20:1<br>
-                        <strong>Prerenal AKI:</strong> >20:1<br>
-                        <strong>Intrinsic renal AKI:</strong> <10:1<br>
-                        <strong>Post-renal AKI:</strong> Variable (often >20:1 initially)
+                        <strong>UK Reference Ranges (NICE CG169):</strong><br>
+                        <strong>Normal:</strong> 40-100:1 (typical range)<br>
+                        <strong>Prerenal AKI:</strong> >100:1 (dehydration, reduced perfusion)<br>
+                        <strong>Intrinsic renal AKI:</strong> 40-80:1 (ATN, glomerulonephritis)<br>
+                        <strong>Post-renal AKI:</strong> Variable, often >100:1 initially<br>
+                        <em>Note: Always interpret with clinical context and eGFR</em>
                     </small>
                 </div>
             </div>
@@ -3720,43 +3724,61 @@ class MLAQuizApp {
             return;
         }
         
+        // Calculate urea:creatinine ratio (UK standard: both in mmol/L)
         // Convert creatinine from μmol/L to mmol/L for ratio calculation
         const creatinineMmol = creatinine / 1000;
-        
-        // Calculate urea:creatinine ratio
         const ratio = urea / creatinineMmol;
         
         let interpretation = '';
         let color = '';
         let clinicalContext = '';
+        let niceGuidance = '';
         
-        if (ratio < 10) {
-            interpretation = 'Low ratio (<10:1)';
+        if (ratio < 40) {
+            interpretation = 'Low ratio (<40:1)';
             color = '#FF5722';
-            clinicalContext = 'Suggests intrinsic renal AKI (acute tubular necrosis, glomerulonephritis, interstitial nephritis)';
-        } else if (ratio <= 20) {
-            interpretation = 'Normal ratio (10-20:1)';
+            clinicalContext = 'Unusual - check sample integrity. May suggest intrinsic renal disease with reduced urea production.';
+            niceGuidance = 'Consider liver disease, malnutrition, or analytical error.';
+        } else if (ratio >= 40 && ratio <= 100) {
+            interpretation = 'Normal ratio (40-100:1)';
             color = '#4CAF50';
-            clinicalContext = 'Normal kidney function or stable CKD';
-        } else if (ratio <= 40) {
-            interpretation = 'Elevated ratio (20-40:1)';
+            clinicalContext = 'Normal kidney function or stable CKD. Ratio within expected range.';
+            niceGuidance = 'Continue standard monitoring as per NICE CG169.';
+        } else if (ratio > 100 && ratio <= 150) {
+            interpretation = 'Elevated ratio (100-150:1)';
             color = '#FF9800';
-            clinicalContext = 'Suggests prerenal AKI (dehydration, hypotension, heart failure) or early post-renal obstruction';
+            clinicalContext = 'Suggests prerenal AKI - assess volume status, BP, medications (ACEi/ARB, diuretics).';
+            niceGuidance = 'Check fluid balance, stop nephrotoxic drugs, consider IV fluids if volume depleted.';
         } else {
-            interpretation = 'Very high ratio (>40:1)';
+            interpretation = 'Very high ratio (>150:1)';
             color = '#F44336';
-            clinicalContext = 'Strongly suggests prerenal AKI or significant dehydration. Consider urgent fluid assessment.';
+            clinicalContext = 'Strongly suggests severe prerenal AKI or early post-renal obstruction.';
+            niceGuidance = 'Urgent assessment required. Consider IV fluids, review medications, bladder scan, nephrology review.';
+        }
+        
+        // Additional context based on absolute values
+        let additionalNotes = '';
+        if (urea > 20) {
+            additionalNotes += '⚠️ Significantly elevated urea - consider urgent nephrology review. ';
+        }
+        if (creatinine > 300) {
+            additionalNotes += '⚠️ Severely elevated creatinine - may require acute dialysis. ';
         }
         
         document.getElementById('urea-creatinine-result').innerHTML = `
             <div style="color: ${color}">
-                <strong>Urea:Creatinine Ratio: ${Math.round(ratio * 10) / 10}:1</strong><br>
+                <strong>Urea:Creatinine Ratio: ${Math.round(ratio)}:1</strong><br>
                 <strong>${interpretation}</strong><br>
                 <div style="margin-top: 8px; font-size: 0.9em;">
-                    ${clinicalContext}
+                    <strong>Clinical Context:</strong> ${clinicalContext}
                 </div>
-                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
-                    Urea: ${urea} mmol/L | Creatinine: ${creatinine} μmol/L (${Math.round(creatinineMmol * 1000) / 1000} mmol/L)
+                <div style="margin-top: 8px; font-size: 0.9em; color: #2E7D32;">
+                    <strong>NICE Guidance:</strong> ${niceGuidance}
+                </div>
+                ${additionalNotes ? `<div style="margin-top: 8px; font-size: 0.9em; color: #D84315;"><strong>${additionalNotes}</strong></div>` : ''}
+                <div style="margin-top: 12px; font-size: 0.8em; color: #666; border-top: 1px solid #eee; padding-top: 8px;">
+                    <strong>Values:</strong> Urea ${urea} mmol/L | Creatinine ${creatinine} μmol/L<br>
+                    <em>Always interpret alongside eGFR, clinical history, and AKI staging (KDIGO criteria)</em>
                 </div>
             </div>
         `;
