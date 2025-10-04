@@ -435,6 +435,21 @@
             color: var(--text-secondary) !important;
         }
         
+        /* Dark mode for general heading elements */
+        [data-theme="dark"] h1,
+        [data-theme="dark"] h2,
+        [data-theme="dark"] h3,
+        [data-theme="dark"] h4,
+        [data-theme="dark"] h5,
+        [data-theme="dark"] h6 {
+            color: var(--text-primary) !important;
+        }
+        
+        /* Dark mode for general text elements */
+        [data-theme="dark"] p {
+            color: var(--text-primary) !important;
+        }
+        
         /* Dark mode for progress buttons and sidebar elements */
         [data-theme="dark"] .progress-stats .progress-item {
             background-color: var(--bg-tertiary) !important;
@@ -2621,6 +2636,20 @@
             color: #8e8e93;
         }
         
+        .loading p {
+            color: #8e8e93;
+            margin: 10px 0 0 0;
+        }
+        
+        /* Dark mode for loading states */
+        [data-theme="dark"] .loading {
+            color: #aeaeb2;
+        }
+        
+        [data-theme="dark"] .loading p {
+            color: #aeaeb2;
+        }
+        
         .spinner {
             width: 24px;
             height: 24px;
@@ -2629,6 +2658,12 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 16px;
+        }
+        
+        /* Dark mode for spinner */
+        [data-theme="dark"] .spinner {
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--button-bg);
         }
         
         @keyframes spin {
