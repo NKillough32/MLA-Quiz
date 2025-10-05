@@ -2236,76 +2236,47 @@ class MLAQuizApp {
 
     initializeCalculators() {
         // Remove any existing calculator event listeners to prevent duplicates
-        if (this.calculatorTouchHandler) {
-            document.removeEventListener('touchend', this.calculatorTouchHandler);
-        }
-        if (this.calculatorClickHandler) {
-            document.removeEventListener('click', this.calculatorClickHandler);
+        this.cleanupCalculatorEvents();
+        
+        console.log('🧮 Initializing calculator events...');
+        
+        // Use targeted event delegation instead of global listeners
+        const calculatorPanel = document.getElementById('calculator-panel');
+        if (!calculatorPanel) {
+            console.error('❌ Calculator panel not found!');
+            return;
         }
         
-        // Handle calculator button clicks with proper touch/click handling
-        let touchHandled = false;
-        let calculatorTabActivated = Date.now(); // Track when calculator tab was activated
-        
-        const handleCalculatorInteraction = (e) => {
-            // Only process if we're in the calculators tool and the target is a calculator button
-            const currentTool = document.querySelector('.tool-nav-btn.active')?.getAttribute('data-tool');
-            if (currentTool !== 'calculators') {
-                return;
-            }
-            
-            // Prevent immediate activation on tab switch (Android fix)
-            if (Date.now() - calculatorTabActivated < 500) {
-                console.log('🧮 Ignoring interaction - too soon after tab activation');
-                return;
-            }
-            
+        // Handle calculator button clicks with specific delegation
+        this.calculatorPanelHandler = (e) => {
+            // Only handle events within the calculator panel
             const calcBtn = e.target.closest('.calculator-btn');
-            if (calcBtn) {
+            if (calcBtn && calculatorPanel.classList.contains('active')) {
                 e.preventDefault();
                 e.stopPropagation();
                 const calcType = calcBtn.getAttribute('data-calc');
-                console.log('🧮 Calculator triggered:', calcType);
+                console.log('🧮 Calculator triggered via panel delegation:', calcType);
                 this.loadCalculator(calcType);
             }
         };
         
-        // Store handlers as instance methods for cleanup
-        this.calculatorTouchHandler = (e) => {
-            // More specific check - only handle if target is actually a calculator button or its child
-            const calcBtn = e.target.closest('.calculator-btn');
-            if (calcBtn) {
-                const currentTool = document.querySelector('.tool-nav-btn.active')?.getAttribute('data-tool');
-                if (currentTool === 'calculators') {
-                    // Additional check - make sure it's not a navigation button touch
-                    if (!e.target.closest('.tool-nav-btn')) {
-                        touchHandled = true;
-                        handleCalculatorInteraction(e);
-                        // Reset the flag after a short delay
-                        setTimeout(() => { touchHandled = false; }, 300);
-                    }
-                }
-            }
-        };
+        // Add event listener only to the calculator panel, not globally
+        calculatorPanel.addEventListener('click', this.calculatorPanelHandler);
+        calculatorPanel.addEventListener('touchend', this.calculatorPanelHandler);
         
-        this.calculatorClickHandler = (e) => {
-            // If touch was already handled, skip the click event
-            if (touchHandled) {
-                return;
-            }
-            handleCalculatorInteraction(e);
-        };
-        
-        // Add event listeners with a slight delay to prevent immediate triggering
-        setTimeout(() => {
-            document.addEventListener('touchend', this.calculatorTouchHandler);
-            document.addEventListener('click', this.calculatorClickHandler);
-            console.log('🧮 Calculator event listeners added with delay');
-        }, 100);
+        console.log('✅ Calculator events initialized with panel delegation');
     }
 
     cleanupCalculatorEvents() {
         // Remove calculator event listeners to prevent unwanted triggers
+        const calculatorPanel = document.getElementById('calculator-panel');
+        if (calculatorPanel && this.calculatorPanelHandler) {
+            calculatorPanel.removeEventListener('click', this.calculatorPanelHandler);
+            calculatorPanel.removeEventListener('touchend', this.calculatorPanelHandler);
+            this.calculatorPanelHandler = null;
+        }
+        
+        // Legacy cleanup for old global listeners
         if (this.calculatorTouchHandler) {
             document.removeEventListener('touchend', this.calculatorTouchHandler);
             this.calculatorTouchHandler = null;
@@ -5669,7 +5640,8 @@ class MLAQuizApp {
         }
         console.log('✅ Guidelines panel found, setting up database...');
         
-        const guidelinesDatabase = {
+        try {
+            const guidelinesDatabase = {
             'hypertension': {
                 title: 'Hypertension Management (NICE NG136 2024)',
                 category: 'cardiovascular',
@@ -6086,6 +6058,18 @@ class MLAQuizApp {
         this.guidelinesDatabase = guidelinesDatabase;
         this.showGuidelinesCategory('all');
         console.log('✅ Guidelines loaded successfully!');
+        
+        } catch (error) {
+            console.error('❌ Error loading guidelines:', error);
+            const container = document.getElementById('guidelines-panel');
+            container.innerHTML = `
+                <div class="error-message">
+                    <h3>⚠️ Guidelines Loading Error</h3>
+                    <p>Unable to load clinical guidelines. Please refresh the page.</p>
+                    <button onclick="window.quizApp.loadGuidelines()">Retry</button>
+                </div>
+            `;
+        }
     }
 
     searchGuidelines(guidelinesDatabase) {
