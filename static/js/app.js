@@ -2172,8 +2172,8 @@ class MLAQuizApp {
             });
         });
 
-        // Initialize calculators
-        this.initializeCalculators();
+        // Initialize calculators only when needed (moved to switchMedicalTool)
+        // this.initializeCalculators();
         
         // Setup mobile back button behavior
         this.setupMobileBackButton();
@@ -2235,36 +2235,72 @@ class MLAQuizApp {
     }
 
     initializeCalculators() {
+        // Remove any existing calculator event listeners to prevent duplicates
+        if (this.calculatorTouchHandler) {
+            document.removeEventListener('touchend', this.calculatorTouchHandler);
+        }
+        if (this.calculatorClickHandler) {
+            document.removeEventListener('click', this.calculatorClickHandler);
+        }
+        
         // Handle calculator button clicks with proper touch/click handling
         let touchHandled = false;
         
         const handleCalculatorInteraction = (e) => {
-            if (e.target.closest('.calculator-btn')) {
+            // Only process if we're in the calculators tool and the target is a calculator button
+            const currentTool = document.querySelector('.tool-nav-btn.active')?.getAttribute('data-tool');
+            if (currentTool !== 'calculators') {
+                return;
+            }
+            
+            const calcBtn = e.target.closest('.calculator-btn');
+            if (calcBtn) {
                 e.preventDefault();
-                e.stopPropagation(); // Prevent medical tools panel from closing
-                const calcType = e.target.closest('.calculator-btn').getAttribute('data-calc');
+                e.stopPropagation();
+                const calcType = calcBtn.getAttribute('data-calc');
+                console.log('🧮 Calculator triggered:', calcType);
                 this.loadCalculator(calcType);
             }
         };
         
-        // Handle touch events for mobile devices
-        document.addEventListener('touchend', (e) => {
-            if (e.target.closest('.calculator-btn')) {
-                touchHandled = true;
-                handleCalculatorInteraction(e);
-                // Reset the flag after a short delay to allow for click events on non-touch interactions
-                setTimeout(() => { touchHandled = false; }, 300);
+        // Store handlers as instance methods for cleanup
+        this.calculatorTouchHandler = (e) => {
+            const calcBtn = e.target.closest('.calculator-btn');
+            if (calcBtn) {
+                const currentTool = document.querySelector('.tool-nav-btn.active')?.getAttribute('data-tool');
+                if (currentTool === 'calculators') {
+                    touchHandled = true;
+                    handleCalculatorInteraction(e);
+                    // Reset the flag after a short delay
+                    setTimeout(() => { touchHandled = false; }, 300);
+                }
             }
-        });
+        };
         
-        // Handle click events for desktop and as fallback for mobile
-        document.addEventListener('click', (e) => {
+        this.calculatorClickHandler = (e) => {
             // If touch was already handled, skip the click event
             if (touchHandled) {
                 return;
             }
             handleCalculatorInteraction(e);
-        });
+        };
+        
+        // Add event listeners
+        document.addEventListener('touchend', this.calculatorTouchHandler);
+        document.addEventListener('click', this.calculatorClickHandler);
+    }
+
+    cleanupCalculatorEvents() {
+        // Remove calculator event listeners to prevent unwanted triggers
+        if (this.calculatorTouchHandler) {
+            document.removeEventListener('touchend', this.calculatorTouchHandler);
+            this.calculatorTouchHandler = null;
+        }
+        if (this.calculatorClickHandler) {
+            document.removeEventListener('click', this.calculatorClickHandler);
+            this.calculatorClickHandler = null;
+        }
+        console.log('🧮 Calculator event listeners cleaned up');
     }
 
     loadCalculator(calcType) {
@@ -5611,6 +5647,14 @@ class MLAQuizApp {
 
     // Clinical Guidelines Functions  
     loadGuidelines() {
+        console.log('📋 Loading guidelines...');
+        const guidelinesContainer = document.getElementById('guidelines-panel');
+        if (!guidelinesContainer) {
+            console.error('❌ Guidelines panel not found!');
+            return;
+        }
+        console.log('✅ Guidelines panel found, setting up database...');
+        
         const guidelinesDatabase = {
             'hypertension': {
                 title: 'Hypertension Management (NICE NG136 2024)',
@@ -6002,6 +6046,7 @@ class MLAQuizApp {
                 monitoring: 'Hourly observations, fluid balance, lactate, organ function, consider HDU/ICU if deteriorating'
             }
         };
+        console.log('✅ Guidelines database created with', Object.keys(guidelinesDatabase).length, 'guidelines');
 
         const container = document.getElementById('guidelines-panel');
         container.innerHTML = `
@@ -6026,6 +6071,7 @@ class MLAQuizApp {
         searchInput.addEventListener('input', () => this.searchGuidelines(guidelinesDatabase));
         this.guidelinesDatabase = guidelinesDatabase;
         this.showGuidelinesCategory('all');
+        console.log('✅ Guidelines loaded successfully!');
     }
 
     searchGuidelines(guidelinesDatabase) {
@@ -7435,6 +7481,12 @@ class MLAQuizApp {
         const toolPanels = document.querySelectorAll('.tool-panel');
         const navButtons = document.querySelectorAll('.tool-nav-btn');
         
+        // Clean up calculator events when switching away from calculators
+        const currentActiveTool = document.querySelector('.tool-nav-btn.active')?.getAttribute('data-tool');
+        if (currentActiveTool === 'calculators' && toolType !== 'calculators' && toolType !== 'calculator-detail') {
+            this.cleanupCalculatorEvents();
+        }
+        
         // Remove active class from all nav buttons
         navButtons.forEach(btn => btn.classList.remove('active'));
         
@@ -7476,7 +7528,8 @@ class MLAQuizApp {
                 this.loadDrugReference();
                 break;
             case 'calculators':
-                // Initialize calculator grid - no additional loading needed
+                // Re-initialize calculator event handlers when switching to calculators
+                this.initializeCalculators();
                 console.log('🧮 Calculators panel activated');
                 break;
             case 'calculator-detail':
