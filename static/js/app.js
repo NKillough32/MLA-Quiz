@@ -6379,6 +6379,402 @@ class MLAQuizApp {
             `;
         }
         
+        // Atrial Fibrillation specific properties
+        if (guideline.types) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>📊 AF Types/Classification</h4>
+                    ${Object.entries(guideline.types).map(([type, description]) => `
+                        <div class="stage-item">
+                            <strong>${type}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.rateControl) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🎯 Rate Control Strategy</h4>
+                    ${Object.entries(guideline.rateControl).map(([strategy, description]) => `
+                        <div class="treatment-item">
+                            <strong>${strategy}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.rhythmControl) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🔄 Rhythm Control Strategy</h4>
+                    ${Object.entries(guideline.rhythmControl).map(([strategy, description]) => `
+                        <div class="treatment-item">
+                            <strong>${strategy}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.anticoagulation) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🩸 Anticoagulation Management</h4>
+                    ${Object.entries(guideline.anticoagulation).map(([aspect, description]) => `
+                        <div class="treatment-item">
+                            <strong>${aspect}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        // Other specific properties used by various guidelines
+        if (guideline.diagnosis) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🔬 Diagnosis</h4>
+                    ${typeof guideline.diagnosis === 'string' ? 
+                        `<p>${guideline.diagnosis}</p>` :
+                        Object.entries(guideline.diagnosis).map(([aspect, description]) => `
+                            <div class="diagnosis-item">
+                                <strong>${aspect}:</strong> ${description}
+                            </div>
+                        `).join('')
+                    }
+                </div>
+            `;
+        }
+        
+        if (guideline.classification) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>📊 Classification</h4>
+                    ${Object.entries(guideline.classification).map(([level, description]) => `
+                        <div class="stage-item">
+                            <strong>${level}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.assessment) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>📋 Assessment</h4>
+                    ${Object.entries(guideline.assessment).map(([aspect, description]) => `
+                        <div class="assessment-item">
+                            <strong>${aspect}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.psychological) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🧠 Psychological Interventions</h4>
+                    ${Object.entries(guideline.psychological).map(([intervention, description]) => `
+                        <div class="treatment-item">
+                            <strong>${intervention}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.pharmacological) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>💊 Pharmacological Treatment</h4>
+                    ${Object.entries(guideline.pharmacological).map(([line, description]) => `
+                        <div class="medication-item">
+                            <strong>${line}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.duration) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>⏱️ Treatment Duration</h4>
+                    <p>${guideline.duration}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.riskFactors) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>⚠️ Risk Factors</h4>
+                    <p>${guideline.riskFactors}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.prevention) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🛡️ Prevention</h4>
+                    ${typeof guideline.prevention === 'string' ? 
+                        `<p>${guideline.prevention}</p>` :
+                        Object.entries(guideline.prevention).map(([aspect, description]) => `
+                            <div class="prevention-item">
+                                <strong>${aspect}:</strong> ${description}
+                            </div>
+                        `).join('')
+                    }
+                </div>
+            `;
+        }
+        
+        if (guideline.acute) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🚨 Acute Management</h4>
+                    ${typeof guideline.acute === 'string' ? 
+                        `<p>${guideline.acute}</p>` :
+                        Object.entries(guideline.acute).map(([severity, description]) => `
+                            <div class="acute-item">
+                                <strong>${severity}:</strong> ${description}
+                            </div>
+                        `).join('')
+                    }
+                </div>
+            `;
+        }
+        
+        if (guideline.rehabilitation) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>♻️ Rehabilitation</h4>
+                    ${typeof guideline.rehabilitation === 'string' ? 
+                        `<p>${guideline.rehabilitation}</p>` :
+                        Object.entries(guideline.rehabilitation).map(([aspect, description]) => `
+                            <div class="rehab-item">
+                                <strong>${aspect}:</strong> ${description}
+                            </div>
+                        `).join('')
+                    }
+                </div>
+            `;
+        }
+        
+        if (guideline.referral) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>📞 Referral Criteria</h4>
+                    ${typeof guideline.referral === 'string' ? 
+                        `<p>${guideline.referral}</p>` :
+                        Object.entries(guideline.referral).map(([urgency, criteria]) => `
+                            <div class="referral-item">
+                                <strong>${urgency}:</strong> ${criteria}
+                            </div>
+                        `).join('')
+                    }
+                </div>
+            `;
+        }
+        
+        if (guideline.complications) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>⚠️ Complications</h4>
+                    <p>${guideline.complications}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.deviceTherapy) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🔌 Device Therapy</h4>
+                    ${Object.entries(guideline.deviceTherapy).map(([device, criteria]) => `
+                        <div class="device-item">
+                            <strong>${device}:</strong> ${criteria}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.pharmacotherapy) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>💊 Pharmacotherapy</h4>
+                    ${Object.entries(guideline.pharmacotherapy).map(([medication, details]) => `
+                        <div class="medication-item">
+                            <strong>${medication}:</strong> ${details}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.surgery) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🏥 Surgical Options</h4>
+                    ${Object.entries(guideline.surgery).map(([type, details]) => `
+                        <div class="surgery-item">
+                            <strong>${type}:</strong> ${details}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.comorbidities) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🔗 Comorbidities</h4>
+                    <p>${guideline.comorbidities}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.recurrent) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🔄 Recurrent Cases</h4>
+                    ${Object.entries(guideline.recurrent).map(([aspect, details]) => `
+                        <div class="recurrent-item">
+                            <strong>${aspect}:</strong> ${details}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.catheter) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🩺 Catheter-Related</h4>
+                    ${Object.entries(guideline.catheter).map(([aspect, details]) => `
+                        <div class="catheter-item">
+                            <strong>${aspect}:</strong> ${details}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.advice) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>💡 Patient Advice</h4>
+                    <p>${guideline.advice}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.inhalers) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>💨 Inhaler Devices</h4>
+                    ${Object.entries(guideline.inhalers).map(([type, description]) => `
+                        <div class="inhaler-item">
+                            <strong>${type}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.triggers) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>⚡ Common Triggers</h4>
+                    <p>${guideline.triggers}</p>
+                </div>
+            `;
+        }
+        
+        if (guideline.admission) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🏥 Admission Criteria</h4>
+                    ${Object.entries(guideline.admission).map(([criteria, details]) => `
+                        <div class="admission-item">
+                            <strong>${criteria}:</strong> ${details}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.severity) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>📊 Severity Assessment</h4>
+                    ${Object.entries(guideline.severity).map(([level, description]) => `
+                        <div class="severity-item">
+                            <strong>${level}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.antibiotics) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>💉 Antibiotic Management</h4>
+                    ${Object.entries(guideline.antibiotics).map(([type, details]) => `
+                        <div class="antibiotic-item">
+                            <strong>${type}:</strong> ${details}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.recognition) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🔍 Recognition</h4>
+                    ${Object.entries(guideline.recognition).map(([aspect, details]) => `
+                        <div class="recognition-item">
+                            <strong>${aspect}:</strong> ${details}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.definitions) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>📖 Definitions</h4>
+                    ${Object.entries(guideline.definitions).map(([term, definition]) => `
+                        <div class="definition-item">
+                            <strong>${term}:</strong> ${definition}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.management) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>⚕️ Management</h4>
+                    ${Object.entries(guideline.management).map(([aspect, details]) => `
+                        <div class="management-item">
+                            <strong>${aspect}:</strong> ${details}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
         contentHtml += `</div>`;
         container.innerHTML = contentHtml;
     }
