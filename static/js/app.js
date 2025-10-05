@@ -2247,8 +2247,52 @@ class MLAQuizApp {
             return;
         }
         
-        // Handle calculator button clicks with specific delegation
+        // Track scroll state to prevent buttons triggering during scroll
+        let isScrolling = false;
+        let scrollTimeout;
+        let startY = 0;
+        let startX = 0;
+        const scrollThreshold = 10; // pixels
+        
+        // Handle scroll detection
+        this.calculatorScrollHandler = (e) => {
+            isScrolling = true;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+            }, 150); // Reset scroll state after 150ms of no scroll
+        };
+        
+        // Handle touch start to track initial position
+        this.calculatorTouchStartHandler = (e) => {
+            if (e.touches && e.touches.length > 0) {
+                startY = e.touches[0].clientY;
+                startX = e.touches[0].clientX;
+            }
+        };
+        
+        // Handle calculator button interactions with scroll detection
         this.calculatorPanelHandler = (e) => {
+            // Check if we're scrolling
+            if (isScrolling) {
+                console.log('🧮 Ignoring interaction - currently scrolling');
+                return;
+            }
+            
+            // For touch events, check if this was a scroll gesture
+            if (e.type === 'touchend' && e.changedTouches && e.changedTouches.length > 0) {
+                const endY = e.changedTouches[0].clientY;
+                const endX = e.changedTouches[0].clientX;
+                const deltaY = Math.abs(endY - startY);
+                const deltaX = Math.abs(endX - startX);
+                
+                // If touch moved more than threshold, it's likely a scroll gesture
+                if (deltaY > scrollThreshold || deltaX > scrollThreshold) {
+                    console.log('🧮 Ignoring interaction - detected scroll gesture');
+                    return;
+                }
+            }
+            
             // Only handle events within the calculator panel
             const calcBtn = e.target.closest('.calculator-btn');
             if (calcBtn && calculatorPanel.classList.contains('active')) {
@@ -2260,20 +2304,32 @@ class MLAQuizApp {
             }
         };
         
-        // Add event listener only to the calculator panel, not globally
-        calculatorPanel.addEventListener('click', this.calculatorPanelHandler);
+        // Add event listeners to the calculator panel
+        calculatorPanel.addEventListener('scroll', this.calculatorScrollHandler);
+        calculatorPanel.addEventListener('touchstart', this.calculatorTouchStartHandler, { passive: true });
         calculatorPanel.addEventListener('touchend', this.calculatorPanelHandler);
+        calculatorPanel.addEventListener('click', this.calculatorPanelHandler);
         
-        console.log('✅ Calculator events initialized with panel delegation');
+        console.log('✅ Calculator events initialized with scroll detection');
     }
 
     cleanupCalculatorEvents() {
         // Remove calculator event listeners to prevent unwanted triggers
         const calculatorPanel = document.getElementById('calculator-panel');
-        if (calculatorPanel && this.calculatorPanelHandler) {
-            calculatorPanel.removeEventListener('click', this.calculatorPanelHandler);
-            calculatorPanel.removeEventListener('touchend', this.calculatorPanelHandler);
-            this.calculatorPanelHandler = null;
+        if (calculatorPanel) {
+            if (this.calculatorPanelHandler) {
+                calculatorPanel.removeEventListener('click', this.calculatorPanelHandler);
+                calculatorPanel.removeEventListener('touchend', this.calculatorPanelHandler);
+                this.calculatorPanelHandler = null;
+            }
+            if (this.calculatorScrollHandler) {
+                calculatorPanel.removeEventListener('scroll', this.calculatorScrollHandler);
+                this.calculatorScrollHandler = null;
+            }
+            if (this.calculatorTouchStartHandler) {
+                calculatorPanel.removeEventListener('touchstart', this.calculatorTouchStartHandler);
+                this.calculatorTouchStartHandler = null;
+            }
         }
         
         // Legacy cleanup for old global listeners
@@ -5816,7 +5872,7 @@ class MLAQuizApp {
                     'Maintenance': 'Amiodarone, sotalol, flecainide (if no structural heart disease)'
                 },
                 anticoagulation: {
-                    'CHA₂DS₂-VASc': 'Calculate stroke risk. Anticoagulate if score ≥2 (men) or ≥3 (women)',
+                    'CHA2DS2-VASc': 'Calculate stroke risk. Anticoagulate if score ≥2 (men) or ≥3 (women)',
                     'HAS-BLED': 'Assess bleeding risk but high score not contraindication',
                     'DOAC': 'First-line: apixaban, dabigatran, edoxaban, rivaroxaban',
                     'Warfarin': 'If DOAC contraindicated. Target INR 2.0-3.0'
