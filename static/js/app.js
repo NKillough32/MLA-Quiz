@@ -7915,7 +7915,7 @@ class MLAQuizApp {
             <div id="ddx-list" class="lab-grid"></div>
         `;
         
-        const searchInput = document.getElementById('differential-search');
+        const searchInput = document.getElementById('ddx-search');
         searchInput.addEventListener('input', () => this.searchDdx(ddxDatabase));
         this.ddxDatabase = ddxDatabase;
         this.showDdxCategory('all');
@@ -8763,6 +8763,14 @@ MLAQuizApp.prototype.createTriadCard = function(triad) {
 
 // Clinical Examination Guide Functions
 MLAQuizApp.prototype.loadExaminationGuide = function() {
+    console.log('🩺 Loading examination guide...');
+    const examinationContainer = document.getElementById('examination-container');
+    if (!examinationContainer) {
+        console.error('❌ Examination container not found!');
+        return;
+    }
+    console.log('✅ Examination container found, setting up database...');
+    
     const examinationDatabase = {
         'cardiovascular': {
             title: 'Cardiovascular Examination',
@@ -9854,7 +9862,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         }
     };
     
-    const container = document.getElementById('examination-container');
+    const container = examinationContainer;
     container.innerHTML = `
         <div class="search-container">
             <input type="text" id="examination-search" placeholder="Search examination techniques...">
@@ -9873,9 +9881,11 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
     `;
     
     const searchInput = document.getElementById('examination-search');
-    searchInput.addEventListener('input', () => this.searchExamination(examinationDatabase));
+    const self = this;
+    searchInput.addEventListener('input', () => self.searchExamination(examinationDatabase));
     this.examinationDatabase = examinationDatabase;
     this.showExaminationCategory('all');
+    console.log('✅ Examination guide loaded successfully!');
 };
 
 MLAQuizApp.prototype.searchExamination = function(examinationDatabase) {
