@@ -6161,6 +6161,17 @@ class MLAQuizApp {
         const guidelinesList = document.getElementById('guidelines-list');
         let guidelines = Object.keys(guidelinesDatabase);
         
+        // Update active state of category buttons
+        const categoryButtons = document.querySelectorAll('.guidelines-categories .category-btn');
+        categoryButtons.forEach(btn => {
+            btn.classList.remove('active');
+            // Check if this button corresponds to the selected category
+            const btnCategory = this.getCategoryFromButtonText(btn.textContent);
+            if (btnCategory === category) {
+                btn.classList.add('active');
+            }
+        });
+        
         if (category !== 'all') {
             guidelines = guidelines.filter(guideline => 
                 guidelinesDatabase[guideline].category.toLowerCase() === category
@@ -6173,6 +6184,21 @@ class MLAQuizApp {
                 <div class="lab-count">${guidelinesDatabase[guideline].category}</div>
             </button>
         `).join('');
+    }
+    
+    // Helper function to map button text to category
+    getCategoryFromButtonText(buttonText) {
+        const categoryMap = {
+            'All Guidelines': 'all',
+            'Cardiovascular': 'cardiovascular',
+            'Pulmonary': 'pulmonary',
+            'Endocrine': 'endocrine',
+            'Renal': 'renal',
+            'Mental Health': 'mental-health',
+            'Neurological': 'neurological',
+            'Infectious Diseases': 'infectious-diseases'
+        };
+        return categoryMap[buttonText] || 'all';
     }
     
     showGuidelineDetail(guidelineKey) {

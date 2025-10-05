@@ -803,17 +803,20 @@
         .guidelines-categories {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
-            padding: 0 4px;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 8px 12px;
+            background: rgba(248, 249, 250, 0.5);
+            border-radius: 12px;
             justify-content: flex-start;
             align-items: center;
         }
         
         @media (max-width: 768px) {
             .guidelines-categories {
-                gap: 6px;
-                padding: 0 2px;
+                gap: 8px;
+                padding: 6px 8px;
+                margin-bottom: 16px;
             }
         }
         
@@ -831,32 +834,38 @@
         
         /* Enhanced styling specifically for guidelines categories */
         .guidelines-categories .category-btn {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            transition: all 0.2s ease;
+            padding: 10px 18px;
+            background: #ffffff;
+            border: 2px solid #e5e5ea;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c1c1e;
+            transition: all 0.3s ease;
             white-space: nowrap;
-            min-height: 36px;
+            min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex: 0 0 auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
         @media (max-width: 768px) {
             .guidelines-categories .category-btn {
-                font-size: 12px;
-                padding: 6px 14px;
-                min-height: 34px;
+                font-size: 13px;
+                padding: 8px 15px;
+                min-height: 36px;
+                border-radius: 20px;
             }
         }
         
         @media (max-width: 480px) {
             .guidelines-categories .category-btn {
-                font-size: 11px;
-                padding: 5px 10px;
-                min-height: 30px;
-                border-radius: 16px;
+                font-size: 12px;
+                padding: 6px 12px;
+                min-height: 32px;
+                border-radius: 18px;
             }
         }
         
@@ -872,16 +881,16 @@
             background: #007AFF;
             color: white;
             border-color: #007AFF;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(0, 122, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
         }
         
         .guidelines-categories .category-btn.active {
             background: #007AFF;
             color: white;
             border-color: #0056CC;
-            box-shadow: 0 1px 3px rgba(0, 122, 255, 0.4);
-            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
+            transform: translateY(-1px);
         }
         
         [data-theme="dark"] .category-btn {
@@ -891,24 +900,31 @@
         }
         
         /* Dark theme for guidelines categories specifically */
+        [data-theme="dark"] .guidelines-categories {
+            background: rgba(44, 44, 46, 0.5);
+        }
+        
         [data-theme="dark"] .guidelines-categories .category-btn {
             background: #2C2C2E;
             border-color: #48484A;
             color: #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
         
         [data-theme="dark"] .guidelines-categories .category-btn:hover {
             background: #007AFF;
             border-color: #007AFF;
             color: white;
-            box-shadow: 0 2px 6px rgba(0, 122, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+            transform: translateY(-2px);
         }
         
         [data-theme="dark"] .guidelines-categories .category-btn.active {
             background: #007AFF;
             border-color: #0056CC;
             color: white;
-            box-shadow: 0 1px 3px rgba(0, 122, 255, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.5);
+            transform: translateY(-1px);
         }
         
         /* Tool Results */
