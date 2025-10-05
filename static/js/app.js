@@ -29,6 +29,11 @@ class MLAQuizApp {
         // Theme and font size settings
         this.fontSize = localStorage.getItem('fontSize') || 'medium';
         
+        // Initialize interactive features
+        this.bookmarks = JSON.parse(localStorage.getItem('medicalToolsBookmarks')) || [];
+        this.recentTools = JSON.parse(localStorage.getItem('medicalToolsRecent')) || [];
+        this.toolNotes = JSON.parse(localStorage.getItem('medicalToolsNotes')) || {};
+        
         this.init();
     }
     
@@ -43,6 +48,7 @@ class MLAQuizApp {
         this.initializeQuizLength();
         console.log('🩺 About to initialize medical tools...');
         this.initializeMedicalTools();
+        this.initializeInteractiveFeatures();
         console.log('✅ App initialization complete');
     }
     
@@ -2238,6 +2244,9 @@ class MLAQuizApp {
     }
 
     loadCalculator(calcType) {
+        // Track tool usage
+        this.trackToolUsage('calculator', calcType);
+        
         // Switch to dedicated calculator panel
         this.switchMedicalTool('calculator-detail');
         
@@ -7335,7 +7344,8 @@ class MLAQuizApp {
             'differential-dx': 'differential-panel',
             'triads': 'triads-panel',
             'examination': 'examination-panel',
-            'emergency-protocols': 'emergency-protocols-panel'
+            'emergency-protocols': 'emergency-protocols-panel',
+            'interpretation': 'interpretation-panel'
         };
         
         // Show selected panel
@@ -7375,6 +7385,9 @@ class MLAQuizApp {
                 break;
             case 'emergency-protocols':
                 this.loadEmergencyProtocols();
+                break;
+            case 'interpretation':
+                this.loadInterpretationTools();
                 break;
         }
         
@@ -10328,4 +10341,524 @@ MLAQuizApp.prototype.showProtocolDetail = function(protocolId) {
     `;
     
     container.innerHTML = detailHtml;
+};
+
+// Interpretation Tools Database
+const interpretationTools = {
+    'ecg-basic': {
+        name: 'ECG Interpretation Guide',
+        category: 'ecg',
+        type: 'systematic',
+        steps: [
+            'Rate: Count QRS complexes (300/large squares or 1500/small squares)',
+            'Rhythm: Regular or irregular? P waves present?',
+            'Axis: Normal (-30° to +90°), left or right deviation?',
+            'P waves: Present before each QRS? Normal morphology?',
+            'PR interval: 120-200ms (3-5 small squares)',
+            'QRS width: <120ms (3 small squares) = narrow',
+            'ST segments: Elevated (>1mm) or depressed?',
+            'T waves: Upright in I, II, V3-V6? Inverted elsewhere?',
+            'QT interval: <440ms (men), <460ms (women)',
+            'Additional: Q waves, bundle branch blocks, etc.'
+        ],
+        normalValues: {
+            'Heart Rate': '60-100 bpm',
+            'PR Interval': '120-200ms',
+            'QRS Width': '<120ms',
+            'QT Interval': '<440ms (♂), <460ms (♀)'
+        },
+        commonAbnormalities: [
+            'STEMI: ST elevation ≥1mm in ≥2 contiguous leads',
+            'NSTEMI: ST depression, T wave inversion',
+            'AF: Irregularly irregular, absent P waves',
+            'Heart Block: Prolonged PR, dropped beats, AV dissociation'
+        ]
+    },
+    'abg-interpretation': {
+        name: 'ABG Interpretation',
+        category: 'abg',
+        type: 'systematic',
+        steps: [
+            'Check pH: Acidotic (<7.35) or alkalotic (>7.45)?',
+            'Primary disorder: Respiratory (CO2) or metabolic (HCO3)?',
+            'Compensation: Appropriate for primary disorder?',
+            'Oxygenation: PaO2 adequate for FiO2?',
+            'Calculate A-a gradient if hypoxic',
+            'Check electrolytes: Na+, K+, Cl-, lactate'
+        ],
+        normalValues: {
+            'pH': '7.35-7.45',
+            'PaCO2': '4.7-6.0 kPa (35-45 mmHg)',
+            'PaO2': '>10 kPa (75 mmHg) on air',
+            'HCO3-': '22-28 mmol/L',
+            'Base Excess': '-2 to +2 mmol/L'
+        },
+        compensation: {
+            'Metabolic Acidosis': 'Expected pCO2 = 1.5 × [HCO3] + 8 (±2)',
+            'Metabolic Alkalosis': 'Expected pCO2 = 0.7 × [HCO3] + 21 (±2)',
+            'Respiratory Acidosis': 'Acute: HCO3 ↑ by 1 per 10 pCO2 ↑',
+            'Respiratory Alkalosis': 'Acute: HCO3 ↓ by 2 per 10 pCO2 ↓'
+        }
+    },
+    'chest-xray': {
+        name: 'Chest X-Ray Systematic Review',
+        category: 'imaging',
+        type: 'systematic',
+        steps: [
+            'Patient details: Name, date, orientation (PA/AP/lateral)',
+            'Quality: Adequate inspiration (ribs 5-7 visible)? Rotation?',
+            'Airways: Trachea central? Carina visible?',
+            'Breathing: Lung fields clear? Pneumothorax?',
+            'Circulation: Heart size (<50% thoracic width)? Mediastinum?',
+            'Disability: Bones intact? Soft tissues normal?',
+            'Everything else: Lines, tubes, pacemakers, etc.',
+            'Review areas: Behind heart, costophrenic angles'
+        ],
+        commonFindings: [
+            'Consolidation: Air space opacification with air bronchograms',
+            'Pneumothorax: Pleural line with absent lung markings',
+            'Pleural effusion: Costophrenic angle blunting, meniscus sign',
+            'Pulmonary oedema: Bilateral alveolar infiltrates, Kerley B lines'
+        ],
+        redFlags: [
+            'Tension pneumothorax: Mediastinal shift away',
+            'Massive PE: Right heart strain, oligaemia',
+            'Aortic dissection: Widened mediastinum'
+        ]
+    },
+    'ct-head': {
+        name: 'CT Head Interpretation',
+        category: 'imaging',
+        type: 'systematic',
+        steps: [
+            'Patient details and clinical context',
+            'Image quality: Motion artefact? Contrast given?',
+            'Blood: High density (hyperdense) areas?',
+            'Brain parenchyma: Symmetry? Grey-white differentiation?',
+            'CSF spaces: Ventricles, sulci, cisterns normal?',
+            'Bones: Skull fractures? Soft tissue swelling?',
+            'Midline shift: >5mm suggests raised ICP',
+            'Mass effect: Compression of ventricles/cisterns?'
+        ],
+        densities: {
+            'Hyperdense': 'Fresh blood, calcification, metal',
+            'Isodense': 'Normal brain tissue',
+            'Hypodense': 'Oedema, old infarct, CSF'
+        },
+        emergencyFindings: [
+            'Acute bleed: Hyperdense area in brain/ventricles',
+            'Mass effect: Midline shift, compressed ventricles',
+            'Herniation: Loss of cisterns, uncal herniation',
+            'Hydrocephalus: Enlarged ventricles'
+        ]
+    }
+};
+
+// Interpretation Tools Functions
+MLAQuizApp.prototype.loadInterpretationTools = function() {
+    const container = document.getElementById('interpretation-container');
+    if (!container) return;
+    
+    // Setup category filtering
+    this.setupInterpretationSearch();
+    
+    // Display all tools initially
+    this.displayInterpretationTools(Object.keys(interpretationTools));
+};
+
+MLAQuizApp.prototype.setupInterpretationSearch = function() {
+    const categoryBtns = document.querySelectorAll('.interpretation-categories .category-btn');
+    
+    const filterTools = () => {
+        const activeCategory = document.querySelector('.interpretation-categories .category-btn.active')?.dataset.category || 'all';
+        
+        let filteredTools = Object.keys(interpretationTools);
+        
+        if (activeCategory !== 'all') {
+            filteredTools = filteredTools.filter(toolId => 
+                interpretationTools[toolId].category === activeCategory
+            );
+        }
+        
+        this.displayInterpretationTools(filteredTools);
+    };
+    
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterTools();
+        });
+    });
+};
+
+MLAQuizApp.prototype.displayInterpretationTools = function(toolIds) {
+    const container = document.getElementById('interpretation-container');
+    if (!container) return;
+    
+    if (toolIds.length === 0) {
+        container.innerHTML = `
+            <div class="no-results">
+                <h3>📋 No interpretation tools found</h3>
+                <p>Try adjusting your category filter.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const toolsHtml = toolIds.map(toolId => {
+        const tool = interpretationTools[toolId];
+        
+        return `
+            <div class="interpretation-item" onclick="window.quizApp.showInterpretationDetail('${toolId}')">
+                <div class="interpretation-header">
+                    <h4>${tool.name}</h4>
+                    <span class="interpretation-type">${tool.type}</span>
+                </div>
+                <div class="interpretation-meta">
+                    <span class="interpretation-category">${tool.category}</span>
+                    <span class="step-count">${tool.steps.length} steps</span>
+                </div>
+                <div class="interpretation-preview">
+                    ${tool.steps.slice(0, 2).map(step => 
+                        `<div class="step-preview">• ${step}</div>`
+                    ).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = toolsHtml;
+};
+
+MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
+    const tool = interpretationTools[toolId];
+    if (!tool) return;
+    
+    const container = document.getElementById('interpretation-container');
+    if (!container) return;
+    
+    let additionalSections = '';
+    
+    if (tool.normalValues) {
+        additionalSections += `
+            <div class="normal-values">
+                <h4>📊 Normal Values</h4>
+                <ul class="values-list">
+                    ${Object.entries(tool.normalValues).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.commonAbnormalities) {
+        additionalSections += `
+            <div class="common-abnormalities">
+                <h4>⚠️ Common Abnormalities</h4>
+                <ul class="abnormalities-list">
+                    ${tool.commonAbnormalities.map(abnormality => `<li>${abnormality}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.compensation) {
+        additionalSections += `
+            <div class="compensation-rules">
+                <h4>⚖️ Compensation Rules</h4>
+                <ul class="compensation-list">
+                    ${Object.entries(tool.compensation).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.emergencyFindings) {
+        additionalSections += `
+            <div class="emergency-findings">
+                <h4>🚨 Emergency Findings</h4>
+                <ul class="emergency-list">
+                    ${tool.emergencyFindings.map(finding => `<li>${finding}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.redFlags) {
+        additionalSections += `
+            <div class="red-flags">
+                <h4>🚩 Red Flags</h4>
+                <ul class="red-flags-list">
+                    ${tool.redFlags.map(flag => `<li>${flag}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.commonFindings) {
+        additionalSections += `
+            <div class="common-findings">
+                <h4>🔍 Common Findings</h4>
+                <ul class="findings-list">
+                    ${tool.commonFindings.map(finding => `<li>${finding}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.densities) {
+        additionalSections += `
+            <div class="densities">
+                <h4>📷 CT Densities</h4>
+                <ul class="densities-list">
+                    ${Object.entries(tool.densities).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    const detailHtml = `
+        <div class="interpretation-detail">
+            <div class="interpretation-detail-header">
+                <button class="back-btn" onclick="window.quizApp.loadInterpretationTools(); event.stopPropagation();">← Back to Interpretation Tools</button>
+                <h3>${tool.name}</h3>
+                <span class="interpretation-type">${tool.type}</span>
+            </div>
+            
+            <div class="interpretation-steps">
+                <h4>📋 Systematic Approach</h4>
+                <ol class="step-list">
+                    ${tool.steps.map(step => `<li>${step}</li>`).join('')}
+                </ol>
+            </div>
+            
+            ${additionalSections}
+        </div>
+    `;
+    
+    container.innerHTML = detailHtml;
+};
+
+// Interactive Features Implementation
+MLAQuizApp.prototype.initializeInteractiveFeatures = function() {
+    console.log('🔗 Initializing interactive features...');
+    
+    // Add bookmark buttons to existing calculators
+    this.addBookmarkButtons();
+    
+    // Setup export functionality
+    this.setupExportFeatures();
+    
+    console.log('🔗 Interactive features initialized');
+};
+
+// Bookmark Management
+MLAQuizApp.prototype.addBookmark = function(toolType, toolName, toolData = {}) {
+    const bookmark = {
+        id: Date.now().toString(),
+        type: toolType,
+        name: toolName,
+        data: toolData,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Remove if already bookmarked
+    this.bookmarks = this.bookmarks.filter(b => !(b.type === toolType && b.name === toolName));
+    
+    // Add to beginning of array
+    this.bookmarks.unshift(bookmark);
+    
+    // Limit to 50 bookmarks
+    if (this.bookmarks.length > 50) {
+        this.bookmarks = this.bookmarks.slice(0, 50);
+    }
+    
+    localStorage.setItem('medicalToolsBookmarks', JSON.stringify(this.bookmarks));
+    this.updateBookmarkButton(toolType, toolName, true);
+    console.log(`📌 Bookmarked: ${toolType} - ${toolName}`);
+};
+
+MLAQuizApp.prototype.removeBookmark = function(toolType, toolName) {
+    this.bookmarks = this.bookmarks.filter(b => !(b.type === toolType && b.name === toolName));
+    localStorage.setItem('medicalToolsBookmarks', JSON.stringify(this.bookmarks));
+    this.updateBookmarkButton(toolType, toolName, false);
+    console.log(`🗑️ Removed bookmark: ${toolType} - ${toolName}`);
+};
+
+MLAQuizApp.prototype.isBookmarked = function(toolType, toolName) {
+    return this.bookmarks.some(b => b.type === toolType && b.name === toolName);
+};
+
+MLAQuizApp.prototype.updateBookmarkButton = function(toolType, toolName, isBookmarked) {
+    const bookmarkBtn = document.querySelector(`[data-bookmark-tool="${toolType}-${toolName}"]`);
+    if (bookmarkBtn) {
+        bookmarkBtn.innerHTML = isBookmarked ? '🔖' : '📌';
+        bookmarkBtn.title = isBookmarked ? 'Remove bookmark' : 'Add bookmark';
+    }
+};
+
+// Recent Tools Management
+MLAQuizApp.prototype.addToRecentTools = function(toolType, toolName, toolData = {}) {
+    const recentItem = {
+        type: toolType,
+        name: toolName,
+        data: toolData,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Remove if already in recent
+    this.recentTools = this.recentTools.filter(r => !(r.type === toolType && r.name === toolName));
+    
+    // Add to beginning
+    this.recentTools.unshift(recentItem);
+    
+    // Limit to 20 recent items
+    if (this.recentTools.length > 20) {
+        this.recentTools = this.recentTools.slice(0, 20);
+    }
+    
+    localStorage.setItem('medicalToolsRecent', JSON.stringify(this.recentTools));
+};
+
+// Notes Management
+MLAQuizApp.prototype.saveToolNote = function(toolId, note) {
+    if (note.trim() === '') {
+        delete this.toolNotes[toolId];
+    } else {
+        this.toolNotes[toolId] = {
+            content: note,
+            timestamp: new Date().toISOString()
+        };
+    }
+    localStorage.setItem('medicalToolsNotes', JSON.stringify(this.toolNotes));
+};
+
+MLAQuizApp.prototype.getToolNote = function(toolId) {
+    return this.toolNotes[toolId]?.content || '';
+};
+
+// Export/Share Functionality
+MLAQuizApp.prototype.exportCalculationResults = function(calculatorType, results) {
+    const exportData = {
+        calculator: calculatorType,
+        results: results,
+        timestamp: new Date().toISOString(),
+        source: 'MLA Quiz PWA - Medical Tools'
+    };
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${calculatorType}-results-${new Date().toISOString().split('T')[0]}.json`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+    
+    console.log(`📤 Exported results for ${calculatorType}`);
+};
+
+MLAQuizApp.prototype.generateTextReport = function(calculatorType, results) {
+    const reportContent = `
+MEDICAL CALCULATOR REPORT
+=========================
+
+Calculator: ${calculatorType.toUpperCase()}
+Generated: ${new Date().toLocaleString()}
+Source: MLA Quiz PWA - Medical Tools
+
+${Object.entries(results).map(([key, value]) => `${key}: ${value}`).join('\n')}
+
+Disclaimer: This calculation is for educational purposes only.
+Always verify results and consult clinical guidelines.
+Do not use for actual patient care without proper validation.
+    `.trim();
+    
+    const dataBlob = new Blob([reportContent], {type: 'text/plain'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${calculatorType}-report-${new Date().toISOString().split('T')[0]}.txt`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+    
+    console.log(`📋 Generated text report for ${calculatorType}`);
+};
+
+// Enhanced Calculator Display
+MLAQuizApp.prototype.addBookmarkButtons = function() {
+    // This will be called when calculators are displayed
+    // to add bookmark functionality to each calculator
+    setTimeout(() => {
+        const calculatorButtons = document.querySelectorAll('.calculator-btn');
+        
+        calculatorButtons.forEach(btn => {
+            const calcType = btn.dataset.calc;
+            if (calcType && !btn.querySelector('.bookmark-btn')) {
+                const bookmarkBtn = document.createElement('button');
+                bookmarkBtn.className = 'bookmark-btn';
+                bookmarkBtn.dataset.bookmarkTool = `calculator-${calcType}`;
+                bookmarkBtn.innerHTML = this.isBookmarked('calculator', calcType) ? '🔖' : '📌';
+                bookmarkBtn.title = this.isBookmarked('calculator', calcType) ? 'Remove bookmark' : 'Add bookmark';
+                bookmarkBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (this.isBookmarked('calculator', calcType)) {
+                        this.removeBookmark('calculator', calcType);
+                    } else {
+                        this.addBookmark('calculator', calcType, { displayName: btn.querySelector('.calc-name')?.textContent || calcType });
+                    }
+                };
+                
+                btn.style.position = 'relative';
+                bookmarkBtn.style.position = 'absolute';
+                bookmarkBtn.style.top = '8px';
+                bookmarkBtn.style.right = '8px';
+                bookmarkBtn.style.background = 'none';
+                bookmarkBtn.style.border = 'none';
+                bookmarkBtn.style.fontSize = '16px';
+                bookmarkBtn.style.cursor = 'pointer';
+                bookmarkBtn.style.zIndex = '10';
+                
+                btn.appendChild(bookmarkBtn);
+            }
+        });
+    }, 100);
+};
+
+MLAQuizApp.prototype.setupExportFeatures = function() {
+    // Add export buttons to calculator results when they're displayed
+    console.log('📤 Export features ready');
+};
+
+// Enhanced tool tracking
+MLAQuizApp.prototype.trackToolUsage = function(toolType, toolName) {
+    this.addToRecentTools(toolType, toolName);
+    
+    // Track usage statistics
+    const usageStats = JSON.parse(localStorage.getItem('medicalToolsUsage')) || {};
+    const toolKey = `${toolType}-${toolName}`;
+    
+    if (!usageStats[toolKey]) {
+        usageStats[toolKey] = { count: 0, lastUsed: null };
+    }
+    
+    usageStats[toolKey].count++;
+    usageStats[toolKey].lastUsed = new Date().toISOString();
+    
+    localStorage.setItem('medicalToolsUsage', JSON.stringify(usageStats));
 };
