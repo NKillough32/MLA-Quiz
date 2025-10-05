@@ -2235,8 +2235,10 @@ class MLAQuizApp {
     }
 
     initializeCalculators() {
-        // Handle calculator button clicks with Android support
-        const handleCalculatorClick = (e) => {
+        // Handle calculator button clicks with proper touch/click handling
+        let touchHandled = false;
+        
+        const handleCalculatorInteraction = (e) => {
             if (e.target.closest('.calculator-btn')) {
                 e.preventDefault();
                 e.stopPropagation(); // Prevent medical tools panel from closing
@@ -2245,9 +2247,24 @@ class MLAQuizApp {
             }
         };
         
-        // Add both click and touch events for Android compatibility
-        document.addEventListener('click', handleCalculatorClick);
-        document.addEventListener('touchend', handleCalculatorClick);
+        // Handle touch events for mobile devices
+        document.addEventListener('touchend', (e) => {
+            if (e.target.closest('.calculator-btn')) {
+                touchHandled = true;
+                handleCalculatorInteraction(e);
+                // Reset the flag after a short delay to allow for click events on non-touch interactions
+                setTimeout(() => { touchHandled = false; }, 300);
+            }
+        });
+        
+        // Handle click events for desktop and as fallback for mobile
+        document.addEventListener('click', (e) => {
+            // If touch was already handled, skip the click event
+            if (touchHandled) {
+                return;
+            }
+            handleCalculatorInteraction(e);
+        });
     }
 
     loadCalculator(calcType) {
@@ -5628,42 +5645,6 @@ class MLAQuizApp {
                     'Pregnancy': 'Target <135/85 mmHg. First-line: labetalol. Alternatives: nifedipine, methyldopa',
                     'Type 2 diabetes': 'ACE inhibitor or ARB first-line. Consider SGLT2 inhibitor',
                     'CKD': 'ACE inhibitor or ARB first-line. Monitor eGFR and potassium'
-                }
-            },
-            'diabetes-t2': {
-                title: 'Type 2 Diabetes Management (NICE NG28 2024)',
-                category: 'endocrine',
-                evidenceLevel: 'NICE Clinical Guideline',
-                lastUpdated: '2024',
-                organisation: 'NICE',
-                targets: {
-                    'HbA1c': '48mmol/mol (6.5%) for adults on lifestyle/metformin only. 53mmol/mol (7.0%) for adults on any drug with hypoglycaemia risk',
-                    'Blood pressure': '<140/90 mmHg (or <130/80 mmHg if kidney, eye or cerebrovascular damage)',
-                    'Cholesterol': 'Primary prevention: 40% reduction in non-HDL cholesterol. Secondary prevention: non-HDL <2.5mmol/L'
-                },
-                algorithm: {
-                    'First-line': 'Standard-release metformin, titrate up to 2g daily (or maximum tolerated)',
-                    'Dual therapy': 'Metformin + DPP-4 inhibitor, pioglitazone, SU, or SGLT2 inhibitor',
-                    'Triple therapy': 'Metformin + 2 other antidiabetic drugs',
-                    'Insulin therapy': 'Consider if HbA1c >58mmol/mol (7.5%) on triple therapy'
-                },
-                firstLine: 'Metformin 500mg twice daily with meals, increase to 1g twice daily if tolerated',
-                secondLine: {
-                    'CVD established': 'SGLT2 inhibitor with proven CV benefit (empagliflozin, canagliflozin, dapagliflozin)',
-                    'Heart failure': 'SGLT2 inhibitor (empagliflozin or dapagliflozin)',
-                    'CKD': 'SGLT2 inhibitor if eGFR ≥30ml/min/1.73m²',
-                    'Standard approach': 'DPP-4 inhibitor, pioglitazone, sulfonylurea, or SGLT2 inhibitor'
-                },
-                monitoring: {
-                    'HbA1c': 'Every 3-6 months until stable, then 6-monthly',
-                    'Annual review': 'BMI, BP, cholesterol, kidney function, foot examination, retinal screening',
-                    'Diabetes complications': 'Annual diabetic eye screening, foot risk assessment'
-                },
-                lifestyle: 'Structured education programme (DESMOND). Weight management if BMI ≥25kg/m²',
-                complications: {
-                    'Diabetic kidney disease': 'ACE inhibitor or ARB. SGLT2 inhibitor if eGFR ≥30',
-                    'Retinopathy': 'Annual digital retinal screening. Refer if sight-threatening',
-                    'Neuropathy': 'Annual foot risk assessment. First-line neuropathic pain: amitriptyline, duloxetine, gabapentin, pregabalin'
                 }
             },
             'asthma': {
