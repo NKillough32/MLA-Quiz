@@ -1063,7 +1063,7 @@ class MLAQuizApp {
                 },
                 body: JSON.stringify({
                     quiz_name: this.quizName,
-                    answers: this.answers
+                    answers: this.submittedAnswers
                 })
             });
             
@@ -2235,14 +2235,19 @@ class MLAQuizApp {
     }
 
     initializeCalculators() {
-        // Handle calculator button clicks
-        document.addEventListener('click', (e) => {
+        // Handle calculator button clicks with Android support
+        const handleCalculatorClick = (e) => {
             if (e.target.closest('.calculator-btn')) {
+                e.preventDefault();
                 e.stopPropagation(); // Prevent medical tools panel from closing
                 const calcType = e.target.closest('.calculator-btn').getAttribute('data-calc');
                 this.loadCalculator(calcType);
             }
-        });
+        };
+        
+        // Add both click and touch events for Android compatibility
+        document.addEventListener('click', handleCalculatorClick);
+        document.addEventListener('touchend', handleCalculatorClick);
     }
 
     loadCalculator(calcType) {
@@ -2398,6 +2403,18 @@ class MLAQuizApp {
             case 'fluid-balance':
                 calculatorTitle = 'Fluid Balance Calculator';
                 calculatorContent += this.getFluidBalanceCalculator();
+                break;
+            case 'timi':
+                calculatorTitle = 'TIMI Risk Score';
+                calculatorContent += this.getTIMICalculator();
+                break;
+            case 'nihss':
+                calculatorTitle = 'NIH Stroke Scale';
+                calculatorContent += this.getNIHSSCalculator();
+                break;
+            case 'rankin':
+                calculatorTitle = 'Modified Rankin Scale';
+                calculatorContent += this.getModifiedRankinCalculator();
                 break;
             default:
                 calculatorTitle = 'Calculator';
@@ -5907,6 +5924,101 @@ class MLAQuizApp {
                     'Asymptomatic bacteriuria': 'Do not treat unless immunocompromised or before invasive procedures'
                 },
                 advice: 'Adequate fluid intake, complete antibiotic course, cranberry products may help prevent recurrence'
+            },
+            'diabetes': {
+                title: 'Type 2 Diabetes Management (NICE NG28 2024)',
+                category: 'endocrine',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                diagnosis: {
+                    'HbA1c': '≥48 mmol/mol (≥6.5%) on two occasions OR single value if symptomatic',
+                    'Fasting glucose': '≥7.0 mmol/L (≥126 mg/dL)',
+                    'Random glucose': '≥11.1 mmol/L (≥200 mg/dL) with symptoms',
+                    'OGTT': '2-hour glucose ≥11.1 mmol/L (≥200 mg/dL)'
+                },
+                targets: {
+                    'HbA1c': '<48 mmol/mol (<6.5%) for newly diagnosed, <53 mmol/mol (<7.0%) for most adults',
+                    'Blood pressure': '<130/80 mmHg',
+                    'Cholesterol': 'Non-HDL <2.5 mmol/L'
+                },
+                lifestyle: {
+                    'Diet': 'Mediterranean-style, low glycaemic index, weight loss if BMI >25',
+                    'Exercise': '150 minutes moderate intensity per week, resistance training',
+                    'Weight': 'Target weight loss 5-10% if overweight'
+                },
+                medications: {
+                    'First-line': 'Metformin 500mg twice daily, titrate to 1g twice daily',
+                    'Second-line': 'SGLT2 inhibitor (if CVD/heart failure) OR DPP-4 inhibitor OR sulfonylurea',
+                    'Third-line': 'Triple therapy or insulin',
+                    'Insulin': 'Start with basal insulin (glargine, detemir) 10 units daily, titrate 2-4 units every 3-7 days'
+                },
+                monitoring: {
+                    'HbA1c': 'Every 3-6 months until stable, then 6-monthly',
+                    'Annual checks': 'Foot examination, eye screening, kidney function, lipids, blood pressure',
+                    'Sick day rules': 'Continue insulin, increase monitoring, seek help if vomiting'
+                },
+                complications: 'Retinopathy, nephropathy, neuropathy, cardiovascular disease, diabetic foot'
+            },
+            'pneumonia': {
+                title: 'Pneumonia Management (NICE NG138 2024)',
+                category: 'pulmonary',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                diagnosis: {
+                    'Clinical': 'Cough, fever, dyspnea, pleuritic chest pain, crackles',
+                    'CXR': 'New infiltrate (may be normal in early disease)',
+                    'Blood tests': 'FBC, CRP, U&E, LFT. Consider pneumococcal/legionella antigens'
+                },
+                severity: {
+                    'CURB-65': 'Confusion, Urea >7, RR ≥30, BP <90/60, age ≥65',
+                    'Score 0-1': 'Low severity - consider home treatment',
+                    'Score 2': 'Moderate severity - consider hospital admission',
+                    'Score ≥3': 'High severity - urgent hospital admission'
+                },
+                treatment: {
+                    'Mild CAP': 'Amoxicillin 500mg three times daily for 5 days',
+                    'Moderate CAP': 'Amoxicillin 500mg three times daily + clarithromycin 500mg twice daily for 5 days',
+                    'Severe CAP': 'Co-amoxiclav 1.2g three times daily IV + clarithromycin 500mg twice daily IV',
+                    'Atypical': 'Clarithromycin 500mg twice daily OR doxycycline 200mg on day 1, then 100mg daily'
+                },
+                admission: {
+                    'Criteria': 'CURB-65 ≥2, hypoxia <90%, inability to maintain oral intake, significant comorbidities',
+                    'Monitoring': 'Oxygen saturation, fluid balance, response to treatment',
+                    'Discharge': 'Clinically stable for 24 hours, able to maintain oral intake, oxygen saturation >90%'
+                },
+                prevention: 'Pneumococcal vaccination (≥65 years, immunocompromised), annual influenza vaccination'
+            },
+            'sepsis': {
+                title: 'Sepsis Recognition & Management (NICE NG51 2024)',
+                category: 'infectious-diseases',
+                evidenceLevel: 'NICE Clinical Guideline',
+                lastUpdated: '2024',
+                organisation: 'NICE',
+                recognition: {
+                    'Red flags': 'Systolic BP <90, HR >130, RR ≥25, needs O2 to maintain sats ≥92%, non-blanching rash',
+                    'Amber flags': 'Relatives concerned about mental state, acute change in mental state, HR 91-130, T <36°C',
+                    'High-risk groups': 'Age >75, immunocompromised, recent surgery/invasive procedure, indwelling devices'
+                },
+                definitions: {
+                    'Sepsis': 'Life-threatening organ dysfunction due to dysregulated host response to infection',
+                    'Septic shock': 'Sepsis with circulatory/cellular dysfunction (lactate >2, vasopressors needed)',
+                    'qSOFA': 'Altered mental state, SBP ≤100, RR ≥22 (score ≥2 = high risk)'
+                },
+                management: {
+                    'Sepsis Six': '1. Give oxygen, 2. Take blood cultures, 3. Give antibiotics, 4. Give fluids, 5. Measure lactate, 6. Measure urine output',
+                    'Timeframe': 'Complete within 1 hour of recognition',
+                    'Antibiotics': 'Broad-spectrum within 1 hour. Adjust based on cultures and local guidelines',
+                    'Fluids': '500ml crystalloid bolus, reassess and repeat if needed'
+                },
+                antibiotics: {
+                    'Community-acquired': 'Amoxicillin 1g IV three times daily + gentamicin',
+                    'Hospital-acquired': 'Piperacillin-tazobactam 4.5g three times daily + gentamicin',
+                    'Neutropenic': 'Piperacillin-tazobactam + gentamicin',
+                    'Duration': 'Review daily, typically 5-7 days depending on source and response'
+                },
+                monitoring: 'Hourly observations, fluid balance, lactate, organ function, consider HDU/ICU if deteriorating'
             }
         };
 
@@ -10844,6 +10956,219 @@ MLAQuizApp.prototype.getFluidBalanceCalculator = function() {
     `;
 };
 
+// TIMI Risk Score Calculator
+MLAQuizApp.prototype.getTIMICalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>TIMI Risk Score</h4>
+            <p><small>Risk assessment for patients with acute coronary syndromes</small></p>
+            
+            <div class="calc-checkbox-group">
+                <label><input type="checkbox" id="timi-age"> Age ≥65 years (+1)</label>
+                <label><input type="checkbox" id="timi-risk-factors"> ≥3 CAD risk factors (+1)</label>
+                <label><input type="checkbox" id="timi-known-cad"> Known CAD (stenosis ≥50%) (+1)</label>
+                <label><input type="checkbox" id="timi-aspirin"> Aspirin use in prior 7 days (+1)</label>
+                <label><input type="checkbox" id="timi-severe-angina"> Severe angina (≥2 episodes in 24h) (+1)</label>
+                <label><input type="checkbox" id="timi-st-deviation"> ST deviation ≥0.5mm (+1)</label>
+                <label><input type="checkbox" id="timi-cardiac-markers"> Elevated cardiac markers (+1)</label>
+            </div>
+            
+            <button onclick="window.quizApp.calculateTIMI()">Calculate TIMI Score</button>
+            <div id="timi-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small><strong>Risk factors:</strong> Family history, hypertension, hypercholesterolemia, diabetes, current smoker</small>
+            </div>
+        </div>
+    `;
+};
+
+// NIH Stroke Scale Calculator
+MLAQuizApp.prototype.getNIHSSCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>NIH Stroke Scale (NIHSS)</h4>
+            <p><small>Neurological assessment for acute stroke severity</small></p>
+            
+            <div class="calc-input-group">
+                <label>1a. Level of Consciousness:</label>
+                <select id="nihss-loc">
+                    <option value="0">Alert, responsive (0)</option>
+                    <option value="1">Not alert, arousable (1)</option>
+                    <option value="2">Not alert, requires stimulation (2)</option>
+                    <option value="3">Unresponsive (3)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>1b. LOC Questions (month, age):</label>
+                <select id="nihss-questions">
+                    <option value="0">Answers both correctly (0)</option>
+                    <option value="1">Answers 1 correctly (1)</option>
+                    <option value="2">Answers neither correctly (2)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>1c. LOC Commands (open/close eyes, grip):</label>
+                <select id="nihss-commands">
+                    <option value="0">Performs both correctly (0)</option>
+                    <option value="1">Performs 1 correctly (1)</option>
+                    <option value="2">Performs neither correctly (2)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>2. Best Gaze:</label>
+                <select id="nihss-gaze">
+                    <option value="0">Normal (0)</option>
+                    <option value="1">Partial gaze palsy (1)</option>
+                    <option value="2">Forced deviation (2)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>3. Visual Fields:</label>
+                <select id="nihss-visual">
+                    <option value="0">No visual loss (0)</option>
+                    <option value="1">Partial hemianopia (1)</option>
+                    <option value="2">Complete hemianopia (2)</option>
+                    <option value="3">Bilateral hemianopia (3)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>4. Facial Palsy:</label>
+                <select id="nihss-facial">
+                    <option value="0">Normal (0)</option>
+                    <option value="1">Minor paralysis (1)</option>
+                    <option value="2">Partial paralysis (2)</option>
+                    <option value="3">Complete paralysis (3)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>5a. Motor Arm - Left:</label>
+                <select id="nihss-arm-left">
+                    <option value="0">No drift (0)</option>
+                    <option value="1">Drift (1)</option>
+                    <option value="2">Some effort against gravity (2)</option>
+                    <option value="3">No effort against gravity (3)</option>
+                    <option value="4">No movement (4)</option>
+                    <option value="9">Amputation/joint fusion (9)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>5b. Motor Arm - Right:</label>
+                <select id="nihss-arm-right">
+                    <option value="0">No drift (0)</option>
+                    <option value="1">Drift (1)</option>
+                    <option value="2">Some effort against gravity (2)</option>
+                    <option value="3">No effort against gravity (3)</option>
+                    <option value="4">No movement (4)</option>
+                    <option value="9">Amputation/joint fusion (9)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>6a. Motor Leg - Left:</label>
+                <select id="nihss-leg-left">
+                    <option value="0">No drift (0)</option>
+                    <option value="1">Drift (1)</option>
+                    <option value="2">Some effort against gravity (2)</option>
+                    <option value="3">No effort against gravity (3)</option>
+                    <option value="4">No movement (4)</option>
+                    <option value="9">Amputation/joint fusion (9)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>6b. Motor Leg - Right:</label>
+                <select id="nihss-leg-right">
+                    <option value="0">No drift (0)</option>
+                    <option value="1">Drift (1)</option>
+                    <option value="2">Some effort against gravity (2)</option>
+                    <option value="3">No effort against gravity (3)</option>
+                    <option value="4">No movement (4)</option>
+                    <option value="9">Amputation/joint fusion (9)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>7. Limb Ataxia:</label>
+                <select id="nihss-ataxia">
+                    <option value="0">Absent (0)</option>
+                    <option value="1">Present in one limb (1)</option>
+                    <option value="2">Present in two limbs (2)</option>
+                    <option value="9">Unable to test (9)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>8. Sensory:</label>
+                <select id="nihss-sensory">
+                    <option value="0">Normal (0)</option>
+                    <option value="1">Mild-moderate loss (1)</option>
+                    <option value="2">Severe/total loss (2)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>9. Best Language:</label>
+                <select id="nihss-language">
+                    <option value="0">No aphasia (0)</option>
+                    <option value="1">Mild-moderate aphasia (1)</option>
+                    <option value="2">Severe aphasia (2)</option>
+                    <option value="3">Mute/global aphasia (3)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>10. Dysarthria:</label>
+                <select id="nihss-dysarthria">
+                    <option value="0">Normal (0)</option>
+                    <option value="1">Mild-moderate (1)</option>
+                    <option value="2">Severe (2)</option>
+                    <option value="9">Intubated/unable to test (9)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>11. Extinction/Inattention:</label>
+                <select id="nihss-extinction">
+                    <option value="0">No abnormality (0)</option>
+                    <option value="1">Visual/tactile/auditory extinction (1)</option>
+                    <option value="2">Profound hemi-inattention (2)</option>
+                </select>
+            </div>
+            
+            <button onclick="window.quizApp.calculateNIHSS()">Calculate NIHSS Score</button>
+            <div id="nihss-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small><strong>Interpretation:</strong> 0 = Normal, 1-4 = Minor, 5-15 = Moderate, 16-20 = Moderate-severe, 21-42 = Severe</small>
+            </div>
+        </div>
+    `;
+};
+
+// Modified Rankin Scale Calculator
+MLAQuizApp.prototype.getModifiedRankinCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Modified Rankin Scale</h4>
+            <p><small>Assessment of functional disability after stroke</small></p>
+            
+            <div class="calc-input-group">
+                <label>Patient Functional Status:</label>
+                <select id="rankin-score">
+                    <option value="0">0 - No symptoms</option>
+                    <option value="1">1 - No significant disability (minor symptoms)</option>
+                    <option value="2">2 - Slight disability (unable to do all previous activities)</option>
+                    <option value="3">3 - Moderate disability (requires some help, walks unassisted)</option>
+                    <option value="4">4 - Moderately severe disability (unable to walk unassisted)</option>
+                    <option value="5">5 - Severe disability (requires constant care, bedridden)</option>
+                    <option value="6">6 - Dead</option>
+                </select>
+            </div>
+            
+            <button onclick="window.quizApp.calculateModifiedRankin()">Assess Functional Status</button>
+            <div id="rankin-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small><strong>Used for:</strong> Measuring degree of disability/dependence in daily activities. Lower scores indicate better outcomes.</small>
+            </div>
+        </div>
+    `;
+};
+
 // Calculation Functions for Missing Calculators
 
 // Paediatric Dosing Calculation
@@ -11136,6 +11461,203 @@ MLAQuizApp.prototype.calculateFluidBalance = function() {
             ` : ''}
             <div class="alert alert-info">
                 💡 Monitor urine output (>0.5ml/kg/hr for adults, >1ml/kg/hr for children)
+            </div>
+        </div>
+    `;
+};
+
+// TIMI Risk Score Calculation
+MLAQuizApp.prototype.calculateTIMI = function() {
+    let score = 0;
+    
+    if (document.getElementById('timi-age').checked) score += 1;
+    if (document.getElementById('timi-risk-factors').checked) score += 1;
+    if (document.getElementById('timi-known-cad').checked) score += 1;
+    if (document.getElementById('timi-aspirin').checked) score += 1;
+    if (document.getElementById('timi-severe-angina').checked) score += 1;
+    if (document.getElementById('timi-st-deviation').checked) score += 1;
+    if (document.getElementById('timi-cardiac-markers').checked) score += 1;
+    
+    let riskLevel = '';
+    let riskPercentage = '';
+    let recommendations = '';
+    
+    if (score <= 2) {
+        riskLevel = 'Low Risk';
+        riskPercentage = '4.7% risk of death/MI/urgent revascularization at 14 days';
+        recommendations = 'Consider discharge with outpatient cardiology follow-up if clinically stable';
+    } else if (score <= 4) {
+        riskLevel = 'Intermediate Risk';
+        riskPercentage = '19.9% risk of death/MI/urgent revascularization at 14 days';
+        recommendations = 'Consider admission and cardiology consultation. Early invasive strategy may be beneficial';
+    } else {
+        riskLevel = 'High Risk';
+        riskPercentage = '40.9% risk of death/MI/urgent revascularization at 14 days';
+        recommendations = 'Admit for urgent cardiology evaluation. Early invasive strategy strongly recommended';
+    }
+    
+    document.getElementById('timi-result').innerHTML = `
+        <div class="result-section">
+            <h5>TIMI Risk Score Results</h5>
+            <div class="result-grid">
+                <div><strong>Score:</strong> ${score}/7 points</div>
+                <div><strong>Risk Level:</strong> ${riskLevel}</div>
+                <div><strong>14-day Risk:</strong> ${riskPercentage}</div>
+            </div>
+            <div class="alert alert-info">
+                <strong>Recommendations:</strong> ${recommendations}
+            </div>
+        </div>
+    `;
+};
+
+// NIH Stroke Scale Calculation
+MLAQuizApp.prototype.calculateNIHSS = function() {
+    let score = 0;
+    
+    score += parseInt(document.getElementById('nihss-loc').value);
+    score += parseInt(document.getElementById('nihss-questions').value);
+    score += parseInt(document.getElementById('nihss-commands').value);
+    score += parseInt(document.getElementById('nihss-gaze').value);
+    score += parseInt(document.getElementById('nihss-visual').value);
+    score += parseInt(document.getElementById('nihss-facial').value);
+    
+    // Motor scores (excluding 9 = untestable)
+    const armLeft = parseInt(document.getElementById('nihss-arm-left').value);
+    const armRight = parseInt(document.getElementById('nihss-arm-right').value);
+    const legLeft = parseInt(document.getElementById('nihss-leg-left').value);
+    const legRight = parseInt(document.getElementById('nihss-leg-right').value);
+    
+    score += (armLeft === 9 ? 0 : armLeft);
+    score += (armRight === 9 ? 0 : armRight);
+    score += (legLeft === 9 ? 0 : legLeft);
+    score += (legRight === 9 ? 0 : legRight);
+    
+    const ataxia = parseInt(document.getElementById('nihss-ataxia').value);
+    score += (ataxia === 9 ? 0 : ataxia);
+    
+    score += parseInt(document.getElementById('nihss-sensory').value);
+    score += parseInt(document.getElementById('nihss-language').value);
+    
+    const dysarthria = parseInt(document.getElementById('nihss-dysarthria').value);
+    score += (dysarthria === 9 ? 0 : dysarthria);
+    
+    score += parseInt(document.getElementById('nihss-extinction').value);
+    
+    let severity = '';
+    let interpretation = '';
+    let thrombectomyEligible = '';
+    
+    if (score === 0) {
+        severity = 'Normal';
+        interpretation = 'No stroke symptoms';
+        thrombectomyEligible = 'Not applicable';
+    } else if (score <= 4) {
+        severity = 'Minor Stroke';
+        interpretation = 'Minor stroke - good prognosis';
+        thrombectomyEligible = 'Generally not eligible for thrombectomy';
+    } else if (score <= 15) {
+        severity = 'Moderate Stroke';
+        interpretation = 'Moderate stroke severity';
+        thrombectomyEligible = 'Consider thrombectomy if large vessel occlusion and within time window';
+    } else if (score <= 20) {
+        severity = 'Moderate-Severe Stroke';
+        interpretation = 'Moderate to severe stroke';
+        thrombectomyEligible = 'Strong candidate for thrombectomy if large vessel occlusion';
+    } else {
+        severity = 'Severe Stroke';
+        interpretation = 'Severe stroke - guarded prognosis';
+        thrombectomyEligible = 'Consider thrombectomy with caution - discuss with neurology';
+    }
+    
+    document.getElementById('nihss-result').innerHTML = `
+        <div class="result-section">
+            <h5>NIH Stroke Scale Results</h5>
+            <div class="result-grid">
+                <div><strong>Total Score:</strong> ${score}/42 points</div>
+                <div><strong>Severity:</strong> ${severity}</div>
+                <div><strong>Interpretation:</strong> ${interpretation}</div>
+            </div>
+            <div class="alert alert-info">
+                <strong>Thrombectomy Consideration:</strong> ${thrombectomyEligible}
+            </div>
+            <div class="alert alert-warning">
+                💡 <strong>Time is brain:</strong> Assess for thrombolysis (≤4.5h) and thrombectomy (≤24h for select cases)
+            </div>
+        </div>
+    `;
+};
+
+// Modified Rankin Scale Calculation
+MLAQuizApp.prototype.calculateModifiedRankin = function() {
+    const score = parseInt(document.getElementById('rankin-score').value);
+    
+    let description = '';
+    let prognosis = '';
+    let careNeeds = '';
+    
+    switch (score) {
+        case 0:
+            description = 'No symptoms at all';
+            prognosis = 'Excellent functional outcome';
+            careNeeds = 'No assistance required';
+            break;
+        case 1:
+            description = 'No significant disability despite symptoms';
+            prognosis = 'Excellent functional outcome';
+            careNeeds = 'Able to carry out all usual duties and activities';
+            break;
+        case 2:
+            description = 'Slight disability';
+            prognosis = 'Good functional outcome';
+            careNeeds = 'Unable to carry out all previous activities but able to look after own affairs without assistance';
+            break;
+        case 3:
+            description = 'Moderate disability';
+            prognosis = 'Moderate functional outcome';
+            careNeeds = 'Requiring some help, but able to walk without assistance';
+            break;
+        case 4:
+            description = 'Moderately severe disability';
+            prognosis = 'Poor functional outcome';
+            careNeeds = 'Unable to walk without assistance and unable to attend to bodily needs without assistance';
+            break;
+        case 5:
+            description = 'Severe disability';
+            prognosis = 'Poor functional outcome';
+            careNeeds = 'Bedridden, incontinent, and requiring constant nursing care and attention';
+            break;
+        case 6:
+            description = 'Dead';
+            prognosis = 'Fatal outcome';
+            careNeeds = 'Not applicable';
+            break;
+    }
+    
+    let outcome = '';
+    if (score <= 2) {
+        outcome = 'Favorable outcome (mRS 0-2)';
+    } else if (score <= 5) {
+        outcome = 'Unfavorable outcome (mRS 3-5)';
+    } else {
+        outcome = 'Death (mRS 6)';
+    }
+    
+    document.getElementById('rankin-result').innerHTML = `
+        <div class="result-section">
+            <h5>Modified Rankin Scale Results</h5>
+            <div class="result-grid">
+                <div><strong>Score:</strong> ${score}/6</div>
+                <div><strong>Description:</strong> ${description}</div>
+                <div><strong>Outcome Category:</strong> ${outcome}</div>
+                <div><strong>Prognosis:</strong> ${prognosis}</div>
+            </div>
+            <div class="care-needs">
+                <h6>Care Requirements:</h6>
+                <p>${careNeeds}</p>
+            </div>
+            <div class="alert alert-info">
+                💡 <strong>Clinical Use:</strong> Primary outcome measure in stroke trials. mRS 0-2 considered good functional outcome.
             </div>
         </div>
     `;
