@@ -3967,15 +3967,6 @@
             
             <!-- Lab Values Panel -->
             <div id="lab-panel" class="tool-panel">
-                <div class="search-container">
-                    <input type="text" id="lab-search" placeholder="Search lab values..." class="tool-search">
-                    <button id="lab-search-btn">🔍</button>
-                </div>
-                <div id="lab-search-results" class="tool-results" style="display: none;"></div>
-                <div class="lab-categories">
-                    <!-- Categories loaded dynamically by JavaScript -->
-                </div>
-                <div id="lab-list" class="tool-results"></div>
                 <div id="lab-values-container">
                     <!-- Content loaded dynamically by JavaScript -->
                     <div class="loading-message">📊 Loading lab values...</div>
@@ -3984,41 +3975,15 @@
             
             <!-- Guidelines Panel -->
             <div id="guidelines-panel" class="tool-panel">
-                <div class="search-container">
-                    <input type="text" id="guidelines-search" placeholder="Search guidelines..." class="tool-search">
-                    <button id="guidelines-search-btn">🔍</button>
-                </div>
-                <div id="guidelines-search-results" class="tool-results" style="display: none;"></div>
-                <div class="guidelines-categories">
-                    <button class="category-btn active" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">All Guidelines</button>
-                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
-                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('pulmonary'); event.stopPropagation();">Pulmonary</button>
-                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('endocrine'); event.stopPropagation();">Endocrine</button>
-                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('renal'); event.stopPropagation();">Renal</button>
-                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('mental-health'); event.stopPropagation();">Mental Health</button>
-                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('neurological'); event.stopPropagation();">Neurological</button>
-                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('infectious-diseases'); event.stopPropagation();">Infectious Diseases</button>
-                </div>
-                <div id="guidelines-list" class="tool-results"></div>
+                <!-- Content loaded dynamically by JavaScript -->
+                <div class="loading-message">📋 Loading guidelines...</div>
             </div>
             
             <!-- Differential Diagnosis Panel -->
             <div id="differential-panel" class="tool-panel">
-                <div class="search-container">
-                    <input type="text" id="differential-search" placeholder="Search symptoms..." class="tool-search">
-                    <button id="differential-search-btn">🔍</button>
-                </div>
-                <div id="differential-search-results" class="tool-results" style="display: none;"></div>
-                <div class="ddx-categories">
-                    <button class="filter-btn active" onclick="window.quizApp.showDdxCategory('all'); event.stopPropagation();">All</button>
-                    <button class="filter-btn" onclick="window.quizApp.showDdxCategory('chest-pain'); event.stopPropagation();">Chest Pain</button>
-                    <button class="filter-btn" onclick="window.quizApp.showDdxCategory('dyspnea'); event.stopPropagation();">Dyspnea</button>
-                    <button class="filter-btn" onclick="window.quizApp.showDdxCategory('abdominal'); event.stopPropagation();">Abdominal</button>
-                    <button class="filter-btn" onclick="window.quizApp.showDdxCategory('neurologic'); event.stopPropagation();">Neurologic</button>
-                </div>
-                <div id="ddx-list" class="tool-results"></div>
-                <div id="differential-dx-container" class="tool-results">
-                    <!-- Dynamic differential diagnosis content loads here -->
+                <div id="differential-dx-container">
+                    <!-- Content loaded dynamically by JavaScript -->
+                    <div class="loading-message">🔍 Loading differential diagnosis...</div>
                 </div>
             </div>
             
@@ -4044,15 +4009,6 @@
 
             <!-- Clinical Examination Panel -->
             <div id="examination-panel" class="tool-panel">
-                <div class="search-container">
-                    <input type="text" id="examination-search" placeholder="Search examinations..." class="tool-search">
-                    <button id="examination-search-btn">🔍</button>
-                </div>
-                <div id="examination-search-results" class="tool-results" style="display: none;"></div>
-                <div class="examination-categories">
-                    <!-- Categories loaded dynamically by JavaScript -->
-                </div>
-                <div id="examination-list" class="tool-results"></div>
                 <div id="examination-container">
                     <!-- Content loaded dynamically by JavaScript -->
                     <div class="loading-message">🩺 Loading examination guide...</div>

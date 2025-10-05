@@ -5614,15 +5614,15 @@ class MLAQuizApp {
                 <div id="lab-search-results" class="lab-grid"></div>
             </div>
             <div class="lab-categories">
-                <button class="category-btn active" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('cbc'); event.stopPropagation();">CBC</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('bmp'); event.stopPropagation();">Chemistry</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('lft'); event.stopPropagation();">Liver</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('lipids'); event.stopPropagation();">Lipids</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('thyroid'); event.stopPropagation();">Thyroid</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('urea_electrolytes'); event.stopPropagation();">U&Es</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('coagulation'); event.stopPropagation();">Coagulation</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('cardiac_markers'); event.stopPropagation();">Cardiac</button>
+                <button class="filter-btn active" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('cbc'); event.stopPropagation();">CBC</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('bmp'); event.stopPropagation();">Chemistry</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('lft'); event.stopPropagation();">Liver</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('lipids'); event.stopPropagation();">Lipids</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('thyroid'); event.stopPropagation();">Thyroid</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('urea_electrolytes'); event.stopPropagation();">U&Es</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('coagulation'); event.stopPropagation();">Coagulation</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('cardiac_markers'); event.stopPropagation();">Cardiac</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('inflammatory_markers'); event.stopPropagation();">Inflammatory</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('endocrine'); event.stopPropagation();">Endocrine</button>
             </div>
@@ -5676,7 +5676,7 @@ class MLAQuizApp {
         let panels = Object.keys(labDatabase);
         
         // Update active state of category buttons
-        const categoryButtons = document.querySelectorAll('.lab-categories .category-btn');
+        const categoryButtons = document.querySelectorAll('.lab-categories .filter-btn');
         if (categoryButtons.length > 0) {
             categoryButtons.forEach(btn => {
                 btn.classList.remove('active');
@@ -7915,15 +7915,15 @@ class MLAQuizApp {
             <div id="ddx-list" class="lab-grid"></div>
         `;
         
-        const searchInput = document.getElementById('ddx-search');
+        const searchInput = document.getElementById('differential-search');
         searchInput.addEventListener('input', () => this.searchDdx(ddxDatabase));
         this.ddxDatabase = ddxDatabase;
         this.showDdxCategory('all');
     }
 
     searchDdx(ddxDatabase) {
-        const query = document.getElementById('ddx-search').value.toLowerCase();
-        const resultsContainer = document.getElementById('ddx-search-results');
+        const query = document.getElementById('differential-search').value.toLowerCase();
+        const resultsContainer = document.getElementById('differential-search-results');
         
         if (query.length < 2) {
             resultsContainer.innerHTML = '';
@@ -7989,11 +7989,9 @@ class MLAQuizApp {
         const container = document.getElementById('differential-dx-container');
         
         const presentationsHtml = Object.entries(symptom.presentations).map(([dx, data]) => `
-            <button class="lab-value-btn ${data.urgency.toLowerCase()}" onclick="console.log('🔍 Diagnosis clicked:', '${dx}'); window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}'); event.stopPropagation();">
+            <button class="lab-value-btn" onclick="console.log('🔍 Diagnosis clicked:', '${dx}'); window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}'); event.stopPropagation();">
                 <div class="lab-name">${dx}</div>
-                <div class="lab-range ${data.urgency.toLowerCase()}">${data.urgency}</div>
-                <div class="lab-description">${data.features.substring(0, 100)}...</div>
-                ${data.differentiatingFeatures ? `<div class="lab-note">🔍 ${data.differentiatingFeatures.substring(0, 80)}...</div>` : ''}
+                <div class="lab-count">${data.urgency}</div>
             </button>
         `).join('');
         
@@ -9978,7 +9976,6 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
             <button class="lab-value-btn" onclick="console.log('🩺 Examination system clicked:', '${system}'); window.quizApp.showExaminationDetail('${system}'); event.stopPropagation();">
                 <div class="lab-name">${examinationDatabase[system].title}</div>
                 <div class="lab-count">${Object.keys(examinationDatabase[system].sections).length} sections</div>
-                <div class="lab-range">📋 ${examinationDatabase[system].approach}</div>
             </button>
         `).join('');
     } else {
@@ -10010,10 +10007,7 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
     const sectionsHtml = Object.entries(system.sections).map(([sectionKey, section]) => `
         <button class="lab-value-btn" onclick="window.quizApp.showSectionDetail('${systemKey}', '${sectionKey}'); event.stopPropagation();">
             <div class="lab-name">${section.name}</div>
-            <div class="lab-range">🔍 ${section.technique.substring(0, 80)}...</div>
-            <div class="lab-count">
-                ✅ Normal | ⚠️ ${Object.keys(section.abnormal).length} Abnormal findings
-            </div>
+            <div class="lab-count">${Object.keys(section.abnormal).length} abnormal findings</div>
         </button>
     `).join('');
     
