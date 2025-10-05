@@ -46,6 +46,7 @@ class MLAQuizApp {
         this.initializeDarkMode();
         this.initializeFontSize();
         this.initializeQuizLength();
+        this.initializeVibration();
         console.log('🩺 About to initialize medical tools...');
         this.initializeMedicalTools();
         this.initializeInteractiveFeatures();
@@ -522,8 +523,7 @@ class MLAQuizApp {
                     startPos = { x: touch.clientX, y: touch.clientY };
                     
                     pressTimer = setTimeout(() => {
-                        // Enhanced haptic feedback for long press
-                        this.performHapticFeedback('heavy');
+                        // Vibration feedback is now handled in toggleRuledOut
                         this.toggleRuledOut(question.id, index);
                     }, 800); // Longer delay for more reliable detection
                     
@@ -620,10 +620,14 @@ class MLAQuizApp {
             // Remove from ruled out list
             ruledOutList.splice(index, 1);
             console.log(`Removed rule-out for Q${questionId} option ${optionIndex}`);
+            // Light vibration for un-excluding
+            this.performHapticFeedback('selection');
         } else {
             // Add to ruled out list
             ruledOutList.push(optionIndex);
             console.log(`Added rule-out for Q${questionId} option ${optionIndex}`);
+            // Heavy vibration for excluding answer
+            this.performHapticFeedback('heavy');
         }
         
         // Update just the visual state without re-rendering entire question
@@ -646,8 +650,8 @@ class MLAQuizApp {
         // Enhanced haptic feedback with Android support
         console.log('🔊 Attempting haptic feedback:', type);
         
-        // Check for modern haptic API first (Android Chrome)
-        if (window.navigator && navigator.vibrate) {
+        // First try the Vibration API (Android Chrome, Firefox)
+        if ('vibrate' in navigator && this.vibrationSupported !== false) {
             try {
                 let pattern;
                 switch (type) {
@@ -661,18 +665,35 @@ class MLAQuizApp {
                         pattern = [50]; // Single short for selection
                         break;
                     case 'heavy':
-                        pattern = [500]; // Long vibration for long press
+                        pattern = [300]; // Longer vibration for long press (reduced from 500ms)
                         break;
                     default:
                         pattern = [80, 40, 80]; // Default light feedback
                 }
                 
-                navigator.vibrate(pattern);
-                console.log('🔊 Vibration triggered:', pattern);
+                // Cancel any existing vibrations first
+                navigator.vibrate(0);
+                
+                // Add small delay to ensure cancellation, then trigger new vibration
+                setTimeout(() => {
+                    const success = navigator.vibrate(pattern);
+                    console.log('🔊 Vibration triggered:', pattern, 'Success:', success);
+                    
+                    // Fallback for some Android browsers that return false but still work
+                    if (!success && pattern.length === 1) {
+                        // Try with single number instead of array
+                        navigator.vibrate(pattern[0]);
+                        console.log('🔊 Fallback vibration attempt:', pattern[0]);
+                    }
+                }, 10);
+                
                 return true;
             } catch (error) {
                 console.log('🔊 Vibration failed:', error);
+                this.vibrationSupported = false; // Disable future attempts
             }
+        } else {
+            console.log('🔊 Vibration API not supported or disabled');
         }
         
         // Check for iOS haptic feedback
@@ -708,6 +729,51 @@ class MLAQuizApp {
         } catch (error) {
             console.log('🔊 Visual feedback failed:', error);
         }
+    }
+    
+    initializeVibration() {
+        console.log('🔊 Initializing vibration support...');
+        
+        // Test vibration availability
+        if ('vibrate' in navigator) {
+            console.log('✅ Vibration API available');
+            
+            // Test with a very short vibration to ensure it works
+            try {
+                navigator.vibrate(1);
+                console.log('✅ Vibration test successful');
+                this.vibrationSupported = true;
+            } catch (error) {
+                console.log('⚠️ Vibration test failed:', error);
+                this.vibrationSupported = false;
+            }
+        } else {
+            console.log('⚠️ Vibration API not available');
+            this.vibrationSupported = false;
+        }
+        
+        // Store vibration support status
+        this.vibrationSupported = this.vibrationSupported || false;
+        
+        // Add user interaction listener to enable vibration (required on some Android browsers)
+        const enableVibrationOnInteraction = () => {
+            if (this.vibrationSupported && !this.vibrationEnabled) {
+                try {
+                    navigator.vibrate(1);
+                    this.vibrationEnabled = true;
+                    console.log('✅ Vibration enabled after user interaction');
+                    // Remove listener after first successful interaction
+                    document.removeEventListener('touchstart', enableVibrationOnInteraction);
+                    document.removeEventListener('click', enableVibrationOnInteraction);
+                } catch (error) {
+                    console.log('⚠️ Failed to enable vibration:', error);
+                }
+            }
+        };
+        
+        // Add listeners for user interaction
+        document.addEventListener('touchstart', enableVibrationOnInteraction, { once: true, passive: true });
+        document.addEventListener('click', enableVibrationOnInteraction, { once: true });
     }
     
     submitAnswer() {
@@ -9764,7 +9830,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
             <div id="examination-search-results" class="lab-grid"></div>
         </div>
         <div class="examination-categories">
-            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('all'); event.stopPropagation();">All Systems</button>
+            <button class="category-btn active" onclick="window.quizApp.showExaminationCategory('all'); event.stopPropagation();">All Systems</button>
             <button class="category-btn" onclick="window.quizApp.showExaminationCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
             <button class="category-btn" onclick="window.quizApp.showExaminationCategory('respiratory'); event.stopPropagation();">Respiratory</button>
             <button class="category-btn" onclick="window.quizApp.showExaminationCategory('abdominal'); event.stopPropagation();">Abdominal</button>
@@ -9822,6 +9888,22 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
     const examinationList = document.getElementById('examination-list');
     let systems = Object.keys(examinationDatabase);
     
+    // Update active state of category buttons
+    const categoryButtons = document.querySelectorAll('.examination-categories .category-btn');
+    categoryButtons.forEach(btn => {
+        btn.classList.remove('active');
+        const btnText = btn.textContent.trim();
+        if ((category === 'all' && btnText === 'All Systems') ||
+            (category === 'cardiovascular' && btnText === 'Cardiovascular') ||
+            (category === 'respiratory' && btnText === 'Respiratory') ||
+            (category === 'abdominal' && btnText === 'Abdominal') ||
+            (category === 'neurological' && btnText === 'Neurological') ||
+            (category === 'ward-based' && btnText === 'Ward-Based') ||
+            (category === 'primary-care' && btnText === 'Primary Care')) {
+            btn.classList.add('active');
+        }
+    });
+    
     if (category !== 'all') {
         if (category === 'ward-based') {
             systems = systems.filter(system => 
@@ -9860,7 +9942,7 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
     `).join('');
     
     container.innerHTML = `
-        <button class="back-btn" onclick="window.quizApp.loadExaminationGuide(); event.stopPropagation();">← Back to Examinations</button>
+        <button class="back-btn" onclick="window.quizApp.showExaminationCategory('all'); event.stopPropagation();">← Back to Examinations</button>
         <div class="examination-detail">
             <h3>🩺 ${system.title}</h3>
             <p class="exam-category">📋 ${system.category}</p>

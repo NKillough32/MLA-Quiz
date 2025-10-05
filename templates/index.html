@@ -927,6 +927,99 @@
             transform: translateY(-1px);
         }
         
+        /* Examination Categories - Same styling as guidelines */
+        .examination-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 8px 12px;
+            background: rgba(248, 249, 250, 0.5);
+            border-radius: 12px;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .examination-categories {
+                gap: 8px;
+                padding: 6px 8px;
+                margin-bottom: 16px;
+            }
+        }
+        
+        .examination-categories .category-btn {
+            padding: 10px 18px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            text-align: center;
+            min-width: 80px;
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 768px) {
+            .examination-categories .category-btn {
+                padding: 8px 14px;
+                font-size: 13px;
+                min-width: 70px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .examination-categories .category-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+                min-width: 60px;
+            }
+        }
+        
+        .examination-categories .category-btn:hover {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+        
+        .examination-categories .category-btn.active {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        /* Dark theme for examination categories */
+        [data-theme="dark"] .examination-categories {
+            background: rgba(48, 48, 48, 0.5);
+        }
+        
+        [data-theme="dark"] .examination-categories .category-btn {
+            background: #2c2c2e;
+            border-color: #404040;
+            color: #e5e5e7;
+        }
+        
+        [data-theme="dark"] .examination-categories .category-btn:hover {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: white;
+        }
+        
+        [data-theme="dark"] .examination-categories .category-btn.active {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.5);
+            transform: translateY(-1px);
+        }
+        
         /* Tool Results */
         .tool-results {
             max-height: calc(100vh - 250px);
@@ -1046,10 +1139,38 @@
             color: white;
         }
         
+        /* Specific styling for guidelines list items */
+        #guidelines-list .lab-value-btn {
+            padding: 18px 16px;
+            background: #007AFF;
+            border: 2px solid #007AFF;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            color: white;
+            margin-bottom: 12px;
+            display: block;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        #guidelines-list .lab-value-btn:last-child {
+            margin-bottom: 0;
+        }
+        
         .lab-value-btn:hover {
             background: #0056d6;
             border-color: #0056d6;
             transform: translateY(-2px);
+        }
+        
+        /* Enhanced hover for guidelines list items */
+        #guidelines-list .lab-value-btn:hover {
+            background: #0056d6;
+            border-color: #0056d6;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
         }
         
         .lab-name {
@@ -1062,6 +1183,22 @@
         .lab-count {
             font-size: 10px;
             color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Enhanced text styling for guidelines */
+        #guidelines-list .lab-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        
+        #guidelines-list .lab-count {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            text-transform: capitalize;
         }
         
         [data-theme="dark"] .lab-value-btn {
@@ -3824,18 +3961,7 @@
                     <button class="category-btn" data-category="hypertension">HTN</button>
                     <button class="category-btn" data-category="emergency">Emergency</button>
                 </div>
-                <div id="guideline-results" class="tool-results">
-                    <div class="guideline-item">
-                        <h4>Hypertension Management</h4>
-                        <p class="guideline-source">AHA/ACC 2017</p>
-                        <p class="guideline-summary">Target: &lt;130/80 mmHg for most adults</p>
-                    </div>
-                    <div class="guideline-item">
-                        <h4>Type 2 Diabetes</h4>
-                        <p class="guideline-source">ADA 2023</p>
-                        <p class="guideline-summary">HbA1c target: &lt;7% for most adults</p>
-                    </div>
-                </div>
+                <div id="guidelines-list" class="tool-results"></div>
             </div>
             
             <!-- Differential Diagnosis Panel -->
