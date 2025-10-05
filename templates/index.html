@@ -792,23 +792,69 @@
         .drug-categories,
         .lab-categories,
         .guideline-categories,
+        .guidelines-categories,
         .symptom-categories {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 16px;
+            padding: 0 4px;
+        }
+        
+        /* Responsive guidelines categories layout */
+        .guidelines-categories {
+            justify-content: flex-start;
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .guidelines-categories {
+                gap: 6px;
+                padding: 0 2px;
+            }
         }
         
         .category-btn {
-            padding: 6px 12px;
+            padding: 8px 16px;
             background: #f1f3f4;
             border: 1px solid #e5e5ea;
-            border-radius: 16px;
-            font-size: 12px;
+            border-radius: 20px;
+            font-size: 13px;
             font-weight: 500;
             color: #1c1c1e;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Guidelines specific button styling */
+        .guidelines-categories .category-btn {
+            flex: 0 0 auto;
+            font-size: 12px;
+            padding: 6px 14px;
+            min-height: 34px;
+        }
+        
+        @media (max-width: 768px) {
+            .guidelines-categories .category-btn {
+                font-size: 11px;
+                padding: 5px 10px;
+                min-height: 30px;
+                border-radius: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .guidelines-categories .category-btn {
+                font-size: 10px;
+                padding: 4px 8px;
+                min-height: 28px;
+                border-radius: 14px;
+            }
         }
         
         .category-btn:hover,
@@ -816,12 +862,51 @@
             background: #007AFF;
             color: white;
             border-color: #007AFF;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        /* Enhanced guidelines button interactions */
+        .guidelines-categories .category-btn:hover {
+            background: #007AFF;
+            color: white;
+            border-color: #007AFF;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 122, 255, 0.25);
+        }
+        
+        .guidelines-categories .category-btn.active {
+            background: #007AFF;
+            color: white;
+            border-color: #0056CC;
+            box-shadow: 0 1px 3px rgba(0, 122, 255, 0.4);
+            transform: none;
         }
         
         [data-theme="dark"] .category-btn {
             background: var(--bg-tertiary);
             border-color: var(--border-color);
             color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .guidelines-categories .category-btn {
+            background: #2C2C2E;
+            border-color: #48484A;
+            color: #FFFFFF;
+        }
+        
+        [data-theme="dark"] .guidelines-categories .category-btn:hover {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 122, 255, 0.3);
+        }
+        
+        [data-theme="dark"] .guidelines-categories .category-btn.active {
+            background: #007AFF;
+            border-color: #0056CC;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0, 122, 255, 0.4);
         }
         
         /* Tool Results */
