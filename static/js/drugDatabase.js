@@ -4,7 +4,7 @@
 const drugDatabase = {
             'aciclovir': {
                 name: 'Aciclovir',
-                class: 'Antiviral agent',
+                class: 'Antiviral drugs',
                 mechanism: 'Nucleoside analogue - inhibits viral DNA polymerase after phosphorylation by viral thymidine kinase',
                 dosing: 'Herpes simplex: 200mg 5x daily for 5 days. Shingles: 800mg 5x daily for 7 days. IV: 5-10mg/kg TDS',
                 contraindications: 'Hypersensitivity. Caution in renal impairment, dehydration',
@@ -32,7 +32,7 @@ const drugDatabase = {
             },
             'adrenaline': {
                 name: 'Adrenaline (Epinephrine)',
-                class: 'Sympathomimetic (Î± and Î² agonist)',
+                class: 'Emergency drugs',
                 mechanism: 'Non-selective Î± and Î² adrenergic agonist causing vasoconstriction and inotropy',
                 dosing: 'Anaphylaxis: 500mcg IM (0.5ml of 1:1000). Cardiac arrest: 1mg IV (1ml of 1:1000)',
                 contraindications: 'None in life-threatening situations. Caution with severe hypertension',
@@ -46,7 +46,7 @@ const drugDatabase = {
             },
             'alendronic acid': {
                 name: 'Alendronic Acid',
-                class: 'Bisphosphonate',
+                class: 'Bisphosphonates',
                 mechanism: 'Inhibits osteoclast-mediated bone resorption by binding to hydroxyapatite',
                 dosing: 'Osteoporosis: 70mg weekly on empty stomach. Paget\'s disease: 40mg daily for 6 months',
                 contraindications: 'Oesophageal abnormalities, hypocalcaemia, severe renal impairment',
@@ -74,7 +74,7 @@ const drugDatabase = {
             },
             'amiodarone': {
                 name: 'Amiodarone',
-                class: 'Class III antiarrhythmic',
+                class: 'Amiodarone',
                 mechanism: 'Blocks potassium channels, prolongs action potential and refractory period',
                 dosing: 'Loading: 200mg TDS for 1 week, then 200mg BD for 1 week. Maintenance: 200mg daily',
                 contraindications: 'Sinus bradycardia, heart block, thyroid disease, iodine allergy',
@@ -88,7 +88,7 @@ const drugDatabase = {
             },
             'amlodipine': {
                 name: 'Amlodipine',
-                class: 'Dihydropyridine calcium channel blocker',
+                class: 'Calcium channel blockers',
                 mechanism: 'Blocks L-type calcium channels in vascular smooth muscle and myocardium, causing vasodilation',
                 dosing: 'Hypertension: Start 5mg daily, max 10mg daily. Elderly/hepatic impairment: start 2.5mg daily',
                 contraindications: 'Hypersensitivity, unstable angina, significant aortic stenosis',
@@ -102,7 +102,7 @@ const drugDatabase = {
             },
             'amoxicillin': {
                 name: 'Amoxicillin',
-                class: 'Beta-lactam antibiotic (Aminopenicillin)',
+                class: 'Penicillins, broad-spectrum',
                 mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
                 dosing: 'Adults: 500mg TDS or 1g BD. Severe infections: 1g TDS. Children: 40-90mg/kg daily in 2-3 divided doses',
                 contraindications: 'Penicillin allergy, infectious mononucleosis (high rash risk)',
@@ -130,7 +130,7 @@ const drugDatabase = {
             },
             'aspirin': {
                 name: 'Aspirin',
-                class: 'Non-selective COX inhibitor/Antiplatelet agent',
+                class: 'Antiplatelet drugs, aspirin',
                 mechanism: 'Irreversibly inhibits COX-1, reducing TXA2 production and platelet aggregation',
                 dosing: 'Cardioprotection: 75mg daily. Acute MI: 300mg STAT, then 75mg daily. Pain: 300-900mg QDS',
                 contraindications: 'Active bleeding, severe heart failure, children <16 years (Reye\'s syndrome)',
@@ -144,7 +144,7 @@ const drugDatabase = {
             },
             'atorvastatin': {
                 name: 'Atorvastatin',
-                class: 'HMG-CoA reductase inhibitor (Statin)',
+                class: 'Statins',
                 mechanism: 'Competitively inhibits HMG-CoA reductase, rate-limiting enzyme in cholesterol synthesis',
                 dosing: 'Adults: Start 20mg daily, usual dose 20-80mg daily. High-intensity: 40-80mg daily. Take any time of day',
                 contraindications: 'Active liver disease, pregnancy, breastfeeding, unexplained persistent â†‘ ALT/AST',
@@ -200,7 +200,7 @@ const drugDatabase = {
             },
             'bendroflumethiazide': {
                 name: 'Bendroflumethiazide',
-                class: 'Thiazide-like diuretic',
+                class: 'Diuretics, thiazide and thiazide-like',
                 mechanism: 'Inhibits sodium-chloride cotransporter in distal convoluted tubule',
                 dosing: 'Hypertension: 2.5mg daily (morning). Oedema: 5-10mg daily initially',
                 contraindications: 'Anuria, severe renal/hepatic impairment, hypersensitivity to sulfonamides',
@@ -214,7 +214,7 @@ const drugDatabase = {
             },
             'benzylpenicillin': {
                 name: 'Benzylpenicillin',
-                class: 'Antibiotic (Penicillin)',
+                class: 'Penicillins, narrow-spectrum',
                 mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
                 dosing: 'Adult: 0.6-2.4g QDS IV/IM. Meningitis: 2.4g 4-hourly. Severe infections: up to 14.4g/day',
                 contraindications: 'Penicillin allergy, previous severe allergic reaction',
@@ -228,7 +228,7 @@ const drugDatabase = {
             },
             'bisoprolol': {
                 name: 'Bisoprolol',
-                class: 'Beta-1 Selective Blocker',
+                class: 'Beta-blockers',
                 mechanism: 'Selective antagonist of cardiac beta-1 adrenoreceptors',
                 dosing: 'Heart failure: Start 1.25mg daily, titrate to 10mg daily. Hypertension: 5-10mg daily',
                 contraindications: 'Asthma, severe COPD, cardiogenic shock, severe bradycardia, severe heart failure',
@@ -270,7 +270,7 @@ const drugDatabase = {
             },
             'cefalexin': {
                 name: 'Cefalexin',
-                class: 'First-generation cephalosporin antibiotic',
+                class: 'Cephalosporins and carbapenems',
                 mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
                 dosing: 'Adults: 250-500mg QDS. Severe infections: 1-1.5g QDS. Children: 25mg/kg BD (max 1g BD)',
                 contraindications: 'Cephalosporin hypersensitivity. Caution if penicillin allergy (cross-reactivity 1-3%)',
@@ -284,7 +284,7 @@ const drugDatabase = {
             },
             'ceftriaxone': {
                 name: 'Ceftriaxone',
-                class: 'Antibiotic (3rd generation cephalosporin)',
+                class: 'Cephalosporins and carbapenems',
                 mechanism: 'Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins',
                 dosing: 'Adult: 1-2g daily IV/IM. Severe infections: 2g BD. Meningitis: 2g BD. Max 4g/day',
                 contraindications: 'Hypersensitivity to cephalosporins, premature neonates, hyperbilirubinemia',
@@ -326,7 +326,7 @@ const drugDatabase = {
             },
             'ciprofloxacin': {
                 name: 'Ciprofloxacin',
-                class: 'Fluoroquinolone antibiotic',
+                class: 'Quinolones',
                 mechanism: 'Inhibits bacterial DNA gyrase and topoisomerase IV',
                 dosing: 'UTI: 250-500mg BD. Complicated infections: 400mg BD IV. Take 2h before/6h after dairy',
                 contraindications: 'Epilepsy, G6PD deficiency, myasthenia gravis, children/pregnancy',
@@ -368,7 +368,7 @@ const drugDatabase = {
             },
             'clindamycin': {
                 name: 'Clindamycin',
-                class: 'Antibiotic (Lincosamide)',
+                class: 'Clindamycin',
                 mechanism: 'Inhibits bacterial protein synthesis by binding to 50S ribosomal subunit',
                 dosing: 'Adult: 150-450mg QDS PO or 0.6-2.7g daily IV in divided doses. Max 4.8g/day IV',
                 contraindications: 'Previous C.diff colitis, severe liver disease, lincomycin allergy',
@@ -382,7 +382,7 @@ const drugDatabase = {
             },
             'clopidogrel': {
                 name: 'Clopidogrel',
-                class: 'ADP receptor antagonist (antiplatelet)',
+                class: 'Antiplatelet drugs, ADP-receptor antagonists',
                 mechanism: 'Irreversibly inhibits P2Y12 ADP receptor on platelets',
                 dosing: 'Acute coronary syndrome: 600mg loading dose, then 75mg daily. Stroke prevention: 75mg daily',
                 contraindications: 'Active bleeding, severe hepatic impairment',
@@ -396,7 +396,7 @@ const drugDatabase = {
             },
             'co-amoxiclav': {
                 name: 'Co-amoxiclav',
-                class: 'Beta-lactam antibiotic with beta-lactamase inhibitor',
+                class: 'Penicillins, broad-spectrum',
                 mechanism: 'Amoxicillin inhibits cell wall synthesis, clavulanic acid protects against beta-lactamases',
                 dosing: 'Adults: 625mg TDS or 1g BD. Severe infections: 1.2g TDS IV. Available as 375mg, 625mg tablets',
                 contraindications: 'Penicillin allergy, previous cholestatic jaundice with co-amoxiclav',
@@ -480,7 +480,7 @@ const drugDatabase = {
             },
             'diazepam': {
                 name: 'Diazepam',
-                class: 'Benzodiazepine',
+                class: 'Benzodiazepines',
                 mechanism: 'Enhances GABA-A receptor activity, increasing chloride influx and neuronal inhibition',
                 dosing: 'Anxiety: 2-5mg TDS. Status epilepticus: 10-20mg IV slowly. Muscle spasm: 2-15mg daily',
                 contraindications: 'Respiratory depression, severe hepatic impairment, myasthenia gravis, sleep apnoea',
@@ -508,7 +508,7 @@ const drugDatabase = {
             },
             'digoxin': {
                 name: 'Digoxin',
-                class: 'Cardiac glycoside',
+                class: 'Digoxin',
                 mechanism: 'Inhibits Na+/K+-ATPase pump, increases intracellular Ca2+, â†‘ contractility, â†“ AV conduction',
                 dosing: 'Loading: 10-15 micrograms/kg IV or PO. Maintenance: 125-250 micrograms daily (reduce in elderly/renal impairment)',
                 contraindications: 'Ventricular arrhythmias, heart block, hypertrophic cardiomyopathy with outflow obstruction',
@@ -536,7 +536,7 @@ const drugDatabase = {
             },
             'doxycycline': {
                 name: 'Doxycycline',
-                class: 'Tetracycline antibiotic',
+                class: 'Tetracyclines and glycylcyclines',
                 mechanism: 'Inhibits bacterial protein synthesis by binding to 30S ribosomal subunit',
                 dosing: 'Adults: 200mg on day 1, then 100mg daily. Acne: 40mg daily modified-release. Malaria prophylaxis: 100mg daily',
                 contraindications: 'Pregnancy, breastfeeding, children <12 years, myasthenia gravis',
@@ -550,7 +550,7 @@ const drugDatabase = {
             },
             'empagliflozin': {
                 name: 'Empagliflozin',
-                class: 'SGLT2 inhibitor',
+                class: 'Sodium-glucose co-transporter 2 inhibitors',
                 mechanism: 'Inhibits sodium-glucose co-transporter 2 in proximal renal tubules',
                 dosing: 'Type 2 diabetes: 10mg daily, may increase to 25mg. Heart failure: 10mg daily',
                 contraindications: 'Type 1 diabetes, ketoacidosis, severe renal impairment (eGFR <30)',
@@ -564,7 +564,7 @@ const drugDatabase = {
             },
             'enoxaparin': {
                 name: 'Enoxaparin',
-                class: 'Low molecular weight heparin (LMWH)',
+                class: 'Heparins and fondaparinux',
                 mechanism: 'Enhances antithrombin III activity, preferentially inhibiting factor Xa',
                 dosing: 'VTE prophylaxis: 40mg daily SC. VTE treatment: 1.5mg/kg daily or 1mg/kg BD SC',
                 contraindications: 'Active bleeding, thrombocytopenia, severe renal impairment',
@@ -592,7 +592,7 @@ const drugDatabase = {
             },
             'ferrous sulfate': {
                 name: 'Ferrous Sulfate',
-                class: 'Iron supplement',
+                class: 'Iron',
                 mechanism: 'Provides elemental iron for haemoglobin synthesis and correction of iron deficiency',
                 dosing: 'Adults: 200mg (65mg elemental iron) BD-TDS on empty stomach. Prophylaxis: 200mg daily',
                 contraindications: 'Haemochromatosis, haemosiderosis, non-iron deficiency anaemia',
@@ -620,7 +620,7 @@ const drugDatabase = {
             },
             'flucloxacillin': {
                 name: 'Flucloxacillin',
-                class: 'Penicillinase-resistant penicillin',
+                class: 'Penicillins, narrow-spectrum',
                 mechanism: 'Î²-lactam antibiotic - inhibits cell wall synthesis, resistant to Î²-lactamases',
                 dosing: 'Oral: 250-500mg QDS on empty stomach. IV: 0.25-2g QDS. Severe infections: up to 8g daily',
                 contraindications: 'Penicillin allergy, previous flucloxacillin-induced hepatitis',
@@ -676,7 +676,7 @@ const drugDatabase = {
             },
             'furosemide': {
                 name: 'Furosemide',
-                class: 'Loop diuretic',
+                class: 'Diuretics, loop',
                 mechanism: 'Inhibits Na+/K+/2Cl- co-transporter in ascending limb of loop of Henle',
                 dosing: 'Heart failure: Start 20-40mg daily, titrate to response. Oedema: 20-80mg daily. IV dose = half oral dose',
                 contraindications: 'Anuria, severe electrolyte imbalance, hepatic coma',
@@ -690,7 +690,7 @@ const drugDatabase = {
             },
             'gabapentin': {
                 name: 'Gabapentin',
-                class: 'Anticonvulsant/Neuropathic pain agent',
+                class: 'Gabapentinoids',
                 mechanism: 'Binds to voltage-gated calcium channel Î±2Î´ subunit, reducing neurotransmitter release',
                 dosing: 'Neuropathic pain: Start 300mg daily, increase to 300mg TDS, max 3600mg daily in divided doses',
                 contraindications: 'Hypersensitivity to gabapentin',
@@ -704,7 +704,7 @@ const drugDatabase = {
             },
             'gentamicin': {
                 name: 'Gentamicin',
-                class: 'Antibiotic (Aminoglycoside)',
+                class: 'Aminoglycoside',
                 mechanism: 'Inhibits bacterial protein synthesis by binding to 30S ribosomal subunit',
                 dosing: 'Adult: 5-7mg/kg daily IV/IM. Adjust for renal function. Monitor levels - trough <2mg/L',
                 contraindications: 'Myasthenia gravis, previous 8th nerve damage, severe renal impairment',
@@ -732,7 +732,7 @@ const drugDatabase = {
             },
             'glyceryl-trinitrate': {
                 name: 'Glyceryl Trinitrate (GTN)',
-                class: 'Nitrate Vasodilator',
+                class: 'Nitrates',
                 mechanism: 'Releases nitric oxide causing smooth muscle relaxation and vasodilation',
                 dosing: 'Angina: 400-800mcg SL PRN. IV: 10-200mcg/min. Topical: 2.5-5mg patches daily',
                 contraindications: 'Severe aortic stenosis, hypertrophic cardiomyopathy, PDE5 inhibitor use',
@@ -746,7 +746,7 @@ const drugDatabase = {
             },
             'haloperidol': {
                 name: 'Haloperidol',
-                class: 'Typical antipsychotic',
+                class: 'Antipsychotics, first-generation (typical)',
                 mechanism: 'Dopamine D2 receptor antagonist, primarily in mesolimbic pathway',
                 dosing: 'Psychosis: 1.5-3mg BD-TDS. Acute agitation: 5-10mg IM. Elderly: start 0.5mg BD',
                 contraindications: 'Comatose states, severe CNS depression, Parkinson\'s disease',
@@ -760,7 +760,7 @@ const drugDatabase = {
             },
             'heparin': {
                 name: 'Heparin',
-                class: 'Anticoagulant (Unfractionated)',
+                class: 'Heparins and fondaparinux',
                 mechanism: 'Binds to antithrombin III, enhancing inactivation of thrombin and factor Xa',
                 dosing: 'DVT/PE: Loading 80 units/kg IV, then 18 units/kg/h. Monitor APTT. Prophylaxis: 5000 units SC BD-TDS',
                 contraindications: 'Active bleeding, severe thrombocytopenia, previous HIT, severe liver disease',
@@ -774,7 +774,7 @@ const drugDatabase = {
             },
             'hydrocortisone': {
                 name: 'Hydrocortisone',
-                class: 'Topical corticosteroid (mild potency)',
+                class: 'Corticosteroids, topical',
                 mechanism: 'Anti-inflammatory glucocorticoid effects via cytoplasmic receptors',
                 dosing: 'Topical: Apply thinly BD-QDS. Oral: 20-30mg daily in divided doses',
                 contraindications: 'Viral skin infections, rosacea, perioral dermatitis (topical)',
@@ -816,7 +816,7 @@ const drugDatabase = {
             },
             'insulin': {
                 name: 'Insulin (Human)',
-                class: 'Hormone replacement therapy',
+                class: 'Insulin',
                 mechanism: 'Replaces endogenous insulin, promoting glucose uptake and protein synthesis',
                 dosing: 'Variable - basal: 0.2-0.4 units/kg/day. Bolus: carbohydrate counting. Sliding scale for acute illness',
                 contraindications: 'Hypoglycaemia. Caution in renal/hepatic impairment',
@@ -914,7 +914,7 @@ const drugDatabase = {
             },
             'levothyroxine': {
                 name: 'Levothyroxine',
-                class: 'Thyroid hormone replacement',
+                class: 'Thyroid hormones',
                 mechanism: 'Synthetic L-thyroxine (T4) hormone, converted to active T3 in peripheral tissues',
                 dosing: 'Adults <50yrs: 1.6micrograms/kg daily. >50yrs or cardiac disease: 25-50micrograms daily, increase by 25-50micrograms every 3-4 weeks',
                 contraindications: 'Untreated adrenal insufficiency, acute myocardial infarction, thyrotoxicosis',
@@ -941,7 +941,7 @@ const drugDatabase = {
                 indication: 'Local anaesthesia, topical anaesthesia, ventricular arrhythmias (IV)'
             },
             'lithium': {
-                name: 'Lithium',
+                name: 'Lithium carbonate',
                 class: 'Mood stabiliser',
                 mechanism: 'Unclear - affects neurotransmitter function and cellular signalling',
                 dosing: 'Start 200-400mg daily, target level 0.6-1.0mmol/L for maintenance, 0.8-1.2mmol/L acute',
@@ -998,7 +998,7 @@ const drugDatabase = {
             },
             'losartan': {
                 name: 'Losartan',
-                class: 'Angiotensin receptor blocker (ARB)',
+                class: 'Angiotensin receptor blockers',
                 mechanism: 'Selective antagonist of angiotensin II at AT1 receptors',
                 dosing: 'Hypertension: Start 50mg daily, max 100mg daily. Heart failure: Start 12.5mg daily, target 150mg daily',
                 contraindications: 'Pregnancy, bilateral renal artery stenosis, severe renal impairment',
@@ -1040,7 +1040,7 @@ const drugDatabase = {
             },
             'metformin': {
                 name: 'Metformin',
-                class: 'Biguanide antidiabetic',
+                class: 'Metformin',
                 mechanism: 'Decreases hepatic glucose production, improves peripheral insulin sensitivity, â†“ intestinal glucose absorption',
                 dosing: 'Standard-release: Start 500mg BD with meals, increase weekly. Max 1g BD. Modified-release: Start 500mg OD, max 2g OD',
                 contraindications: 'eGFR <30, acute conditions with tissue hypoxia, severe heart failure, alcohol dependence',
@@ -1054,7 +1054,7 @@ const drugDatabase = {
             },
             'methotrexate': {
                 name: 'Methotrexate',
-                class: 'Antimetabolite/Disease-modifying antirheumatic drug',
+                class: 'Methotrexate',
                 mechanism: 'Inhibits dihydrofolate reductase, interfering with folate metabolism',
                 dosing: 'Rheumatoid arthritis: 7.5-25mg weekly. Always prescribe folic acid 5mg weekly (day after MTX)',
                 contraindications: 'Pregnancy, breastfeeding, severe renal/hepatic impairment, immunodeficiency',
@@ -1082,7 +1082,7 @@ const drugDatabase = {
             },
             'metronidazole': {
                 name: 'Metronidazole',
-                class: 'Nitroimidazole antibiotic',
+                class: 'Metronidazole',
                 mechanism: 'Disrupts DNA synthesis in anaerobic bacteria and protozoa',
                 dosing: 'Oral: 400mg TDS for 5-7 days. IV: 500mg TDS. C.diff: 400mg TDS for 10-14 days',
                 contraindications: 'Hypersensitivity, first trimester pregnancy, disulfiram reaction with alcohol',
@@ -1180,7 +1180,7 @@ const drugDatabase = {
             },
             'nitrofurantoin': {
                 name: 'Nitrofurantoin',
-                class: 'Nitrofuran antibiotic',
+                class: 'Nitrofurantoin',
                 mechanism: 'Inhibits bacterial enzymes involved in carbohydrate metabolism',
                 dosing: 'UTI treatment: 100mg BD for 3 days (women) or 7 days (men). Prophylaxis: 50-100mg at night',
                 contraindications: 'eGFR <45ml/min/1.73mÂ², pregnancy at term, G6PD deficiency, acute porphyria',
@@ -1208,7 +1208,7 @@ const drugDatabase = {
             },
             'olanzapine': {
                 name: 'Olanzapine',
-                class: 'Atypical antipsychotic',
+                class: 'Antipsychotics, second-generation (atypical)',
                 mechanism: 'Dopamine D2, serotonin 5-HT2A receptor antagonist with multiple receptor activity',
                 dosing: 'Schizophrenia: Start 10mg daily, range 5-20mg. Bipolar: 15mg daily, adjust 5-20mg',
                 contraindications: 'Comatose states, severe CNS depression',
@@ -1264,7 +1264,7 @@ const drugDatabase = {
             },
             'paracetamol': {
                 name: 'Paracetamol',
-                class: 'Analgesic, Antipyretic',
+                class: 'Paracetamol',
                 mechanism: 'Inhibits COX enzymes centrally, affects prostaglandin synthesis in hypothalamus',
                 dosing: 'Adults: 500mg-1g every 4-6 hours (max 4g/24h). Children: 15mg/kg every 4-6 hours (max 60mg/kg/24h)',
                 contraindications: 'Severe hepatic impairment, hypersensitivity to paracetamol',
@@ -1320,7 +1320,7 @@ const drugDatabase = {
             },
             'pregabalin': {
                 name: 'Pregabalin',
-                class: 'Anticonvulsant/Neuropathic Pain Agent',
+                class: 'Gabapentinoids',
                 mechanism: 'Binds to voltage-gated calcium channels reducing excitatory neurotransmitter release',
                 dosing: 'Neuropathic pain: Start 75mg BD, titrate to 150-300mg BD. Epilepsy: 150-600mg daily',
                 contraindications: 'Hypersensitivity to pregabalin, galactose intolerance',
@@ -1362,7 +1362,7 @@ const drugDatabase = {
             },
             'quinine': {
                 name: 'Quinine',
-                class: 'Antimalarial agent',
+                class: 'Quinine',
                 mechanism: 'Interferes with parasitic DNA replication, affects calcium distribution in muscle',
                 dosing: 'Malaria: 600mg TDS for 7 days. Cramps: 200-300mg at bedtime (unlicensed)',
                 contraindications: 'Optic neuritis, tinnitus, myasthenia gravis, G6PD deficiency',
@@ -1376,7 +1376,7 @@ const drugDatabase = {
             },
             'ramipril': {
                 name: 'Ramipril',
-                class: 'ACE inhibitor',
+                class: 'Angiotensin-converting enzyme (ACE) inhibitors',
                 mechanism: 'Inhibits ACE, preventing conversion of angiotensin I to II, reducing aldosterone secretion',
                 dosing: 'Hypertension: Start 1.25-2.5mg daily, usual 2.5-5mg daily, max 10mg daily. Heart failure: Start 1.25mg daily, target 10mg daily',
                 contraindications: 'Pregnancy, bilateral renal artery stenosis, angioedema history, hyperkalaemia >5.5mmol/L',
@@ -1488,7 +1488,7 @@ const drugDatabase = {
             },
             'simvastatin': {
                 name: 'Simvastatin',
-                class: 'HMG-CoA reductase inhibitor (statin)',
+                class: 'Statins',
                 mechanism: 'Competitively inhibits HMG-CoA reductase, rate-limiting enzyme in cholesterol synthesis',
                 dosing: 'Start 20mg at night, max 80mg daily. Usual maintenance: 20-40mg daily',
                 contraindications: 'Active liver disease, pregnancy, breastfeeding',
@@ -1502,7 +1502,7 @@ const drugDatabase = {
             },
             'spironolactone': {
                 name: 'Spironolactone',
-                class: 'Aldosterone receptor antagonist (potassium-sparing diuretic)',
+                class: 'Aldosterone antagonists',
                 mechanism: 'Competitive antagonist of aldosterone at mineralocorticoid receptors',
                 dosing: 'Heart failure: Start 25mg daily, max 50mg daily. Ascites: 100-400mg daily. Monitor K+ closely',
                 contraindications: 'Hyperkalaemia (>5.0mmol/L), severe renal impairment, Addison\'s disease',
@@ -1516,7 +1516,7 @@ const drugDatabase = {
             },
             'sumatriptan': {
                 name: 'Sumatriptan',
-                class: 'Serotonin 5-HT1 receptor agonist (triptan)',
+                class: 'Serotonin 5-HT1-receptor agonists (triptans)',
                 mechanism: 'Selective 5-HT1B/1D receptor agonist causing vasoconstriction and neuronal inhibition',
                 dosing: 'Subcutaneous: 6mg, may repeat after 1h. Oral: 50-100mg, may repeat after 2h. Max 300mg/24h',
                 contraindications: 'Ischaemic heart disease, cerebrovascular disease, uncontrolled hypertension',
@@ -1544,7 +1544,7 @@ const drugDatabase = {
             },
             'tramadol': {
                 name: 'Tramadol',
-                class: 'Atypical opioid analgesic',
+                class: 'Opioids',
                 mechanism: 'Weak mu-opioid agonist + inhibits serotonin/noradrenaline reuptake',
                 dosing: 'Immediate release: 50-100mg QDS PRN (max 400mg daily). MR: 100-400mg daily',
                 contraindications: 'Epilepsy, head injury, concurrent MAOIs, severe respiratory depression',
@@ -1600,7 +1600,7 @@ const drugDatabase = {
             },
             'warfarin': {
                 name: 'Warfarin',
-                class: 'Vitamin K antagonist anticoagulant',
+                class: 'Warfarin',
                 mechanism: 'Inhibits vitamin K epoxide reductase, preventing synthesis of factors II, VII, IX, X',
                 dosing: 'Start 5-10mg daily (3mg if elderly/liver disease). Adjust based on INR. Target INR 2.0-3.0 (2.5-3.5 for mechanical valves)',
                 contraindications: 'Active bleeding, pregnancy (except mechanical heart valves), severe hepatic disease',
