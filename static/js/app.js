@@ -2161,7 +2161,8 @@ class MLAQuizApp {
 
         // Handle tool navigation
         toolNavBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent medical tools panel from closing
                 const toolType = btn.getAttribute('data-tool');
                 this.switchMedicalTool(toolType);
                 
@@ -2237,6 +2238,7 @@ class MLAQuizApp {
         // Handle calculator button clicks
         document.addEventListener('click', (e) => {
             if (e.target.closest('.calculator-btn')) {
+                e.stopPropagation(); // Prevent medical tools panel from closing
                 const calcType = e.target.closest('.calculator-btn').getAttribute('data-calc');
                 this.loadCalculator(calcType);
             }
@@ -10237,7 +10239,8 @@ MLAQuizApp.prototype.setupEmergencyProtocolsSearch = function() {
     };
     
     categoryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent medical tools panel from closing
             categoryBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             filterProtocols();
@@ -10276,7 +10279,7 @@ MLAQuizApp.prototype.displayEmergencyProtocols = function(protocolIds) {
         const urgencyClass = protocol.urgency === 'emergency' ? 'emergency' : 'standard';
         
         return `
-            <div class="protocol-item ${urgencyClass}" onclick="window.quizApp.showProtocolDetail('${protocolId}')">
+            <div class="protocol-item ${urgencyClass}" onclick="window.quizApp.showProtocolDetail('${protocolId}'); event.stopPropagation();">
                 <div class="protocol-header">
                     <h4>${protocol.name}</h4>
                     <span class="protocol-urgency ${protocol.urgency}">${protocol.urgency.toUpperCase()}</span>
@@ -10305,7 +10308,7 @@ MLAQuizApp.prototype.showProtocolDetail = function(protocolId) {
     if (!container) return;
     
     const detailHtml = `
-        <div class="protocol-detail">
+        <div class="protocol-detail" onclick="event.stopPropagation();">
             <div class="protocol-detail-header">
                 <button class="back-btn" onclick="window.quizApp.loadEmergencyProtocols(); event.stopPropagation();">← Back to Protocols</button>
                 <h3>${protocol.name}</h3>
@@ -10484,7 +10487,8 @@ MLAQuizApp.prototype.setupInterpretationSearch = function() {
     };
     
     categoryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent medical tools panel from closing
             categoryBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             filterTools();
@@ -10510,7 +10514,7 @@ MLAQuizApp.prototype.displayInterpretationTools = function(toolIds) {
         const tool = interpretationTools[toolId];
         
         return `
-            <div class="interpretation-item" onclick="window.quizApp.showInterpretationDetail('${toolId}')">
+            <div class="interpretation-item" onclick="window.quizApp.showInterpretationDetail('${toolId}'); event.stopPropagation();">
                 <div class="interpretation-header">
                     <h4>${tool.name}</h4>
                     <span class="interpretation-type">${tool.type}</span>
@@ -10624,7 +10628,7 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     }
     
     const detailHtml = `
-        <div class="interpretation-detail">
+        <div class="interpretation-detail" onclick="event.stopPropagation();">
             <div class="interpretation-detail-header">
                 <button class="back-btn" onclick="window.quizApp.loadInterpretationTools(); event.stopPropagation();">← Back to Interpretation Tools</button>
                 <h3>${tool.name}</h3>
