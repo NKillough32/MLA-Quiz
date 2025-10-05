@@ -1231,6 +1231,578 @@
             color: #aaa;
         }
         
+        /* Emergency Protocols Styles */
+        .emergency-categories, .interpretation-categories {
+            display: flex;
+            gap: 8px;
+            padding: 16px;
+            border-bottom: 1px solid #e5e5ea;
+            flex-wrap: wrap;
+        }
+        
+        .emergency-categories .category-btn, .interpretation-categories .category-btn {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .emergency-categories .category-btn:hover, .interpretation-categories .category-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+            color: #374151;
+        }
+        
+        .emergency-categories .category-btn.active, .interpretation-categories .category-btn.active {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: white;
+        }
+        
+        .protocol-item, .interpretation-item {
+            padding: 16px;
+            border-bottom: 1px solid #e5e5ea;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .protocol-item:hover, .interpretation-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .protocol-item.emergency {
+            border-left: 4px solid #f44336;
+        }
+        
+        .protocol-header, .interpretation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .protocol-header h4, .interpretation-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c1c1e;
+            flex: 1;
+        }
+        
+        .protocol-urgency {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .protocol-urgency.emergency {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .protocol-urgency.high {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .protocol-urgency.moderate {
+            background: #fff8e1;
+            color: #f57c00;
+        }
+        
+        .protocol-meta, .interpretation-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        
+        .protocol-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .action-tag {
+            padding: 2px 6px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .protocol-detail, .interpretation-detail {
+            padding: 20px;
+        }
+        
+        .protocol-detail-header, .interpretation-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .protocol-detail-header h3, .interpretation-detail-header h3 {
+            margin: 0;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .protocol-steps, .protocol-drugs, .protocol-critical, .interpretation-steps,
+        .normal-values, .common-abnormalities, .compensation-rules, .emergency-findings {
+            margin-bottom: 20px;
+        }
+        
+        .protocol-steps h4, .protocol-drugs h4, .protocol-critical h4, .interpretation-steps h4,
+        .normal-values h4, .common-abnormalities h4, .compensation-rules h4, .emergency-findings h4 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c1c1e;
+        }
+        
+        .step-list, .drug-list, .critical-list, .values-list, .abnormalities-list,
+        .compensation-list, .emergency-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .step-list li, .drug-list li, .critical-list li, .values-list li,
+        .abnormalities-list li, .compensation-list li, .emergency-list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .interpretation-type, .step-count {
+            padding: 2px 8px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .interpretation-preview {
+            margin-top: 8px;
+        }
+        
+        .step-preview {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .suicide-warning {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+        
+        /* Dark mode styles for new components */
+        [data-theme="dark"] .emergency-categories, [data-theme="dark"] .interpretation-categories {
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .emergency-categories .category-btn, [data-theme="dark"] .interpretation-categories .category-btn {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #ddd;
+        }
+        
+        [data-theme="dark"] .emergency-categories .category-btn:hover, [data-theme="dark"] .interpretation-categories .category-btn:hover {
+            background: #1a2332;
+            border-color: #4A90E2;
+            color: #4A90E2;
+        }
+        
+        [data-theme="dark"] .emergency-categories .category-btn.active, [data-theme="dark"] .interpretation-categories .category-btn.active {
+            background: #4A90E2;
+            border-color: #4A90E2;
+            color: white;
+        }
+        
+        [data-theme="dark"] .protocol-item, [data-theme="dark"] .interpretation-item {
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .protocol-item:hover, [data-theme="dark"] .interpretation-item:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        [data-theme="dark"] .protocol-header h4, [data-theme="dark"] .interpretation-header h4,
+        [data-theme="dark"] .protocol-steps h4, [data-theme="dark"] .protocol-drugs h4,
+        [data-theme="dark"] .protocol-critical h4, [data-theme="dark"] .interpretation-steps h4,
+        [data-theme="dark"] .normal-values h4, [data-theme="dark"] .common-abnormalities h4,
+        [data-theme="dark"] .compensation-rules h4, [data-theme="dark"] .emergency-findings h4 {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .protocol-meta, [data-theme="dark"] .interpretation-meta,
+        [data-theme="dark"] .step-preview {
+            color: var(--text-secondary);
+        }
+        
+        /* Interactive Features Styles */
+        .bookmark-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .bookmark-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .calculator-notes {
+            margin-top: 20px;
+            padding: 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .notes-header h4 {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .notes-toggle {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .quick-access-panel {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quick-access-tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e5ea;
+            background: #f8f9fa;
+        }
+        
+        .quick-tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #8e8e93;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .quick-tab:hover {
+            background: #e5e5ea;
+            color: #1c1c1e;
+        }
+        
+        .quick-tab.active {
+            color: #007AFF;
+            border-bottom-color: #007AFF;
+            background: white;
+        }
+        
+        .quick-access-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .quick-tab-content {
+            display: none;
+            padding: 16px;
+        }
+        
+        .quick-tab-content.active {
+            display: block;
+        }
+        
+        .quick-tool-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #e5e5ea;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .quick-tool-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .tool-name {
+            font-weight: 500;
+            color: #1c1c1e;
+            flex: 1;
+        }
+        
+        .tool-time, .tool-frequency {
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        
+        .remove-bookmark {
+            background: none;
+            border: none;
+            font-size: 14px;
+            color: #ff3b30;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .remove-bookmark:hover {
+            background: #ffebee;
+        }
+        
+        .no-items {
+            text-align: center;
+            color: #8e8e93;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+        
+        .lab-test-item {
+            padding: 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: white;
+        }
+        
+        .lab-test-item.critical-test {
+            border-left: 4px solid #f44336;
+            background: #fff5f5;
+        }
+        
+        .lab-test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .lab-test-header h4 {
+            margin: 0;
+            color: #1c1c1e;
+            font-size: 16px;
+        }
+        
+        .lab-panel {
+            font-size: 12px;
+            color: #8e8e93;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .lab-test-values {
+            margin-bottom: 12px;
+        }
+        
+        .normal-range, .critical-range {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .critical-range {
+            color: #f44336;
+            font-weight: 600;
+        }
+        
+        .lab-test-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        
+        .lab-interpretation {
+            border-top: 1px solid #e5e5ea;
+            padding-top: 12px;
+        }
+        
+        .interpretation-section {
+            margin-bottom: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .interpretation-section.critical {
+            color: #f44336;
+            font-weight: 600;
+        }
+        
+        .lab-values-header {
+            padding: 16px;
+            border-bottom: 1px solid #e5e5ea;
+            background: #f8f9fa;
+        }
+        
+        .lab-search-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .lab-search-container input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .lab-search-container button {
+            padding: 8px 12px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .lab-filters {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .lab-filters select {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .lab-filters label {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        /* Dark mode styles for interactive features */
+        [data-theme="dark"] .calculator-notes {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .notes-header h4 {
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="dark"] .quick-access-tabs {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .quick-tab {
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="dark"] .quick-tab:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .quick-tab.active {
+            background: var(--bg-secondary);
+            color: #4A90E2;
+            border-bottom-color: #4A90E2;
+        }
+        
+        [data-theme="dark"] .quick-tool-item {
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .quick-tool-item:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        [data-theme="dark"] .tool-name {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .tool-time,
+        [data-theme="dark"] .tool-frequency {
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="dark"] .lab-test-item {
+            background: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .lab-test-item.critical-test {
+            background: #2a1f1f;
+        }
+        
+        [data-theme="dark"] .lab-test-header h4 {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .lab-panel {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="dark"] .lab-test-description {
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="dark"] .lab-interpretation {
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .lab-values-header {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color);
+        }
+        
         /* Mobile Responsive */
         @media (max-width: 480px) {
             .medical-tools-panel {
@@ -2925,6 +3497,8 @@
         <div class="tools-navigation">
             <button class="tool-nav-btn active" data-tool="drug-reference">💊 Drug Reference</button>
             <button class="tool-nav-btn" data-tool="calculators">🧮 Calculators</button>
+            <button class="tool-nav-btn" data-tool="emergency-protocols">🚨 Emergency</button>
+            <button class="tool-nav-btn" data-tool="interpretation">📋 Interpretation</button>
             <button class="tool-nav-btn" data-tool="lab-values">📊 Lab Values</button>
             <button class="tool-nav-btn" data-tool="guidelines">📋 Guidelines</button>
             <button class="tool-nav-btn" data-tool="differential-dx">🔍 Differential Dx</button>
@@ -3031,6 +3605,62 @@
                     <button class="calculator-btn" data-calc="palliative">
                         <div class="calc-icon">🌸</div>
                         <div class="calc-name">Palliative Care</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="grace">
+                        <div class="calc-icon">💔</div>
+                        <div class="calc-name">GRACE Score</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="crusade">
+                        <div class="calc-icon">🩸</div>
+                        <div class="calc-name">CRUSADE Score</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="timi">
+                        <div class="calc-icon">❤️</div>
+                        <div class="calc-name">TIMI Score</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="nihss">
+                        <div class="calc-icon">🧠</div>
+                        <div class="calc-name">NIH Stroke Scale</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="rankin">
+                        <div class="calc-icon">🚶</div>
+                        <div class="calc-name">Modified Rankin</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="phq9">
+                        <div class="calc-icon">😔</div>
+                        <div class="calc-name">PHQ-9</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="gad7">
+                        <div class="calc-icon">😰</div>
+                        <div class="calc-name">GAD-7</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="insulin-sliding">
+                        <div class="calc-icon">💉</div>
+                        <div class="calc-name">Insulin Sliding Scale</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="vasopressor">
+                        <div class="calc-icon">💊</div>
+                        <div class="calc-name">Vasopressor Dosing</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="paediatric-dosing">
+                        <div class="calc-icon">👶</div>
+                        <div class="calc-name">Paediatric Dosing</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="infusion-rate">
+                        <div class="calc-icon">💧</div>
+                        <div class="calc-name">Infusion Rate</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="cockcroft-gault">
+                        <div class="calc-icon">🫘</div>
+                        <div class="calc-name">Cockcroft-Gault</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="bsa">
+                        <div class="calc-icon">📐</div>
+                        <div class="calc-name">Body Surface Area</div>
+                    </button>
+                    <button class="calculator-btn" data-calc="fluid-balance">
+                        <div class="calc-icon">🌊</div>
+                        <div class="calc-name">Fluid Balance</div>
                     </button>
                 </div>
                 <div id="calculator-workspace" class="calculator-workspace">
@@ -3178,6 +3808,37 @@
                 <div id="examination-container">
                     <!-- Content loaded dynamically by JavaScript -->
                     <div class="loading-message">🩺 Loading examination guide...</div>
+                </div>
+            </div>
+
+            <!-- Emergency Protocols Panel -->
+            <div id="emergency-protocols-panel" class="tool-panel">
+                <div class="emergency-categories">
+                    <button class="category-btn active" data-category="all">All Protocols</button>
+                    <button class="category-btn" data-category="cardiac">Cardiac</button>
+                    <button class="category-btn" data-category="respiratory">Respiratory</button>
+                    <button class="category-btn" data-category="trauma">Trauma</button>
+                    <button class="category-btn" data-category="sepsis">Sepsis</button>
+                    <button class="category-btn" data-category="metabolic">Metabolic</button>
+                </div>
+                <div id="emergency-protocols-container" class="tool-results">
+                    <!-- Content loaded dynamically by JavaScript -->
+                    <div class="loading-message">🚨 Loading emergency protocols...</div>
+                </div>
+            </div>
+
+            <!-- Interpretation Tools Panel -->
+            <div id="interpretation-panel" class="tool-panel">
+                <div class="interpretation-categories">
+                    <button class="category-btn active" data-category="all">All Tools</button>
+                    <button class="category-btn" data-category="ecg">ECG</button>
+                    <button class="category-btn" data-category="abg">ABG</button>
+                    <button class="category-btn" data-category="imaging">Imaging</button>
+                    <button class="category-btn" data-category="lab">Lab Results</button>
+                </div>
+                <div id="interpretation-container" class="tool-results">
+                    <!-- Content loaded dynamically by JavaScript -->
+                    <div class="loading-message">📋 Loading interpretation tools...</div>
                 </div>
             </div>
         </div>

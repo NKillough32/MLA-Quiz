@@ -2119,6 +2119,9 @@ class MLAQuizApp {
             toolPanels: toolPanels.length
         });
 
+        // Initialize interactive features
+        this.initializeBookmarks();
+        
         // Toggle panel open/close
         if (toolsToggle) {
             toolsToggle.addEventListener('click', () => {
@@ -2343,6 +2346,62 @@ class MLAQuizApp {
             case 'palliative':
                 calculatorTitle = 'Palliative Care Calculator';
                 calculatorContent += this.getPalliativeCalculator();
+                break;
+            case 'grace':
+                calculatorTitle = 'GRACE Score';
+                calculatorContent += this.getGRACECalculator();
+                break;
+            case 'crusade':
+                calculatorTitle = 'CRUSADE Score';
+                calculatorContent += this.getCRUSADECalculator();
+                break;
+            case 'timi':
+                calculatorTitle = 'TIMI Score';
+                calculatorContent += this.getTIMICalculator();
+                break;
+            case 'nihss':
+                calculatorTitle = 'NIH Stroke Scale';
+                calculatorContent += this.getNIHSSCalculator();
+                break;
+            case 'rankin':
+                calculatorTitle = 'Modified Rankin Scale';
+                calculatorContent += this.getRankinCalculator();
+                break;
+            case 'phq9':
+                calculatorTitle = 'PHQ-9 Depression Scale';
+                calculatorContent += this.getPHQ9Calculator();
+                break;
+            case 'gad7':
+                calculatorTitle = 'GAD-7 Anxiety Scale';
+                calculatorContent += this.getGAD7Calculator();
+                break;
+            case 'insulin-sliding':
+                calculatorTitle = 'Insulin Sliding Scale';
+                calculatorContent += this.getInsulinSlidingCalculator();
+                break;
+            case 'vasopressor':
+                calculatorTitle = 'Vasopressor Dosing';
+                calculatorContent += this.getVasopressorCalculator();
+                break;
+            case 'paediatric-dosing':
+                calculatorTitle = 'Paediatric Drug Dosing';
+                calculatorContent += this.getPaediatricDosingCalculator();
+                break;
+            case 'infusion-rate':
+                calculatorTitle = 'Infusion Rate Calculator';
+                calculatorContent += this.getInfusionRateCalculator();
+                break;
+            case 'cockcroft-gault':
+                calculatorTitle = 'Cockcroft-Gault Calculator';
+                calculatorContent += this.getCockcroftGaultCalculator();
+                break;
+            case 'bsa':
+                calculatorTitle = 'Body Surface Area';
+                calculatorContent += this.getBSACalculator();
+                break;
+            case 'fluid-balance':
+                calculatorTitle = 'Fluid Balance Calculator';
+                calculatorContent += this.getFluidBalanceCalculator();
                 break;
             default:
                 calculatorTitle = 'Calculator';
@@ -4922,24 +4981,93 @@ class MLAQuizApp {
             </div>
         `;
         
-        // Scroll to the top of the drug reference container
-        container.scrollTop = 0;
-        
-        // Also scroll the main content area to the top if it exists
-        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-        if (mainContent) {
-            mainContent.scrollTop = 0;
-        }
-        
-        // Scroll the page to the top as well
-        window.scrollTo(0, 0);
+        // Enhanced scroll to top functionality with multiple approaches
+        setTimeout(() => {
+            // 1. Scroll the drug reference container to the top
+            container.scrollTop = 0;
+            
+            // 2. Scroll various possible parent containers
+            const scrollTargets = [
+                document.querySelector('.medical-tools-container'),
+                document.querySelector('.main-content'),
+                document.querySelector('.content'),
+                document.querySelector('#content'),
+                document.querySelector('.app-container'),
+                document.body,
+                document.documentElement
+            ];
+            
+            scrollTargets.forEach(target => {
+                if (target) {
+                    target.scrollTop = 0;
+                }
+            });
+            
+            // 3. Force page scroll to top
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+            
+            // 4. Backup instant scroll in case smooth doesn't work
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+                container.scrollTop = 0;
+            }, 100);
+            
+        }, 50); // Small delay to ensure DOM is updated
     }
 
     // Lab Values Functions
     loadLabValues() {
-        console.log('🧪 Loading lab values...');
-        const labDatabase = {
-            'cbc': {
+        console.log('🧪 Loading enhanced lab values...');
+        const container = document.getElementById('lab-values-container');
+        if (!container) return;
+        
+        // Enhanced lab values with critical alerts and age-specific ranges
+        container.innerHTML = `
+            <div class="lab-values-header">
+                <div class="lab-search-container">
+                    <input type="text" id="lab-search" placeholder="Search lab values..." class="tool-search">
+                    <button id="lab-search-btn">🔍</button>
+                </div>
+                <div class="lab-filters">
+                    <select id="age-group-filter">
+                        <option value="adult">Adult Values</option>
+                        <option value="paediatric">Paediatric Values</option>
+                        <option value="neonatal">Neonatal Values</option>
+                        <option value="pregnancy">Pregnancy Values</option>
+                    </select>
+                    <label><input type="checkbox" id="show-critical-only"> Critical values only</label>
+                </div>
+            </div>
+            
+            <div class="lab-categories">
+                <button class="category-btn active" data-category="all">All Tests</button>
+                <button class="category-btn" data-category="cbc">Blood Count</button>
+                <button class="category-btn" data-category="biochemistry">Biochemistry</button>
+                <button class="category-btn" data-category="cardiac">Cardiac Markers</button>
+                <button class="category-btn" data-category="liver">Liver Function</button>
+                <button class="category-btn" data-category="lipids">Lipid Profile</button>
+                <button class="category-btn" data-category="thyroid">Thyroid</button>
+                <button class="category-btn" data-category="immunology">Immunology</button>
+            </div>
+            
+            <div id="lab-results" class="lab-grid">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        `;
+        
+        // Setup enhanced lab values functionality
+        this.setupEnhancedLabValues();
+        this.displayLabValues('all', 'adult');
+    }
+
+    setupEnhancedLabValues() {
+        // Enhanced lab values with age-specific ranges and critical alerts
+        this.labValues = {
+            cbc: {
                 name: 'Complete Blood Count (CBC)',
                 values: {
                     'WBC': { 
@@ -7310,7 +7438,9 @@ class MLAQuizApp {
             'guidelines': 'guidelines-panel',
             'differential-dx': 'differential-panel',
             'triads': 'triads-panel',
-            'examination': 'examination-panel'
+            'examination': 'examination-panel',
+            'emergency-protocols': 'emergency-protocols-panel',
+            'interpretation': 'interpretation-panel'
         };
         
         // Show selected panel
@@ -7347,6 +7477,12 @@ class MLAQuizApp {
                 break;
             case 'examination':
                 this.loadExaminationGuide();
+                break;
+            case 'emergency-protocols':
+                this.loadEmergencyProtocols();
+                break;
+            case 'interpretation':
+                this.loadInterpretationTools();
                 break;
         }
         
@@ -9265,6 +9401,1643 @@ MLAQuizApp.prototype.setupMobileBackButton = function() {
             window.history.pushState({ medicalToolsActive: true }, '', window.location.href);
         }
     });
+};
+
+// Emergency Protocols Database
+const emergencyProtocols = {
+    'acls-vf-vt': {
+        name: 'ACLS: VF/VT',
+        category: 'cardiac',
+        urgency: 'emergency',
+        steps: [
+            'Verify unresponsiveness and no normal breathing',
+            'Begin CPR: 30:2 compressions to ventilations',
+            'Attach defibrillator/monitor',
+            'Check rhythm - VF/VT confirmed',
+            'Charge defibrillator to 200J (biphasic)',
+            'Clear area and deliver shock',
+            'Resume CPR immediately for 2 minutes',
+            'Check rhythm - if VF/VT persists, repeat shock',
+            'Give Adrenaline 1mg IV/IO after 2nd shock',
+            'Give Amiodarone 300mg IV/IO after 3rd shock',
+            'Continue cycles until ROSC or exhaustion'
+        ],
+        drugs: ['Adrenaline 1mg IV/IO every 3-5 minutes', 'Amiodarone 300mg IV/IO (then 150mg if needed)'],
+        ukGuideline: 'Resuscitation Council UK 2021',
+        criticalActions: ['High-quality CPR', 'Minimise interruptions', 'Consider reversible causes (4Hs 4Ts)']
+    },
+    'acls-pea-asystole': {
+        name: 'ACLS: PEA/Asystole',
+        category: 'cardiac',
+        urgency: 'emergency',
+        steps: [
+            'Verify unresponsiveness and no normal breathing',
+            'Begin CPR: 30:2 compressions to ventilations',
+            'Attach defibrillator/monitor',
+            'Check rhythm - PEA/Asystole confirmed',
+            'Continue CPR for 2 minutes',
+            'Give Adrenaline 1mg IV/IO as soon as possible',
+            'Check rhythm every 2 minutes',
+            'Repeat Adrenaline every 3-5 minutes',
+            'Treat reversible causes aggressively',
+            'Continue until ROSC or exhaustion'
+        ],
+        drugs: ['Adrenaline 1mg IV/IO every 3-5 minutes'],
+        ukGuideline: 'Resuscitation Council UK 2021',
+        criticalActions: ['High-quality CPR', 'Identify and treat reversible causes', 'Consider mechanical CPR device']
+    },
+    'sepsis-six': {
+        name: 'Sepsis 6 Bundle',
+        category: 'sepsis',
+        urgency: 'emergency',
+        steps: [
+            'Give high-flow oxygen (aim SpO2 94-98%)',
+            'Take blood cultures (and other cultures)',
+            'Give IV antibiotics within 1 hour',
+            'Give IV fluid resuscitation if hypotensive',
+            'Check lactate levels',
+            'Monitor urine output (aim >0.5ml/kg/hr)'
+        ],
+        drugs: ['Broad-spectrum antibiotics within 1 hour', '30ml/kg crystalloid if hypotensive'],
+        ukGuideline: 'NICE NG51',
+        criticalActions: ['Time-critical delivery', 'Source control', 'Early escalation to critical care']
+    },
+    'major-trauma': {
+        name: 'Major Trauma Protocol',
+        category: 'trauma',
+        urgency: 'emergency',
+        steps: [
+            'Primary survey: A-B-C-D-E',
+            'Airway with C-spine control',
+            'Breathing - chest examination, O2',
+            'Circulation - control bleeding, IV access',
+            'Disability - neurological assessment',
+            'Exposure - full examination, prevent hypothermia',
+            'Team leader to coordinate care',
+            'Activate major trauma team',
+            'CT trauma series if stable',
+            'Damage control surgery if unstable'
+        ],
+        drugs: ['Tranexamic acid 1g IV if bleeding', 'Blood products as per massive transfusion protocol'],
+        ukGuideline: 'NICE NG39',
+        criticalActions: ['Stop catastrophic bleeding', 'Prevent hypothermia', 'Rapid decision making']
+    },
+    'anaphylaxis': {
+        name: 'Anaphylaxis Management',
+        category: 'respiratory',
+        urgency: 'emergency',
+        steps: [
+            'Remove/avoid trigger if possible',
+            'Call for help immediately',
+            'Give Adrenaline 500mcg IM (0.5ml 1:1000)',
+            'Lie patient flat with legs raised',
+            'High-flow oxygen (15L via non-rebreather)',
+            'Establish IV access',
+            'Give IV fluids if hypotensive',
+            'Repeat Adrenaline after 5 minutes if no improvement',
+            'Give Chlorphenamine 10mg IV/IM',
+            'Give Hydrocortisone 200mg IV/IM'
+        ],
+        drugs: ['Adrenaline 500mcg IM (repeat if needed)', 'Chlorphenamine 10mg IV/IM', 'Hydrocortisone 200mg IV/IM'],
+        ukGuideline: 'Resuscitation Council UK 2021',
+        criticalActions: ['Early Adrenaline', 'Airway management', 'Fluid resuscitation']
+    },
+    'dka-protocol': {
+        name: 'DKA Management',
+        category: 'metabolic',
+        urgency: 'emergency',
+        steps: [
+            'Confirm diagnosis: glucose >11mmol/L, ketones >3mmol/L, pH <7.3',
+            'Start IV fluids: 0.9% saline 1L over 1 hour',
+            'Start fixed-rate insulin infusion: 0.1 units/kg/hr',
+            'Replace potassium as guided by levels',
+            'Monitor blood glucose, ketones, pH hourly',
+            'When glucose <14mmol/L, add 10% dextrose',
+            'Continue until ketones <0.6mmol/L and pH >7.3',
+            'Identify and treat precipitating cause',
+            'Convert to subcutaneous insulin when stable'
+        ],
+        drugs: ['0.9% saline', 'Insulin (Actrapid) 0.1 units/kg/hr', 'Potassium replacement'],
+        ukGuideline: 'Joint British Diabetes Societies 2013',
+        criticalActions: ['Fluid replacement', 'Insulin therapy', 'Potassium monitoring', 'Identify precipitant']
+    },
+    'hhs-protocol': {
+        name: 'HHS Management',
+        category: 'metabolic',
+        urgency: 'emergency',
+        steps: [
+            'Confirm diagnosis: glucose >30mmol/L, osmolality >320mOsm/kg',
+            'Calculate fluid deficit (usually 8-12L)',
+            'Start 0.9% saline 15-20ml/kg over first hour',
+            'Continue fluid replacement over 24-48 hours',
+            'Start insulin only when glucose stops falling with fluids',
+            'Insulin rate: 0.05 units/kg/hr (half DKA rate)',
+            'Replace potassium carefully',
+            'Monitor for cerebral oedema',
+            'Anticoagulation (LMWH) unless contraindicated'
+        ],
+        drugs: ['0.9% saline (large volumes)', 'Insulin (lower rate than DKA)', 'LMWH prophylaxis'],
+        ukGuideline: 'Joint British Diabetes Societies 2012',
+        criticalActions: ['Careful fluid replacement', 'Lower insulin doses', 'Thromboprophylaxis']
+    }
+};
+
+// Load Emergency Protocols
+MLAQuizApp.prototype.loadEmergencyProtocols = function() {
+    const container = document.getElementById('emergency-protocols-container');
+    if (!container) return;
+    
+    // Setup category filtering
+    this.setupEmergencyProtocolsSearch();
+    
+    // Display all protocols initially
+    this.displayEmergencyProtocols(Object.keys(emergencyProtocols));
+};
+
+MLAQuizApp.prototype.setupEmergencyProtocolsSearch = function() {
+    const categoryBtns = document.querySelectorAll('.emergency-categories .category-btn');
+    
+    const filterProtocols = () => {
+        const activeCategory = document.querySelector('.emergency-categories .category-btn.active')?.dataset.category || 'all';
+        
+        let filteredProtocols = Object.keys(emergencyProtocols);
+        
+        if (activeCategory !== 'all') {
+            filteredProtocols = filteredProtocols.filter(protocolId => 
+                emergencyProtocols[protocolId].category === activeCategory
+            );
+        }
+        
+        this.displayEmergencyProtocols(filteredProtocols);
+    };
+    
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterProtocols();
+        });
+    });
+};
+
+MLAQuizApp.prototype.displayEmergencyProtocols = function(protocolIds) {
+    const container = document.getElementById('emergency-protocols-container');
+    if (!container) return;
+    
+    if (protocolIds.length === 0) {
+        container.innerHTML = `
+            <div class="no-results">
+                <h3>🚨 No protocols found</h3>
+                <p>Try adjusting your category filter.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Sort by urgency (emergency first) then alphabetically
+    const urgencyOrder = { 'emergency': 0, 'high': 1, 'moderate': 2, 'low': 3 };
+    const sortedProtocolIds = protocolIds.sort((a, b) => {
+        const protocolA = emergencyProtocols[a];
+        const protocolB = emergencyProtocols[b];
+        
+        const urgencyDiff = urgencyOrder[protocolA.urgency] - urgencyOrder[protocolB.urgency];
+        if (urgencyDiff !== 0) return urgencyDiff;
+        
+        return protocolA.name.localeCompare(protocolB.name);
+    });
+    
+    const protocolsHtml = sortedProtocolIds.map(protocolId => {
+        const protocol = emergencyProtocols[protocolId];
+        const urgencyClass = protocol.urgency === 'emergency' ? 'emergency' : 'standard';
+        
+        return `
+            <div class="protocol-item ${urgencyClass}" onclick="window.quizApp.showProtocolDetail('${protocolId}')">
+                <div class="protocol-header">
+                    <h4>${protocol.name}</h4>
+                    <span class="protocol-urgency ${protocol.urgency}">${protocol.urgency.toUpperCase()}</span>
+                </div>
+                <div class="protocol-meta">
+                    <span class="protocol-category">${protocol.category}</span>
+                    <span class="protocol-guideline">${protocol.ukGuideline}</span>
+                </div>
+                <div class="protocol-actions">
+                    ${protocol.criticalActions.slice(0, 2).map(action => 
+                        `<span class="action-tag">${action}</span>`
+                    ).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = protocolsHtml;
+};
+
+MLAQuizApp.prototype.showProtocolDetail = function(protocolId) {
+    const protocol = emergencyProtocols[protocolId];
+    if (!protocol) return;
+    
+    const container = document.getElementById('emergency-protocols-container');
+    if (!container) return;
+    
+    const detailHtml = `
+        <div class="protocol-detail">
+            <div class="protocol-detail-header">
+                <button class="back-btn" onclick="window.quizApp.loadEmergencyProtocols(); event.stopPropagation();">← Back to Protocols</button>
+                <h3>${protocol.name}</h3>
+                <span class="protocol-urgency ${protocol.urgency}">${protocol.urgency.toUpperCase()}</span>
+            </div>
+            
+            <div class="protocol-steps">
+                <h4>📋 Protocol Steps</h4>
+                <ol class="step-list">
+                    ${protocol.steps.map(step => `<li>${step}</li>`).join('')}
+                </ol>
+            </div>
+            
+            <div class="protocol-drugs">
+                <h4>💊 Key Medications</h4>
+                <ul class="drug-list">
+                    ${protocol.drugs.map(drug => `<li>${drug}</li>`).join('')}
+                </ul>
+            </div>
+            
+            <div class="protocol-critical">
+                <h4>⚡ Critical Actions</h4>
+                <ul class="critical-list">
+                    ${protocol.criticalActions.map(action => `<li>${action}</li>`).join('')}
+                </ul>
+            </div>
+            
+            <div class="protocol-guideline">
+                <h4>📖 UK Guideline</h4>
+                <p>${protocol.ukGuideline}</p>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = detailHtml;
+};
+
+// Interpretation Tools Database  
+const interpretationTools = {
+    'ecg-basic': {
+        name: 'ECG Interpretation Guide',
+        category: 'ecg',
+        type: 'systematic',
+        steps: [
+            'Rate: Count QRS complexes (300/large squares or 1500/small squares)',
+            'Rhythm: Regular or irregular? P waves present?',
+            'Axis: Normal (-30° to +90°), left or right deviation?',
+            'P waves: Present before each QRS? Normal morphology?',
+            'PR interval: 120-200ms (3-5 small squares)',
+            'QRS width: <120ms (3 small squares) = narrow',
+            'ST segments: Elevated (>1mm) or depressed?',
+            'T waves: Upright in I, II, V3-V6? Inverted elsewhere?',
+            'QT interval: <440ms (men), <460ms (women)',
+            'Additional: Q waves, bundle branch blocks, etc.'
+        ],
+        normalValues: {
+            'Heart Rate': '60-100 bpm',
+            'PR Interval': '120-200ms',
+            'QRS Width': '<120ms',
+            'QT Interval': '<440ms (♂), <460ms (♀)'
+        },
+        commonAbnormalities: [
+            'STEMI: ST elevation ≥1mm in ≥2 contiguous leads',
+            'NSTEMI: ST depression, T wave inversion',
+            'AF: Irregularly irregular, absent P waves',
+            'Heart Block: Prolonged PR, dropped beats, AV dissociation'
+        ]
+    },
+    'abg-interpretation': {
+        name: 'ABG Interpretation',
+        category: 'abg',
+        type: 'systematic',
+        steps: [
+            'Check pH: Acidotic (<7.35) or alkalotic (>7.45)?',
+            'Primary disorder: Respiratory (CO2) or metabolic (HCO3)?',
+            'Compensation: Appropriate for primary disorder?',
+            'Oxygenation: PaO2 adequate for FiO2?',
+            'Calculate A-a gradient if hypoxic',
+            'Check electrolytes: Na+, K+, Cl-, lactate'
+        ],
+        normalValues: {
+            'pH': '7.35-7.45',
+            'PaCO2': '4.7-6.0 kPa (35-45 mmHg)',
+            'PaO2': '>10 kPa (75 mmHg) on air',
+            'HCO3-': '22-28 mmol/L',
+            'Base Excess': '-2 to +2 mmol/L'
+        },
+        compensation: {
+            'Metabolic Acidosis': 'Expected pCO2 = 1.5 × [HCO3] + 8 (±2)',
+            'Metabolic Alkalosis': 'Expected pCO2 = 0.7 × [HCO3] + 21 (±2)',
+            'Respiratory Acidosis': 'Acute: HCO3 ↑ by 1 per 10 pCO2 ↑',
+            'Respiratory Alkalosis': 'Acute: HCO3 ↓ by 2 per 10 pCO2 ↓'
+        }
+    },
+    'chest-xray': {
+        name: 'Chest X-Ray Systematic Review',
+        category: 'imaging',
+        type: 'systematic',
+        steps: [
+            'Patient details: Name, date, orientation (PA/AP/lateral)',
+            'Quality: Adequate inspiration (ribs 5-7 visible)? Rotation?',
+            'Airways: Trachea central? Carina visible?',
+            'Breathing: Lung fields clear? Pneumothorax?',
+            'Circulation: Heart size (<50% thoracic width)? Mediastinum?',
+            'Disability: Bones intact? Soft tissues normal?',
+            'Everything else: Lines, tubes, pacemakers, etc.',
+            'Review areas: Behind heart, costophrenic angles'
+        ],
+        commonFindings: [
+            'Consolidation: Air space opacification with air bronchograms',
+            'Pneumothorax: Pleural line with absent lung markings',
+            'Pleural effusion: Costophrenic angle blunting, meniscus sign',
+            'Pulmonary oedema: Bilateral alveolar infiltrates, Kerley B lines'
+        ],
+        redFlags: [
+            'Tension pneumothorax: Mediastinal shift away',
+            'Massive PE: Right heart strain, oligaemia',
+            'Aortic dissection: Widened mediastinum'
+        ]
+    },
+    'ct-head': {
+        name: 'CT Head Interpretation',
+        category: 'imaging',
+        type: 'systematic',
+        steps: [
+            'Patient details and clinical context',
+            'Image quality: Motion artefact? Contrast given?',
+            'Blood: High density (hyperdense) areas?',
+            'Brain parenchyma: Symmetry? Grey-white differentiation?',
+            'CSF spaces: Ventricles, sulci, cisterns normal?',
+            'Bones: Skull fractures? Soft tissue swelling?',
+            'Midline shift: >5mm suggests raised ICP',
+            'Mass effect: Compression of ventricles/cisterns?'
+        ],
+        densities: {
+            'Hyperdense': 'Fresh blood, calcification, metal',
+            'Isodense': 'Normal brain tissue',
+            'Hypodense': 'Oedema, old infarct, CSF'
+        },
+        emergencyFindings: [
+            'Acute bleed: Hyperdense area in brain/ventricles',
+            'Mass effect: Midline shift, compressed ventricles',
+            'Herniation: Loss of cisterns, uncal herniation',
+            'Hydrocephalus: Enlarged ventricles'
+        ]
+    }
+};
+
+// Load Interpretation Tools
+MLAQuizApp.prototype.loadInterpretationTools = function() {
+    const container = document.getElementById('interpretation-container');
+    if (!container) return;
+    
+    // Setup category filtering
+    this.setupInterpretationSearch();
+    
+    // Display all tools initially
+    this.displayInterpretationTools(Object.keys(interpretationTools));
+};
+
+MLAQuizApp.prototype.setupInterpretationSearch = function() {
+    const categoryBtns = document.querySelectorAll('.interpretation-categories .category-btn');
+    
+    const filterTools = () => {
+        const activeCategory = document.querySelector('.interpretation-categories .category-btn.active')?.dataset.category || 'all';
+        
+        let filteredTools = Object.keys(interpretationTools);
+        
+        if (activeCategory !== 'all') {
+            filteredTools = filteredTools.filter(toolId => 
+                interpretationTools[toolId].category === activeCategory
+            );
+        }
+        
+        this.displayInterpretationTools(filteredTools);
+    };
+    
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterTools();
+        });
+    });
+};
+
+MLAQuizApp.prototype.displayInterpretationTools = function(toolIds) {
+    const container = document.getElementById('interpretation-container');
+    if (!container) return;
+    
+    if (toolIds.length === 0) {
+        container.innerHTML = `
+            <div class="no-results">
+                <h3>📋 No interpretation tools found</h3>
+                <p>Try adjusting your category filter.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const toolsHtml = toolIds.map(toolId => {
+        const tool = interpretationTools[toolId];
+        
+        return `
+            <div class="interpretation-item" onclick="window.quizApp.showInterpretationDetail('${toolId}')">
+                <div class="interpretation-header">
+                    <h4>${tool.name}</h4>
+                    <span class="interpretation-type">${tool.type}</span>
+                </div>
+                <div class="interpretation-meta">
+                    <span class="interpretation-category">${tool.category}</span>
+                    <span class="step-count">${tool.steps.length} steps</span>
+                </div>
+                <div class="interpretation-preview">
+                    ${tool.steps.slice(0, 2).map(step => 
+                        `<div class="step-preview">• ${step}</div>`
+                    ).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = toolsHtml;
+};
+
+MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
+    const tool = interpretationTools[toolId];
+    if (!tool) return;
+    
+    const container = document.getElementById('interpretation-container');
+    if (!container) return;
+    
+    let additionalSections = '';
+    
+    if (tool.normalValues) {
+        additionalSections += `
+            <div class="normal-values">
+                <h4>📊 Normal Values</h4>
+                <ul class="values-list">
+                    ${Object.entries(tool.normalValues).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.commonAbnormalities) {
+        additionalSections += `
+            <div class="common-abnormalities">
+                <h4>⚠️ Common Abnormalities</h4>
+                <ul class="abnormalities-list">
+                    ${tool.commonAbnormalities.map(abnormality => `<li>${abnormality}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.compensation) {
+        additionalSections += `
+            <div class="compensation-rules">
+                <h4>⚖️ Compensation Rules</h4>
+                <ul class="compensation-list">
+                    ${Object.entries(tool.compensation).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.emergencyFindings) {
+        additionalSections += `
+            <div class="emergency-findings">
+                <h4>🚨 Emergency Findings</h4>
+                <ul class="emergency-list">
+                    ${tool.emergencyFindings.map(finding => `<li>${finding}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    const detailHtml = `
+        <div class="interpretation-detail">
+            <div class="interpretation-detail-header">
+                <button class="back-btn" onclick="window.quizApp.loadInterpretationTools(); event.stopPropagation();">← Back to Interpretation Tools</button>
+                <h3>${tool.name}</h3>
+                <span class="interpretation-type">${tool.type}</span>
+            </div>
+            
+            <div class="interpretation-steps">
+                <h4>📋 Systematic Approach</h4>
+                <ol class="step-list">
+                    ${tool.steps.map(step => `<li>${step}</li>`).join('')}
+                </ol>
+            </div>
+            
+            ${additionalSections}
+        </div>
+    `;
+    
+    container.innerHTML = detailHtml;
+};
+
+// Additional Calculator Functions for New Clinical Scores
+
+// GRACE Score Calculator
+MLAQuizApp.prototype.getGRACECalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>GRACE Score for ACS Risk Assessment</h4>
+            <div class="calc-input-group">
+                <label>Age (years):</label>
+                <input type="number" id="grace-age" placeholder="65" min="0" max="120">
+            </div>
+            <div class="calc-input-group">
+                <label>Heart Rate (bpm):</label>
+                <input type="number" id="grace-hr" placeholder="80" min="30" max="250">
+            </div>
+            <div class="calc-input-group">
+                <label>Systolic BP (mmHg):</label>
+                <input type="number" id="grace-sbp" placeholder="120" min="50" max="300">
+            </div>
+            <div class="calc-input-group">
+                <label>Creatinine (μmol/L):</label>
+                <input type="number" id="grace-creatinine" placeholder="100" min="50" max="1000">
+            </div>
+            <div class="calc-checkbox-group">
+                <label><input type="checkbox" id="grace-killip2"> Killip Class II-IV</label>
+                <label><input type="checkbox" id="grace-cardiac-arrest"> Cardiac arrest</label>
+                <label><input type="checkbox" id="grace-st-deviation"> ST deviation</label>
+                <label><input type="checkbox" id="grace-elevated-enzymes"> Elevated cardiac enzymes</label>
+            </div>
+            <button onclick="window.quizApp.calculateGRACE()">Calculate GRACE Score</button>
+            <div id="grace-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>GRACE Risk:</strong> Low ≤108 | Intermediate 109-140 | High >140</small>
+            </div>
+        </div>
+    `;
+};
+
+// CRUSADE Score Calculator
+MLAQuizApp.prototype.getCRUSADECalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>CRUSADE Bleeding Risk Score</h4>
+            <div class="calc-input-group">
+                <label>Baseline Haematocrit (%):</label>
+                <input type="number" id="crusade-hct" placeholder="40" min="10" max="60" step="0.1">
+            </div>
+            <div class="calc-input-group">
+                <label>Creatinine Clearance (ml/min):</label>
+                <input type="number" id="crusade-ccr" placeholder="80" min="5" max="200">
+            </div>
+            <div class="calc-input-group">
+                <label>Heart Rate (bpm):</label>
+                <input type="number" id="crusade-hr" placeholder="75" min="30" max="250">
+            </div>
+            <div class="calc-input-group">
+                <label>Systolic BP (mmHg):</label>
+                <input type="number" id="crusade-sbp" placeholder="130" min="50" max="300">
+            </div>
+            <div class="calc-input-group">
+                <label>Sex:</label>
+                <select id="crusade-sex">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+            <div class="calc-checkbox-group">
+                <label><input type="checkbox" id="crusade-chf"> Signs of CHF at presentation</label>
+                <label><input type="checkbox" id="crusade-vascular"> Prior vascular disease</label>
+                <label><input type="checkbox" id="crusade-diabetes"> Diabetes mellitus</label>
+            </div>
+            <button onclick="window.quizApp.calculateCRUSADE()">Calculate CRUSADE Score</button>
+            <div id="crusade-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Bleeding Risk:</strong> Very Low ≤20 | Low 21-30 | Moderate 31-40 | High 41-50 | Very High >50</small>
+            </div>
+        </div>
+    `;
+};
+
+// PHQ-9 Depression Scale
+MLAQuizApp.prototype.getPHQ9Calculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>PHQ-9 Depression Screening Scale</h4>
+            <p>Over the last 2 weeks, how often have you been bothered by any of the following problems?</p>
+            
+            ${this.getPHQ9Question('phq9-q1', 'Little interest or pleasure in doing things')}
+            ${this.getPHQ9Question('phq9-q2', 'Feeling down, depressed, or hopeless')}
+            ${this.getPHQ9Question('phq9-q3', 'Trouble falling or staying asleep, or sleeping too much')}
+            ${this.getPHQ9Question('phq9-q4', 'Feeling tired or having little energy')}
+            ${this.getPHQ9Question('phq9-q5', 'Poor appetite or overeating')}
+            ${this.getPHQ9Question('phq9-q6', 'Feeling bad about yourself or that you are a failure')}
+            ${this.getPHQ9Question('phq9-q7', 'Trouble concentrating on things')}
+            ${this.getPHQ9Question('phq9-q8', 'Moving or speaking slowly, or being restless')}
+            ${this.getPHQ9Question('phq9-q9', 'Thoughts that you would be better off dead')}
+            
+            <button onclick="window.quizApp.calculatePHQ9()">Calculate PHQ-9 Score</button>
+            <div id="phq9-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Depression Severity:</strong> None/Minimal 0-4 | Mild 5-9 | Moderate 10-14 | Moderately Severe 15-19 | Severe 20-27</small>
+            </div>
+        </div>
+    `;
+};
+
+MLAQuizApp.prototype.getPHQ9Question = function(id, question) {
+    return `
+        <div class="calc-input-group">
+            <label>${question}:</label>
+            <select id="${id}">
+                <option value="0">Not at all</option>
+                <option value="1">Several days</option>
+                <option value="2">More than half the days</option>
+                <option value="3">Nearly every day</option>
+            </select>
+        </div>
+    `;
+};
+
+// GAD-7 Anxiety Scale
+MLAQuizApp.prototype.getGAD7Calculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>GAD-7 Anxiety Screening Scale</h4>
+            <p>Over the last 2 weeks, how often have you been bothered by any of the following problems?</p>
+            
+            ${this.getGAD7Question('gad7-q1', 'Feeling nervous, anxious or on edge')}
+            ${this.getGAD7Question('gad7-q2', 'Not being able to stop or control worrying')}
+            ${this.getGAD7Question('gad7-q3', 'Worrying too much about different things')}
+            ${this.getGAD7Question('gad7-q4', 'Trouble relaxing')}
+            ${this.getGAD7Question('gad7-q5', 'Being so restless that it is hard to sit still')}
+            ${this.getGAD7Question('gad7-q6', 'Becoming easily annoyed or irritable')}
+            ${this.getGAD7Question('gad7-q7', 'Feeling afraid as if something awful might happen')}
+            
+            <button onclick="window.quizApp.calculateGAD7()">Calculate GAD-7 Score</button>
+            <div id="gad7-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Anxiety Severity:</strong> Minimal 0-4 | Mild 5-9 | Moderate 10-14 | Severe 15-21</small>
+            </div>
+        </div>
+    `;
+};
+
+MLAQuizApp.prototype.getGAD7Question = function(id, question) {
+    return `
+        <div class="calc-input-group">
+            <label>${question}:</label>
+            <select id="${id}">
+                <option value="0">Not at all</option>
+                <option value="1">Several days</option>
+                <option value="2">More than half the days</option>
+                <option value="3">Nearly every day</option>
+            </select>
+        </div>
+    `;
+};
+
+// NIH Stroke Scale
+MLAQuizApp.prototype.getNIHSSCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>NIH Stroke Scale (NIHSS)</h4>
+            <div class="calc-input-group">
+                <label>1a. Level of Consciousness:</label>
+                <select id="nihss-loc">
+                    <option value="0">Alert</option>
+                    <option value="1">Drowsy</option>
+                    <option value="2">Stuporous</option>
+                    <option value="3">Coma</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>1b. LOC Questions (age, month):</label>
+                <select id="nihss-questions">
+                    <option value="0">Both correct</option>
+                    <option value="1">One correct</option>
+                    <option value="2">Neither correct</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>1c. LOC Commands (open/close eyes, grip):</label>
+                <select id="nihss-commands">
+                    <option value="0">Both correct</option>
+                    <option value="1">One correct</option>
+                    <option value="2">Neither correct</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>2. Best Gaze:</label>
+                <select id="nihss-gaze">
+                    <option value="0">Normal</option>
+                    <option value="1">Partial gaze palsy</option>
+                    <option value="2">Forced deviation</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>3. Visual Fields:</label>
+                <select id="nihss-visual">
+                    <option value="0">No visual loss</option>
+                    <option value="1">Partial hemianopia</option>
+                    <option value="2">Complete hemianopia</option>
+                    <option value="3">Bilateral hemianopia</option>
+                </select>
+            </div>
+            <button onclick="window.quizApp.calculateNIHSS()">Calculate NIHSS Score</button>
+            <div id="nihss-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Stroke Severity:</strong> Minor 0-4 | Moderate 5-15 | Moderate-Severe 16-20 | Severe >20</small>
+            </div>
+        </div>
+    `;
+};
+
+// Insulin Sliding Scale Calculator
+MLAQuizApp.prototype.getInsulinSlidingCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Insulin Sliding Scale Calculator</h4>
+            <div class="calc-input-group">
+                <label>Current Blood Glucose (mmol/L):</label>
+                <input type="number" id="insulin-glucose" placeholder="12.5" step="0.1" min="1" max="50">
+            </div>
+            <div class="calc-input-group">
+                <label>Patient Weight (kg):</label>
+                <input type="number" id="insulin-weight" placeholder="70" min="20" max="200">
+            </div>
+            <div class="calc-input-group">
+                <label>Insulin Sensitivity:</label>
+                <select id="insulin-sensitivity">
+                    <option value="normal">Normal (0.5-1 unit/kg/day)</option>
+                    <option value="resistant">Insulin resistant (>1 unit/kg/day)</option>
+                    <option value="sensitive">Insulin sensitive (<0.5 unit/kg/day)</option>
+                </select>
+            </div>
+            <div class="calc-checkbox-group">
+                <label><input type="checkbox" id="insulin-critical"> Critically ill patient</label>
+                <label><input type="checkbox" id="insulin-steroids"> On high-dose steroids</label>
+            </div>
+            <button onclick="window.quizApp.calculateInsulinSliding()">Calculate Insulin Dose</button>
+            <div id="insulin-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Target glucose:</strong> 6-10 mmol/L (general wards) | 6-8 mmol/L (critical care)</small>
+            </div>
+        </div>
+    `;
+};
+
+// Vasopressor Dosing Calculator
+MLAQuizApp.prototype.getVasopressorCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Vasopressor Dosing Calculator</h4>
+            <div class="calc-input-group">
+                <label>Patient Weight (kg):</label>
+                <input type="number" id="vaso-weight" placeholder="70" min="20" max="200">
+            </div>
+            <div class="calc-input-group">
+                <label>Vasopressor:</label>
+                <select id="vaso-drug">
+                    <option value="noradrenaline">Noradrenaline</option>
+                    <option value="adrenaline">Adrenaline</option>
+                    <option value="vasopressin">Vasopressin</option>
+                    <option value="dopamine">Dopamine</option>
+                    <option value="dobutamine">Dobutamine</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>Target MAP (mmHg):</label>
+                <input type="number" id="vaso-map" placeholder="65" min="50" max="120">
+            </div>
+            <div class="calc-input-group">
+                <label>Starting Dose Level:</label>
+                <select id="vaso-dose-level">
+                    <option value="low">Low (initial)</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="max">Maximum</option>
+                </select>
+            </div>
+            <button onclick="window.quizApp.calculateVasopressor()">Calculate Dosing</button>
+            <div id="vaso-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Note:</strong> All doses are guidelines only. Titrate to clinical response and MAP target.</small>
+            </div>
+        </div>
+    `;
+};
+
+// Paediatric Dosing Calculator
+MLAQuizApp.prototype.getPaediatricDosingCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Paediatric Drug Dosing Calculator</h4>
+            <div class="calc-input-group">
+                <label>Child's Weight (kg):</label>
+                <input type="number" id="paed-weight" placeholder="20" min="1" max="100" step="0.1">
+            </div>
+            <div class="calc-input-group">
+                <label>Child's Age:</label>
+                <select id="paed-age">
+                    <option value="neonate">Neonate (0-28 days)</option>
+                    <option value="infant">Infant (1 month-2 years)</option>
+                    <option value="child">Child (2-12 years)</option>
+                    <option value="adolescent">Adolescent (12-18 years)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>Drug:</label>
+                <select id="paed-drug">
+                    <option value="paracetamol">Paracetamol</option>
+                    <option value="ibuprofen">Ibuprofen</option>
+                    <option value="amoxicillin">Amoxicillin</option>
+                    <option value="prednisolone">Prednisolone</option>
+                    <option value="salbutamol">Salbutamol</option>
+                    <option value="adrenaline">Adrenaline (anaphylaxis)</option>
+                </select>
+            </div>
+            <div class="calc-input-group">
+                <label>Indication:</label>
+                <select id="paed-indication">
+                    <option value="standard">Standard dosing</option>
+                    <option value="emergency">Emergency/Loading dose</option>
+                    <option value="maintenance">Maintenance therapy</option>
+                </select>
+            </div>
+            <button onclick="window.quizApp.calculatePaediatricDosing()">Calculate Dose</button>
+            <div id="paed-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Warning:</strong> Always check local guidelines and maximum adult doses. Verify calculations independently.</small>
+            </div>
+        </div>
+    `;
+};
+
+// Now add the calculation functions
+MLAQuizApp.prototype.calculateGRACE = function() {
+    const age = parseInt(document.getElementById('grace-age').value);
+    const hr = parseInt(document.getElementById('grace-hr').value);
+    const sbp = parseInt(document.getElementById('grace-sbp').value);
+    const creatinine = parseInt(document.getElementById('grace-creatinine').value);
+    
+    if (!age || !hr || !sbp || !creatinine) {
+        document.getElementById('grace-result').innerHTML = '<p class="error">Please fill in all required fields</p>';
+        return;
+    }
+    
+    let score = 0;
+    
+    // Age scoring
+    if (age < 30) score += 0;
+    else if (age < 40) score += 8;
+    else if (age < 50) score += 25;
+    else if (age < 60) score += 41;
+    else if (age < 70) score += 58;
+    else if (age < 80) score += 75;
+    else score += 91;
+    
+    // Heart rate scoring
+    if (hr < 50) score += 0;
+    else if (hr < 70) score += 3;
+    else if (hr < 90) score += 9;
+    else if (hr < 110) score += 15;
+    else if (hr < 150) score += 24;
+    else if (hr < 200) score += 38;
+    else score += 46;
+    
+    // Systolic BP scoring
+    if (sbp >= 200) score += 0;
+    else if (sbp >= 160) score += 10;
+    else if (sbp >= 140) score += 18;
+    else if (sbp >= 120) score += 24;
+    else if (sbp >= 100) score += 34;
+    else if (sbp >= 80) score += 43;
+    else score += 53;
+    
+    // Creatinine scoring
+    if (creatinine < 35) score += 1;
+    else if (creatinine < 71) score += 4;
+    else if (creatinine < 107) score += 7;
+    else if (creatinine < 177) score += 10;
+    else if (creatinine < 354) score += 13;
+    else score += 21;
+    
+    // Additional factors
+    if (document.getElementById('grace-killip2').checked) score += 20;
+    if (document.getElementById('grace-cardiac-arrest').checked) score += 43;
+    if (document.getElementById('grace-st-deviation').checked) score += 28;
+    if (document.getElementById('grace-elevated-enzymes').checked) score += 14;
+    
+    let riskLevel = '';
+    let mortality = '';
+    let color = '';
+    
+    if (score <= 108) {
+        riskLevel = 'Low Risk';
+        mortality = '<1% in-hospital mortality';
+        color = '#4CAF50';
+    } else if (score <= 140) {
+        riskLevel = 'Intermediate Risk';
+        mortality = '1-3% in-hospital mortality';
+        color = '#FF9800';
+    } else {
+        riskLevel = 'High Risk';
+        mortality = '>3% in-hospital mortality';
+        color = '#F44336';
+    }
+    
+    document.getElementById('grace-result').innerHTML = `
+        <h4 style="color: ${color}">GRACE Score: ${score}</h4>
+        <p><strong>Risk Level:</strong> ${riskLevel}</p>
+        <p><strong>Prognosis:</strong> ${mortality}</p>
+        <p><strong>Recommendation:</strong> ${score > 140 ? 'Early invasive strategy recommended' : 'Consider conservative or early invasive strategy'}</p>
+    `;
+};
+
+MLAQuizApp.prototype.calculatePHQ9 = function() {
+    let totalScore = 0;
+    
+    for (let i = 1; i <= 9; i++) {
+        const value = parseInt(document.getElementById(`phq9-q${i}`).value) || 0;
+        totalScore += value;
+    }
+    
+    let severity = '';
+    let recommendation = '';
+    let color = '';
+    
+    if (totalScore <= 4) {
+        severity = 'None/Minimal Depression';
+        recommendation = 'No treatment required. Consider routine screening in high-risk populations.';
+        color = '#4CAF50';
+    } else if (totalScore <= 9) {
+        severity = 'Mild Depression';
+        recommendation = 'Consider watchful waiting, repeat PHQ-9 in 2 weeks. Consider counselling.';
+        color = '#8BC34A';
+    } else if (totalScore <= 14) {
+        severity = 'Moderate Depression';
+        recommendation = 'Antidepressant medication or psychotherapy. Monitor closely.';
+        color = '#FF9800';
+    } else if (totalScore <= 19) {
+        severity = 'Moderately Severe Depression';
+        recommendation = 'Antidepressant medication AND psychotherapy. Consider psychiatry referral.';
+        color = '#FF5722';
+    } else {
+        severity = 'Severe Depression';
+        recommendation = 'Urgent psychiatry referral. Consider risk assessment. Antidepressant + psychotherapy.';
+        color = '#F44336';
+    }
+    
+    // Check question 9 for suicidal ideation
+    const q9Score = parseInt(document.getElementById('phq9-q9').value) || 0;
+    let suicidalWarning = '';
+    
+    if (q9Score > 0) {
+        suicidalWarning = `<div class="suicide-warning" style="background: #ffebee; border-left: 4px solid #f44336; padding: 10px; margin: 10px 0;">
+            <strong>⚠️ SUICIDAL IDEATION DETECTED</strong><br>
+            Score ${q9Score} on question 9. Immediate risk assessment required.
+        </div>`;
+    }
+    
+    document.getElementById('phq9-result').innerHTML = `
+        <h4 style="color: ${color}">PHQ-9 Score: ${totalScore}/27</h4>
+        <p><strong>Severity:</strong> ${severity}</p>
+        <p><strong>Recommendation:</strong> ${recommendation}</p>
+        ${suicidalWarning}
+    `;
+};
+
+MLAQuizApp.prototype.calculateGAD7 = function() {
+    let totalScore = 0;
+    
+    for (let i = 1; i <= 7; i++) {
+        const value = parseInt(document.getElementById(`gad7-q${i}`).value) || 0;
+        totalScore += value;
+    }
+    
+    let severity = '';
+    let recommendation = '';
+    let color = '';
+    
+    if (totalScore <= 4) {
+        severity = 'Minimal Anxiety';
+        recommendation = 'No treatment required. Monitor if risk factors present.';
+        color = '#4CAF50';
+    } else if (totalScore <= 9) {
+        severity = 'Mild Anxiety';
+        recommendation = 'Consider watchful waiting, self-help resources, or brief counselling.';
+        color = '#8BC34A';
+    } else if (totalScore <= 14) {
+        severity = 'Moderate Anxiety';
+        recommendation = 'Consider therapy (CBT preferred) or medication. Regular monitoring.';
+        color = '#FF9800';
+    } else {
+        severity = 'Severe Anxiety';
+        recommendation = 'Urgent referral for specialist assessment. Consider combination therapy.';
+        color = '#F44336';
+    }
+    
+    document.getElementById('gad7-result').innerHTML = `
+        <h4 style="color: ${color}">GAD-7 Score: ${totalScore}/21</h4>
+        <p><strong>Severity:</strong> ${severity}</p>
+        <p><strong>Recommendation:</strong> ${recommendation}</p>
+    `;
+};
+
+MLAQuizApp.prototype.calculateNIHSS = function() {
+    // This is a simplified version - full NIHSS has 15 items
+    let totalScore = 0;
+    
+    totalScore += parseInt(document.getElementById('nihss-loc').value) || 0;
+    totalScore += parseInt(document.getElementById('nihss-questions').value) || 0;
+    totalScore += parseInt(document.getElementById('nihss-commands').value) || 0;
+    totalScore += parseInt(document.getElementById('nihss-gaze').value) || 0;
+    totalScore += parseInt(document.getElementById('nihss-visual').value) || 0;
+    
+    let severity = '';
+    let recommendation = '';
+    let color = '';
+    
+    if (totalScore <= 4) {
+        severity = 'Minor Stroke';
+        recommendation = 'Consider thrombolysis if within window. Good prognosis.';
+        color = '#4CAF50';
+    } else if (totalScore <= 15) {
+        severity = 'Moderate Stroke';
+        recommendation = 'Thrombolysis if eligible. Moderate disability likely.';
+        color = '#FF9800';
+    } else if (totalScore <= 20) {
+        severity = 'Moderate-Severe Stroke';
+        recommendation = 'Consider thrombectomy if large vessel occlusion. Significant disability likely.';
+        color = '#FF5722';
+    } else {
+        severity = 'Severe Stroke';
+        recommendation = 'Emergency intervention if eligible. High risk of severe disability/death.';
+        color = '#F44336';
+    }
+    
+    document.getElementById('nihss-result').innerHTML = `
+        <h4 style="color: ${color}">NIHSS Score: ${totalScore} (partial)</h4>
+        <p><strong>Severity:</strong> ${severity}</p>
+        <p><strong>Recommendation:</strong> ${recommendation}</p>
+        <p><em>Note: This is a simplified 5-item version. Full NIHSS has 15 items.</em></p>
+    `;
+};
+
+MLAQuizApp.prototype.calculateInsulinSliding = function() {
+    const glucose = parseFloat(document.getElementById('insulin-glucose').value);
+    const weight = parseFloat(document.getElementById('insulin-weight').value);
+    const sensitivity = document.getElementById('insulin-sensitivity').value;
+    const critical = document.getElementById('insulin-critical').checked;
+    const steroids = document.getElementById('insulin-steroids').checked;
+    
+    if (!glucose || !weight) {
+        document.getElementById('insulin-result').innerHTML = '<p class="error">Please enter glucose and weight</p>';
+        return;
+    }
+    
+    let targetGlucose = critical ? 7 : 8; // mmol/L
+    let correctionFactor = 3; // Default correction factor
+    
+    // Adjust correction factor based on sensitivity
+    if (sensitivity === 'sensitive') correctionFactor = 4;
+    else if (sensitivity === 'resistant') correctionFactor = 2;
+    
+    // Adjust for steroids
+    if (steroids) correctionFactor = correctionFactor * 0.7;
+    
+    // Calculate correction dose
+    let correctionDose = Math.max(0, (glucose - targetGlucose) / correctionFactor);
+    
+    // Round to practical doses
+    correctionDose = Math.round(correctionDose * 2) / 2; // Round to nearest 0.5 units
+    
+    let recommendation = '';
+    let color = '#2196F3';
+    
+    if (glucose < 4) {
+        recommendation = '⚠️ HYPOGLYCAEMIA - Give glucose/dextrose. Check in 15 minutes.';
+        color = '#F44336';
+        correctionDose = 0;
+    } else if (glucose < 6) {
+        recommendation = 'Glucose below target. Consider reducing insulin or giving snack.';
+        color = '#FF9800';
+        correctionDose = 0;
+    } else if (glucose <= 10) {
+        recommendation = 'Glucose within acceptable range.';
+        color = '#4CAF50';
+    } else if (glucose <= 15) {
+        recommendation = 'Glucose elevated. Give correction dose.';
+        color = '#FF9800';
+    } else {
+        recommendation = 'Glucose significantly elevated. Consider IV insulin infusion.';
+        color = '#F44336';
+    }
+    
+    document.getElementById('insulin-result').innerHTML = `
+        <h4 style="color: ${color}">Insulin Dose Calculation</h4>
+        <p><strong>Current Glucose:</strong> ${glucose} mmol/L</p>
+        <p><strong>Target Glucose:</strong> ${targetGlucose} mmol/L</p>
+        <p><strong>Correction Factor:</strong> ${correctionFactor}</p>
+        <p><strong>Recommended Dose:</strong> ${correctionDose} units subcutaneous</p>
+        <p><strong>Action:</strong> ${recommendation}</p>
+        <p><em>Recheck glucose in 2-4 hours</em></p>
+    `;
+};
+
+MLAQuizApp.prototype.calculateVasopressor = function() {
+    const weight = parseFloat(document.getElementById('vaso-weight').value);
+    const drug = document.getElementById('vaso-drug').value;
+    const map = parseInt(document.getElementById('vaso-map').value);
+    const doseLevel = document.getElementById('vaso-dose-level').value;
+    
+    if (!weight || !map) {
+        document.getElementById('vaso-result').innerHTML = '<p class="error">Please enter weight and MAP target</p>';
+        return;
+    }
+    
+    const vasopressorDoses = {
+        'noradrenaline': {
+            'low': { min: 0.05, max: 0.1, units: 'mcg/kg/min' },
+            'medium': { min: 0.1, max: 0.3, units: 'mcg/kg/min' },
+            'high': { min: 0.3, max: 1.0, units: 'mcg/kg/min' },
+            'max': { min: 1.0, max: 3.0, units: 'mcg/kg/min' }
+        },
+        'adrenaline': {
+            'low': { min: 0.05, max: 0.1, units: 'mcg/kg/min' },
+            'medium': { min: 0.1, max: 0.3, units: 'mcg/kg/min' },
+            'high': { min: 0.3, max: 1.0, units: 'mcg/kg/min' },
+            'max': { min: 1.0, max: 2.0, units: 'mcg/kg/min' }
+        },
+        'vasopressin': {
+            'low': { min: 0.01, max: 0.04, units: 'units/min' },
+            'medium': { min: 0.04, max: 0.06, units: 'units/min' },
+            'high': { min: 0.06, max: 0.08, units: 'units/min' },
+            'max': { min: 0.08, max: 0.1, units: 'units/min' }
+        }
+    };
+    
+    const dose = vasopressorDoses[drug][doseLevel];
+    let startDose, maxDose;
+    
+    if (drug === 'vasopressin') {
+        startDose = dose.min;
+        maxDose = dose.max;
+    } else {
+        startDose = dose.min * weight;
+        maxDose = dose.max * weight;
+    }
+    
+    let infusionRates = '';
+    if (drug !== 'vasopressin') {
+        // Calculate ml/hr for common concentrations
+        const concentration = drug === 'noradrenaline' ? 4 : 4; // mg in 50ml
+        const startRate = (startDose * 60) / (concentration * 1000) * 50;
+        const maxRate = (maxDose * 60) / (concentration * 1000) * 50;
+        infusionRates = `<p><strong>Infusion Rate:</strong> ${startRate.toFixed(1)}-${maxRate.toFixed(1)} ml/hr (${concentration}mg in 50ml)</p>`;
+    }
+    
+    document.getElementById('vaso-result').innerHTML = `
+        <h4>Vasopressor Dosing: ${drug.charAt(0).toUpperCase() + drug.slice(1)}</h4>
+        <p><strong>Patient Weight:</strong> ${weight} kg</p>
+        <p><strong>Target MAP:</strong> ${map} mmHg</p>
+        <p><strong>Dose Range:</strong> ${startDose.toFixed(2)}-${maxDose.toFixed(2)} ${dose.units}</p>
+        ${infusionRates}
+        <p><strong>Monitoring:</strong> MAP every 5-15 minutes, titrate by 25-50% increments</p>
+        <p><em>Start at lowest dose and titrate to MAP target</em></p>
+    `;
+};
+
+MLAQuizApp.prototype.calculatePaediatricDosing = function() {
+    const weight = parseFloat(document.getElementById('paed-weight').value);
+    const age = document.getElementById('paed-age').value;
+    const drug = document.getElementById('paed-drug').value;
+    const indication = document.getElementById('paed-indication').value;
+    
+    if (!weight) {
+        document.getElementById('paed-result').innerHTML = '<p class="error">Please enter child\'s weight</p>';
+        return;
+    }
+    
+    const paediatricDoses = {
+        'paracetamol': {
+            standard: { dose: '15 mg/kg', frequency: 'every 6 hours', max: '60 mg/kg/day', adult_max: '4g/day' },
+            emergency: { dose: '20 mg/kg', frequency: 'loading dose', max: 'then 15 mg/kg 6-hourly', adult_max: '4g/day' }
+        },
+        'ibuprofen': {
+            standard: { dose: '5-10 mg/kg', frequency: 'every 6-8 hours', max: '30 mg/kg/day', adult_max: '2.4g/day' },
+            emergency: { dose: '10 mg/kg', frequency: 'every 6 hours', max: '40 mg/kg/day', adult_max: '2.4g/day' }
+        },
+        'amoxicillin': {
+            standard: { dose: '25-50 mg/kg/day', frequency: 'divided 8-hourly', max: '3g/day', adult_max: '3g/day' },
+            emergency: { dose: '80-90 mg/kg/day', frequency: 'divided 8-hourly', max: '6g/day', adult_max: '6g/day' }
+        },
+        'adrenaline': {
+            emergency: { dose: '0.01 mg/kg (0.01 ml/kg of 1:1000)', frequency: 'IM single dose', max: '0.5mg max', adult_max: '0.5mg' }
+        }
+    };
+    
+    const drugInfo = paediatricDoses[drug];
+    const doseInfo = drugInfo[indication] || drugInfo.standard;
+    
+    // Calculate actual dose
+    let calculatedDose = '';
+    let maxDose = '';
+    
+    if (drug === 'adrenaline') {
+        const dose = Math.min(weight * 0.01, 0.5);
+        calculatedDose = `${dose.toFixed(2)} mg (${dose.toFixed(2)} ml of 1:1000)`;
+    } else {
+        // Extract numeric dose
+        const doseMatch = doseInfo.dose.match(/(\d+(?:-\d+)?)/);
+        if (doseMatch) {
+            const doseValue = doseMatch[1].includes('-') ? 
+                doseMatch[1].split('-').map(Number) : [Number(doseMatch[1])];
+            
+            if (doseValue.length === 2) {
+                calculatedDose = `${(doseValue[0] * weight).toFixed(1)}-${(doseValue[1] * weight).toFixed(1)} mg`;
+            } else {
+                calculatedDose = `${(doseValue[0] * weight).toFixed(1)} mg`;
+            }
+        }
+    }
+    
+    // Age-specific warnings
+    let ageWarning = '';
+    if (age === 'neonate' && !['paracetamol'].includes(drug)) {
+        ageWarning = '<p class="warning" style="color: #f44336;">⚠️ Neonatal dosing may differ. Consult BNFC.</p>';
+    }
+    
+    document.getElementById('paed-result').innerHTML = `
+        <h4>Paediatric Dosing: ${drug.charAt(0).toUpperCase() + drug.slice(1)}</h4>
+        <p><strong>Patient:</strong> ${weight} kg ${age}</p>
+        <p><strong>Calculated Dose:</strong> ${calculatedDose}</p>
+        <p><strong>Frequency:</strong> ${doseInfo.frequency}</p>
+        <p><strong>Maximum:</strong> ${doseInfo.max}</p>
+        <p><strong>Adult Maximum:</strong> ${doseInfo.adult_max}</p>
+        ${ageWarning}
+        <p><em>Always verify against local guidelines and BNFC</em></p>
+    `;
+};
+
+// Additional calculator stubs for remaining calculators
+MLAQuizApp.prototype.getTIMICalculator = function() {
+    return `<div class="calculator-form"><h4>TIMI Score</h4><p>Implementation in progress...</p></div>`;
+};
+
+MLAQuizApp.prototype.getRankinCalculator = function() {
+    return `<div class="calculator-form"><h4>Modified Rankin Scale</h4><p>Implementation in progress...</p></div>`;
+};
+
+MLAQuizApp.prototype.getInfusionRateCalculator = function() {
+    return `<div class="calculator-form"><h4>Infusion Rate Calculator</h4><p>Implementation in progress...</p></div>`;
+};
+
+MLAQuizApp.prototype.getCockcroftGaultCalculator = function() {
+    return `<div class="calculator-form"><h4>Cockcroft-Gault Calculator</h4><p>Implementation in progress...</p></div>`;
+};
+
+MLAQuizApp.prototype.getBSACalculator = function() {
+    return `<div class="calculator-form"><h4>Body Surface Area Calculator</h4><p>Implementation in progress...</p></div>`;
+};
+
+MLAQuizApp.prototype.getFluidBalanceCalculator = function() {
+    return `<div class="calculator-form"><h4>Fluid Balance Calculator</h4><p>Implementation in progress...</p></div>`;
+};
+
+// Interactive Features for Medical Tools
+
+// Bookmark Management
+MLAQuizApp.prototype.initializeBookmarks = function() {
+    this.bookmarks = JSON.parse(localStorage.getItem('medicalToolsBookmarks')) || [];
+    this.recentTools = JSON.parse(localStorage.getItem('medicalToolsRecent')) || [];
+    this.toolNotes = JSON.parse(localStorage.getItem('medicalToolsNotes')) || {};
+};
+
+MLAQuizApp.prototype.addBookmark = function(toolType, toolName, toolData = {}) {
+    const bookmark = {
+        id: Date.now().toString(),
+        type: toolType,
+        name: toolName,
+        data: toolData,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Remove if already bookmarked
+    this.bookmarks = this.bookmarks.filter(b => !(b.type === toolType && b.name === toolName));
+    
+    // Add to beginning of array
+    this.bookmarks.unshift(bookmark);
+    
+    // Limit to 50 bookmarks
+    if (this.bookmarks.length > 50) {
+        this.bookmarks = this.bookmarks.slice(0, 50);
+    }
+    
+    localStorage.setItem('medicalToolsBookmarks', JSON.stringify(this.bookmarks));
+    this.updateBookmarkButton(toolType, toolName, true);
+};
+
+MLAQuizApp.prototype.removeBookmark = function(toolType, toolName) {
+    this.bookmarks = this.bookmarks.filter(b => !(b.type === toolType && b.name === toolName));
+    localStorage.setItem('medicalToolsBookmarks', JSON.stringify(this.bookmarks));
+    this.updateBookmarkButton(toolType, toolName, false);
+};
+
+MLAQuizApp.prototype.isBookmarked = function(toolType, toolName) {
+    return this.bookmarks.some(b => b.type === toolType && b.name === toolName);
+};
+
+MLAQuizApp.prototype.updateBookmarkButton = function(toolType, toolName, isBookmarked) {
+    const bookmarkBtn = document.querySelector(`[data-bookmark-tool="${toolType}-${toolName}"]`);
+    if (bookmarkBtn) {
+        bookmarkBtn.innerHTML = isBookmarked ? '🔖' : '📌';
+        bookmarkBtn.title = isBookmarked ? 'Remove bookmark' : 'Add bookmark';
+    }
+};
+
+// Recent Tools Management
+MLAQuizApp.prototype.addToRecentTools = function(toolType, toolName, toolData = {}) {
+    const recentItem = {
+        type: toolType,
+        name: toolName,
+        data: toolData,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Remove if already in recent
+    this.recentTools = this.recentTools.filter(r => !(r.type === toolType && r.name === toolName));
+    
+    // Add to beginning
+    this.recentTools.unshift(recentItem);
+    
+    // Limit to 20 recent items
+    if (this.recentTools.length > 20) {
+        this.recentTools = this.recentTools.slice(0, 20);
+    }
+    
+    localStorage.setItem('medicalToolsRecent', JSON.stringify(this.recentTools));
+};
+
+// Notes Management
+MLAQuizApp.prototype.saveToolNote = function(toolId, note) {
+    if (note.trim() === '') {
+        delete this.toolNotes[toolId];
+    } else {
+        this.toolNotes[toolId] = {
+            content: note,
+            timestamp: new Date().toISOString()
+        };
+    }
+    localStorage.setItem('medicalToolsNotes', JSON.stringify(this.toolNotes));
+};
+
+MLAQuizApp.prototype.getToolNote = function(toolId) {
+    return this.toolNotes[toolId]?.content || '';
+};
+
+// Export/Share Functionality
+MLAQuizApp.prototype.exportCalculationResults = function(calculatorType, results) {
+    const exportData = {
+        calculator: calculatorType,
+        results: results,
+        timestamp: new Date().toISOString(),
+        source: 'MLA Quiz PWA - Medical Tools'
+    };
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${calculatorType}-results-${new Date().toISOString().split('T')[0]}.json`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+};
+
+MLAQuizApp.prototype.generatePDFReport = function(calculatorType, results) {
+    // Simple text-based report generation
+    const reportContent = `
+MEDICAL CALCULATOR REPORT
+=========================
+
+Calculator: ${calculatorType.toUpperCase()}
+Generated: ${new Date().toLocaleString()}
+Source: MLA Quiz PWA - Medical Tools
+
+${Object.entries(results).map(([key, value]) => `${key}: ${value}`).join('\n')}
+
+Disclaimer: This calculation is for educational purposes only. 
+Always verify results and consult clinical guidelines.
+Do not use for actual patient care without proper validation.
+    `.trim();
+    
+    const dataBlob = new Blob([reportContent], {type: 'text/plain'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${calculatorType}-report-${new Date().toISOString().split('T')[0]}.txt`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+};
+
+// Enhanced Calculator Display with Interactive Features
+MLAQuizApp.prototype.enhanceCalculatorDisplay = function(calculatorType, container) {
+    // Add bookmark button
+    const bookmarkBtn = document.createElement('button');
+    bookmarkBtn.className = 'bookmark-btn';
+    bookmarkBtn.dataset.bookmarkTool = `calculator-${calculatorType}`;
+    bookmarkBtn.innerHTML = this.isBookmarked('calculator', calculatorType) ? '🔖' : '📌';
+    bookmarkBtn.title = this.isBookmarked('calculator', calculatorType) ? 'Remove bookmark' : 'Add bookmark';
+    bookmarkBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (this.isBookmarked('calculator', calculatorType)) {
+            this.removeBookmark('calculator', calculatorType);
+        } else {
+            this.addBookmark('calculator', calculatorType);
+        }
+    };
+    
+    // Add to header
+    const header = container.querySelector('.calculator-header');
+    if (header) {
+        header.appendChild(bookmarkBtn);
+    }
+    
+    // Add to recent tools when calculator is loaded
+    this.addToRecentTools('calculator', calculatorType);
+    
+    // Add notes section
+    const notesSection = document.createElement('div');
+    notesSection.className = 'calculator-notes';
+    notesSection.innerHTML = `
+        <div class="notes-header">
+            <h4>📝 Personal Notes</h4>
+            <button class="notes-toggle" onclick="this.parentElement.parentElement.querySelector('.notes-content').style.display = this.parentElement.parentElement.querySelector('.notes-content').style.display === 'none' ? 'block' : 'none'">Toggle</button>
+        </div>
+        <div class="notes-content" style="display: none;">
+            <textarea placeholder="Add your personal notes about this calculator..." 
+                      onchange="window.quizApp.saveToolNote('calculator-${calculatorType}', this.value)"
+                      style="width: 100%; height: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">${this.getToolNote(`calculator-${calculatorType}`)}</textarea>
+        </div>
+    `;
+    
+    container.appendChild(notesSection);
+};
+
+// Quick Access Panel
+MLAQuizApp.prototype.showQuickAccessPanel = function() {
+    const container = document.getElementById('medical-tools-panel');
+    if (!container) return;
+    
+    const quickAccessHTML = `
+        <div class="quick-access-panel">
+            <div class="tools-header">
+                <h3>⚡ Quick Access</h3>
+                <button id="tools-close-btn" class="tools-close-btn">×</button>
+            </div>
+            
+            <div class="quick-access-tabs">
+                <button class="quick-tab active" data-tab="recent">🕒 Recent</button>
+                <button class="quick-tab" data-tab="bookmarks">🔖 Bookmarks</button>
+                <button class="quick-tab" data-tab="favorites">⭐ Favorites</button>
+            </div>
+            
+            <div class="quick-access-content">
+                <div id="recent-tools" class="quick-tab-content active">
+                    ${this.renderRecentTools()}
+                </div>
+                <div id="bookmarked-tools" class="quick-tab-content">
+                    ${this.renderBookmarkedTools()}
+                </div>
+                <div id="favorite-tools" class="quick-tab-content">
+                    ${this.renderFavoriteTools()}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = quickAccessHTML;
+    
+    // Setup tab functionality
+    const tabs = container.querySelectorAll('.quick-tab');
+    const contents = container.querySelectorAll('.quick-tab-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            tab.classList.add('active');
+            const targetContent = container.querySelector(`#${tab.dataset.tab}-tools`);
+            if (targetContent) targetContent.classList.add('active');
+        });
+    });
+};
+
+MLAQuizApp.prototype.renderRecentTools = function() {
+    if (this.recentTools.length === 0) {
+        return '<p class="no-items">No recent tools used</p>';
+    }
+    
+    return this.recentTools.map(tool => `
+        <div class="quick-tool-item" onclick="window.quizApp.loadQuickTool('${tool.type}', '${tool.name}')">
+            <div class="tool-name">${tool.name}</div>
+            <div class="tool-time">${this.formatTimeAgo(tool.timestamp)}</div>
+        </div>
+    `).join('');
+};
+
+MLAQuizApp.prototype.renderBookmarkedTools = function() {
+    if (this.bookmarks.length === 0) {
+        return '<p class="no-items">No bookmarked tools</p>';
+    }
+    
+    return this.bookmarks.map(bookmark => `
+        <div class="quick-tool-item">
+            <div class="tool-name" onclick="window.quizApp.loadQuickTool('${bookmark.type}', '${bookmark.name}')">${bookmark.name}</div>
+            <button class="remove-bookmark" onclick="window.quizApp.removeBookmark('${bookmark.type}', '${bookmark.name}'); window.quizApp.showQuickAccessPanel();" title="Remove bookmark">🗑️</button>
+        </div>
+    `).join('');
+};
+
+MLAQuizApp.prototype.renderFavoriteTools = function() {
+    // Most frequently used tools based on recent activity
+    const toolFrequency = {};
+    this.recentTools.forEach(tool => {
+        const key = `${tool.type}-${tool.name}`;
+        toolFrequency[key] = (toolFrequency[key] || 0) + 1;
+    });
+    
+    const sortedTools = Object.entries(toolFrequency)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 10)
+        .map(([key, count]) => {
+            const [type, name] = key.split('-', 2);
+            return { type, name, count };
+        });
+    
+    if (sortedTools.length === 0) {
+        return '<p class="no-items">No frequently used tools yet</p>';
+    }
+    
+    return sortedTools.map(tool => `
+        <div class="quick-tool-item" onclick="window.quizApp.loadQuickTool('${tool.type}', '${tool.name}')">
+            <div class="tool-name">${tool.name}</div>
+            <div class="tool-frequency">Used ${tool.count} times</div>
+        </div>
+    `).join('');
+};
+
+MLAQuizApp.prototype.loadQuickTool = function(toolType, toolName) {
+    // Navigate to the appropriate tool based on type
+    switch(toolType) {
+        case 'calculator':
+            this.switchMedicalTool('calculators');
+            setTimeout(() => this.loadCalculator(toolName), 100);
+            break;
+        case 'protocol':
+            this.switchMedicalTool('emergency-protocols');
+            setTimeout(() => this.showProtocolDetail(toolName), 100);
+            break;
+        case 'interpretation':
+            this.switchMedicalTool('interpretation');
+            setTimeout(() => this.showInterpretationDetail(toolName), 100);
+            break;
+        default:
+            this.switchMedicalTool(toolType);
+    }
+};
+
+MLAQuizApp.prototype.formatTimeAgo = function(timestamp) {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffMs = now - time;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return time.toLocaleDateString();
 };
 
 // Service Worker registration with better error handling
