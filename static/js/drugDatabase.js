@@ -33,8 +33,8 @@ const drugDatabase = {
             'adrenaline': {
                 name: 'Adrenaline (Epinephrine)',
                 class: 'Emergency drugs',
-                mechanism: 'Non-selective Î± and Î² adrenergic agonist causing vasoconstriction and inotropy',
-                dosing: 'Anaphylaxis: 500mcg IM (0.5ml of 1:1000). Cardiac arrest: 1mg IV (1ml of 1:1000)',
+                mechanism: 'Non-selective α and β adrenergic agonist causing vasoconstriction and inotropy',
+                dosing: 'Anaphylaxis: 500mcg IM (0.5ml of 1:1000). Cardiac arrest: 1mg IV (10ml of 1:10,000)',
                 contraindications: 'None in life-threatening situations. Caution with severe hypertension',
                 interactions: 'Î²-blockers (unopposed Î± effects), tricyclics (arrhythmias), MAOIs',
                 monitoring: 'Heart rate, blood pressure, ECG, blood glucose',
