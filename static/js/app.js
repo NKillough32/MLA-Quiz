@@ -4921,6 +4921,18 @@ class MLAQuizApp {
                 </div>
             </div>
         `;
+        
+        // Scroll to the top of the drug reference container
+        container.scrollTop = 0;
+        
+        // Also scroll the main content area to the top if it exists
+        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.scrollTop = 0;
+        }
+        
+        // Scroll the page to the top as well
+        window.scrollTo(0, 0);
     }
 
     // Lab Values Functions
