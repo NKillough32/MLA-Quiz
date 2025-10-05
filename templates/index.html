@@ -780,12 +780,38 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+        }
+        
+        .search-container button:hover {
+            background: #0056CC;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        .search-container button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px rgba(0, 122, 255, 0.2);
         }
         
         [data-theme="dark"] .tool-search {
             background: var(--bg-tertiary);
             border-color: var(--border-color);
             color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .search-container button {
+            background: #007AFF;
+            color: white;
+        }
+        
+        [data-theme="dark"] .search-container button:hover {
+            background: #0056CC;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
         }
         
         /* Category Buttons */
@@ -1941,29 +1967,6 @@
             padding: 16px;
             border-bottom: 1px solid #e5e5ea;
             background: #f8f9fa;
-        }
-        
-        .lab-search-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        
-        .lab-search-container input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        .lab-search-container button {
-            padding: 8px 12px;
-            background: #007AFF;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
         }
         
         .lab-filters {
@@ -3964,6 +3967,15 @@
             
             <!-- Lab Values Panel -->
             <div id="lab-panel" class="tool-panel">
+                <div class="search-container">
+                    <input type="text" id="lab-search" placeholder="Search lab values..." class="tool-search">
+                    <button id="lab-search-btn">🔍</button>
+                </div>
+                <div id="lab-search-results" class="tool-results" style="display: none;"></div>
+                <div class="lab-categories">
+                    <!-- Categories loaded dynamically by JavaScript -->
+                </div>
+                <div id="lab-list" class="tool-results"></div>
                 <div id="lab-values-container">
                     <!-- Content loaded dynamically by JavaScript -->
                     <div class="loading-message">📊 Loading lab values...</div>
@@ -3973,15 +3985,19 @@
             <!-- Guidelines Panel -->
             <div id="guidelines-panel" class="tool-panel">
                 <div class="search-container">
-                    <input type="text" id="guideline-search" placeholder="Search guidelines..." class="tool-search">
-                    <button id="guideline-search-btn">🔍</button>
+                    <input type="text" id="guidelines-search" placeholder="Search guidelines..." class="tool-search">
+                    <button id="guidelines-search-btn">🔍</button>
                 </div>
-                <div class="guideline-categories">
-                    <button class="category-btn" data-category="all">All</button>
-                    <button class="category-btn" data-category="cardiac">Cardiac</button>
-                    <button class="category-btn" data-category="diabetes">Diabetes</button>
-                    <button class="category-btn" data-category="hypertension">HTN</button>
-                    <button class="category-btn" data-category="emergency">Emergency</button>
+                <div id="guidelines-search-results" class="tool-results" style="display: none;"></div>
+                <div class="guidelines-categories">
+                    <button class="category-btn active" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">All Guidelines</button>
+                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
+                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('pulmonary'); event.stopPropagation();">Pulmonary</button>
+                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('endocrine'); event.stopPropagation();">Endocrine</button>
+                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('renal'); event.stopPropagation();">Renal</button>
+                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('mental-health'); event.stopPropagation();">Mental Health</button>
+                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('neurological'); event.stopPropagation();">Neurological</button>
+                    <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('infectious-diseases'); event.stopPropagation();">Infectious Diseases</button>
                 </div>
                 <div id="guidelines-list" class="tool-results"></div>
             </div>
@@ -3992,13 +4008,15 @@
                     <input type="text" id="differential-search" placeholder="Search symptoms..." class="tool-search">
                     <button id="differential-search-btn">🔍</button>
                 </div>
-                <div class="symptom-categories">
-                    <button class="category-btn" data-category="all">All</button>
-                    <button class="category-btn" data-category="chest-pain">Chest Pain</button>
-                    <button class="category-btn" data-category="dyspnea">Dyspnea</button>
-                    <button class="category-btn" data-category="abdominal">Abdominal</button>
-                    <button class="category-btn" data-category="neurologic">Neuro</button>
+                <div id="differential-search-results" class="tool-results" style="display: none;"></div>
+                <div class="ddx-categories">
+                    <button class="filter-btn active" onclick="window.quizApp.showDdxCategory('all'); event.stopPropagation();">All</button>
+                    <button class="filter-btn" onclick="window.quizApp.showDdxCategory('chest-pain'); event.stopPropagation();">Chest Pain</button>
+                    <button class="filter-btn" onclick="window.quizApp.showDdxCategory('dyspnea'); event.stopPropagation();">Dyspnea</button>
+                    <button class="filter-btn" onclick="window.quizApp.showDdxCategory('abdominal'); event.stopPropagation();">Abdominal</button>
+                    <button class="filter-btn" onclick="window.quizApp.showDdxCategory('neurologic'); event.stopPropagation();">Neurologic</button>
                 </div>
+                <div id="ddx-list" class="tool-results"></div>
                 <div id="differential-dx-container" class="tool-results">
                     <!-- Dynamic differential diagnosis content loads here -->
                 </div>
@@ -4026,6 +4044,15 @@
 
             <!-- Clinical Examination Panel -->
             <div id="examination-panel" class="tool-panel">
+                <div class="search-container">
+                    <input type="text" id="examination-search" placeholder="Search examinations..." class="tool-search">
+                    <button id="examination-search-btn">🔍</button>
+                </div>
+                <div id="examination-search-results" class="tool-results" style="display: none;"></div>
+                <div class="examination-categories">
+                    <!-- Categories loaded dynamically by JavaScript -->
+                </div>
+                <div id="examination-list" class="tool-results"></div>
                 <div id="examination-container">
                     <!-- Content loaded dynamically by JavaScript -->
                     <div class="loading-message">🩺 Loading examination guide...</div>
