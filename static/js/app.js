@@ -2245,11 +2245,18 @@ class MLAQuizApp {
         
         // Handle calculator button clicks with proper touch/click handling
         let touchHandled = false;
+        let calculatorTabActivated = Date.now(); // Track when calculator tab was activated
         
         const handleCalculatorInteraction = (e) => {
             // Only process if we're in the calculators tool and the target is a calculator button
             const currentTool = document.querySelector('.tool-nav-btn.active')?.getAttribute('data-tool');
             if (currentTool !== 'calculators') {
+                return;
+            }
+            
+            // Prevent immediate activation on tab switch (Android fix)
+            if (Date.now() - calculatorTabActivated < 500) {
+                console.log('🧮 Ignoring interaction - too soon after tab activation');
                 return;
             }
             
@@ -2265,14 +2272,18 @@ class MLAQuizApp {
         
         // Store handlers as instance methods for cleanup
         this.calculatorTouchHandler = (e) => {
+            // More specific check - only handle if target is actually a calculator button or its child
             const calcBtn = e.target.closest('.calculator-btn');
             if (calcBtn) {
                 const currentTool = document.querySelector('.tool-nav-btn.active')?.getAttribute('data-tool');
                 if (currentTool === 'calculators') {
-                    touchHandled = true;
-                    handleCalculatorInteraction(e);
-                    // Reset the flag after a short delay
-                    setTimeout(() => { touchHandled = false; }, 300);
+                    // Additional check - make sure it's not a navigation button touch
+                    if (!e.target.closest('.tool-nav-btn')) {
+                        touchHandled = true;
+                        handleCalculatorInteraction(e);
+                        // Reset the flag after a short delay
+                        setTimeout(() => { touchHandled = false; }, 300);
+                    }
                 }
             }
         };
@@ -2285,9 +2296,12 @@ class MLAQuizApp {
             handleCalculatorInteraction(e);
         };
         
-        // Add event listeners
-        document.addEventListener('touchend', this.calculatorTouchHandler);
-        document.addEventListener('click', this.calculatorClickHandler);
+        // Add event listeners with a slight delay to prevent immediate triggering
+        setTimeout(() => {
+            document.addEventListener('touchend', this.calculatorTouchHandler);
+            document.addEventListener('click', this.calculatorClickHandler);
+            console.log('🧮 Calculator event listeners added with delay');
+        }, 100);
     }
 
     cleanupCalculatorEvents() {
@@ -6064,7 +6078,7 @@ class MLAQuizApp {
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('neurological'); event.stopPropagation();">Neurological</button>
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('infectious-diseases'); event.stopPropagation();">Infectious Diseases</button>
             </div>
-            <div id="guidelines-list" class="lab-grid"></div>
+            <div id="guidelines-list" class="tool-results"></div>
         `;
         
         const searchInput = document.getElementById('guidelines-search');
