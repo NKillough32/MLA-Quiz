@@ -2379,6 +2379,26 @@ class MLAQuizApp {
                 calculatorTitle = 'Palliative Care Calculator';
                 calculatorContent += this.getPalliativeCalculator();
                 break;
+            case 'paediatric-dosing':
+                calculatorTitle = 'Paediatric Dosing Calculator';
+                calculatorContent += this.getPaediatricDosingCalculator();
+                break;
+            case 'infusion-rate':
+                calculatorTitle = 'Infusion Rate Calculator';
+                calculatorContent += this.getInfusionRateCalculator();
+                break;
+            case 'cockcroft-gault':
+                calculatorTitle = 'Cockcroft-Gault eGFR';
+                calculatorContent += this.getCockcroftGaultCalculator();
+                break;
+            case 'bsa':
+                calculatorTitle = 'Body Surface Area Calculator';
+                calculatorContent += this.getBSACalculator();
+                break;
+            case 'fluid-balance':
+                calculatorTitle = 'Fluid Balance Calculator';
+                calculatorContent += this.getFluidBalanceCalculator();
+                break;
             default:
                 calculatorTitle = 'Calculator';
                 calculatorContent += '<p>Calculator not found.</p>';
@@ -10647,6 +10667,478 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     `;
     
     container.innerHTML = detailHtml;
+};
+
+// Missing Calculator Implementations
+
+// Paediatric Dosing Calculator
+MLAQuizApp.prototype.getPaediatricDosingCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Paediatric Dosing Calculator</h4>
+            <p><small>Weight-based pediatric drug dosing calculations</small></p>
+            
+            <div class="calc-input-group">
+                <label>Child's Weight (kg):</label>
+                <input type="number" id="paed-weight" placeholder="15" min="1" max="100" step="0.1">
+            </div>
+            <div class="calc-input-group">
+                <label>Child's Age (years):</label>
+                <input type="number" id="paed-age" placeholder="5" min="0" max="18" step="0.1">
+            </div>
+            <div class="calc-input-group">
+                <label>Medication:</label>
+                <select id="paed-medication">
+                    <option value="">Select medication</option>
+                    <option value="paracetamol">Paracetamol (Acetaminophen)</option>
+                    <option value="ibuprofen">Ibuprofen</option>
+                    <option value="amoxicillin">Amoxicillin</option>
+                    <option value="prednisolone">Prednisolone</option>
+                    <option value="salbutamol">Salbutamol</option>
+                    <option value="azithromycin">Azithromycin</option>
+                </select>
+            </div>
+            
+            <button onclick="window.quizApp.calculatePaediatricDosing()">Calculate Dose</button>
+            <div id="paed-dosing-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small><strong>Note:</strong> Always verify doses with current pediatric guidelines. For children under 3 months, seek specialist advice.</small>
+            </div>
+        </div>
+    `;
+};
+
+// Infusion Rate Calculator
+MLAQuizApp.prototype.getInfusionRateCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>IV Infusion Rate Calculator</h4>
+            <p><small>Calculate infusion rates for IV medications and fluids</small></p>
+            
+            <div class="calc-input-group">
+                <label>Total Volume (ml):</label>
+                <input type="number" id="infusion-volume" placeholder="1000" min="1" max="10000">
+            </div>
+            <div class="calc-input-group">
+                <label>Infusion Time (hours):</label>
+                <input type="number" id="infusion-time" placeholder="8" min="0.1" max="24" step="0.1">
+            </div>
+            <div class="calc-input-group">
+                <label>Drop Factor (drops/ml):</label>
+                <select id="drop-factor">
+                    <option value="10">10 (Blood set)</option>
+                    <option value="15">15 (Standard)</option>
+                    <option value="20" selected>20 (Standard)</option>
+                    <option value="60">60 (Micro-drip)</option>
+                </select>
+            </div>
+            
+            <button onclick="window.quizApp.calculateInfusionRate()">Calculate Rate</button>
+            <div id="infusion-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small><strong>Formula:</strong> Rate (ml/hr) = Volume / Time; Drops/min = (Volume × Drop Factor) / (Time × 60)</small>
+            </div>
+        </div>
+    `;
+};
+
+// Cockcroft-Gault Calculator
+MLAQuizApp.prototype.getCockcroftGaultCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Cockcroft-Gault eGFR Calculator</h4>
+            <p><small>Estimate creatinine clearance based on age, weight, and serum creatinine</small></p>
+            
+            <div class="calc-input-group">
+                <label>Age (years):</label>
+                <input type="number" id="cg-age" placeholder="65" min="18" max="120">
+            </div>
+            <div class="calc-input-group">
+                <label>Weight (kg):</label>
+                <input type="number" id="cg-weight" placeholder="70" min="30" max="200" step="0.1">
+            </div>
+            <div class="calc-input-group">
+                <label>Serum Creatinine (μmol/L):</label>
+                <input type="number" id="cg-creatinine" placeholder="100" min="50" max="1000">
+            </div>
+            <div class="calc-checkbox-group">
+                <label><input type="radio" name="cg-sex" value="male" checked> Male</label>
+                <label><input type="radio" name="cg-sex" value="female"> Female</label>
+            </div>
+            
+            <button onclick="window.quizApp.calculateCockcroftGault()">Calculate eGFR</button>
+            <div id="cg-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small><strong>Formula:</strong> CrCl = ((140-age) × weight × K) / creatinine<br>
+                K = 1.23 (male), 1.04 (female)</small>
+            </div>
+        </div>
+    `;
+};
+
+// Body Surface Area Calculator
+MLAQuizApp.prototype.getBSACalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Body Surface Area Calculator</h4>
+            <p><small>Calculate BSA using Dubois, Mosteller, and Haycock formulas</small></p>
+            
+            <div class="calc-input-group">
+                <label>Weight (kg):</label>
+                <input type="number" id="bsa-weight" placeholder="70" min="1" max="300" step="0.1">
+            </div>
+            <div class="calc-input-group">
+                <label>Height (cm):</label>
+                <input type="number" id="bsa-height" placeholder="170" min="50" max="250" step="0.1">
+            </div>
+            
+            <button onclick="window.quizApp.calculateBSA()">Calculate BSA</button>
+            <div id="bsa-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small><strong>Formulas:</strong><br>
+                • Dubois: 0.007184 × W^0.425 × H^0.725<br>
+                • Mosteller: √(W × H / 3600)<br>
+                • Haycock: 0.024265 × W^0.5378 × H^0.3964</small>
+            </div>
+        </div>
+    `;
+};
+
+// Fluid Balance Calculator
+MLAQuizApp.prototype.getFluidBalanceCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Fluid Balance Calculator</h4>
+            <p><small>Calculate daily fluid requirements and monitor fluid balance</small></p>
+            
+            <div class="calc-input-group">
+                <label>Patient Weight (kg):</label>
+                <input type="number" id="fluid-weight" placeholder="70" min="1" max="300" step="0.1">
+            </div>
+            <div class="calc-input-group">
+                <label>Age (years):</label>
+                <input type="number" id="fluid-age" placeholder="65" min="1" max="120">
+            </div>
+            <div class="calc-checkbox-group">
+                <label><input type="checkbox" id="fluid-fever"> Fever (add 500ml per °C above 37°C)</label>
+                <label><input type="checkbox" id="fluid-losses"> Abnormal losses (diarrhea, drains, etc.)</label>
+                <label><input type="checkbox" id="fluid-heart-failure"> Heart failure (restrict fluids)</label>
+                <label><input type="checkbox" id="fluid-renal"> Renal impairment</label>
+            </div>
+            <div class="calc-input-group">
+                <label>Additional Losses (ml/day):</label>
+                <input type="number" id="fluid-additional" placeholder="0" min="0" max="5000">
+            </div>
+            
+            <button onclick="window.quizApp.calculateFluidBalance()">Calculate Requirements</button>
+            <div id="fluid-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small><strong>Basic Formula:</strong> 30-35ml/kg/day for adults, 100ml/kg/day for infants</small>
+            </div>
+        </div>
+    `;
+};
+
+// Calculation Functions for Missing Calculators
+
+// Paediatric Dosing Calculation
+MLAQuizApp.prototype.calculatePaediatricDosing = function() {
+    const weight = parseFloat(document.getElementById('paed-weight').value);
+    const age = parseFloat(document.getElementById('paed-age').value);
+    const medication = document.getElementById('paed-medication').value;
+    
+    if (!weight || !age || !medication) {
+        document.getElementById('paed-dosing-result').innerHTML = 
+            '<div class="alert alert-warning">Please fill in all fields</div>';
+        return;
+    }
+    
+    const dosing = {
+        'paracetamol': {
+            dose: '15 mg/kg',
+            frequency: 'every 4-6 hours',
+            maxDaily: '60 mg/kg/day',
+            maxSingle: '1g',
+            route: 'PO/IV'
+        },
+        'ibuprofen': {
+            dose: '5-10 mg/kg',
+            frequency: 'every 6-8 hours',
+            maxDaily: '30 mg/kg/day',
+            maxSingle: '400mg',
+            route: 'PO'
+        },
+        'amoxicillin': {
+            dose: '20-40 mg/kg',
+            frequency: 'every 8 hours',
+            maxDaily: '90 mg/kg/day',
+            maxSingle: '1g',
+            route: 'PO'
+        },
+        'prednisolone': {
+            dose: '1-2 mg/kg',
+            frequency: 'once daily',
+            maxDaily: '60 mg/day',
+            maxSingle: '60mg',
+            route: 'PO'
+        },
+        'salbutamol': {
+            dose: '100-200 mcg (1-2 puffs)',
+            frequency: 'every 4-6 hours PRN',
+            maxDaily: '8 puffs/day',
+            maxSingle: '200mcg',
+            route: 'Inhaled'
+        },
+        'azithromycin': {
+            dose: '10 mg/kg',
+            frequency: 'once daily for 3 days',
+            maxDaily: '500 mg/day',
+            maxSingle: '500mg',
+            route: 'PO'
+        }
+    };
+    
+    const drug = dosing[medication];
+    const doseValue = parseFloat(drug.dose.split(' ')[0]);
+    const calculatedDose = doseValue * weight;
+    
+    let ageWarning = '';
+    if (age < 0.25) {
+        ageWarning = '<div class="alert alert-danger">⚠️ Neonatal dosing requires specialist consultation</div>';
+    } else if (age < 2) {
+        ageWarning = '<div class="alert alert-warning">⚠️ Infant dosing - verify with pediatric guidelines</div>';
+    }
+    
+    document.getElementById('paed-dosing-result').innerHTML = `
+        ${ageWarning}
+        <div class="result-section">
+            <h5>${medication.charAt(0).toUpperCase() + medication.slice(1)} Dosing</h5>
+            <div class="result-grid">
+                <div><strong>Calculated Dose:</strong> ${calculatedDose.toFixed(1)} mg</div>
+                <div><strong>Standard Dose:</strong> ${drug.dose}</div>
+                <div><strong>Frequency:</strong> ${drug.frequency}</div>
+                <div><strong>Route:</strong> ${drug.route}</div>
+                <div><strong>Max Single Dose:</strong> ${drug.maxSingle}</div>
+                <div><strong>Max Daily Dose:</strong> ${drug.maxDaily}</div>
+            </div>
+        </div>
+    `;
+};
+
+// Infusion Rate Calculation
+MLAQuizApp.prototype.calculateInfusionRate = function() {
+    const volume = parseFloat(document.getElementById('infusion-volume').value);
+    const time = parseFloat(document.getElementById('infusion-time').value);
+    const dropFactor = parseFloat(document.getElementById('drop-factor').value);
+    
+    if (!volume || !time || !dropFactor) {
+        document.getElementById('infusion-result').innerHTML = 
+            '<div class="alert alert-warning">Please fill in all fields</div>';
+        return;
+    }
+    
+    const ratePerHour = volume / time;
+    const dropsPerMinute = (volume * dropFactor) / (time * 60);
+    const ratePerMinute = ratePerHour / 60;
+    
+    document.getElementById('infusion-result').innerHTML = `
+        <div class="result-section">
+            <h5>Infusion Rate Results</h5>
+            <div class="result-grid">
+                <div><strong>Rate:</strong> ${ratePerHour.toFixed(1)} ml/hr</div>
+                <div><strong>Rate per minute:</strong> ${ratePerMinute.toFixed(2)} ml/min</div>
+                <div><strong>Drops per minute:</strong> ${dropsPerMinute.toFixed(0)} drops/min</div>
+                <div><strong>Total time:</strong> ${time} hours</div>
+            </div>
+            <div class="alert alert-info">
+                💡 Set pump to <strong>${ratePerHour.toFixed(1)} ml/hr</strong> or count <strong>${dropsPerMinute.toFixed(0)} drops/min</strong>
+            </div>
+        </div>
+    `;
+};
+
+// Cockcroft-Gault Calculation
+MLAQuizApp.prototype.calculateCockcroftGault = function() {
+    const age = parseFloat(document.getElementById('cg-age').value);
+    const weight = parseFloat(document.getElementById('cg-weight').value);
+    const creatinine = parseFloat(document.getElementById('cg-creatinine').value);
+    const sex = document.querySelector('input[name="cg-sex"]:checked').value;
+    
+    if (!age || !weight || !creatinine) {
+        document.getElementById('cg-result').innerHTML = 
+            '<div class="alert alert-warning">Please fill in all fields</div>';
+        return;
+    }
+    
+    const K = sex === 'male' ? 1.23 : 1.04;
+    const crCl = ((140 - age) * weight * K) / creatinine;
+    
+    let interpretation = '';
+    let stage = '';
+    
+    if (crCl >= 90) {
+        interpretation = 'Normal kidney function';
+        stage = 'CKD Stage 1 (if kidney damage present)';
+    } else if (crCl >= 60) {
+        interpretation = 'Mildly decreased kidney function';
+        stage = 'CKD Stage 2';
+    } else if (crCl >= 45) {
+        interpretation = 'Mild to moderately decreased kidney function';
+        stage = 'CKD Stage 3a';
+    } else if (crCl >= 30) {
+        interpretation = 'Moderately to severely decreased kidney function';
+        stage = 'CKD Stage 3b';
+    } else if (crCl >= 15) {
+        interpretation = 'Severely decreased kidney function';
+        stage = 'CKD Stage 4';
+    } else {
+        interpretation = 'Kidney failure';
+        stage = 'CKD Stage 5';
+    }
+    
+    document.getElementById('cg-result').innerHTML = `
+        <div class="result-section">
+            <h5>Cockcroft-Gault Results</h5>
+            <div class="result-grid">
+                <div><strong>Creatinine Clearance:</strong> ${crCl.toFixed(1)} ml/min</div>
+                <div><strong>Interpretation:</strong> ${interpretation}</div>
+                <div><strong>CKD Stage:</strong> ${stage}</div>
+            </div>
+            <div class="alert alert-info">
+                💡 Consider dose adjustment for medications if CrCl < 60 ml/min
+            </div>
+        </div>
+    `;
+};
+
+// BSA Calculation
+MLAQuizApp.prototype.calculateBSA = function() {
+    const weight = parseFloat(document.getElementById('bsa-weight').value);
+    const height = parseFloat(document.getElementById('bsa-height').value);
+    
+    if (!weight || !height) {
+        document.getElementById('bsa-result').innerHTML = 
+            '<div class="alert alert-warning">Please enter weight and height</div>';
+        return;
+    }
+    
+    // Dubois formula: 0.007184 × W^0.425 × H^0.725
+    const dubois = 0.007184 * Math.pow(weight, 0.425) * Math.pow(height, 0.725);
+    
+    // Mosteller formula: √(W × H / 3600)
+    const mosteller = Math.sqrt((weight * height) / 3600);
+    
+    // Haycock formula: 0.024265 × W^0.5378 × H^0.3964
+    const haycock = 0.024265 * Math.pow(weight, 0.5378) * Math.pow(height, 0.3964);
+    
+    const average = (dubois + mosteller + haycock) / 3;
+    
+    document.getElementById('bsa-result').innerHTML = `
+        <div class="result-section">
+            <h5>Body Surface Area Results</h5>
+            <div class="result-grid">
+                <div><strong>Dubois Formula:</strong> ${dubois.toFixed(2)} m²</div>
+                <div><strong>Mosteller Formula:</strong> ${mosteller.toFixed(2)} m²</div>
+                <div><strong>Haycock Formula:</strong> ${haycock.toFixed(2)} m²</div>
+                <div><strong>Average BSA:</strong> ${average.toFixed(2)} m²</div>
+            </div>
+            <div class="alert alert-info">
+                💡 Mosteller formula is most commonly used for drug dosing
+            </div>
+        </div>
+    `;
+};
+
+// Fluid Balance Calculation
+MLAQuizApp.prototype.calculateFluidBalance = function() {
+    const weight = parseFloat(document.getElementById('fluid-weight').value);
+    const age = parseFloat(document.getElementById('fluid-age').value);
+    const fever = document.getElementById('fluid-fever').checked;
+    const losses = document.getElementById('fluid-losses').checked;
+    const heartFailure = document.getElementById('fluid-heart-failure').checked;
+    const renal = document.getElementById('fluid-renal').checked;
+    const additional = parseFloat(document.getElementById('fluid-additional').value) || 0;
+    
+    if (!weight || !age) {
+        document.getElementById('fluid-result').innerHTML = 
+            '<div class="alert alert-warning">Please enter weight and age</div>';
+        return;
+    }
+    
+    let baseRequirement;
+    
+    // Calculate base fluid requirement
+    if (age < 1) {
+        baseRequirement = weight * 100; // 100ml/kg/day for infants
+    } else if (age < 18) {
+        if (weight <= 10) {
+            baseRequirement = weight * 100;
+        } else if (weight <= 20) {
+            baseRequirement = 1000 + ((weight - 10) * 50);
+        } else {
+            baseRequirement = 1500 + ((weight - 20) * 20);
+        }
+    } else {
+        baseRequirement = weight * 30; // 30ml/kg/day for adults
+    }
+    
+    let adjustedRequirement = baseRequirement;
+    let adjustments = [];
+    
+    if (fever) {
+        const feverIncrease = 500;
+        adjustedRequirement += feverIncrease;
+        adjustments.push(`+${feverIncrease}ml for fever`);
+    }
+    
+    if (losses) {
+        const lossIncrease = 500;
+        adjustedRequirement += lossIncrease;
+        adjustments.push(`+${lossIncrease}ml for abnormal losses`);
+    }
+    
+    if (additional > 0) {
+        adjustedRequirement += additional;
+        adjustments.push(`+${additional}ml for additional losses`);
+    }
+    
+    if (heartFailure) {
+        adjustedRequirement *= 0.8; // Restrict to 80%
+        adjustments.push('Restricted to 80% due to heart failure');
+    }
+    
+    if (renal) {
+        adjustments.push('Consider further restriction for renal impairment');
+    }
+    
+    const hourlyRate = adjustedRequirement / 24;
+    
+    document.getElementById('fluid-result').innerHTML = `
+        <div class="result-section">
+            <h5>Fluid Balance Results</h5>
+            <div class="result-grid">
+                <div><strong>Base Requirement:</strong> ${baseRequirement.toFixed(0)} ml/day</div>
+                <div><strong>Adjusted Requirement:</strong> ${adjustedRequirement.toFixed(0)} ml/day</div>
+                <div><strong>Hourly Rate:</strong> ${hourlyRate.toFixed(1)} ml/hr</div>
+            </div>
+            ${adjustments.length > 0 ? `
+                <div class="adjustments">
+                    <h6>Adjustments Applied:</h6>
+                    <ul>
+                        ${adjustments.map(adj => `<li>${adj}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+            <div class="alert alert-info">
+                💡 Monitor urine output (>0.5ml/kg/hr for adults, >1ml/kg/hr for children)
+            </div>
+        </div>
+    `;
 };
 
 // Interactive Features Implementation
