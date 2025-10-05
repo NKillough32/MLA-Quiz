@@ -799,8 +799,10 @@
             margin-bottom: 16px;
         }
         
-        /* Specific styling for guidelines categories only */
-        .guidelines-categories {
+        /* Specific styling for guidelines, lab, and ddx categories */
+        .guidelines-categories,
+        .lab-categories,
+        .ddx-categories {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -813,7 +815,9 @@
         }
         
         @media (max-width: 768px) {
-            .guidelines-categories {
+            .guidelines-categories,
+            .lab-categories,
+            .ddx-categories {
                 gap: 8px;
                 padding: 6px 8px;
                 margin-bottom: 16px;
@@ -832,8 +836,10 @@
             transition: all 0.2s;
         }
         
-        /* Enhanced styling specifically for guidelines categories */
-        .guidelines-categories .category-btn {
+        /* Enhanced styling for guidelines, lab, and ddx categories */
+        .guidelines-categories .category-btn,
+        .lab-categories .filter-btn,
+        .ddx-categories .filter-btn {
             padding: 10px 18px;
             background: #ffffff;
             border: 2px solid #e5e5ea;
@@ -852,7 +858,9 @@
         }
         
         @media (max-width: 768px) {
-            .guidelines-categories .category-btn {
+            .guidelines-categories .category-btn,
+            .lab-categories .filter-btn,
+            .ddx-categories .filter-btn {
                 font-size: 13px;
                 padding: 8px 15px;
                 min-height: 36px;
@@ -861,7 +869,9 @@
         }
         
         @media (max-width: 480px) {
-            .guidelines-categories .category-btn {
+            .guidelines-categories .category-btn,
+            .lab-categories .filter-btn,
+            .ddx-categories .filter-btn {
                 font-size: 12px;
                 padding: 6px 12px;
                 min-height: 32px;
@@ -876,8 +886,10 @@
             border-color: #007AFF;
         }
         
-        /* Enhanced guidelines button interactions only */
-        .guidelines-categories .category-btn:hover {
+        /* Enhanced button interactions for guidelines, lab, and ddx categories */
+        .guidelines-categories .category-btn:hover,
+        .lab-categories .filter-btn:hover,
+        .ddx-categories .filter-btn:hover {
             background: #007AFF;
             color: white;
             border-color: #007AFF;
@@ -885,7 +897,9 @@
             box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
         }
         
-        .guidelines-categories .category-btn.active {
+        .guidelines-categories .category-btn.active,
+        .lab-categories .filter-btn.active,
+        .ddx-categories .filter-btn.active {
             background: #007AFF;
             color: white;
             border-color: #0056CC;
@@ -899,19 +913,25 @@
             color: var(--text-primary);
         }
         
-        /* Dark theme for guidelines categories specifically */
-        [data-theme="dark"] .guidelines-categories {
+        /* Dark theme for guidelines, lab, and ddx categories */
+        [data-theme="dark"] .guidelines-categories,
+        [data-theme="dark"] .lab-categories,
+        [data-theme="dark"] .ddx-categories {
             background: rgba(44, 44, 46, 0.5);
         }
         
-        [data-theme="dark"] .guidelines-categories .category-btn {
+        [data-theme="dark"] .guidelines-categories .category-btn,
+        [data-theme="dark"] .lab-categories .filter-btn,
+        [data-theme="dark"] .ddx-categories .filter-btn {
             background: #2C2C2E;
             border-color: #48484A;
             color: #FFFFFF;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
         
-        [data-theme="dark"] .guidelines-categories .category-btn:hover {
+        [data-theme="dark"] .guidelines-categories .category-btn:hover,
+        [data-theme="dark"] .lab-categories .filter-btn:hover,
+        [data-theme="dark"] .ddx-categories .filter-btn:hover {
             background: #007AFF;
             border-color: #007AFF;
             color: white;
@@ -919,7 +939,9 @@
             transform: translateY(-2px);
         }
         
-        [data-theme="dark"] .guidelines-categories .category-btn.active {
+        [data-theme="dark"] .guidelines-categories .category-btn.active,
+        [data-theme="dark"] .lab-categories .filter-btn.active,
+        [data-theme="dark"] .ddx-categories .filter-btn.active {
             background: #007AFF;
             border-color: #0056CC;
             color: white;

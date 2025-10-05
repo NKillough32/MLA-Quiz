@@ -5614,7 +5614,7 @@ class MLAQuizApp {
                 <div id="lab-search-results" class="lab-grid"></div>
             </div>
             <div class="lab-categories">
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
+                <button class="category-btn active" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('cbc'); event.stopPropagation();">CBC</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('bmp'); event.stopPropagation();">Chemistry</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('lft'); event.stopPropagation();">Liver</button>
@@ -5674,6 +5674,30 @@ class MLAQuizApp {
         const labDatabase = this.labDatabase;
         const labList = document.getElementById('lab-list');
         let panels = Object.keys(labDatabase);
+        
+        // Update active state of category buttons
+        const categoryButtons = document.querySelectorAll('.lab-categories .category-btn');
+        if (categoryButtons.length > 0) {
+            categoryButtons.forEach(btn => {
+                btn.classList.remove('active');
+                const btnText = btn.textContent.trim();
+                if ((category === 'all' && btnText === 'All Labs') ||
+                    (category === 'cbc' && btnText === 'CBC') ||
+                    (category === 'bmp' && btnText === 'Chemistry') ||
+                    (category === 'lft' && btnText === 'Liver') ||
+                    (category === 'lipids' && btnText === 'Lipids') ||
+                    (category === 'thyroid' && btnText === 'Thyroid') ||
+                    (category === 'urea_electrolytes' && btnText === 'U&Es') ||
+                    (category === 'coagulation' && btnText === 'Coagulation') ||
+                    (category === 'cardiac_markers' && btnText === 'Cardiac') ||
+                    (category === 'inflammatory_markers' && btnText === 'Inflammatory') ||
+                    (category === 'endocrine' && btnText === 'Endocrine')) {
+                    btn.classList.add('active');
+                }
+            });
+        } else {
+            console.log('⚠️ Lab category buttons not found');
+        }
         
         if (category !== 'all') {
             panels = panels.filter(panel => panel === category);
@@ -7881,7 +7905,7 @@ class MLAQuizApp {
                 <div id="ddx-search-results" class="lab-grid"></div>
             </div>
             <div class="ddx-categories">
-                <button class="category-btn" onclick="window.quizApp.showDdxCategory('all'); event.stopPropagation();">All Symptoms</button>
+                <button class="category-btn active" onclick="window.quizApp.showDdxCategory('all'); event.stopPropagation();">All Symptoms</button>
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('cardiovascular'); event.stopPropagation();">CV/Pulm</button>
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('gastroenterology'); event.stopPropagation();">GI/Surgery</button>
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('neurology'); event.stopPropagation();">Neurology</button>
@@ -7935,6 +7959,15 @@ class MLAQuizApp {
     showDdxCategory(category) {
         const ddxDatabase = this.ddxDatabase;
         const ddxList = document.getElementById('ddx-list');
+        
+        // Update active button state
+        document.querySelectorAll('.ddx-categories .filter-btn').forEach(btn => btn.classList.remove('active'));
+        const targetButton = Array.from(document.querySelectorAll('.ddx-categories .filter-btn')).find(btn => 
+            btn.textContent.toLowerCase().includes(category.toLowerCase()) ||
+            (category === 'all' && btn.textContent === 'All')
+        );
+        if (targetButton) targetButton.classList.add('active');
+        
         let symptoms = Object.keys(ddxDatabase);
         
         if (category !== 'all') {
@@ -9886,23 +9919,44 @@ MLAQuizApp.prototype.searchExamination = function(examinationDatabase) {
 MLAQuizApp.prototype.showExaminationCategory = function(category) {
     const examinationDatabase = this.examinationDatabase;
     const examinationList = document.getElementById('examination-list');
+    
+    // Safety check - if examination-list doesn't exist, reload the interface first
+    if (!examinationList) {
+        console.log('⚠️ Examination list not found, reloading interface...');
+        this.loadExaminationGuide();
+        // Try again after a short delay to allow DOM to update
+        setTimeout(() => this.showExaminationCategory(category), 100);
+        return;
+    }
+    
+    // Safety check for examination database
+    if (!examinationDatabase) {
+        console.log('⚠️ Examination database not loaded, reloading...');
+        this.loadExaminationGuide();
+        return;
+    }
+    
     let systems = Object.keys(examinationDatabase);
     
     // Update active state of category buttons
     const categoryButtons = document.querySelectorAll('.examination-categories .category-btn');
-    categoryButtons.forEach(btn => {
-        btn.classList.remove('active');
-        const btnText = btn.textContent.trim();
-        if ((category === 'all' && btnText === 'All Systems') ||
-            (category === 'cardiovascular' && btnText === 'Cardiovascular') ||
-            (category === 'respiratory' && btnText === 'Respiratory') ||
-            (category === 'abdominal' && btnText === 'Abdominal') ||
-            (category === 'neurological' && btnText === 'Neurological') ||
-            (category === 'ward-based' && btnText === 'Ward-Based') ||
-            (category === 'primary-care' && btnText === 'Primary Care')) {
-            btn.classList.add('active');
-        }
-    });
+    if (categoryButtons.length > 0) {
+        categoryButtons.forEach(btn => {
+            btn.classList.remove('active');
+            const btnText = btn.textContent.trim();
+            if ((category === 'all' && btnText === 'All Systems') ||
+                (category === 'cardiovascular' && btnText === 'Cardiovascular') ||
+                (category === 'respiratory' && btnText === 'Respiratory') ||
+                (category === 'abdominal' && btnText === 'Abdominal') ||
+                (category === 'neurological' && btnText === 'Neurological') ||
+                (category === 'ward-based' && btnText === 'Ward-Based') ||
+                (category === 'primary-care' && btnText === 'Primary Care')) {
+                btn.classList.add('active');
+            }
+        });
+    } else {
+        console.log('⚠️ Examination category buttons not found');
+    }
     
     if (category !== 'all') {
         if (category === 'ward-based') {
@@ -9918,18 +9972,40 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
         }
     }
     
-    examinationList.innerHTML = systems.map(system => `
-        <button class="lab-value-btn" onclick="console.log('🩺 Examination system clicked:', '${system}'); window.quizApp.showExaminationDetail('${system}'); event.stopPropagation();">
-            <div class="lab-name">${examinationDatabase[system].title}</div>
-            <div class="lab-count">${Object.keys(examinationDatabase[system].sections).length} sections</div>
-            <div class="lab-range">📋 ${examinationDatabase[system].approach}</div>
-        </button>
-    `).join('');
+    // Safely update the examination list
+    if (examinationList) {
+        examinationList.innerHTML = systems.map(system => `
+            <button class="lab-value-btn" onclick="console.log('🩺 Examination system clicked:', '${system}'); window.quizApp.showExaminationDetail('${system}'); event.stopPropagation();">
+                <div class="lab-name">${examinationDatabase[system].title}</div>
+                <div class="lab-count">${Object.keys(examinationDatabase[system].sections).length} sections</div>
+                <div class="lab-range">📋 ${examinationDatabase[system].approach}</div>
+            </button>
+        `).join('');
+    } else {
+        console.log('⚠️ Failed to update examination list - element not found');
+    }
 };
 
 MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
+    // Safety checks
+    if (!this.examinationDatabase) {
+        console.log('⚠️ Examination database not loaded, reloading...');
+        this.loadExaminationGuide();
+        return;
+    }
+    
     const system = this.examinationDatabase[systemKey];
+    if (!system) {
+        console.log('⚠️ System not found:', systemKey);
+        this.loadExaminationGuide();
+        return;
+    }
+    
     const container = document.getElementById('examination-container');
+    if (!container) {
+        console.log('⚠️ Examination container not found');
+        return;
+    }
     
     const sectionsHtml = Object.entries(system.sections).map(([sectionKey, section]) => `
         <button class="lab-value-btn" onclick="window.quizApp.showSectionDetail('${systemKey}', '${sectionKey}'); event.stopPropagation();">
@@ -9942,7 +10018,7 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
     `).join('');
     
     container.innerHTML = `
-        <button class="back-btn" onclick="window.quizApp.showExaminationCategory('all'); event.stopPropagation();">← Back to Examinations</button>
+        <button class="back-btn" onclick="window.quizApp.loadExaminationGuide(); event.stopPropagation();">← Back to Examinations</button>
         <div class="examination-detail">
             <h3>🩺 ${system.title}</h3>
             <p class="exam-category">📋 ${system.category}</p>
@@ -9959,9 +10035,32 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
 };
 
 MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
+    // Safety checks
+    if (!this.examinationDatabase) {
+        console.log('⚠️ Examination database not loaded, reloading...');
+        this.loadExaminationGuide();
+        return;
+    }
+    
     const system = this.examinationDatabase[systemKey];
+    if (!system) {
+        console.log('⚠️ System not found:', systemKey);
+        this.loadExaminationGuide();
+        return;
+    }
+    
     const section = system.sections[sectionKey];
+    if (!section) {
+        console.log('⚠️ Section not found:', sectionKey);
+        this.showExaminationDetail(systemKey);
+        return;
+    }
+    
     const container = document.getElementById('examination-container');
+    if (!container) {
+        console.log('⚠️ Examination container not found');
+        return;
+    }
     
     const abnormalHtml = Object.entries(section.abnormal).map(([finding, description]) => `
         <div class="finding-item abnormal">
