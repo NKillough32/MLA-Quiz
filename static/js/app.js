@@ -1309,27 +1309,70 @@ class MLAQuizApp {
         this.showLoading('Calculating results...');
         
         try {
-            const response = await fetch('/api/quiz/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    quiz_name: this.quizName,
-                    answers: this.submittedAnswers
-                })
-            });
+            // For uploaded quizzes, calculate score locally
+            const isUploadedQuiz = this.currentQuiz && this.currentQuiz.isUploaded;
             
-            const data = await response.json();
-            
-            if (data.success) {
-                this.showResults(data.score, data.results);
+            if (isUploadedQuiz) {
+                console.log('📊 Calculating score locally for uploaded quiz');
+                
+                // Calculate score locally
+                let correctCount = 0;
+                const results = [];
+                
+                for (const question of this.questions) {
+                    const questionId = question.id.toString();
+                    const userAnswer = this.submittedAnswers[questionId];
+                    const correctAnswer = question.correct_answer;
+                    
+                    const isCorrect = userAnswer !== undefined && userAnswer === correctAnswer;
+                    if (isCorrect) {
+                        correctCount++;
+                    }
+                    
+                    results.push({
+                        question_id: question.id,
+                        user_answer: userAnswer,
+                        correct_answer: correctAnswer,
+                        is_correct: isCorrect,
+                        question_title: question.title || `Question ${question.id}`
+                    });
+                }
+                
+                const score = {
+                    correct: correctCount,
+                    total: this.questions.length,
+                    percentage: Math.round((correctCount / this.questions.length) * 100)
+                };
+                
+                console.log('📊 Local score calculated:', score);
+                this.showResults(score, results);
+                
             } else {
-                this.showError('Failed to submit quiz: ' + data.error);
+                // For server quizzes, submit to API
+                console.log('📊 Submitting to server for scoring');
+                
+                const response = await fetch('/api/quiz/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        quiz_name: this.quizName,
+                        answers: this.submittedAnswers
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.showResults(data.score, data.results);
+                } else {
+                    this.showError('Failed to submit quiz: ' + data.error);
+                }
             }
         } catch (error) {
-            console.error('Error submitting quiz:', error);
-            this.showError('Failed to submit quiz. Please check your connection.');
+            console.error('Error finishing quiz:', error);
+            this.showError('Failed to calculate results. Please try again.');
         }
     }
     
