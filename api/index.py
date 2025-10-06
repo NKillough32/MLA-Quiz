@@ -80,6 +80,8 @@ class PWAQuizLoader:
         parts = [p.strip() for p in re.split(r'\n\s*\n', rest) if p.strip()]
         
         logger.info(f"Question {num}: Split into {len(parts)} parts")
+        for idx, part in enumerate(parts):
+            logger.info(f"Question {num}: parts[{idx}] = '{part[:100]}...'" if len(part) > 100 else f"Question {num}: parts[{idx}] = '{part}'")
 
         scenario = parts[0] if parts else ""
         investigation_index = None
