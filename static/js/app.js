@@ -5180,14 +5180,14 @@ class MLAQuizApp {
             </div>
         `;
         
-        // Scroll to the top of the drug reference container
-        container.scrollTop = 0;
-        
-        // Also scroll the main content area to the top if it exists
-        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-        if (mainContent) {
-            mainContent.scrollTop = 0;
+        // Scroll to the top - target the parent panel that actually scrolls
+        const drugPanel = document.getElementById('drug-panel');
+        if (drugPanel) {
+            drugPanel.scrollTop = 0;
         }
+        
+        // Also scroll the container itself
+        container.scrollTop = 0;
         
         // Scroll the page to the top as well
         window.scrollTo(0, 0);
@@ -5762,12 +5762,14 @@ class MLAQuizApp {
             </div>
         `;
         
-        // Scroll to the top
-        container.scrollTop = 0;
-        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-        if (mainContent) {
-            mainContent.scrollTop = 0;
+        // Scroll to the top - target the parent panel that actually scrolls
+        const labPanel = document.getElementById('lab-panel');
+        if (labPanel) {
+            labPanel.scrollTop = 0;
         }
+        
+        // Also scroll the container itself
+        container.scrollTop = 0;
     }
     
     showLabTest(panelKey, testKey) {
@@ -5811,12 +5813,14 @@ class MLAQuizApp {
             </div>
         `;
         
-        // Scroll to the top
-        container.scrollTop = 0;
-        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-        if (mainContent) {
-            mainContent.scrollTop = 0;
+        // Scroll to the top - target the parent panel that actually scrolls
+        const labPanel = document.getElementById('lab-panel');
+        if (labPanel) {
+            labPanel.scrollTop = 0;
         }
+        
+        // Also scroll the container itself
+        container.scrollTop = 0;
     }
 
     // Clinical Guidelines Functions  
@@ -6940,14 +6944,14 @@ class MLAQuizApp {
         contentHtml += `</div>`;
         container.innerHTML = contentHtml;
         
-        // Scroll to the top of the guidelines container
-        container.scrollTop = 0;
-        
-        // Also scroll the main content area to the top if it exists
-        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-        if (mainContent) {
-            mainContent.scrollTop = 0;
+        // Scroll to the top - target the parent panel that actually scrolls
+        const guidelinesPanel = document.getElementById('guidelines-panel');
+        if (guidelinesPanel) {
+            guidelinesPanel.scrollTop = 0;
         }
+        
+        // Also scroll the container itself
+        container.scrollTop = 0;
     }
 
     // Differential Diagnosis Functions
@@ -8070,12 +8074,14 @@ class MLAQuizApp {
             </div>
         `;
         
-        // Scroll to the top
-        container.scrollTop = 0;
-        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-        if (mainContent) {
-            mainContent.scrollTop = 0;
+        // Scroll to the top - target the parent panel that actually scrolls
+        const ddxPanel = document.getElementById('differential-panel');
+        if (ddxPanel) {
+            ddxPanel.scrollTop = 0;
         }
+        
+        // Also scroll the container itself
+        container.scrollTop = 0;
     }
     
     showDiagnosisDetail(symptomKey, dxKey) {
@@ -8113,12 +8119,14 @@ class MLAQuizApp {
             </div>
         `;
         
-        // Scroll to the top
-        container.scrollTop = 0;
-        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-        if (mainContent) {
-            mainContent.scrollTop = 0;
+        // Scroll to the top - target the parent panel that actually scrolls
+        const ddxPanel = document.getElementById('differential-panel');
+        if (ddxPanel) {
+            ddxPanel.scrollTop = 0;
         }
+        
+        // Also scroll the container itself
+        container.scrollTop = 0;
     }
 
     // Override switchMedicalTool to load content
@@ -10112,12 +10120,14 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
         </div>
     `;
     
-    // Scroll to the top
-    container.scrollTop = 0;
-    const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.scrollTop = 0;
+    // Scroll to the top - target the parent panel that actually scrolls
+    const examPanel = document.getElementById('examination-panel');
+    if (examPanel) {
+        examPanel.scrollTop = 0;
     }
+    
+    // Also scroll the container itself
+    container.scrollTop = 0;
 };
 
 MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
@@ -10185,12 +10195,14 @@ MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
         </div>
     `;
     
-    // Scroll to the top
-    container.scrollTop = 0;
-    const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.scrollTop = 0;
+    // Scroll to the top - target the parent panel that actually scrolls
+    const examPanel = document.getElementById('examination-panel');
+    if (examPanel) {
+        examPanel.scrollTop = 0;
     }
+    
+    // Also scroll the container itself
+    container.scrollTop = 0;
 };
 
 // Mobile back button override for medical tools
