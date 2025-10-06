@@ -108,22 +108,22 @@ class PWAQuizLoader:
                 
                 # Check if this section is just an image reference
                 # Pattern: [IMAGE: filename.png] or ![Image](__REF__:filename)
-                is_image_only = re.match(r'^\s*\[IMAGE:\s*[^\]]+\]\s*$', potential_prompt.strip())
+                is_image_only = re.match(r'^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$', potential_prompt.strip())
                 
                 if is_image_only:
                     logger.info(f"Question {num}: Detected image-only section")
-                    # Store the image reference
+                    # Keep the image as the prompt for now - frontend will handle display
                     image_reference = potential_prompt.strip()
-                    # Add image to investigations section so it appears with the clinical data
-                    investigations = investigations + "\n\n" + image_reference if investigations else image_reference
                     
                     if investigation_index + 2 < len(parts):
                         # The actual question comes AFTER the image
+                        # This section contains the question text and options
                         prompt = parts[investigation_index + 2]
                         tail_start = investigation_index + 3
                         logger.info(f"Question {num}: Using section after image as prompt: '{prompt[:100]}'")
                     else:
                         logger.warning(f"Question {num}: Image detected but no section after image, using default")
+                        prompt = image_reference  # Keep image as prompt
                         tail_start = investigation_index + 2
                 else:
                     prompt = potential_prompt
@@ -138,22 +138,22 @@ class PWAQuizLoader:
             logger.info(f"Question {num}: Section after scenario: '{potential_prompt[:100]}'")
             
             # Check if the section after scenario is an image reference
-            is_image_only = re.match(r'^\s*\[IMAGE:\s*[^\]]+\]\s*$', potential_prompt.strip())
+            is_image_only = re.match(r'^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$', potential_prompt.strip())
             
             if is_image_only:
                 logger.info(f"Question {num}: Detected image-only section after scenario")
-                # Store the image reference
+                # Keep the image reference
                 image_reference = potential_prompt.strip()
-                # Add image to scenario so it appears with the clinical presentation
-                scenario = scenario + "\n\n" + image_reference
                 
                 if len(parts) >= 3:
                     # The actual question comes AFTER the image
+                    # This section contains the question text and options
                     prompt = parts[2]
                     tail_start = 3
                     logger.info(f"Question {num}: Using section after image as prompt: '{prompt[:100]}'")
                 else:
                     logger.warning(f"Question {num}: Image detected but no section after image")
+                    prompt = image_reference  # Keep image as prompt
                     tail_start = 2
             else:
                 prompt = potential_prompt
@@ -226,22 +226,31 @@ class PWAQuizLoader:
             logger.warning(f"No explanation found for question {num}. Tail content sample: {tail_content[:300]}")
             explanations = []
 
-        # If no options found, try to extract from the prompt section
-        if not options and prompt:
-            prompt_lines = prompt.split('\n')
-            option_lines = []
-            non_option_lines = []
-            
-            for line in prompt_lines:
-                line = line.strip()
-                if re.match(r'^([A-Z])[.)]\s*', line):
-                    option_lines.append(line)
-                else:
-                    non_option_lines.append(line)
-            
-            if option_lines:
+        # Extract options from prompt if they're mixed together
+        # This is common when question and options are in the same markdown section
+        prompt_lines = prompt.split('\n')
+        option_lines = []
+        non_option_lines = []
+        
+        for line in prompt_lines:
+            line_stripped = line.strip()
+            # Match option patterns like "A) Option text" or "A. Option text"
+            if re.match(r'^([A-Z])[.)]\s*', line_stripped):
+                option_lines.append(line_stripped)
+            else:
+                non_option_lines.append(line)
+        
+        if option_lines:
+            # Options were found in the prompt section
+            if not options:
+                # No options found elsewhere, use these
                 options = option_lines
-                prompt = '\n'.join(non_option_lines).strip()
+            else:
+                # Options found in both places, prefer the ones from prompt
+                options = option_lines
+            # Clean the prompt to only contain the question text
+            prompt = '\n'.join(non_option_lines).strip()
+            logger.info(f"Question {num}: Extracted {len(option_lines)} options from prompt section")
 
         logger.info(f"Parsed question {num}: title='{title[:50] if len(title) > 50 else title}', prompt='{prompt[:80] if prompt else 'None'}', options={len(options)}, correct_answer={correct_answer}")
         if correct_answer is None and options:

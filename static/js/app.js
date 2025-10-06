@@ -379,11 +379,13 @@ class MLAQuizApp {
         let imageHtml = '';
         const promptText = question.prompt || question.question || question.title || '';
         console.log('Debug - Prompt text found:', promptText);
+        console.log('Debug - Full question object:', question);
         
         // Check if prompt is just an image reference (common for questions with images)
         const isImageOnlyPrompt = promptText && promptText.match(/^\s*\[IMAGE:\s*[^\]]+\]\s*$/);
         
         if (isImageOnlyPrompt) {
+            console.log('Warning - Prompt is image-only, this should not happen with new parser');
             // If prompt is just an image reference, process it as image
             imageHtml = this.formatText(promptText);
             // Check if there's a separate question field or use default
