@@ -377,17 +377,26 @@ class MLAQuizApp {
         // Format question prompt - separate images from question text
         let questionPromptHtml = '';
         let imageHtml = '';
+        
+        // Check if there's a separate image field (new parser format)
+        if (question.image && question.image.trim()) {
+            console.log('Debug - Found separate image field:', question.image);
+            imageHtml = this.formatText(question.image);
+        }
+        
         const promptText = question.prompt || question.question || question.title || '';
         console.log('Debug - Prompt text found:', promptText);
         console.log('Debug - Full question object:', question);
         
-        // Check if prompt is just an image reference (common for questions with images)
-        const isImageOnlyPrompt = promptText && promptText.match(/^\s*\[IMAGE:\s*[^\]]+\]\s*$/);
+        // Check if prompt is just an image reference (old format, should not happen with new parser)
+        const isImageOnlyPrompt = promptText && promptText.match(/^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$/);
         
         if (isImageOnlyPrompt) {
             console.log('Warning - Prompt is image-only, this should not happen with new parser');
-            // If prompt is just an image reference, process it as image
-            imageHtml = this.formatText(promptText);
+            // If prompt is just an image reference and we don't already have an image, process it as image
+            if (!imageHtml) {
+                imageHtml = this.formatText(promptText);
+            }
             // Check if there's a separate question field or use default
             const actualQuestion = question.question || question.questionText;
             if (actualQuestion && actualQuestion !== promptText) {
@@ -398,17 +407,19 @@ class MLAQuizApp {
             }
         } else if (promptText && promptText.trim()) {
             // Check if prompt contains image references mixed with text
-            const imageMatches = promptText.match(/\[IMAGE:[^\]]+\]/g);
+            const imageMatches = promptText.match(/(\[IMAGE:[^\]]+\]|!\[Image\]\([^)]+\))/g);
             let cleanPromptText = promptText;
             
             if (imageMatches) {
                 // Remove image references from prompt text
-                cleanPromptText = promptText.replace(/\[IMAGE:[^\]]+\]/g, '').trim();
+                cleanPromptText = promptText.replace(/(\[IMAGE:[^\]]+\]|!\[Image\]\([^)]+\))/g, '').trim();
                 
-                // Process each image
-                imageMatches.forEach(imageRef => {
-                    imageHtml += this.formatText(imageRef);
-                });
+                // Process each image (only if we don't already have an image from the image field)
+                if (!imageHtml) {
+                    imageMatches.forEach(imageRef => {
+                        imageHtml += this.formatText(imageRef);
+                    });
+                }
             }
             
             // Use clean prompt text or process entire prompt if no image matches found

@@ -101,7 +101,7 @@ class PWAQuizLoader:
 
         prompt = "What is the most likely diagnosis?"
         tail_start = 1
-        image_reference = ""  # Store image reference separately
+        image = ""  # Store image reference separately for frontend display
 
         if investigation_index is not None:
             if investigation_index + 1 < len(parts):
@@ -116,9 +116,8 @@ class PWAQuizLoader:
                     logger.info(f"Question {num}: Detected image-only section")
                     logger.info(f"Question {num}: len(parts)={len(parts)}, investigation_index={investigation_index}")
                     logger.info(f"Question {num}: Checking if investigation_index + 2 ({investigation_index + 2}) < len(parts) ({len(parts)})")
-                    # The image is in its own section - keep it as prompt for display
-                    image_reference = potential_prompt.strip()
-                    prompt = image_reference
+                    # Store the image reference separately
+                    image = potential_prompt.strip()
                     
                     if investigation_index + 2 < len(parts):
                         # The actual question comes AFTER the image in a separate section
@@ -175,10 +174,9 @@ class PWAQuizLoader:
             
             if is_image_only:
                 logger.info(f"Question {num}: Detected image-only section after scenario")
-                # The image is in its own section
-                image_reference = potential_prompt.strip()
-                prompt = image_reference
-                logger.info(f"Question {num}: DEBUG - Set prompt to image reference: '{prompt}'")
+                # Store the image reference separately
+                image = potential_prompt.strip()
+                logger.info(f"Question {num}: DEBUG - Stored image reference: '{image}'")
                 
                 if len(parts) >= 3:
                     # The actual question comes AFTER the image in a separate section
@@ -381,6 +379,7 @@ class PWAQuizLoader:
         logger.info(f"Question {num}: DEBUG - FINAL VALUES BEFORE RETURN:")
         logger.info(f"Question {num}: DEBUG - scenario='{scenario[:100] if len(scenario) > 100 else scenario}'")
         logger.info(f"Question {num}: DEBUG - prompt='{prompt}'")
+        logger.info(f"Question {num}: DEBUG - image='{image}'")
         logger.info(f"Question {num}: DEBUG - investigations='{investigations[:50] if investigations else 'None'}'")
 
         return {
@@ -389,6 +388,7 @@ class PWAQuizLoader:
             'specialty': specialty,
             'scenario': scenario,
             'investigations': investigations,
+            'image': image,  # Separate image field for frontend
             'prompt': prompt,
             'options': options,
             'correct_answer': correct_answer,
