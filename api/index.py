@@ -112,22 +112,52 @@ class PWAQuizLoader:
                 
                 if is_image_only:
                     logger.info(f"Question {num}: Detected image-only section")
-                    # Keep the image as the prompt for now - frontend will handle display
+                    logger.info(f"Question {num}: len(parts)={len(parts)}, investigation_index={investigation_index}")
+                    logger.info(f"Question {num}: Checking if investigation_index + 2 ({investigation_index + 2}) < len(parts) ({len(parts)})")
+                    # The image is in its own section - keep it as prompt for display
                     image_reference = potential_prompt.strip()
+                    prompt = image_reference
                     
                     if investigation_index + 2 < len(parts):
-                        # The actual question comes AFTER the image
-                        # This section contains the question text and options
+                        # The actual question comes AFTER the image in a separate section
                         prompt = parts[investigation_index + 2]
                         tail_start = investigation_index + 3
                         logger.info(f"Question {num}: Using section after image as prompt: '{prompt[:100]}'")
                     else:
-                        logger.warning(f"Question {num}: Image detected but no section after image, using default")
-                        prompt = image_reference  # Keep image as prompt
+                        logger.warning(f"Question {num}: Image detected but no section after image (investigation_index={investigation_index}, len(parts)={len(parts)})")
                         tail_start = investigation_index + 2
                 else:
-                    prompt = potential_prompt
-                    tail_start = investigation_index + 2
+                    # Not image-only, but check if image is embedded in the text
+                    # Split the section into lines to separate image from question
+                    section_lines = potential_prompt.split('\n')
+                    image_lines = []
+                    question_lines = []
+                    found_image = False
+                    
+                    for line in section_lines:
+                        # Check if line contains an image reference
+                        if re.match(r'^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$', line.strip()):
+                            image_lines.append(line)
+                            found_image = True
+                        elif found_image:
+                            # Everything after the image is the question
+                            question_lines.append(line)
+                        elif not found_image and not line.strip():
+                            # Empty line before we found image, skip it
+                            continue
+                        elif not found_image:
+                            # Before image, could be part of investigations or scenario
+                            question_lines.append(line)
+                    
+                    if found_image and question_lines:
+                        # Found image embedded with question - separate them
+                        prompt = '\n'.join(question_lines).strip()
+                        logger.info(f"Question {num}: Separated embedded image from question: '{prompt[:100]}'")
+                        tail_start = investigation_index + 2
+                    else:
+                        # No image found, use as-is
+                        prompt = potential_prompt
+                        tail_start = investigation_index + 2
             else:
                 scenario_parts_check = scenario.split('\n\n')
                 if len(scenario_parts_check) > 1:
@@ -136,28 +166,60 @@ class PWAQuizLoader:
         elif len(parts) >= 2:
             potential_prompt = parts[1]
             logger.info(f"Question {num}: Section after scenario: '{potential_prompt[:100]}'")
+            logger.info(f"Question {num}: DEBUG - len(parts)={len(parts)}, parts array: {[p[:50] + '...' if len(p) > 50 else p for p in parts]}")
             
             # Check if the section after scenario is an image reference
             is_image_only = re.match(r'^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$', potential_prompt.strip())
             
             if is_image_only:
                 logger.info(f"Question {num}: Detected image-only section after scenario")
-                # Keep the image reference
+                # The image is in its own section
                 image_reference = potential_prompt.strip()
+                prompt = image_reference
+                logger.info(f"Question {num}: DEBUG - Set prompt to image reference: '{prompt}'")
                 
                 if len(parts) >= 3:
-                    # The actual question comes AFTER the image
-                    # This section contains the question text and options
+                    # The actual question comes AFTER the image in a separate section
+                    logger.info(f"Question {num}: DEBUG - BEFORE assignment: prompt='{prompt}'")
+                    logger.info(f"Question {num}: DEBUG - parts[2] content: '{parts[2]}'")
                     prompt = parts[2]
+                    logger.info(f"Question {num}: DEBUG - AFTER assignment: prompt='{prompt}'")
                     tail_start = 3
                     logger.info(f"Question {num}: Using section after image as prompt: '{prompt[:100]}'")
                 else:
                     logger.warning(f"Question {num}: Image detected but no section after image")
-                    prompt = image_reference  # Keep image as prompt
                     tail_start = 2
             else:
-                prompt = potential_prompt
-                tail_start = 2
+                # Not image-only, but check if image is embedded in the text
+                logger.info(f"Question {num}: Checking for embedded image in section (length {len(potential_prompt)} chars)")
+                section_lines = potential_prompt.split('\n')
+                logger.info(f"Question {num}: Section has {len(section_lines)} lines")
+                image_lines = []
+                question_lines = []
+                found_image = False
+                
+                for idx, line in enumerate(section_lines):
+                    is_image_line = re.match(r'^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$', line.strip())
+                    if is_image_line:
+                        logger.info(f"Question {num}: Line {idx} is image: '{line.strip()[:80]}'")
+                        image_lines.append(line)
+                        found_image = True
+                    elif found_image:
+                        logger.info(f"Question {num}: Line {idx} after image: '{line.strip()[:80]}'")
+                        question_lines.append(line)
+                    elif not found_image and not line.strip():
+                        continue
+                    elif not found_image:
+                        question_lines.append(line)
+                
+                if found_image and question_lines:
+                    prompt = '\n'.join(question_lines).strip()
+                    logger.info(f"Question {num}: Separated embedded image from question: '{prompt[:100]}'")
+                    tail_start = 2
+                else:
+                    logger.info(f"Question {num}: No embedded image found or no question lines after image (found_image={found_image}, question_lines={len(question_lines)})")
+                    prompt = potential_prompt
+                    tail_start = 2
 
         # Extract options (A, B, C, D, etc.)
         options = []
@@ -228,6 +290,20 @@ class PWAQuizLoader:
 
         # Extract options from prompt if they're mixed together
         # This is common when question and options are in the same markdown section
+        
+        # FIRST: Check if prompt is just an image reference - if so, it's not the real question
+        logger.info(f"Question {num}: DEBUG - About to check fallback. Current prompt value: '{prompt}'")
+        if re.match(r'^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$', prompt.strip()):
+            logger.warning(f"Question {num}: Prompt is still just an image after parsing! This means the question is missing.")
+            # The prompt IS the image, we need to find the actual question elsewhere
+            # It might be in the next part, or mixed with the image in the same part
+            # Let's check if there's content after the image in the current section
+            # Actually, if we're here, we've already tried to separate - so default to generic question
+            prompt = "What is the most likely diagnosis?"
+            logger.info(f"Question {num}: Using default prompt since image is the only content")
+        else:
+            logger.info(f"Question {num}: DEBUG - Fallback check passed, prompt is NOT just an image")
+        
         prompt_lines = prompt.split('\n')
         option_lines = []
         non_option_lines = []
@@ -255,6 +331,11 @@ class PWAQuizLoader:
         logger.info(f"Parsed question {num}: title='{title[:50] if len(title) > 50 else title}', prompt='{prompt[:80] if prompt else 'None'}', options={len(options)}, correct_answer={correct_answer}")
         if correct_answer is None and options:
             logger.warning(f"No correct answer found for question {num}. Sample content: {tail_content[:200]}...")
+
+        logger.info(f"Question {num}: DEBUG - FINAL VALUES BEFORE RETURN:")
+        logger.info(f"Question {num}: DEBUG - scenario='{scenario[:100] if len(scenario) > 100 else scenario}'")
+        logger.info(f"Question {num}: DEBUG - prompt='{prompt}'")
+        logger.info(f"Question {num}: DEBUG - investigations='{investigations[:50] if investigations else 'None'}'")
 
         return {
             'id': int(num),
