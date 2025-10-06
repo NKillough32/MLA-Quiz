@@ -2212,8 +2212,8 @@ class MLAQuizApp {
             
             const toggleBtn = document.createElement('button');
             toggleBtn.id = 'haptics-toggle';
-            toggleBtn.className = 'navbar-btn';
-            toggleBtn.style.cssText = 'position: absolute; right: 160px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
+            toggleBtn.className = 'navbar-btn haptics-toggle-btn';
+            toggleBtn.style.cssText = 'position: absolute; left: 60px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
             toggleBtn.onclick = () => this.setHapticsEnabled(!this.hapticsOptIn);
             
             toggleBtn.textContent = this.hapticsOptIn ? '🔔 Haptics: On' : '🔕 Haptics: Off';
