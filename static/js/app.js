@@ -4898,8 +4898,8 @@ class MLAQuizApp {
             </div>
             <div id="drug-search-results"></div>
             <div class="drug-categories">
-                <button class="category-btn active" onclick="window.quizApp.showDrugCategory('all'); event.stopPropagation();">All Drugs</button>
-                <button class="category-btn" onclick="window.quizApp.showDrugCategory('alphabetical'); event.stopPropagation();">A-Z</button>
+                <button class="category-btn" onclick="window.quizApp.showDrugCategory('all'); event.stopPropagation();">All Drugs</button>
+                <button class="category-btn active" onclick="window.quizApp.showDrugCategory('alphabetical'); event.stopPropagation();">A-Z</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('analgesics'); event.stopPropagation();">Pain Management</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('antibiotics'); event.stopPropagation();">Antibiotics</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
@@ -4918,7 +4918,7 @@ class MLAQuizApp {
         searchInput.addEventListener('input', () => this.searchDrugs(drugDatabase));
         searchBtn.addEventListener('click', () => this.searchDrugs(drugDatabase));
         this.drugDatabase = drugDatabase;
-        this.showDrugCategory('all');
+        this.showDrugCategory('alphabetical');
     }
 
     searchDrugs(drugDatabase) {
@@ -5628,6 +5628,273 @@ class MLAQuizApp {
                         critical: '<100 nmol/L (consider steroid replacement)',
                         ageVariations: 'Peak in early morning, follows circadian rhythm',
                         clinicalSignificance: 'Diurnal variation important. Low 9am cortisol needs synacthen test. Midnight cortisol for Cushings.'
+                    },
+                    'LH': {
+                        normal: 'M: 1-10 IU/L, F (follicular): 2-10, F (ovulation): 20-70, F (luteal): 1-15, Postmenopausal: 10-60',
+                        low: 'Hypogonadotropic hypogonadism, hypopituitarism, anorexia, stress',
+                        high: 'Primary gonadal failure, PCOS, menopause, Kallmann syndrome',
+                        critical: 'Not typically defined',
+                        ageVariations: 'Varies significantly by menstrual phase and menopausal status',
+                        clinicalSignificance: 'Measure with FSH for fertility evaluation. LH:FSH ratio >2 suggests PCOS.'
+                    },
+                    'FSH': {
+                        normal: 'M: 1-10 IU/L, F (follicular): 3-10, F (ovulation): 10-20, F (luteal): 1-10, Postmenopausal: 20-120',
+                        low: 'Hypogonadotropic hypogonadism, hypopituitarism, pregnancy',
+                        high: 'Primary ovarian/testicular failure, menopause, Klinefelter syndrome',
+                        critical: 'Not typically defined',
+                        ageVariations: 'Increases dramatically after menopause',
+                        clinicalSignificance: 'High FSH with low estrogen/testosterone indicates primary gonadal failure.'
+                    },
+                    'Testosterone': {
+                        normal: 'M: 10-30 nmol/L, F: 0.5-2.5 nmol/L',
+                        low: 'Hypogonadism, pituitary disease, obesity, medications, aging',
+                        high: 'PCOS, adrenal tumors, testicular tumors, anabolic steroid use',
+                        critical: 'Not typically defined',
+                        ageVariations: 'Declines with age in men (~1% per year after 30)',
+                        clinicalSignificance: 'Measure total and free testosterone. Sample in morning (9-11am). Low testosterone with low LH/FSH = secondary hypogonadism.'
+                    },
+                    'Prolactin': {
+                        normal: 'M: <15 μg/L, F (non-pregnant): <25 μg/L',
+                        low: 'Rarely clinically significant, hypopituitarism',
+                        high: 'Prolactinoma, medications (antipsychotics, metoclopramide), hypothyroidism, pregnancy',
+                        critical: '>200 μg/L (likely prolactinoma)',
+                        ageVariations: 'Elevated during pregnancy and lactation',
+                        clinicalSignificance: 'Causes galactorrhea, hypogonadism. Macroprolactin can cause false elevations. MRI pituitary if >100.'
+                    }
+                }
+            },
+            'vitamins_minerals': {
+                name: 'Vitamins & Minerals',
+                values: {
+                    'Vitamin B12': {
+                        normal: '200-900 ng/L',
+                        low: 'Pernicious anaemia, malabsorption, vegan diet, metformin use, gastric surgery',
+                        high: 'B12 supplementation, liver disease, myeloproliferative disorders',
+                        critical: '<150 ng/L',
+                        ageVariations: 'Absorption decreases with age',
+                        clinicalSignificance: 'Deficiency causes macrocytic anaemia, neuropathy. Check MMA/homocysteine if borderline. Treat empirically if symptomatic.'
+                    },
+                    'Folate': {
+                        normal: '3-20 μg/L',
+                        low: 'Poor diet, malabsorption, alcohol, antifolate drugs (methotrexate), pregnancy',
+                        high: 'Folate supplementation, rarely clinically significant',
+                        critical: '<2 μg/L',
+                        ageVariations: 'Requirements increase in pregnancy',
+                        clinicalSignificance: 'Deficiency causes macrocytic anaemia. Always check B12 concurrently. Treat B12 deficiency before folate.'
+                    },
+                    'Vitamin D': {
+                        normal: '>50 nmol/L (adequate), 30-50 (insufficient), <30 (deficient)',
+                        low: 'Limited sun exposure, malabsorption, CKD, obesity, dark skin',
+                        high: 'Vitamin D toxicity, excessive supplementation',
+                        critical: '<25 nmol/L (severe deficiency)',
+                        ageVariations: 'Elderly at higher risk of deficiency',
+                        clinicalSignificance: 'Deficiency causes osteomalacia, osteoporosis. Supplement if <50. Check PTH if low. Common in UK population.'
+                    },
+                    'Ferritin': {
+                        normal: 'M: 30-300 μg/L, F: 15-200 μg/L',
+                        low: 'Iron deficiency anaemia, blood loss, poor intake, malabsorption',
+                        high: 'Inflammation, infection, liver disease, haemochromatosis, malignancy',
+                        critical: '<15 μg/L (iron deficiency)',
+                        ageVariations: 'Lower in premenopausal women due to menstruation',
+                        clinicalSignificance: 'Best test for iron stores. <30 suggests iron deficiency even if not anaemic. Acute phase protein - can be falsely elevated.'
+                    },
+                    'Iron': {
+                        normal: '10-30 μmol/L',
+                        low: 'Iron deficiency, chronic disease, poor intake',
+                        high: 'Haemochromatosis, iron supplementation, haemolysis, repeated transfusions',
+                        critical: 'Not typically defined',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Shows diurnal variation. Best interpreted with TIBC and ferritin. Low with high TIBC suggests iron deficiency.'
+                    },
+                    'TIBC': {
+                        normal: '45-70 μmol/L',
+                        low: 'Chronic disease, malnutrition, liver disease, nephrotic syndrome',
+                        high: 'Iron deficiency, pregnancy, oral contraceptives',
+                        critical: 'Not typically defined',
+                        ageVariations: 'Slightly higher in pregnancy',
+                        clinicalSignificance: 'Transferrin saturation = (Iron/TIBC) × 100%. Normal: 20-45%. <20% = iron deficiency. >45% = iron overload.'
+                    },
+                    'Transferrin Saturation': {
+                        normal: '20-45%',
+                        low: 'Iron deficiency anaemia, chronic disease',
+                        high: 'Haemochromatosis, iron overload, sideroblastic anaemia',
+                        critical: '>60% (consider haemochromatosis)',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: '<20% suggests iron deficiency. >45% warrants investigation for haemochromatosis. Calculate from iron and TIBC.'
+                    },
+                    'Calcium (corrected)': {
+                        normal: '2.20-2.60 mmol/L',
+                        low: 'Hypoparathyroidism, vitamin D deficiency, CKD, pancreatitis, hypoalbuminaemia',
+                        high: 'Primary hyperparathyroidism, malignancy, vitamin D toxicity, thiazide diuretics',
+                        critical: '<1.90 or >3.00 mmol/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Correct for albumin: Corrected Ca = measured Ca + 0.02 × (40 - albumin g/L). Check PTH if abnormal.'
+                    },
+                    'Magnesium': {
+                        normal: '0.70-1.00 mmol/L',
+                        low: 'Diuretics, alcohol, diarrhoea, malabsorption, DKA, refeeding syndrome',
+                        high: 'Renal failure, excessive supplementation, Addisons disease',
+                        critical: '<0.50 or >1.50 mmol/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Often overlooked. Low Mg causes arrhythmias, seizures, resistant hypokalaemia/hypocalcaemia. Replace IV if severe.'
+                    },
+                    'Phosphate': {
+                        normal: '0.80-1.50 mmol/L',
+                        low: 'Refeeding syndrome, vitamin D deficiency, hyperparathyroidism, DKA recovery',
+                        high: 'Renal failure, hypoparathyroidism, tumour lysis syndrome, rhabdomyolysis',
+                        critical: '<0.30 or >2.50 mmol/L',
+                        ageVariations: 'Higher in children',
+                        clinicalSignificance: 'Low phosphate dangerous in refeeding. High phosphate in CKD requires phosphate binders. Check with calcium and PTH.'
+                    }
+                }
+            },
+            'bone_markers': {
+                name: 'Bone Markers',
+                values: {
+                    'PTH': {
+                        normal: '1.6-6.9 pmol/L',
+                        low: 'Hypoparathyroidism, vitamin D toxicity, hypercalcaemia',
+                        high: 'Primary/secondary hyperparathyroidism, vitamin D deficiency, CKD',
+                        critical: '<0.5 or >30 pmol/L',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'High PTH + high Ca = primary hyperparathyroidism. High PTH + low Ca = secondary (vitamin D deficiency, CKD).'
+                    },
+                    'ALP (bone-specific)': {
+                        normal: '20-130 U/L',
+                        low: 'Hypothyroidism, malnutrition',
+                        high: 'Paget disease, bone metastases, fracture healing, osteomalacia, hyperparathyroidism',
+                        critical: '>5× upper limit',
+                        ageVariations: 'Elevated in children (growth) and elderly (bone turnover)',
+                        clinicalSignificance: 'Use to differentiate bone vs liver cause of elevated total ALP. Order if total ALP elevated without GGT elevation.'
+                    }
+                }
+            },
+            'immunology': {
+                name: 'Immunology & Autoimmune',
+                values: {
+                    'Rheumatoid Factor': {
+                        normal: '<20 IU/mL',
+                        low: 'No clinical significance',
+                        high: 'Rheumatoid arthritis, Sjögren syndrome, SLE, chronic infections, elderly',
+                        critical: '>100 IU/mL (high titre)',
+                        ageVariations: 'Can be positive in 5-10% of healthy elderly',
+                        clinicalSignificance: 'Positive in 70-80% of RA. Not specific - also in other autoimmune diseases. High titre more significant.'
+                    },
+                    'Anti-CCP': {
+                        normal: '<20 units/mL',
+                        low: 'No clinical significance',
+                        high: 'Rheumatoid arthritis',
+                        critical: '>100 units/mL (strongly positive)',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'More specific than RF for RA (95% specificity). Predicts erosive disease. Can be positive years before symptoms.'
+                    },
+                    'ANA': {
+                        normal: '<1:80 (negative)',
+                        low: 'No clinical significance',
+                        high: 'SLE, drug-induced lupus, Sjögren, scleroderma, mixed connective tissue disease',
+                        critical: '>1:640 (high titre)',
+                        ageVariations: 'Low titres can be positive in healthy individuals, especially elderly',
+                        clinicalSignificance: 'Screening test for autoimmune disease. Pattern matters (speckled, homogeneous, nucleolar). Positive in 5-10% healthy.'
+                    }
+                }
+            },
+            'proteins': {
+                name: 'Protein Studies',
+                values: {
+                    'Total Protein': {
+                        normal: '60-80 g/L',
+                        low: 'Malnutrition, liver disease, nephrotic syndrome, protein-losing enteropathy',
+                        high: 'Dehydration, multiple myeloma, chronic inflammation',
+                        critical: '<40 or >100 g/L',
+                        ageVariations: 'Slightly lower in elderly',
+                        clinicalSignificance: 'Sum of albumin and globulins. Use with albumin to calculate A:G ratio and globulin level.'
+                    },
+                    'Globulin': {
+                        normal: '20-35 g/L',
+                        low: 'Immunodeficiency, nephrotic syndrome, malnutrition',
+                        high: 'Chronic infection, autoimmune disease, multiple myeloma, liver disease',
+                        critical: '<15 or >50 g/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Calculated: Total Protein - Albumin. A:G ratio normally 1.5-2.5. Low ratio (<1) suggests myeloma or liver disease.'
+                    }
+                }
+            },
+            'renal_urine': {
+                name: 'Renal & Urine Tests',
+                values: {
+                    'Urine ACR': {
+                        normal: '<3 mg/mmol',
+                        low: 'No clinical significance',
+                        high: 'Diabetic nephropathy, CKD, hypertension, proteinuria',
+                        critical: '>30 mg/mmol (macroalbuminuria)',
+                        ageVariations: 'Increases with age',
+                        clinicalSignificance: 'Microalbuminuria: 3-30 mg/mmol. Screen annually in diabetes. Early marker of diabetic kidney disease. ACE-I/ARB if elevated.'
+                    },
+                    'Urinalysis': {
+                        normal: 'Negative for blood, protein, glucose, ketones, nitrites, leukocytes',
+                        low: 'Not applicable',
+                        high: 'UTI (nitrites, leukocytes), diabetes (glucose), kidney disease (protein, blood), DKA (ketones)',
+                        critical: 'Gross haematuria, heavy proteinuria',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Dipstick: quick screening. Blood without infection needs imaging for malignancy. Protein needs quantification. Nitrites 90% specific for UTI.'
+                    }
+                }
+            },
+            'hematology_additional': {
+                name: 'Additional Hematology',
+                values: {
+                    'Reticulocyte Count': {
+                        normal: '0.5-2.0% (25-100 × 10⁹/L)',
+                        low: 'Bone marrow failure, aplastic anaemia, B12/folate deficiency',
+                        high: 'Haemolytic anaemia, bleeding, response to treatment',
+                        critical: '<0.2% or >6%',
+                        ageVariations: 'Higher in neonates',
+                        clinicalSignificance: 'Reflects bone marrow red cell production. High with anaemia = haemolysis or bleeding. Low with anaemia = production problem.'
+                    },
+                    'Blood Film': {
+                        normal: 'Normal red cell, white cell, and platelet morphology',
+                        low: 'Not applicable',
+                        high: 'Various abnormalities: target cells, spherocytes, blasts, hypersegmented neutrophils',
+                        critical: 'Presence of blasts (leukaemia), severe haemolysis features',
+                        ageVariations: 'Morphology changes with age',
+                        clinicalSignificance: 'Essential in anaemia workup. Identifies: iron deficiency (pencil cells), B12 deficiency (hypersegmentation), haemolysis (spherocytes, fragments).'
+                    }
+                }
+            },
+            'specialized': {
+                name: 'Specialized Tests',
+                values: {
+                    'PSA': {
+                        normal: '<4 ng/mL (age-dependent)',
+                        low: 'No clinical significance',
+                        high: 'Prostate cancer, BPH, prostatitis, recent DRE/ejaculation',
+                        critical: '>10 ng/mL (high risk)',
+                        ageVariations: 'Increases with age: <50yr: <2.5, 50-60: <3.5, 60-70: <4.5, >70: <6.5',
+                        clinicalSignificance: 'Screening controversial. Velocity >0.75/year concerning. Free:total ratio <25% suggests cancer. Can be elevated 48h after ejaculation.'
+                    },
+                    'Lactate': {
+                        normal: '0.5-2.0 mmol/L',
+                        low: 'No clinical significance',
+                        high: 'Sepsis, shock, tissue hypoxia, seizures, metformin, liver disease',
+                        critical: '>4 mmol/L',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Marker of tissue hypoperfusion. Serial lactates guide sepsis resuscitation. Elevated in sepsis, shock, mesenteric ischaemia.'
+                    },
+                    'Amylase': {
+                        normal: '30-110 U/L',
+                        low: 'Chronic pancreatitis, pancreatic insufficiency',
+                        high: 'Acute pancreatitis, perforated peptic ulcer, mesenteric ischaemia, mumps',
+                        critical: '>3× upper limit (suggests pancreatitis)',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'Rises within 6-12h of acute pancreatitis. Not specific - also elevated in other acute abdomens. Lipase more specific.'
+                    },
+                    'Lipase': {
+                        normal: '10-140 U/L',
+                        low: 'Chronic pancreatitis (late stage)',
+                        high: 'Acute pancreatitis, pancreatic cancer, renal failure, bowel obstruction',
+                        critical: '>3× upper limit',
+                        ageVariations: 'Consistent across ages',
+                        clinicalSignificance: 'More specific and sensitive than amylase for acute pancreatitis. Remains elevated longer (7-14 days vs 3-5 days).'
                     }
                 }
             }
@@ -5651,7 +5918,14 @@ class MLAQuizApp {
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('coagulation'); event.stopPropagation();">Coagulation</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('cardiac_markers'); event.stopPropagation();">Cardiac</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('inflammatory_markers'); event.stopPropagation();">Inflammatory</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('endocrine'); event.stopPropagation();">Endocrine</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('endocrine'); event.stopPropagation();">Hormones</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('vitamins_minerals'); event.stopPropagation();">Vitamins</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('bone_markers'); event.stopPropagation();">Bone</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('immunology'); event.stopPropagation();">Immunology</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('proteins'); event.stopPropagation();">Proteins</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('renal_urine'); event.stopPropagation();">Urine</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('hematology_additional'); event.stopPropagation();">Hematology+</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('specialized'); event.stopPropagation();">Specialized</button>
             </div>
             <div id="lab-list" class="lab-grid"></div>
         `;
