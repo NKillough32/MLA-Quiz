@@ -99,16 +99,37 @@ class PWAQuizLoader:
 
         if investigation_index is not None:
             if investigation_index + 1 < len(parts):
-                prompt = parts[investigation_index + 1]
-                tail_start = investigation_index + 2
+                potential_prompt = parts[investigation_index + 1]
+                # Check if this section is just an image reference
+                # Pattern: [IMAGE: filename.png] or ![Image](__REF__:filename)
+                is_image_only = re.match(r'^\s*\[IMAGE:\s*[^\]]+\]\s*$', potential_prompt.strip())
+                
+                if is_image_only and investigation_index + 2 < len(parts):
+                    # The actual question comes AFTER the image
+                    prompt = parts[investigation_index + 2]
+                    tail_start = investigation_index + 3
+                    logger.info(f"Question {num}: Found image-only section, using next section as prompt")
+                else:
+                    prompt = potential_prompt
+                    tail_start = investigation_index + 2
             else:
                 scenario_parts_check = scenario.split('\n\n')
                 if len(scenario_parts_check) > 1:
                     prompt = scenario_parts_check[-1]
                     scenario = '\n\n'.join(scenario_parts_check[:-1])
         elif len(parts) >= 2:
-            prompt = parts[1]
-            tail_start = 2
+            potential_prompt = parts[1]
+            # Check if the section after scenario is an image reference
+            is_image_only = re.match(r'^\s*\[IMAGE:\s*[^\]]+\]\s*$', potential_prompt.strip())
+            
+            if is_image_only and len(parts) >= 3:
+                # The actual question comes AFTER the image
+                prompt = parts[2]
+                tail_start = 3
+                logger.info(f"Question {num}: Found image-only section after scenario, using next section as prompt")
+            else:
+                prompt = potential_prompt
+                tail_start = 2
 
         # Extract options (A, B, C, D, etc.)
         options = []

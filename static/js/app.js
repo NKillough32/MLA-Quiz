@@ -381,12 +381,19 @@ class MLAQuizApp {
         console.log('Debug - Prompt text found:', promptText);
         
         // Check if prompt is just an image reference (common for questions with images)
-        const isImageOnlyPrompt = promptText && promptText.match(/^!\[Image\]\(__REF__:[^)]+\)$/);
+        const isImageOnlyPrompt = promptText && promptText.match(/^\s*\[IMAGE:\s*[^\]]+\]\s*$/);
         
         if (isImageOnlyPrompt) {
-            // If prompt is just an image reference, process it as image and use default question text
+            // If prompt is just an image reference, process it as image
             imageHtml = this.formatText(promptText);
-            questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
+            // Check if there's a separate question field or use default
+            const actualQuestion = question.question || question.questionText;
+            if (actualQuestion && actualQuestion !== promptText) {
+                questionPromptHtml = `<div class="prompt">${this.formatText(actualQuestion)}</div>`;
+            } else {
+                // Fallback to default only if no other question text exists
+                questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
+            }
         } else if (promptText && promptText.trim()) {
             // Check if prompt contains image references mixed with text
             const imageMatches = promptText.match(/\[IMAGE:[^\]]+\]/g);
