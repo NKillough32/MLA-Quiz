@@ -76,7 +76,10 @@ class PWAQuizLoader:
             return None
 
         num, title, rest = m.groups()
-        parts = [p.strip() for p in re.split(r'\n\s*\n', rest, maxsplit=4) if p.strip()]
+        # Remove maxsplit limitation to capture all sections including image and question after image
+        parts = [p.strip() for p in re.split(r'\n\s*\n', rest) if p.strip()]
+        
+        logger.info(f"Question {num}: Split into {len(parts)} parts")
 
         scenario = parts[0] if parts else ""
         investigation_index = None
@@ -96,19 +99,32 @@ class PWAQuizLoader:
 
         prompt = "What is the most likely diagnosis?"
         tail_start = 1
+        image_reference = ""  # Store image reference separately
 
         if investigation_index is not None:
             if investigation_index + 1 < len(parts):
                 potential_prompt = parts[investigation_index + 1]
+                logger.info(f"Question {num}: Section after investigations: '{potential_prompt[:100]}'")
+                
                 # Check if this section is just an image reference
                 # Pattern: [IMAGE: filename.png] or ![Image](__REF__:filename)
                 is_image_only = re.match(r'^\s*\[IMAGE:\s*[^\]]+\]\s*$', potential_prompt.strip())
                 
-                if is_image_only and investigation_index + 2 < len(parts):
-                    # The actual question comes AFTER the image
-                    prompt = parts[investigation_index + 2]
-                    tail_start = investigation_index + 3
-                    logger.info(f"Question {num}: Found image-only section, using next section as prompt")
+                if is_image_only:
+                    logger.info(f"Question {num}: Detected image-only section")
+                    # Store the image reference
+                    image_reference = potential_prompt.strip()
+                    # Add image to investigations section so it appears with the clinical data
+                    investigations = investigations + "\n\n" + image_reference if investigations else image_reference
+                    
+                    if investigation_index + 2 < len(parts):
+                        # The actual question comes AFTER the image
+                        prompt = parts[investigation_index + 2]
+                        tail_start = investigation_index + 3
+                        logger.info(f"Question {num}: Using section after image as prompt: '{prompt[:100]}'")
+                    else:
+                        logger.warning(f"Question {num}: Image detected but no section after image, using default")
+                        tail_start = investigation_index + 2
                 else:
                     prompt = potential_prompt
                     tail_start = investigation_index + 2
@@ -119,14 +135,26 @@ class PWAQuizLoader:
                     scenario = '\n\n'.join(scenario_parts_check[:-1])
         elif len(parts) >= 2:
             potential_prompt = parts[1]
+            logger.info(f"Question {num}: Section after scenario: '{potential_prompt[:100]}'")
+            
             # Check if the section after scenario is an image reference
             is_image_only = re.match(r'^\s*\[IMAGE:\s*[^\]]+\]\s*$', potential_prompt.strip())
             
-            if is_image_only and len(parts) >= 3:
-                # The actual question comes AFTER the image
-                prompt = parts[2]
-                tail_start = 3
-                logger.info(f"Question {num}: Found image-only section after scenario, using next section as prompt")
+            if is_image_only:
+                logger.info(f"Question {num}: Detected image-only section after scenario")
+                # Store the image reference
+                image_reference = potential_prompt.strip()
+                # Add image to scenario so it appears with the clinical presentation
+                scenario = scenario + "\n\n" + image_reference
+                
+                if len(parts) >= 3:
+                    # The actual question comes AFTER the image
+                    prompt = parts[2]
+                    tail_start = 3
+                    logger.info(f"Question {num}: Using section after image as prompt: '{prompt[:100]}'")
+                else:
+                    logger.warning(f"Question {num}: Image detected but no section after image")
+                    tail_start = 2
             else:
                 prompt = potential_prompt
                 tail_start = 2
@@ -215,7 +243,7 @@ class PWAQuizLoader:
                 options = option_lines
                 prompt = '\n'.join(non_option_lines).strip()
 
-        logger.info(f"Parsed question {num}: title='{title[:50] if len(title) > 50 else title}', options={len(options)}, correct_answer={correct_answer}")
+        logger.info(f"Parsed question {num}: title='{title[:50] if len(title) > 50 else title}', prompt='{prompt[:80] if prompt else 'None'}', options={len(options)}, correct_answer={correct_answer}")
         if correct_answer is None and options:
             logger.warning(f"No correct answer found for question {num}. Sample content: {tail_content[:200]}...")
 
