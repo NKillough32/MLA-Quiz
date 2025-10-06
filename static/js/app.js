@@ -29,8 +29,7 @@ class MLAQuizApp {
         // Theme and font size settings
         this.fontSize = localStorage.getItem('fontSize') || 'medium';
         
-        // Initialize interactive features
-        this.bookmarks = JSON.parse(localStorage.getItem('medicalToolsBookmarks')) || [];
+        // Initialize interactive features (bookmarks removed - not used)
         this.recentTools = JSON.parse(localStorage.getItem('medicalToolsRecent')) || [];
         this.toolNotes = JSON.parse(localStorage.getItem('medicalToolsNotes')) || {};
         
@@ -4894,9 +4893,10 @@ class MLAQuizApp {
         const container = document.getElementById('drug-reference-container');
         container.innerHTML = `
             <div class="search-container">
-                <input type="text" id="drug-search" placeholder="Search medications...">
-                <div id="drug-search-results"></div>
+                <input type="text" id="drug-search" placeholder="Search medications..." class="tool-search">
+                <button id="drug-search-btn">🔍</button>
             </div>
+            <div id="drug-search-results"></div>
             <div class="drug-categories">
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('all'); event.stopPropagation();">All Drugs</button>
                 <button class="category-btn" onclick="window.quizApp.showDrugCategory('alphabetical'); event.stopPropagation();">A-Z</button>
@@ -4914,7 +4914,9 @@ class MLAQuizApp {
         `;
         
         const searchInput = document.getElementById('drug-search');
+        const searchBtn = document.getElementById('drug-search-btn');
         searchInput.addEventListener('input', () => this.searchDrugs(drugDatabase));
+        searchBtn.addEventListener('click', () => this.searchDrugs(drugDatabase));
         this.drugDatabase = drugDatabase;
         this.showDrugCategory('all');
     }
@@ -5610,9 +5612,10 @@ class MLAQuizApp {
         const container = document.getElementById('lab-values-container');
         container.innerHTML = `
             <div class="search-container">
-                <input type="text" id="lab-search" placeholder="Search lab values...">
-                <div id="lab-search-results" class="lab-grid"></div>
+                <input type="text" id="lab-search" placeholder="Search lab values..." class="tool-search">
+                <button id="lab-search-btn">🔍</button>
             </div>
+            <div id="lab-search-results" class="lab-grid"></div>
             <div class="lab-categories">
                 <button class="filter-btn active" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
                 <button class="filter-btn" onclick="window.quizApp.showLabCategory('cbc'); event.stopPropagation();">CBC</button>
@@ -5623,14 +5626,16 @@ class MLAQuizApp {
                 <button class="filter-btn" onclick="window.quizApp.showLabCategory('urea_electrolytes'); event.stopPropagation();">U&Es</button>
                 <button class="filter-btn" onclick="window.quizApp.showLabCategory('coagulation'); event.stopPropagation();">Coagulation</button>
                 <button class="filter-btn" onclick="window.quizApp.showLabCategory('cardiac_markers'); event.stopPropagation();">Cardiac</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('inflammatory_markers'); event.stopPropagation();">Inflammatory</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('endocrine'); event.stopPropagation();">Endocrine</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('inflammatory_markers'); event.stopPropagation();">Inflammatory</button>
+                <button class="filter-btn" onclick="window.quizApp.showLabCategory('endocrine'); event.stopPropagation();">Endocrine</button>
             </div>
             <div id="lab-list" class="lab-grid"></div>
         `;
         
         const searchInput = document.getElementById('lab-search');
+        const searchBtn = document.getElementById('lab-search-btn');
         searchInput.addEventListener('input', () => this.searchLabValues(labDatabase));
+        searchBtn.addEventListener('click', () => this.searchLabValues(labDatabase));
         this.labDatabase = labDatabase;
         this.showLabCategory('all');
         console.log('🧪 Lab values interface loaded successfully');
@@ -6183,9 +6188,10 @@ class MLAQuizApp {
         const container = document.getElementById('guidelines-panel');
         container.innerHTML = `
             <div class="search-container">
-                <input type="text" id="guidelines-search" placeholder="Search guidelines...">
-                <div id="guidelines-search-results" class="lab-grid"></div>
+                <input type="text" id="guidelines-search" placeholder="Search guidelines..." class="tool-search">
+                <button id="guidelines-search-btn">🔍</button>
             </div>
+            <div id="guidelines-search-results" class="lab-grid"></div>
             <div class="guidelines-categories">
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">All Guidelines</button>
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
@@ -6200,7 +6206,9 @@ class MLAQuizApp {
         `;
         
         const searchInput = document.getElementById('guidelines-search');
+        const searchBtn = document.getElementById('guidelines-search-btn');
         searchInput.addEventListener('input', () => this.searchGuidelines(guidelinesDatabase));
+        searchBtn.addEventListener('click', () => this.searchGuidelines(guidelinesDatabase));
         this.guidelinesDatabase = guidelinesDatabase;
         this.showGuidelinesCategory('all');
         console.log('✅ Guidelines loaded successfully!');
@@ -12371,50 +12379,7 @@ MLAQuizApp.prototype.initializeInteractiveFeatures = function() {
     console.log('🔗 Interactive features initialized');
 };
 
-// Bookmark Management
-MLAQuizApp.prototype.addBookmark = function(toolType, toolName, toolData = {}) {
-    const bookmark = {
-        id: Date.now().toString(),
-        type: toolType,
-        name: toolName,
-        data: toolData,
-        timestamp: new Date().toISOString()
-    };
-    
-    // Remove if already bookmarked
-    this.bookmarks = this.bookmarks.filter(b => !(b.type === toolType && b.name === toolName));
-    
-    // Add to beginning of array
-    this.bookmarks.unshift(bookmark);
-    
-    // Limit to 50 bookmarks
-    if (this.bookmarks.length > 50) {
-        this.bookmarks = this.bookmarks.slice(0, 50);
-    }
-    
-    localStorage.setItem('medicalToolsBookmarks', JSON.stringify(this.bookmarks));
-    this.updateBookmarkButton(toolType, toolName, true);
-    console.log(`📌 Bookmarked: ${toolType} - ${toolName}`);
-};
-
-MLAQuizApp.prototype.removeBookmark = function(toolType, toolName) {
-    this.bookmarks = this.bookmarks.filter(b => !(b.type === toolType && b.name === toolName));
-    localStorage.setItem('medicalToolsBookmarks', JSON.stringify(this.bookmarks));
-    this.updateBookmarkButton(toolType, toolName, false);
-    console.log(`🗑️ Removed bookmark: ${toolType} - ${toolName}`);
-};
-
-MLAQuizApp.prototype.isBookmarked = function(toolType, toolName) {
-    return this.bookmarks.some(b => b.type === toolType && b.name === toolName);
-};
-
-MLAQuizApp.prototype.updateBookmarkButton = function(toolType, toolName, isBookmarked) {
-    const bookmarkBtn = document.querySelector(`[data-bookmark-tool="${toolType}-${toolName}"]`);
-    if (bookmarkBtn) {
-        bookmarkBtn.innerHTML = isBookmarked ? '🔖' : '📌';
-        bookmarkBtn.title = isBookmarked ? 'Remove bookmark' : 'Add bookmark';
-    }
-};
+// Bookmark functionality removed - not used in calculators
 
 // Recent Tools Management
 MLAQuizApp.prototype.addToRecentTools = function(toolType, toolName, toolData = {}) {
@@ -12513,45 +12478,7 @@ Do not use for actual patient care without proper validation.
     console.log(`📋 Generated text report for ${calculatorType}`);
 };
 
-// Enhanced Calculator Display
-MLAQuizApp.prototype.addBookmarkButtons = function() {
-    // This will be called when calculators are displayed
-    // to add bookmark functionality to each calculator
-    setTimeout(() => {
-        const calculatorButtons = document.querySelectorAll('.calculator-btn');
-        
-        calculatorButtons.forEach(btn => {
-            const calcType = btn.dataset.calc;
-            if (calcType && !btn.querySelector('.bookmark-btn')) {
-                const bookmarkBtn = document.createElement('button');
-                bookmarkBtn.className = 'bookmark-btn';
-                bookmarkBtn.dataset.bookmarkTool = `calculator-${calcType}`;
-                bookmarkBtn.innerHTML = this.isBookmarked('calculator', calcType) ? '🔖' : '📌';
-                bookmarkBtn.title = this.isBookmarked('calculator', calcType) ? 'Remove bookmark' : 'Add bookmark';
-                bookmarkBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    if (this.isBookmarked('calculator', calcType)) {
-                        this.removeBookmark('calculator', calcType);
-                    } else {
-                        this.addBookmark('calculator', calcType, { displayName: btn.querySelector('.calc-name')?.textContent || calcType });
-                    }
-                };
-                
-                btn.style.position = 'relative';
-                bookmarkBtn.style.position = 'absolute';
-                bookmarkBtn.style.top = '8px';
-                bookmarkBtn.style.right = '8px';
-                bookmarkBtn.style.background = 'none';
-                bookmarkBtn.style.border = 'none';
-                bookmarkBtn.style.fontSize = '16px';
-                bookmarkBtn.style.cursor = 'pointer';
-                bookmarkBtn.style.zIndex = '10';
-                
-                btn.appendChild(bookmarkBtn);
-            }
-        });
-    }, 100);
-};
+// Bookmark functionality removed - not used in calculators
 
 MLAQuizApp.prototype.setupExportFeatures = function() {
     // Add export buttons to calculator results when they're displayed
