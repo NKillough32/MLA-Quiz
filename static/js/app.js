@@ -2206,21 +2206,27 @@ class MLAQuizApp {
         const navbar = document.querySelector('.navbar');
         if (navbar) {
             // Remove existing toggle if present
-            const existingToggle = document.getElementById('haptics-toggle');
+            const existingToggle = document.querySelector('.haptics-controls');
             if (existingToggle) {
                 existingToggle.remove();
             }
             
+            // Create a container similar to font-controls
+            const hapticsControls = document.createElement('div');
+            hapticsControls.className = 'haptics-controls';
+            hapticsControls.style.cssText = 'position: absolute; left: 200px; display: flex; gap: 5px; align-items: center; z-index: 1001;';
+            
             const toggleBtn = document.createElement('button');
             toggleBtn.id = 'haptics-toggle';
-            toggleBtn.className = 'navbar-btn haptics-toggle-btn';
-            toggleBtn.style.cssText = 'position: absolute; left: 200px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
+            toggleBtn.className = 'haptics-btn';
+            toggleBtn.style.cssText = 'background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 10px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; min-width: 32px;';
             toggleBtn.onclick = () => this.setHapticsEnabled(!this.hapticsOptIn);
             
             toggleBtn.textContent = this.hapticsOptIn ? '🔔' : '🔕';
             toggleBtn.title = this.hapticsOptIn ? 'Haptics: On (click to disable)' : 'Haptics: Off (click to enable)';
             
-            navbar.appendChild(toggleBtn);
+            hapticsControls.appendChild(toggleBtn);
+            navbar.appendChild(hapticsControls);
             console.log('Haptics toggle added to navbar');
         } else {
             console.log('Navbar not found, retrying in 100ms');
