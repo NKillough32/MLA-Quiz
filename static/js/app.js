@@ -33,7 +33,136 @@ class MLAQuizApp {
         this.recentTools = JSON.parse(localStorage.getItem('medicalToolsRecent')) || [];
         this.toolNotes = JSON.parse(localStorage.getItem('medicalToolsNotes')) || {};
         
+        // IndexedDB for efficient image storage (especially on mobile)
+        this.db = null;
+        this.initIndexedDB();
+        
         this.init();
+    }
+    
+    async initIndexedDB() {
+        try {
+            // Only use IndexedDB on mobile devices to avoid storage issues
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (!isMobile) {
+                console.log('📱 Desktop detected, using localStorage for images');
+                return;
+            }
+            
+            console.log('📱 Mobile detected, initializing IndexedDB for efficient image storage...');
+            
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('MLAQuizDB', 1);
+                
+                request.onerror = () => {
+                    console.error('❌ IndexedDB failed to open:', request.error);
+                    resolve(); // Don't reject, just use localStorage fallback
+                };
+                
+                request.onsuccess = () => {
+                    this.db = request.result;
+                    console.log('✅ IndexedDB initialized successfully');
+                    resolve();
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Create object store for images
+                    if (!db.objectStoreNames.contains('images')) {
+                        const imageStore = db.createObjectStore('images', { keyPath: 'id' });
+                        imageStore.createIndex('quizName', 'quizName', { unique: false });
+                        console.log('✅ Created IndexedDB object stores');
+                    }
+                };
+            });
+        } catch (error) {
+            console.error('❌ IndexedDB initialization error:', error);
+            // Continue without IndexedDB - will use localStorage
+        }
+    }
+    
+    async storeImageInDB(quizName, imageKey, imageData) {
+        if (!this.db) {
+            console.log('📦 IndexedDB not available, skipping image storage');
+            return false;
+        }
+        
+        try {
+            const transaction = this.db.transaction(['images'], 'readwrite');
+            const store = transaction.objectStore('images');
+            
+            const data = {
+                id: `${quizName}_${imageKey}`,
+                quizName: quizName,
+                imageKey: imageKey,
+                imageData: imageData,
+                timestamp: Date.now()
+            };
+            
+            await store.put(data);
+            console.log(`✅ Stored image in IndexedDB: ${imageKey}`);
+            return true;
+        } catch (error) {
+            console.error('❌ Failed to store image in IndexedDB:', error);
+            return false;
+        }
+    }
+    
+    async getImageFromDB(quizName, imageKey) {
+        if (!this.db) {
+            return null;
+        }
+        
+        try {
+            const transaction = this.db.transaction(['images'], 'readonly');
+            const store = transaction.objectStore('images');
+            const request = store.get(`${quizName}_${imageKey}`);
+            
+            return new Promise((resolve, reject) => {
+                request.onsuccess = () => {
+                    if (request.result) {
+                        console.log(`✅ Retrieved image from IndexedDB: ${imageKey}`);
+                        resolve(request.result.imageData);
+                    } else {
+                        resolve(null);
+                    }
+                };
+                request.onerror = () => resolve(null);
+            });
+        } catch (error) {
+            console.error('❌ Failed to get image from IndexedDB:', error);
+            return null;
+        }
+    }
+    
+    async getAllImagesForQuiz(quizName) {
+        if (!this.db) {
+            return {};
+        }
+        
+        try {
+            const transaction = this.db.transaction(['images'], 'readonly');
+            const store = transaction.objectStore('images');
+            const index = store.index('quizName');
+            const request = index.getAll(quizName);
+            
+            return new Promise((resolve, reject) => {
+                request.onsuccess = () => {
+                    const images = {};
+                    request.result.forEach(item => {
+                        images[item.imageKey] = item.imageData;
+                    });
+                    console.log(`✅ Retrieved ${Object.keys(images).length} images from IndexedDB for ${quizName}`);
+                    resolve(images);
+                };
+                request.onerror = () => resolve({});
+            });
+        } catch (error) {
+            console.error('❌ Failed to get images from IndexedDB:', error);
+            return {};
+        }
     }
     
     init() {
@@ -158,11 +287,11 @@ class MLAQuizApp {
         }
     }
     
-    renderQuizList(quizzes) {
+    async renderQuizList(quizzes) {
         const quizList = document.getElementById('quizList');
         
-        // Get uploaded quizzes from localStorage
-        const uploadedQuizzes = this.getUploadedQuizzes();
+        // Get uploaded quizzes from localStorage (now async for IndexedDB support)
+        const uploadedQuizzes = await this.getUploadedQuizzes();
         
         // Combine server quizzes with uploaded quizzes
         const allQuizzes = [...quizzes];
@@ -222,8 +351,8 @@ class MLAQuizApp {
         
         try {
             if (isUploaded) {
-                // Load from localStorage
-                const uploadedQuizzes = this.getUploadedQuizzes();
+                // Load from localStorage (now async for IndexedDB support)
+                const uploadedQuizzes = await this.getUploadedQuizzes();
                 const quiz = uploadedQuizzes.find(q => q.name === quizName);
                 
                 if (!quiz) {
@@ -252,6 +381,9 @@ class MLAQuizApp {
                 
                 this.questions = quiz.questions || [];
                 
+                // Store current quiz for image lookups
+                this.currentQuiz = quiz;
+                
                 // Filter questions based on selected length
                 this.questions = this.filterQuestionsByLength(this.questions);
                 this.quizName = quiz.name;
@@ -267,6 +399,7 @@ class MLAQuizApp {
                 }
                 
                 console.log('🔍 LOADING - Successfully loaded uploaded quiz with', this.questions.length, 'questions');
+                console.log('📱 Images available:', Object.keys(quiz.images || {}).length);
                 if (quiz.imagesRemoved) {
                     this.showError('Note: Images were not stored due to browser limits. Questions will work but images may not display.');
                 }
@@ -1475,7 +1608,7 @@ class MLAQuizApp {
         }
     }
     
-    storeUploadedQuiz(quizData) {
+    async storeUploadedQuiz(quizData) {
         console.log('🔍 STORAGE DEBUG - Storing quiz:', quizData.name);
         console.log('🔍 STORAGE DEBUG - Quiz has images:', Object.keys(quizData.images || {}));
         
@@ -1486,13 +1619,70 @@ class MLAQuizApp {
             // Remove existing quiz with same name
             uploadedQuizzes = uploadedQuizzes.filter(quiz => quiz.name !== quizData.name);
             
-            // Check if we need to compress or split the data
+            // Calculate sizes
             const dataSize = JSON.stringify(quizData).length;
-            const maxLocalStorageSize = 5 * 1024 * 1024; // 5MB typical limit
+            const imagesSize = JSON.stringify(quizData.images || {}).length;
+            const questionsSize = JSON.stringify(quizData.questions || []).length;
             
-            console.log('🔍 STORAGE DEBUG - Quiz data size:', Math.round(dataSize / 1024), 'KB');
+            // Adjust limit for mobile devices (2.5MB) vs desktop (5MB)
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const maxLocalStorageSize = isMobile ? 2.5 * 1024 * 1024 : 5 * 1024 * 1024;
             
-            if (dataSize > maxLocalStorageSize) {
+            console.log('🔍 STORAGE DEBUG - Device type:', isMobile ? 'Mobile' : 'Desktop');
+            console.log('🔍 STORAGE DEBUG - Storage limit:', Math.round(maxLocalStorageSize / 1024), 'KB');
+            console.log('🔍 STORAGE DEBUG - Total size:', Math.round(dataSize / 1024), 'KB');
+            console.log('🔍 STORAGE DEBUG - Images size:', Math.round(imagesSize / 1024), 'KB');
+            console.log('🔍 STORAGE DEBUG - Questions size:', Math.round(questionsSize / 1024), 'KB');
+            
+            // On mobile with large images, use IndexedDB
+            if (isMobile && this.db && imagesSize > 500 * 1024) { // > 500KB of images
+                console.log('📱 Mobile device with large images - using IndexedDB for image storage');
+                
+                // Store images in IndexedDB
+                const imageKeys = Object.keys(quizData.images || {});
+                let storedCount = 0;
+                
+                for (const key of imageKeys) {
+                    const imageData = quizData.images[key];
+                    // Only store actual base64 data in IndexedDB, not references
+                    if (typeof imageData === 'string' && imageData.startsWith('data:')) {
+                        const success = await this.storeImageInDB(quizData.name, key, imageData);
+                        if (success) storedCount++;
+                    }
+                }
+                
+                console.log(`✅ Stored ${storedCount}/${imageKeys.length} images in IndexedDB`);
+                
+                // Store quiz metadata with flag indicating images are in IndexedDB
+                const quizMeta = {
+                    name: quizData.name,
+                    total_questions: quizData.total_questions,
+                    isUploaded: true,
+                    uploadTimestamp: quizData.uploadTimestamp,
+                    hasImages: imageKeys.length > 0,
+                    imagesInIndexedDB: true, // Flag for image retrieval
+                    imageKeys: imageKeys, // Store keys for reference
+                    dataStored: 'indexeddb'
+                };
+                
+                uploadedQuizzes.push(quizMeta);
+                
+                // Store only questions in localStorage (much smaller)
+                const questionsOnly = {
+                    questions: quizData.questions,
+                    images: quizData.images // Keep references but actual data is in IndexedDB
+                };
+                
+                try {
+                    localStorage.setItem(`quiz_${quizData.name}`, JSON.stringify(questionsOnly));
+                    localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+                    console.log('✅ Successfully stored quiz using IndexedDB for images');
+                } catch (storageError) {
+                    console.error('❌ Failed to store quiz metadata:', storageError);
+                    throw storageError;
+                }
+                
+            } else if (dataSize > maxLocalStorageSize) {
                 console.log('🔍 STORAGE DEBUG - Quiz too large for localStorage, using split storage');
                 
                 // Store quiz metadata separately
@@ -1507,7 +1697,7 @@ class MLAQuizApp {
                 
                 uploadedQuizzes.push(quizMeta);
                 
-                // Store questions and images separately with compression
+                // Store questions and images separately
                 const questionsData = {
                     questions: quizData.questions,
                     images: quizData.images
@@ -1519,9 +1709,9 @@ class MLAQuizApp {
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
                     console.log('🔍 STORAGE DEBUG - Successfully stored quiz using split storage');
                 } catch (quotaError) {
-                    console.log('🔍 STORAGE DEBUG - Still too large, using image-reduced storage');
+                    console.log('🔍 STORAGE DEBUG - Still too large, removing images');
                     
-                    // If still too large, store without images and show warning
+                    // If still too large, store without images
                     const questionsOnly = {
                         questions: quizData.questions,
                         images: {} // Empty images to save space
@@ -1560,7 +1750,7 @@ class MLAQuizApp {
         }
     }
     
-    getUploadedQuizzes() {
+    async getUploadedQuizzes() {
         console.log('🔍 STORAGE DEBUG - Retrieving uploaded quizzes');
         
         // Get quizzes from localStorage
@@ -1575,28 +1765,54 @@ class MLAQuizApp {
             quizzes = [...quizzes, ...window.tempUploadedQuizzes];
         }
         
-        // For split storage quizzes, we need to reconstruct the data when loading
-        const reconstructedQuizzes = quizzes.map(quiz => {
-            if (quiz.dataStored === 'split') {
+        // For split storage or IndexedDB quizzes, reconstruct the data
+        const reconstructedQuizzes = [];
+        
+        for (const quiz of quizzes) {
+            if (quiz.dataStored === 'indexeddb' && quiz.imagesInIndexedDB) {
+                console.log('📱 Reconstructing quiz from IndexedDB:', quiz.name);
+                try {
+                    // Get questions from localStorage
+                    const quizData = JSON.parse(localStorage.getItem(`quiz_${quiz.name}`) || '{}');
+                    
+                    // Get images from IndexedDB
+                    const imagesFromDB = await this.getAllImagesForQuiz(quiz.name);
+                    
+                    console.log(`✅ Retrieved ${Object.keys(imagesFromDB).length} images from IndexedDB for ${quiz.name}`);
+                    
+                    reconstructedQuizzes.push({
+                        ...quiz,
+                        questions: quizData.questions || [],
+                        images: {
+                            ...quizData.images, // Keep references
+                            ...imagesFromDB // Merge actual image data from IndexedDB
+                        }
+                    });
+                } catch (error) {
+                    console.error('❌ Failed to reconstruct quiz from IndexedDB:', quiz.name, error);
+                    reconstructedQuizzes.push(quiz); // Return metadata only
+                }
+            } else if (quiz.dataStored === 'split') {
                 console.log('🔍 STORAGE DEBUG - Reconstructing split storage quiz:', quiz.name);
                 try {
                     const quizData = JSON.parse(localStorage.getItem(`quiz_${quiz.name}`) || '{}');
-                    return {
+                    reconstructedQuizzes.push({
                         ...quiz,
                         questions: quizData.questions || [],
                         images: quizData.images || {}
-                    };
+                    });
                 } catch (error) {
                     console.error('🔍 STORAGE ERROR - Failed to reconstruct quiz:', quiz.name, error);
-                    return quiz; // Return metadata only
+                    reconstructedQuizzes.push(quiz); // Return metadata only
                 }
+            } else {
+                reconstructedQuizzes.push(quiz);
             }
-            return quiz;
-        });
+        }
         
-        console.log('🔍 STORAGE DEBUG - Retrieved', reconstructedQuizzes.length, 'uploaded quizzes from localStorage');
+        console.log('🔍 STORAGE DEBUG - Retrieved', reconstructedQuizzes.length, 'uploaded quizzes');
         reconstructedQuizzes.forEach((quiz, index) => {
-            console.log(`🔍 STORAGE DEBUG - Quiz ${index + 1}: ${quiz.name}, Images:`, Object.keys(quiz.images || {}));
+            console.log(`🔍 STORAGE DEBUG - Quiz ${index + 1}: ${quiz.name}, Images:`, Object.keys(quiz.images || {}).length);
         });
         
         return reconstructedQuizzes;
@@ -1654,71 +1870,62 @@ class MLAQuizApp {
                 // It's already a data URL, display it as an image
                 return `<div class="image-container"><img src="${filename}" alt="Image" loading="lazy" onclick="openImageModal('${filename}', 'Image')"></div>`;
             } else {
-                // It's a filename, try different possible paths
+                // It's a filename, try to find it in currentQuiz.images
                 let imagePath = filename.trim();
                 console.log('🖼️ IMAGE DEBUG - Looking for image file:', imagePath);
                 
-                // Try common paths for images
-                const possiblePaths = [
-                    imagePath, // Original filename
-                    `Questions/MLA/MLA_images/${imagePath}`, // Common MLA images folder
-                    `static/images/${imagePath}`, // Static images folder
-                    `/api/image/${imagePath}` // API endpoint for images
-                ];
-                console.log('🖼️ IMAGE DEBUG - Possible paths:', possiblePaths);
-                
-                // For uploaded quizzes, check if images are embedded in localStorage
-                const uploadedQuizzes = this.getUploadedQuizzes();
-                console.log('🖼️ IMAGE DEBUG - Checking', uploadedQuizzes.length, 'uploaded quizzes for embedded images');
-                
-                for (const quiz of uploadedQuizzes) {
-                    console.log('🖼️ IMAGE DEBUG - Quiz:', quiz.name, 'has images:', Object.keys(quiz.images || {}));
-                    if (quiz.images) {
-                        // Try multiple possible keys for the image
-                        const possibleKeys = [
-                            imagePath, // Original filename
-                            imagePath.toLowerCase(), // Lowercase
-                            imagePath.replace(/\.[^.]+$/, ''), // Without extension
-                            imagePath.replace(/\.[^.]+$/, '').toLowerCase(), // Without extension, lowercase
-                            `MLA_images/${imagePath}`, // With folder prefix
-                            `MLA_images/${imagePath.toLowerCase()}`, // With folder prefix, lowercase
-                        ];
-                        
-                        let imageData = null;
-                        let foundKey = null;
-                        
-                        for (const key of possibleKeys) {
-                            if (quiz.images[key]) {
-                                imageData = quiz.images[key];
-                                foundKey = key;
-                                console.log('🖼️ IMAGE DEBUG - Found image with key:', key);
-                                break;
-                            }
-                        }
-                        
-                        if (imageData) {
-                            console.log('🖼️ IMAGE DEBUG - Found embedded image data for:', foundKey);
-                            
-                            // Handle reference-based storage (resolve references)
-                            if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
-                                const refKey = imageData.substring(8); // Remove '__REF__:' prefix (8 characters)
-                                imageData = quiz.images[refKey];
-                                console.log('🖼️ IMAGE DEBUG - Resolved reference from', foundKey, 'to', refKey);
-                            }
-                            
-                            if (imageData && imageData.startsWith('data:')) {
-                                // Found actual image data
-                                return `<div class="image-container"><img src="${imageData}" alt="Image" loading="lazy" onclick="openImageModal('${imageData}', 'Image')"></div>`;
-                            } else {
-                                console.log('🖼️ IMAGE DEBUG - Image data after resolution:', typeof imageData, imageData?.substring(0, 50) + '...');
-                            }
+                // Use currentQuiz images if available
+                if (this.currentQuiz && this.currentQuiz.images) {
+                    console.log('🖼️ IMAGE DEBUG - Searching in currentQuiz.images');
+                    
+                    // Try multiple possible keys for the image
+                    const possibleKeys = [
+                        imagePath, // Original filename
+                        imagePath.toLowerCase(), // Lowercase
+                        imagePath.replace(/\.[^.]+$/, ''), // Without extension
+                        imagePath.replace(/\.[^.]+$/, '').toLowerCase(), // Without extension, lowercase
+                        `MLA_images/${imagePath}`, // With folder prefix
+                        `MLA_images/${imagePath.toLowerCase()}`, // With folder prefix, lowercase
+                    ];
+                    
+                    let imageData = null;
+                    let foundKey = null;
+                    
+                    for (const key of possibleKeys) {
+                        if (this.currentQuiz.images[key]) {
+                            imageData = this.currentQuiz.images[key];
+                            foundKey = key;
+                            console.log('🖼️ IMAGE DEBUG - Found image with key:', key);
+                            break;
                         }
                     }
+                    
+                    if (imageData) {
+                        console.log('🖼️ IMAGE DEBUG - Found embedded image data for:', foundKey);
+                        
+                        // Handle reference-based storage (resolve references)
+                        if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
+                            const refKey = imageData.substring(8);
+                            imageData = this.currentQuiz.images[refKey];
+                            console.log('🖼️ IMAGE DEBUG - Resolved reference from', foundKey, 'to', refKey);
+                        }
+                        
+                        if (imageData && imageData.startsWith('data:')) {
+                            // Found actual image data
+                            return `<div class="image-container"><img src="${imageData}" alt="Image" loading="lazy" onclick="openImageModal('${imageData}', 'Image')"></div>`;
+                        } else {
+                            console.log('🖼️ IMAGE DEBUG - Image data after resolution:', typeof imageData, imageData?.substring(0, 50) + '...');
+                        }
+                    } else {
+                        console.log('⚠️ Image not found in currentQuiz.images. Available keys:', Object.keys(this.currentQuiz.images).slice(0, 10));
+                    }
+                } else {
+                    console.log('⚠️ currentQuiz or currentQuiz.images not available');
                 }
                 
-                console.log('🖼️ IMAGE DEBUG - No embedded image found, showing as link with path:', possiblePaths[1]);
-                // Default: show as a link that tries the first possible path
-                return `<a href="#" class="image-link" onclick="openImageModal('${possiblePaths[1]}', 'Image'); return false;">🖼️ View Image: ${imagePath}</a>`;
+                console.log('🖼️ IMAGE DEBUG - No embedded image found, showing as link');
+                // Default: show as a link
+                return `<a href="#" class="image-link" onclick="alert('Image not available: ${imagePath}'); return false;">🖼️ View Image: ${imagePath}</a>`;
             }
         });
         
@@ -1732,39 +1939,37 @@ class MLAQuizApp {
                 const refKey = url.substring(8); // Remove '__REF__:' prefix (8 characters)
                 console.log('🖼️ IMAGE DEBUG - Looking for refKey:', refKey);
                 
-                // Look up the actual image data
-                const uploadedQuizzes = this.getUploadedQuizzes();
-                for (const quiz of uploadedQuizzes) {
-                    if (quiz.images) {
-                        console.log('🖼️ IMAGE DEBUG - Checking quiz:', quiz.name, 'for key:', refKey);
+                // Use currentQuiz images if available (already loaded with IndexedDB data)
+                if (this.currentQuiz && this.currentQuiz.images) {
+                    console.log('🖼️ IMAGE DEBUG - Using currentQuiz.images for lookup');
+                    
+                    // Check if the reference key exists directly
+                    if (this.currentQuiz.images[refKey]) {
+                        let imageData = this.currentQuiz.images[refKey];
+                        console.log('🖼️ IMAGE DEBUG - Found direct match for key:', refKey);
                         
-                        // Check if the reference key exists directly
-                        if (quiz.images[refKey]) {
-                            let imageData = quiz.images[refKey];
-                            console.log('🖼️ IMAGE DEBUG - Found direct match for key:', refKey);
-                            
-                            // If it's another reference, resolve it
-                            if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
-                                const secondRefKey = imageData.substring(8); // Remove '__REF__:' prefix (8 characters)
-                                imageData = quiz.images[secondRefKey];
-                                console.log('🖼️ IMAGE DEBUG - Resolved nested reference from', refKey, 'to', secondRefKey);
-                            }
-                            
-                            if (imageData && imageData.startsWith('data:')) {
-                                actualUrl = imageData;
-                                console.log('🖼️ IMAGE DEBUG - Resolved markdown reference to base64 data');
-                                break;
-                            } else {
-                                console.log('🖼️ IMAGE DEBUG - Found data but not base64:', typeof imageData, imageData?.substring(0, 50));
-                            }
-                        } else {
-                            console.log('🖼️ IMAGE DEBUG - Key not found directly, available keys:', Object.keys(quiz.images).slice(0, 10));
+                        // If it's another reference, resolve it
+                        if (typeof imageData === 'string' && imageData.startsWith('__REF__:')) {
+                            const secondRefKey = imageData.substring(8);
+                            imageData = this.currentQuiz.images[secondRefKey];
+                            console.log('🖼️ IMAGE DEBUG - Resolved nested reference from', refKey, 'to', secondRefKey);
                         }
+                        
+                        if (imageData && imageData.startsWith('data:')) {
+                            actualUrl = imageData;
+                            console.log('✅ Resolved markdown reference to base64 data');
+                        } else {
+                            console.log('⚠️ Found data but not base64:', typeof imageData, imageData?.substring(0, 50));
+                        }
+                    } else {
+                        console.log('⚠️ Key not found:', refKey, 'Available keys:', Object.keys(this.currentQuiz.images).slice(0, 10));
                     }
+                } else {
+                    console.log('⚠️ currentQuiz or currentQuiz.images not available');
                 }
                 
                 if (actualUrl === url) {
-                    console.log('🖼️ IMAGE DEBUG - Failed to resolve reference:', refKey);
+                    console.log('❌ Failed to resolve reference:', refKey);
                 }
             }
             
