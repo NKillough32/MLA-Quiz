@@ -2214,12 +2214,10 @@ class MLAQuizApp {
             // Create a container similar to font-controls
             const hapticsControls = document.createElement('div');
             hapticsControls.className = 'haptics-controls';
-            hapticsControls.style.cssText = 'position: absolute; left: 200px; display: flex; gap: 5px; align-items: center; z-index: 1001;';
             
             const toggleBtn = document.createElement('button');
             toggleBtn.id = 'haptics-toggle';
             toggleBtn.className = 'haptics-btn';
-            toggleBtn.style.cssText = 'background: transparent; border: 1px solid #007AFF; color: #007AFF; padding: 6px 10px; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; min-width: 32px;';
             toggleBtn.onclick = () => this.setHapticsEnabled(!this.hapticsOptIn);
             
             toggleBtn.textContent = this.hapticsOptIn ? '🔔' : '🔕';
