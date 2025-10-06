@@ -646,8 +646,23 @@ class MLAQuizApp {
     }
     
     performHapticFeedback(type = 'light') {
-        // Enhanced haptic feedback with Android support
+        // Enhanced haptic feedback with Android support and opt-in checking
         console.log('🔊 Attempting haptic feedback:', type);
+        
+        // Check if user has opted in to haptics
+        if (!this.hapticsOptIn) {
+            console.log('🔊 Haptics disabled - user has not opted in');
+            this.performVisualFeedback(type);
+            return false;
+        }
+        
+        // Check for prefers-reduced-motion system preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) {
+            console.log('🔊 Haptics disabled - user prefers reduced motion');
+            this.performVisualFeedback(type);
+            return false;
+        }
         
         // First try the Vibration API (Android Chrome, Firefox)
         if ('vibrate' in navigator && this.vibrationSupported !== false) {
@@ -685,6 +700,9 @@ class MLAQuizApp {
                         console.log('🔊 Fallback vibration attempt:', pattern[0]);
                     }
                 }, 10);
+                
+                // Also provide visual feedback
+                this.performVisualFeedback(type);
                 
                 return true;
             } catch (error) {
@@ -733,6 +751,17 @@ class MLAQuizApp {
     initializeVibration() {
         console.log('🔊 Initializing vibration support...');
         
+        // Read haptics preference from localStorage (default: false - opt-in required)
+        const savedPreference = localStorage.getItem('hapticsEnabled');
+        this.hapticsOptIn = savedPreference === 'true';
+        console.log('Haptics opt-in status:', this.hapticsOptIn);
+        
+        // Check for prefers-reduced-motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) {
+            console.log('⚠️ User prefers reduced motion - haptics will be disabled');
+        }
+        
         // Test vibration availability
         if ('vibrate' in navigator) {
             console.log('✅ Vibration API available');
@@ -753,6 +782,9 @@ class MLAQuizApp {
         
         // Store vibration support status
         this.vibrationSupported = this.vibrationSupported || false;
+        
+        // Add haptics toggle to navbar
+        this.addHapticsToggle();
         
         // Add user interaction listener to enable vibration (required on some Android browsers)
         const enableVibrationOnInteraction = () => {
@@ -2145,6 +2177,52 @@ class MLAQuizApp {
         } else {
             console.log('Navbar not found, retrying in 100ms');
             setTimeout(() => this.addDarkModeToggle(), 100);
+        }
+    }
+
+    setHapticsEnabled(enabled) {
+        this.hapticsOptIn = enabled;
+        localStorage.setItem('hapticsEnabled', enabled ? 'true' : 'false');
+        
+        // Update button text
+        const toggleBtn = document.getElementById('haptics-toggle');
+        if (toggleBtn) {
+            toggleBtn.textContent = enabled ? '🔔 Haptics: On' : '🔕 Haptics: Off';
+        }
+        
+        // Provide brief feedback when enabling
+        if (enabled && this.vibrationSupported) {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!prefersReducedMotion && 'vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+        
+        console.log(`Haptics ${enabled ? 'enabled' : 'disabled'}`);
+    }
+
+    addHapticsToggle() {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            // Remove existing toggle if present
+            const existingToggle = document.getElementById('haptics-toggle');
+            if (existingToggle) {
+                existingToggle.remove();
+            }
+            
+            const toggleBtn = document.createElement('button');
+            toggleBtn.id = 'haptics-toggle';
+            toggleBtn.className = 'navbar-btn';
+            toggleBtn.style.cssText = 'position: absolute; right: 160px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
+            toggleBtn.onclick = () => this.setHapticsEnabled(!this.hapticsOptIn);
+            
+            toggleBtn.textContent = this.hapticsOptIn ? '🔔 Haptics: On' : '🔕 Haptics: Off';
+            
+            navbar.appendChild(toggleBtn);
+            console.log('Haptics toggle added to navbar');
+        } else {
+            console.log('Navbar not found, retrying in 100ms');
+            setTimeout(() => this.addHapticsToggle(), 100);
         }
     }
     
