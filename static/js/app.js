@@ -380,8 +380,11 @@ class MLAQuizApp {
         
         // Check if there's a separate image field (new parser format)
         if (question.image && question.image.trim()) {
-            console.log('Debug - Found separate image field:', question.image);
+            console.log('✅ NEW FORMAT - Found separate image field:', question.image);
             imageHtml = this.formatText(question.image);
+            console.log('✅ NEW FORMAT - Generated imageHtml:', imageHtml.substring(0, 200));
+        } else {
+            console.log('⚠️ No separate image field found in question object');
         }
         
         const promptText = question.prompt || question.question || question.title || '';
