@@ -1010,6 +1010,308 @@
             transform: translateY(-1px);
         }
         
+        /* Back Button - Standardized across all medical tools */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: #f1f3f4;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            color: #007AFF;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+        }
+        
+        .back-btn:hover {
+            background: #e8eaed;
+            border-color: #007AFF;
+            transform: translateX(-2px);
+        }
+        
+        .back-btn:active {
+            transform: translateX(0);
+            background: #dfe1e5;
+        }
+        
+        [data-theme="dark"] .back-btn {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #007AFF;
+        }
+        
+        [data-theme="dark"] .back-btn:hover {
+            background: #333;
+            border-color: #007AFF;
+        }
+        
+        /* Detail View Container - Standardized for drug, lab, guideline, diagnosis, examination details */
+        .drug-detail,
+        .lab-detail,
+        .guideline-detail,
+        .diagnosis-detail,
+        .examination-detail,
+        .protocol-detail,
+        .interpretation-detail {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="dark"] .drug-detail,
+        [data-theme="dark"] .lab-detail,
+        [data-theme="dark"] .guideline-detail,
+        [data-theme="dark"] .diagnosis-detail,
+        [data-theme="dark"] .examination-detail,
+        [data-theme="dark"] .protocol-detail,
+        [data-theme="dark"] .interpretation-detail {
+            background: #1c1c1e;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Detail View Headers */
+        .drug-detail h3,
+        .lab-detail h3,
+        .guideline-detail h3,
+        .diagnosis-detail h3,
+        .examination-detail h3,
+        .protocol-detail h3,
+        .interpretation-detail h3 {
+            margin: 0 0 12px 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1c1c1e;
+            line-height: 1.3;
+        }
+        
+        [data-theme="dark"] .drug-detail h3,
+        [data-theme="dark"] .lab-detail h3,
+        [data-theme="dark"] .guideline-detail h3,
+        [data-theme="dark"] .diagnosis-detail h3,
+        [data-theme="dark"] .examination-detail h3,
+        [data-theme="dark"] .protocol-detail h3,
+        [data-theme="dark"] .interpretation-detail h3 {
+            color: white;
+        }
+        
+        /* Info Section - Standardized for all detail views */
+        .info-section {
+            background: #f8f9fa;
+            border: 1px solid #e5e5ea;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-section.alert {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        
+        [data-theme="dark"] .info-section {
+            background: #2a2a2a;
+            border-color: #444;
+        }
+        
+        [data-theme="dark"] .info-section.alert {
+            background: #4a3c1f;
+            border-color: #ffc107;
+        }
+        
+        .info-section h4 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c1c1e;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        [data-theme="dark"] .info-section h4 {
+            color: white;
+        }
+        
+        .info-section p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #3c3c3e;
+        }
+        
+        [data-theme="dark"] .info-section p {
+            color: #e5e5ea;
+        }
+        
+        /* Info Section Items - Standardized for all types */
+        .stage-item,
+        .group-item,
+        .target-item,
+        .treatment-item,
+        .algorithm-item,
+        .medication-item,
+        .secondline-item,
+        .monitoring-item,
+        .contraindication-item,
+        .special-population-item,
+        .exacerbation-item,
+        .nonpharm-item,
+        .diagnosis-item,
+        .assessment-item,
+        .prevention-item,
+        .acute-item,
+        .rehab-item,
+        .referral-item,
+        .device-item,
+        .surgery-item,
+        .recurrent-item,
+        .catheter-item,
+        .inhaler-item,
+        .admission-item,
+        .severity-item,
+        .antibiotic-item,
+        .recognition-item,
+        .definition-item,
+        .management-item {
+            padding: 10px 12px;
+            background: white;
+            border-left: 3px solid #007AFF;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .stage-item:last-child,
+        .group-item:last-child,
+        .target-item:last-child,
+        .treatment-item:last-child,
+        .algorithm-item:last-child,
+        .medication-item:last-child,
+        .secondline-item:last-child,
+        .monitoring-item:last-child,
+        .contraindication-item:last-child,
+        .special-population-item:last-child,
+        .exacerbation-item:last-child,
+        .nonpharm-item:last-child,
+        .diagnosis-item:last-child,
+        .assessment-item:last-child,
+        .prevention-item:last-child,
+        .acute-item:last-child,
+        .rehab-item:last-child,
+        .referral-item:last-child,
+        .device-item:last-child,
+        .surgery-item:last-child,
+        .recurrent-item:last-child,
+        .catheter-item:last-child,
+        .inhaler-item:last-child,
+        .admission-item:last-child,
+        .severity-item:last-child,
+        .antibiotic-item:last-child,
+        .recognition-item:last-child,
+        .definition-item:last-child,
+        .management-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        [data-theme="dark"] .stage-item,
+        [data-theme="dark"] .group-item,
+        [data-theme="dark"] .target-item,
+        [data-theme="dark"] .treatment-item,
+        [data-theme="dark"] .algorithm-item,
+        [data-theme="dark"] .medication-item,
+        [data-theme="dark"] .secondline-item,
+        [data-theme="dark"] .monitoring-item,
+        [data-theme="dark"] .contraindication-item,
+        [data-theme="dark"] .special-population-item,
+        [data-theme="dark"] .exacerbation-item,
+        [data-theme="dark"] .nonpharm-item,
+        [data-theme="dark"] .diagnosis-item,
+        [data-theme="dark"] .assessment-item,
+        [data-theme="dark"] .prevention-item,
+        [data-theme="dark"] .acute-item,
+        [data-theme="dark"] .rehab-item,
+        [data-theme="dark"] .referral-item,
+        [data-theme="dark"] .device-item,
+        [data-theme="dark"] .surgery-item,
+        [data-theme="dark"] .recurrent-item,
+        [data-theme="dark"] .catheter-item,
+        [data-theme="dark"] .inhaler-item,
+        [data-theme="dark"] .admission-item,
+        [data-theme="dark"] .severity-item,
+        [data-theme="dark"] .antibiotic-item,
+        [data-theme="dark"] .recognition-item,
+        [data-theme="dark"] .definition-item,
+        [data-theme="dark"] .management-item {
+            background: #1c1c1e;
+            color: #e5e5ea;
+        }
+        
+        .stage-item strong,
+        .group-item strong,
+        .target-item strong,
+        .treatment-item strong,
+        .algorithm-item strong,
+        .medication-item strong,
+        .secondline-item strong,
+        .monitoring-item strong,
+        .contraindication-item strong,
+        .special-population-item strong,
+        .exacerbation-item strong,
+        .nonpharm-item strong,
+        .diagnosis-item strong,
+        .assessment-item strong,
+        .prevention-item strong,
+        .acute-item strong,
+        .rehab-item strong,
+        .referral-item strong,
+        .device-item strong,
+        .surgery-item strong,
+        .recurrent-item strong,
+        .catheter-item strong,
+        .inhaler-item strong,
+        .admission-item strong,
+        .severity-item strong,
+        .antibiotic-item strong,
+        .recognition-item strong,
+        .definition-item strong,
+        .management-item strong {
+            color: #007AFF;
+            font-weight: 600;
+        }
+        
+        /* Guideline Meta Information */
+        .guideline-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e5ea;
+        }
+        
+        [data-theme="dark"] .guideline-meta {
+            border-bottom-color: #444;
+        }
+        
+        .evidence-level,
+        .last-updated {
+            font-size: 13px;
+            color: #8e8e93;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
         /* Tool Results */
         .tool-results {
             max-height: calc(100vh - 250px);
@@ -1117,7 +1419,7 @@
             color: var(--text-primary);
         }
 
-        /* Lab Value Buttons */
+        /* Lab Value Buttons - Standardized for all tabs */
         .lab-value-btn {
             padding: 16px 12px;
             background: #007AFF;
@@ -1129,38 +1431,10 @@
             color: white;
         }
         
-        /* Specific styling for guidelines list items */
-        #guidelines-list .lab-value-btn {
-            padding: 18px 16px;
-            background: #007AFF;
-            border: 2px solid #007AFF;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
-            color: white;
-            margin-bottom: 12px;
-            display: block;
-            width: 100%;
-            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
-        }
-        
-        #guidelines-list .lab-value-btn:last-child {
-            margin-bottom: 0;
-        }
-        
         .lab-value-btn:hover {
             background: #0056d6;
             border-color: #0056d6;
             transform: translateY(-2px);
-        }
-        
-        /* Enhanced hover for guidelines list items */
-        #guidelines-list .lab-value-btn:hover {
-            background: #0056d6;
-            border-color: #0056d6;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
         }
         
         .lab-name {
@@ -1173,22 +1447,6 @@
         .lab-count {
             font-size: 10px;
             color: rgba(255, 255, 255, 0.8);
-        }
-        
-        /* Enhanced text styling for guidelines */
-        #guidelines-list .lab-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 6px;
-            line-height: 1.3;
-        }
-        
-        #guidelines-list .lab-count {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 500;
-            text-transform: capitalize;
         }
         
         [data-theme="dark"] .lab-value-btn {
