@@ -1499,9 +1499,10 @@
             border-color: #003d99;
         }
 
-        /* Lab Grid */
+        /* Lab Grid - Standardized grid for all card layouts */
         .lab-grid,
-        #drug-list {
+        #drug-list,
+        #guidelines-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
@@ -1510,7 +1511,8 @@
         
         @media (max-width: 768px) {
             .lab-grid,
-            #drug-list {
+            #drug-list,
+            #guidelines-list {
                 grid-template-columns: 1fr;
             }
         }

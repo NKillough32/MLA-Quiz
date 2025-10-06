@@ -6226,7 +6226,7 @@ class MLAQuizApp {
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('neurological'); event.stopPropagation();">Neurological</button>
                 <button class="category-btn" onclick="window.quizApp.showGuidelinesCategory('infectious-diseases'); event.stopPropagation();">Infectious Diseases</button>
             </div>
-            <div id="guidelines-list" class="tool-results"></div>
+            <div id="guidelines-list" class="lab-grid"></div>
         `;
         
         const searchInput = document.getElementById('guidelines-search');
