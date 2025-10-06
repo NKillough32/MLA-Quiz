@@ -4945,10 +4945,10 @@ class MLAQuizApp {
         matches.sort((a, b) => drugDatabase[a].name.localeCompare(drugDatabase[b].name));
         
         resultsContainer.innerHTML = matches.map(drug => `
-            <div class="drug-result" onclick="console.log('💊 Drug search result clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
+            <button class="drug-card" onclick="console.log('💊 Drug search result clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
                 <div class="drug-name">${drugDatabase[drug].name}</div>
                 <div class="drug-class">${drugDatabase[drug].class}</div>
-            </div>
+            </button>
         `).join('');
     }
     
@@ -12400,8 +12400,7 @@ MLAQuizApp.prototype.calculateModifiedRankin = function() {
 MLAQuizApp.prototype.initializeInteractiveFeatures = function() {
     console.log('🔗 Initializing interactive features...');
     
-    // Add bookmark buttons to existing calculators
-    this.addBookmarkButtons();
+    // Bookmark functionality removed - not used
     
     // Setup export functionality
     this.setupExportFeatures();
