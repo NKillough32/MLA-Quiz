@@ -7909,9 +7909,10 @@ class MLAQuizApp {
         const container = document.getElementById('differential-dx-container');
         container.innerHTML = `
             <div class="search-container">
-                <input type="text" id="ddx-search" placeholder="Search symptoms or diagnoses...">
-                <div id="ddx-search-results" class="lab-grid"></div>
+                <input type="text" id="ddx-search" placeholder="Search symptoms or diagnoses..." class="tool-search">
+                <button id="ddx-search-btn">🔍</button>
             </div>
+            <div id="ddx-search-results" class="lab-grid"></div>
             <div class="ddx-categories">
                 <button class="category-btn active" onclick="window.quizApp.showDdxCategory('all'); event.stopPropagation();">All Symptoms</button>
                 <button class="category-btn" onclick="window.quizApp.showDdxCategory('cardiovascular'); event.stopPropagation();">CV/Pulm</button>
@@ -7924,14 +7925,16 @@ class MLAQuizApp {
         `;
         
         const searchInput = document.getElementById('ddx-search');
+        const searchBtn = document.getElementById('ddx-search-btn');
         searchInput.addEventListener('input', () => this.searchDdx(ddxDatabase));
+        searchBtn.addEventListener('click', () => this.searchDdx(ddxDatabase));
         this.ddxDatabase = ddxDatabase;
         this.showDdxCategory('all');
     }
 
     searchDdx(ddxDatabase) {
-        const query = document.getElementById('differential-search').value.toLowerCase();
-        const resultsContainer = document.getElementById('differential-search-results');
+        const query = document.getElementById('ddx-search').value.toLowerCase();
+        const resultsContainer = document.getElementById('ddx-search-results');
         
         if (query.length < 2) {
             resultsContainer.innerHTML = '';
@@ -9873,9 +9876,10 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
     const container = examinationContainer;
     container.innerHTML = `
         <div class="search-container">
-            <input type="text" id="examination-search" placeholder="Search examination techniques...">
-            <div id="examination-search-results" class="lab-grid"></div>
+            <input type="text" id="examination-search" placeholder="Search examination techniques..." class="tool-search">
+            <button id="examination-search-btn">🔍</button>
         </div>
+        <div id="examination-search-results" class="lab-grid"></div>
         <div class="examination-categories">
             <button class="category-btn active" onclick="window.quizApp.showExaminationCategory('all'); event.stopPropagation();">All Systems</button>
             <button class="category-btn" onclick="window.quizApp.showExaminationCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
@@ -9889,8 +9893,10 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
     `;
     
     const searchInput = document.getElementById('examination-search');
+    const searchBtn = document.getElementById('examination-search-btn');
     const self = this;
     searchInput.addEventListener('input', () => self.searchExamination(examinationDatabase));
+    searchBtn.addEventListener('click', () => self.searchExamination(examinationDatabase));
     this.examinationDatabase = examinationDatabase;
     this.showExaminationCategory('all');
     console.log('✅ Examination guide loaded successfully!');
