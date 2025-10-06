@@ -5761,6 +5761,13 @@ class MLAQuizApp {
                 </div>
             </div>
         `;
+        
+        // Scroll to the top
+        container.scrollTop = 0;
+        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.scrollTop = 0;
+        }
     }
     
     showLabTest(panelKey, testKey) {
@@ -5803,6 +5810,13 @@ class MLAQuizApp {
                 </div>
             </div>
         `;
+        
+        // Scroll to the top
+        container.scrollTop = 0;
+        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.scrollTop = 0;
+        }
     }
 
     // Clinical Guidelines Functions  
@@ -6925,6 +6939,15 @@ class MLAQuizApp {
         
         contentHtml += `</div>`;
         container.innerHTML = contentHtml;
+        
+        // Scroll to the top of the guidelines container
+        container.scrollTop = 0;
+        
+        // Also scroll the main content area to the top if it exists
+        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.scrollTop = 0;
+        }
     }
 
     // Differential Diagnosis Functions
@@ -8046,6 +8069,13 @@ class MLAQuizApp {
                 </div>
             </div>
         `;
+        
+        // Scroll to the top
+        container.scrollTop = 0;
+        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.scrollTop = 0;
+        }
     }
     
     showDiagnosisDetail(symptomKey, dxKey) {
@@ -8082,6 +8112,13 @@ class MLAQuizApp {
                 </div>
             </div>
         `;
+        
+        // Scroll to the top
+        container.scrollTop = 0;
+        const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.scrollTop = 0;
+        }
     }
 
     // Override switchMedicalTool to load content
@@ -10074,6 +10111,13 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
             </div>
         </div>
     `;
+    
+    // Scroll to the top
+    container.scrollTop = 0;
+    const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.scrollTop = 0;
+    }
 };
 
 MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
@@ -10140,6 +10184,13 @@ MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
             </div>` : ''}
         </div>
     `;
+    
+    // Scroll to the top
+    container.scrollTop = 0;
+    const mainContent = document.querySelector('.medical-tools-container') || document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.scrollTop = 0;
+    }
 };
 
 // Mobile back button override for medical tools
