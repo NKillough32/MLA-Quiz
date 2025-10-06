@@ -4957,6 +4957,30 @@ class MLAQuizApp {
         const drugList = document.getElementById('drug-list');
         let drugs = Object.keys(drugDatabase);
         
+        // Update active state of category buttons
+        const categoryButtons = document.querySelectorAll('.drug-categories .category-btn');
+        categoryButtons.forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Find and activate the correct button
+        const activeButton = Array.from(categoryButtons).find(btn => {
+            const btnText = btn.textContent.trim();
+            if (category === 'all' && btnText === 'All Drugs') return true;
+            if (category === 'alphabetical' && btnText === 'A-Z') return true;
+            if (category === 'analgesics' && btnText === 'Pain Management') return true;
+            if (category === 'antibiotics' && btnText === 'Antibiotics') return true;
+            if (category === 'cardiovascular' && btnText === 'Cardiovascular') return true;
+            if (category === 'mental-health' && btnText === 'Mental Health') return true;
+            if (category === 'respiratory' && btnText === 'Respiratory') return true;
+            if (category === 'endocrine' && btnText === 'Endocrine') return true;
+            if (category === 'emergency' && btnText === 'Emergency') return true;
+            if (category === 'gastro' && btnText === 'Gastro') return true;
+            if (category === 'neuro' && btnText === 'Neurological') return true;
+            return false;
+        });
+        if (activeButton) activeButton.classList.add('active');
+        
         // Filter drugs by category
         if (category === 'analgesics') {
             drugs = drugs.filter(drug => {
@@ -5681,7 +5705,7 @@ class MLAQuizApp {
         let panels = Object.keys(labDatabase);
         
         // Update active state of category buttons
-        const categoryButtons = document.querySelectorAll('.lab-categories .filter-btn');
+        const categoryButtons = document.querySelectorAll('.lab-categories .category-btn');
         if (categoryButtons.length > 0) {
             categoryButtons.forEach(btn => {
                 btn.classList.remove('active');

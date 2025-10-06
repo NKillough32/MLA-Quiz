@@ -1199,8 +1199,49 @@
             border-color: #003d99;
         }
 
+        /* Drug Cards */
+        .drug-card {
+            padding: 16px 12px;
+            background: #007AFF;
+            border: 1px solid #007AFF;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            color: white;
+        }
+
+        .drug-card:hover {
+            background: #0056d6;
+            border-color: #0056d6;
+            transform: translateY(-2px);
+        }
+
+        .drug-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .drug-class {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="dark"] .drug-card {
+            background: #0056d6;
+            border-color: #0056d6;
+        }
+
+        [data-theme="dark"] .drug-card:hover {
+            background: #003d99;
+            border-color: #003d99;
+        }
+
         /* Lab Grid */
-        .lab-grid {
+        .lab-grid,
+        #drug-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
@@ -1208,7 +1249,8 @@
         }
         
         @media (max-width: 768px) {
-            .lab-grid {
+            .lab-grid,
+            #drug-list {
                 grid-template-columns: 1fr;
             }
         }
