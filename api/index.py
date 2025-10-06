@@ -291,16 +291,60 @@ class PWAQuizLoader:
         # Extract options from prompt if they're mixed together
         # This is common when question and options are in the same markdown section
         
-        # FIRST: Check if prompt is just an image reference - if so, it's not the real question
+        # SIMPLER LOGIC: If prompt is just an image, find the question sentence before the options
         logger.info(f"Question {num}: DEBUG - About to check fallback. Current prompt value: '{prompt}'")
+        logger.info(f"Question {num}: DEBUG - tail_start={tail_start}, len(parts)={len(parts)}")
         if re.match(r'^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$', prompt.strip()):
-            logger.warning(f"Question {num}: Prompt is still just an image after parsing! This means the question is missing.")
-            # The prompt IS the image, we need to find the actual question elsewhere
-            # It might be in the next part, or mixed with the image in the same part
-            # Let's check if there's content after the image in the current section
-            # Actually, if we're here, we've already tried to separate - so default to generic question
-            prompt = "What is the most likely diagnosis?"
-            logger.info(f"Question {num}: Using default prompt since image is the only content")
+            logger.warning(f"Question {num}: Prompt is still just an image after parsing! Looking for question before options...")
+            
+            # Look through the tail parts (where options should be) to find the question
+            question_found = False
+            for i in range(tail_start, len(parts)):
+                part = parts[i]
+                logger.info(f"Question {num}: Checking parts[{i}] for options/question: '{part[:100]}'")
+                # Check if this part contains options (starts with A. or A))
+                if re.search(r'^\s*[A-Z][.)]\s', part, re.MULTILINE):
+                    logger.info(f"Question {num}: Found options in parts[{i}]")
+                    # The question should be right before the first option
+                    # Split by newlines and find the last sentence before options
+                    lines = part.split('\n')
+                    question_lines = []
+                    for line in lines:
+                        if re.match(r'^\s*[A-Z][.)]\s', line):
+                            # Found first option, stop
+                            break
+                        if line.strip():
+                            question_lines.append(line.strip())
+                    
+                    if question_lines:
+                        # Join the lines that come before options
+                        potential_question = ' '.join(question_lines).strip()
+                        # Check if it ends with a question mark
+                        if potential_question.endswith('?'):
+                            prompt = potential_question
+                            question_found = True
+                            logger.info(f"Question {num}: Found question before options: '{prompt}'")
+                            break
+                        # Even if no question mark, use the last sentence before options
+                        elif len(potential_question) > 10:
+                            prompt = potential_question
+                            question_found = True
+                            logger.info(f"Question {num}: Using text before options as question: '{prompt}'")
+                            break
+            
+            if not question_found:
+                # Check in scenario if it ends with a question
+                if scenario.strip().endswith('?'):
+                    # Get the last sentence from scenario
+                    sentences = re.split(r'[.!]\s+', scenario)
+                    if sentences and sentences[-1].strip().endswith('?'):
+                        prompt = sentences[-1].strip()
+                        logger.info(f"Question {num}: Extracted question from end of scenario: '{prompt}'")
+                        question_found = True
+            
+            if not question_found:
+                prompt = "What is the most likely diagnosis?"
+                logger.info(f"Question {num}: Using default prompt since no question found")
         else:
             logger.info(f"Question {num}: DEBUG - Fallback check passed, prompt is NOT just an image")
         
