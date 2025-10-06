@@ -2184,10 +2184,11 @@ class MLAQuizApp {
         this.hapticsOptIn = enabled;
         localStorage.setItem('hapticsEnabled', enabled ? 'true' : 'false');
         
-        // Update button text
+        // Update button icon and tooltip
         const toggleBtn = document.getElementById('haptics-toggle');
         if (toggleBtn) {
-            toggleBtn.textContent = enabled ? '🔔 Haptics: On' : '🔕 Haptics: Off';
+            toggleBtn.textContent = enabled ? '🔔' : '🔕';
+            toggleBtn.title = enabled ? 'Haptics: On (click to disable)' : 'Haptics: Off (click to enable)';
         }
         
         // Provide brief feedback when enabling
@@ -2213,10 +2214,11 @@ class MLAQuizApp {
             const toggleBtn = document.createElement('button');
             toggleBtn.id = 'haptics-toggle';
             toggleBtn.className = 'navbar-btn haptics-toggle-btn';
-            toggleBtn.style.cssText = 'position: absolute; left: 60px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
+            toggleBtn.style.cssText = 'position: absolute; right: 130px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
             toggleBtn.onclick = () => this.setHapticsEnabled(!this.hapticsOptIn);
             
-            toggleBtn.textContent = this.hapticsOptIn ? '🔔 Haptics: On' : '🔕 Haptics: Off';
+            toggleBtn.textContent = this.hapticsOptIn ? '🔔' : '🔕';
+            toggleBtn.title = this.hapticsOptIn ? 'Haptics: On (click to disable)' : 'Haptics: Off (click to enable)';
             
             navbar.appendChild(toggleBtn);
             console.log('Haptics toggle added to navbar');
