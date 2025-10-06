@@ -7972,10 +7972,10 @@ class MLAQuizApp {
         const ddxList = document.getElementById('ddx-list');
         
         // Update active button state
-        document.querySelectorAll('.ddx-categories .filter-btn').forEach(btn => btn.classList.remove('active'));
-        const targetButton = Array.from(document.querySelectorAll('.ddx-categories .filter-btn')).find(btn => 
+        document.querySelectorAll('.ddx-categories .category-btn').forEach(btn => btn.classList.remove('active'));
+        const targetButton = Array.from(document.querySelectorAll('.ddx-categories .category-btn')).find(btn => 
             btn.textContent.toLowerCase().includes(category.toLowerCase()) ||
-            (category === 'all' && btn.textContent === 'All')
+            (category === 'all' && btn.textContent === 'All Symptoms')
         );
         if (targetButton) targetButton.classList.add('active');
         
