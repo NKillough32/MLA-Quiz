@@ -236,7 +236,7 @@ const drugDatabase = {
                 monitoring: 'Signs of infection resolution, allergic reactions, renal function if high dose',
                 pregnancy: 'Safe - category A. First-line for many infections in pregnancy',
                 sideEffects: 'Allergic reactions (rash to anaphylaxis), diarrhea, injection site reactions',
-                pharmacokinetics: 'Good tissue penetration. tÂ½ 30min. Mainly renal excretion',
+                pharmacokinetics: 'Good tissue penetration. t½ 30min. Mainly renal excretion',
                 clinicalPearls: 'First-line for streptococcal infections. Give IV for serious infections',
                 indication: 'Meningitis, cellulitis, pneumonia, endocarditis, necrotizing fasciitis'
             },
@@ -250,7 +250,7 @@ const drugDatabase = {
                 monitoring: 'Heart rate, blood pressure, signs of heart failure, renal function, glucose',
                 pregnancy: 'Use with caution - category C. Risk of IUGR and neonatal complications',
                 sideEffects: 'Bradycardia, hypotension, fatigue, cold extremities, bronchospasm',
-                pharmacokinetics: 'Good oral bioavailability. tÂ½ 10-12h. 50% hepatic, 50% renal elimination',
+                pharmacokinetics: 'Good oral bioavailability. t½ 10-12h. 50% hepatic, 50% renal elimination',
                 clinicalPearls: 'Most cardioselective beta-blocker. Evidence-based for heart failure',
                 indication: 'Heart failure, post-MI, hypertension, angina, atrial fibrillation'
             },
@@ -306,7 +306,7 @@ const drugDatabase = {
                 monitoring: 'Signs of infection resolution, renal function, LFTs, FBC, C.diff surveillance',
                 pregnancy: 'Safe - category B. Crosses placenta but no known teratogenic effects',
                 sideEffects: 'Diarrhea, rash, injection site reactions, gallbladder sludging, C.diff',
-                pharmacokinetics: 'Good tissue penetration including CSF. tÂ½ 6-9h. 50% renal excretion',
+                pharmacokinetics: 'Good tissue penetration including CSF. t½ 6-9h. 50% renal excretion',
                 clinicalPearls: 'Excellent CNS penetration. Once daily dosing. Avoid calcium solutions',
                 indication: 'Pneumonia, meningitis, sepsis, gonorrhea, cellulitis, intra-abdominal infections'
             },
@@ -390,7 +390,7 @@ const drugDatabase = {
                 monitoring: 'Diarrhea/C.diff symptoms, liver function, infection resolution',
                 pregnancy: 'Generally safe - category B. Limited placental transfer',
                 sideEffects: 'C.diff colitis, diarrhea, rash, metallic taste, liver dysfunction',
-                pharmacokinetics: 'Good tissue/bone penetration. tÂ½ 2-3h. Hepatic metabolism',
+                pharmacokinetics: 'Good tissue/bone penetration. t½ 2-3h. Hepatic metabolism',
                 clinicalPearls: 'Excellent bone penetration. High C.diff risk. Stop if diarrhea develops',
                 indication: 'Bone/joint infections, anaerobic infections, skin/soft tissue, dental infections'
             },
@@ -726,7 +726,7 @@ const drugDatabase = {
                 monitoring: 'Renal function, hearing, balance, drug levels (peak/trough), urine output',
                 pregnancy: 'Avoid - category D. Risk of 8th cranial nerve damage to fetus',
                 sideEffects: 'Nephrotoxicity, ototoxicity (vestibular/auditory), neuromuscular blockade',
-                pharmacokinetics: 'Poor oral absorption. Good tissue penetration. tÂ½ 2-3h. 95% renal excretion',
+                pharmacokinetics: 'Poor oral absorption. Good tissue penetration. t½ 2-3h. 95% renal excretion',
                 clinicalPearls: 'Once daily dosing preferred. Synergistic with beta-lactams. Monitor levels',
                 indication: 'Serious gram-negative infections, endocarditis, sepsis, UTI, pneumonia'
             },
@@ -782,7 +782,7 @@ const drugDatabase = {
                 monitoring: 'APTT (target 1.5-2.5x control), platelet count (HIT screening), signs of bleeding',
                 pregnancy: 'Safe - does not cross placenta. First-line anticoagulant in pregnancy',
                 sideEffects: 'Bleeding, HIT, osteoporosis (long-term), alopecia, skin necrosis',
-                pharmacokinetics: 'IV: immediate onset, tÂ½ 1-2h. SC: onset 1-2h. Metabolism hepatic',
+                pharmacokinetics: 'IV: immediate onset, t½ 1-2h. SC: onset 1-2h. Metabolism hepatic',
                 clinicalPearls: 'Monitor for HIT. Reverse with protamine. Use anti-Xa levels if APTT unreliable',
                 indication: 'DVT/PE treatment, ACS, AF, cardiac surgery, dialysis, stroke prevention'
             },
@@ -866,7 +866,7 @@ const drugDatabase = {
                 monitoring: 'Blood pressure, heart rate, respiratory rate, emergence reactions',
                 pregnancy: 'Use with caution - category C. Limited data but appears relatively safe',
                 sideEffects: 'Emergence reactions, hallucinations, hypertension, tachycardia, laryngospasm',
-                pharmacokinetics: 'Rapid onset 1-2min IV. tÂ½ 2-3h. Hepatic metabolism to active metabolites',
+                pharmacokinetics: 'Rapid onset 1-2min IV. t½ 2-3h. Hepatic metabolism to active metabolites',
                 clinicalPearls: 'Maintains airway reflexes. Good for unstable patients. Pre-treat with benzodiazepine',
                 indication: 'Emergency anaesthesia, procedural sedation, severe asthma, treatment-resistant depression'
             },
@@ -1034,7 +1034,7 @@ const drugDatabase = {
                 monitoring: 'Serum magnesium, reflexes, respiratory rate, urine output, renal function',
                 pregnancy: 'Safe and indicated for eclampsia/pre-eclampsia. Standard treatment',
                 sideEffects: 'Hypotension, respiratory depression, areflexia, cardiac arrest (overdose)',
-                pharmacokinetics: 'Onset 1-5min IV. Excreted unchanged by kidneys. tÂ½ 3-4h',
+                pharmacokinetics: 'Onset 1-5min IV. Excreted unchanged by kidneys. t½ 3-4h',
                 clinicalPearls: 'Check reflexes before each dose. Have calcium gluconate ready as antidote',
                 indication: 'Eclampsia, torsades de pointes, hypomagnesemia, severe asthma'
             },
@@ -1048,7 +1048,7 @@ const drugDatabase = {
                 monitoring: 'Renal function, seizure activity, infection resolution, C.diff surveillance',
                 pregnancy: 'Safe - category B. Use when benefits outweigh risks',
                 sideEffects: 'Diarrhea, nausea, headache, seizures (high dose/renal impairment), C.diff',
-                pharmacokinetics: 'Excellent tissue penetration including CSF. tÂ½ 1h. 70% renal excretion',
+                pharmacokinetics: 'Excellent tissue penetration including CSF. t½ 1h. 70% renal excretion',
                 clinicalPearls: 'Broad spectrum including ESBL producers. Lower seizure risk than imipenem',
                 indication: 'Severe sepsis, complicated UTI, intra-abdominal infections, meningitis'
             },
@@ -1090,7 +1090,7 @@ const drugDatabase = {
                 monitoring: 'Neurological symptoms (tardive dyskinesia), cardiac conduction, renal function',
                 pregnancy: 'Safe - category A. Commonly used for hyperemesis gravidarum',
                 sideEffects: 'Extrapyramidal effects, tardive dyskinesia, drowsiness, depression, galactorrhea',
-                pharmacokinetics: 'Onset 30min PO, 10min IV. tÂ½ 4-6h. Hepatic metabolism, renal excretion',
+                pharmacokinetics: 'Onset 30min PO, 10min IV. t½ 4-6h. Hepatic metabolism, renal excretion',
                 clinicalPearls: 'Limit to 5 days to reduce tardive dyskinesia risk. Give procyclidine for dystonia',
                 indication: 'Nausea/vomiting, gastroparesis, migraine-associated nausea, postoperative nausea'
             },
@@ -1118,7 +1118,7 @@ const drugDatabase = {
                 monitoring: 'Respiratory rate, oxygen saturation, blood pressure, level of consciousness',
                 pregnancy: 'Avoid - category D. Risk of floppy infant syndrome',
                 sideEffects: 'Respiratory depression, hypotension, amnesia, paradoxical agitation',
-                pharmacokinetics: 'Rapid onset 2-5min IV. tÂ½ 1-4h. Hepatic metabolism (CYP3A4)',
+                pharmacokinetics: 'Rapid onset 2-5min IV. t½ 1-4h. Hepatic metabolism (CYP3A4)',
                 clinicalPearls: 'Flumazenil antidote available. Titrate slowly. Have airway management ready',
                 indication: 'Conscious sedation, premedication, status epilepticus, ICU sedation'
             },
@@ -1258,7 +1258,7 @@ const drugDatabase = {
                 monitoring: 'QT interval (especially IV), constipation, liver function',
                 pregnancy: 'Generally safe - category B. Benefits usually outweigh risks',
                 sideEffects: 'Constipation, headache, QT prolongation, hypersensitivity reactions',
-                pharmacokinetics: 'Good oral bioavailability. tÂ½ 3-6h. Hepatic metabolism (CYP3A4)',
+                pharmacokinetics: 'Good oral bioavailability. t½ 3-6h. Hepatic metabolism (CYP3A4)',
                 clinicalPearls: 'Most effective for chemotherapy-induced nausea. Check QT with IV use',
                 indication: 'Chemotherapy-induced nausea, postoperative nausea, radiotherapy nausea'
             },
@@ -1272,7 +1272,7 @@ const drugDatabase = {
                 monitoring: 'Magnesium levels (long-term), B12 levels, bone density, C.diff risk',
                 pregnancy: 'Generally safe - category B. Use if benefits outweigh risks',
                 sideEffects: 'Headache, diarrhea, hypomagnesemia, increased fracture risk, C.diff',
-                pharmacokinetics: 'Onset 2-3 days for full effect. tÂ½ 1h. Hepatic metabolism (CYP2C19)',
+                pharmacokinetics: 'Onset 2-3 days for full effect. t½ 1h. Hepatic metabolism (CYP2C19)',
                 clinicalPearls: 'IV formulation available. Less drug interactions than omeprazole',
                 indication: 'GORD, peptic ulcer disease, H.pylori eradication, stress ulcer prophylaxis'
             },
@@ -1314,7 +1314,7 @@ const drugDatabase = {
                 monitoring: 'Renal function, infection resolution, allergic reactions, C.diff surveillance',
                 pregnancy: 'Safe - category B. Use when clinically indicated',
                 sideEffects: 'Diarrhea, rash, phlebitis, electrolyte disturbances, C.diff colitis',
-                pharmacokinetics: 'Good tissue penetration. tÂ½ 1h. 80% renal excretion unchanged',
+                pharmacokinetics: 'Good tissue penetration. t½ 1h. 80% renal excretion unchanged',
                 clinicalPearls: 'Broad spectrum anti-pseudomonal. Common empirical choice for sepsis',
                 indication: 'Hospital-acquired pneumonia, complicated UTI, sepsis, neutropenic fever'
             },
@@ -1342,7 +1342,7 @@ const drugDatabase = {
                 monitoring: 'Renal function, weight gain, mood changes, visual disturbances',
                 pregnancy: 'Avoid - category C. Teratogenic in animal studies',
                 sideEffects: 'Sedation, dizziness, weight gain, peripheral edema, blurred vision',
-                pharmacokinetics: 'Good oral absorption. tÂ½ 6h. 90% renal excretion unchanged',
+                pharmacokinetics: 'Good oral absorption. t½ 6h. 90% renal excretion unchanged',
                 clinicalPearls: 'Effective for neuropathic pain. Controlled drug. Gradual withdrawal needed',
                 indication: 'Neuropathic pain, epilepsy, generalized anxiety disorder, fibromyalgia'
             },
@@ -1356,7 +1356,7 @@ const drugDatabase = {
                 monitoring: 'Extrapyramidal symptoms, blood counts, hepatic function, cardiac conduction',
                 pregnancy: 'Use with caution - category C. Potential extrapyramidal effects in neonate',
                 sideEffects: 'Extrapyramidal effects, sedation, anticholinergic effects, tardive dyskinesia',
-                pharmacokinetics: 'Good oral absorption. tÂ½ 23h. Extensive hepatic metabolism',
+                pharmacokinetics: 'Good oral absorption. t½ 23h. Extensive hepatic metabolism',
                 clinicalPearls: 'Effective for vertigo and labyrinthitis. Avoid in Parkinson\'s disease',
                 indication: 'Nausea/vomiting, vertigo, migraine, schizophrenia (higher doses)'
             },
@@ -1370,7 +1370,7 @@ const drugDatabase = {
                 monitoring: 'Blood pressure, respiratory rate, depth of anaesthesia, lipid levels (prolonged use)',
                 pregnancy: 'Safe for anaesthesia - category B. Crosses placenta rapidly',
                 sideEffects: 'Hypotension, respiratory depression, injection pain, propofol infusion syndrome',
-                pharmacokinetics: 'Rapid onset 40s, offset 5-10min. tÂ½ 1-3h. Hepatic and extrahepatic metabolism',
+                pharmacokinetics: 'Rapid onset 40s, offset 5-10min. t½ 1-3h. Hepatic and extrahepatic metabolism',
                 clinicalPearls: 'Painful injection - use lidocaine. Quick recovery. Risk of PRIS with prolonged use',
                 indication: 'General anaesthesia induction/maintenance, ICU sedation, procedural sedation'
             },
@@ -1580,7 +1580,7 @@ const drugDatabase = {
                 monitoring: 'Signs of thrombosis, renal function, visual disturbances',
                 pregnancy: 'Generally safe. Used for postpartum hemorrhage. Category B',
                 sideEffects: 'Nausea, diarrhea, thrombosis (rare), seizures (high dose), visual disturbances',
-                pharmacokinetics: 'Peak 3h PO, 1h IV. 90% excreted unchanged in urine. tÂ½ 2-3h',
+                pharmacokinetics: 'Peak 3h PO, 1h IV. 90% excreted unchanged in urine. t½ 2-3h',
                 clinicalPearls: 'Most effective within 3h of trauma. Reduces mortality in major bleeding',
                 indication: 'Major bleeding, trauma, menorrhagia, hereditary angioedema'
             },
@@ -1623,7 +1623,7 @@ const drugDatabase = {
                 pregnancy: 'Teratogenic - avoid except mechanical valves (use LMWH periconception)',
                 sideEffects: 'Bleeding (major risk), skin necrosis (rare), purple toe syndrome (rare)',
                 pharmacokinetics: 'Onset: 36-72h, Half-life: 36-42h, CYP2C9 metabolism',
-                clinicalPearls: 'Take same time daily. Avoid vitamin K-rich foods in large amounts. Reversal: vitamin K Â± PCC',
+                clinicalPearls: 'Take same time daily. Avoid vitamin K-rich foods in large amounts. Reversal: vitamin K ± PCC',
                 indication: 'AF, VTE, mechanical heart valves. Being replaced by DOACs where appropriate'
             },
             'zopiclone': {

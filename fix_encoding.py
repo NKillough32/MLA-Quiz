@@ -27,6 +27,8 @@ replacements = [
     ('\u00e2\u2030\u00a5', '\u2265'),  # â‰¥ → ≥ (greater than or equal)
     ('\u00e2\u2030\u00a4', '\u2264'),  # â‰¤ → ≤ (less than or equal)
     ('\u00ce\u00bc', '\u03bc'),        # Î¼ → μ (mu)
+    ('\u00c2\u00bd', '\u00bd'),        # Â½ → ½ (one half)
+    ('\u00c2\u00b1', '\u00b1'),        # Â± → ± (plus-minus)
 ]
 
 # Count occurrences before replacement
@@ -43,6 +45,8 @@ print(f"  Delta character corrupted: {counts[replacements[4][0]]} occurrences")
 print(f"  Greater-or-equal corrupted: {counts[replacements[5][0]]} occurrences")
 print(f"  Less-or-equal corrupted: {counts[replacements[6][0]]} occurrences")
 print(f"  Mu character corrupted: {counts[replacements[7][0]]} occurrences")
+print(f"  One-half (½) corrupted: {counts[replacements[8][0]]} occurrences")
+print(f"  Plus-minus (±) corrupted: {counts[replacements[9][0]]} occurrences")
 print()
 
 # Perform replacements
