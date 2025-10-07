@@ -3618,19 +3618,19 @@ class MLAQuizApp {
         let color = '';
         let recommendation = '';
 
-        // Updated NICE guidelines for cardiovascular risk
+        // NICE NG238 (Dec 2023) cardiovascular risk guidelines
         if (risk < 10) {
             riskLevel = 'Low risk (<10%)';
             color = '#4CAF50';
-            recommendation = 'Lifestyle advice and reassess in 5 years. Statins not routinely recommended unless additional factors';
+            recommendation = 'NICE NG238: Lifestyle advice and reassess in 5 years. Consider statins if additional risk factors present';
         } else if (risk < 20) {
             riskLevel = 'Moderate risk (10-20%)';
             color = '#FF9800';
-            recommendation = 'NICE: Consider offering statin therapy (atorvastatin 20mg) with shared decision-making. Discuss benefits and risks';
+            recommendation = 'NICE NG238: Offer atorvastatin 20mg with shared decision-making and lifestyle modification';
         } else {
             riskLevel = 'High risk (≥20%)';
             color = '#F44336';
-            recommendation = 'NICE: Offer statin therapy (atorvastatin 20mg) with shared decision-making and lifestyle modification';
+            recommendation = 'NICE NG238: Offer atorvastatin 20mg with shared decision-making and lifestyle modification';
         }
 
         document.getElementById('qrisk-result').innerHTML = `
@@ -4157,21 +4157,22 @@ class MLAQuizApp {
         // Convert μmol/L to mg/dL
         const creatinine_mg = creatinine * 0.0113;
         
-        // CKD-EPI 2021 equation (race-neutral)
+        // CKD-EPI 2021 equation (race-neutral) - NIDDK
+        // 142 × min(Scr/κ,1)^α × max(Scr/κ,1)^−1.200 × 0.9938^Age × (×1.012 if female)
         let k, alpha;
         if (sex === 'female') {
             k = 0.7;
-            alpha = creatinine_mg <= 0.7 ? -0.329 : -1.209;
+            alpha = -0.241;  // Female exponent for CKD-EPI 2021
         } else {
             k = 0.9;
-            alpha = creatinine_mg <= 0.9 ? -0.411 : -1.209;
+            alpha = -0.302;  // Male exponent for CKD-EPI 2021
         }
         
-        let egfr = 141 * Math.pow(Math.min(creatinine_mg / k, 1), alpha) * 
-                   Math.pow(Math.max(creatinine_mg / k, 1), -1.209) * 
-                   Math.pow(0.993, age);
+        let egfr = 142 * Math.pow(Math.min(creatinine_mg / k, 1), alpha) * 
+                   Math.pow(Math.max(creatinine_mg / k, 1), -1.200) * 
+                   Math.pow(0.9938, age);
                    
-        if (sex === 'female') egfr *= 1.018;
+        if (sex === 'female') egfr *= 1.012;
         // Race multiplier removed as per CKD-EPI 2021 recommendations
         
         egfr = Math.round(egfr);
@@ -4223,8 +4224,8 @@ class MLAQuizApp {
     getUreaCreatinineCalculator() {
         return `
             <div class="calculator-form">
-                <h4>Urea:Creatinine Ratio Calculator (UK Standards)</h4>
-                <p><small>Assessment of kidney function and AKI classification (NICE/KDIGO guidelines)</small></p>
+                <h4>Urea:Creatinine Ratio Calculator</h4>
+                <p><small>Contextual information for kidney function assessment</small></p>
                 
                 <div class="calc-input-group">
                     <label>Serum Urea (mmol/L):</label>
@@ -4242,12 +4243,14 @@ class MLAQuizApp {
                 
                 <div class="calc-reference">
                     <small>
-                        <strong>UK Reference Ranges (NICE CG169):</strong><br>
-                        <strong>Normal:</strong> 40-100:1 (typical range)<br>
-                        <strong>Prerenal AKI:</strong> >100:1 (dehydration, reduced perfusion)<br>
-                        <strong>Intrinsic renal AKI:</strong> 40-80:1 (ATN, glomerulonephritis)<br>
-                        <strong>Post-renal AKI:</strong> Variable, often >100:1 initially<br>
-                        <em>Note: Always interpret with clinical context and eGFR</em>
+                        <strong>⚠️ Note:</strong> U:C ratio is NOT used for AKI diagnosis<br>
+                        <strong>AKI Diagnostic Criteria (KDIGO/NICE CG169):</strong><br>
+                        • Creatinine rise ≥26 μmol/L in 48h, OR<br>
+                        • Creatinine ≥1.5× baseline in 7 days, OR<br>
+                        • Urine output <0.5 mL/kg/hr for >6 hours<br><br>
+                        <strong>U:C Ratio (contextual only):</strong><br>
+                        40-100:1 typical | >100:1 may suggest prerenal causes<br>
+                        <em>Always interpret with clinical context, AKI staging, and eGFR</em>
                     </small>
                 </div>
             </div>
@@ -5002,15 +5005,16 @@ class MLAQuizApp {
             return;
         }
 
-        // Updated conversion factors to oral morphine equivalents (mg) - UK Faculty of Pain Medicine 2022
+        // UK opioid conversion factors - Faculty of Pain Medicine guidance
+        // ⚠️ CRITICAL: Patch conversions are per mcg/hr, NOT total daily dose
         const toMorphineFactors = {
             'morphine-oral': 1,
             'morphine-sc': 2,  // SC morphine is twice as potent as oral
             'oxycodone-oral': 1.5,  // Oxycodone 1mg = 1.5mg morphine
-            'fentanyl-patch': 100,  // UK guidance: 1 mcg/hr fentanyl = 100mg oral morphine per day (was 150)
+            'fentanyl-patch': 2.4,  // UK: Fentanyl 12 mcg/hr ≈ 30-45mg OME/day → ~2.4-3.75 mg per mcg/hr
             'codeine': 0.1,  // Codeine 10mg = 1mg morphine
             'tramadol': 0.1,  // Tramadol 10mg = 1mg morphine
-            'buprenorphine-patch': 110  // UK guidance: 1 mcg/hr buprenorphine = 110mg oral morphine per day (was 75)
+            'buprenorphine-patch': 2.4  // UK: Buprenorphine 5 mcg/hr ≈ 12mg OME/day → ~2.4 mg per mcg/hr
         };
 
         // Conversion factors from oral morphine equivalents
@@ -5018,16 +5022,16 @@ class MLAQuizApp {
             'morphine-oral': 1,
             'morphine-sc': 0.5,  // Oral to SC morphine
             'oxycodone-oral': 0.67,  // Morphine to oxycodone
-            'fentanyl-patch': 0.01,  // Morphine to fentanyl patch (1/100)
+            'fentanyl-patch': 0.4,  // Conservative: ~2.5mg OME per mcg/hr
             'diamorphine-sc': 0.33  // Oral morphine to SC diamorphine
         };
 
         // Convert current dose to morphine equivalents
         const morphineEquivalent = currentDose * toMorphineFactors[currentOpioid];
         
-        // Convert to target opioid with 25-50% dose reduction for safety
+        // Faculty of Pain Medicine: Reduce by 25-50% when switching (more for high doses/elderly)
         const fullTargetDose = morphineEquivalent * fromMorphineFactors[targetOpioid];
-        const reducedTargetDose = fullTargetDose * 0.75; // 25% reduction
+        const reducedTargetDose = fullTargetDose * 0.5; // 50% reduction for safety
 
         let dosageForm = '';
         let administration = '';
@@ -5063,17 +5067,24 @@ class MLAQuizApp {
 
         document.getElementById('opioid-conversion-result').innerHTML = `
             <div style="color: #2196F3;">
-                <strong>Conversion Result:</strong><br>
-                <strong>Target Dose: ${Math.round(reducedTargetDose * 10) / 10} ${dosageForm}</strong><br>
+                <strong>Opioid Conversion Estimate:</strong><br>
+                <strong>Oral Morphine Equivalent: ${Math.round(morphineEquivalent)} mg/day</strong><br>
+                <strong>Recommended Starting Dose: ${Math.round(reducedTargetDose * 10) / 10} ${dosageForm}</strong><br>
                 <em>Administration:</em> ${administration}<br>
                 <em>Breakthrough:</em> ${frequency}<br><br>
-                <div style="color: #FF5722; font-weight: bold; margin: 8px 0;">
-                    ⚠️ SAFETY: Start at 25-50% dose reduction and titrate carefully
+                <div style="color: #D32F2F; font-weight: bold; margin: 8px 0; border: 2px solid #D32F2F; padding: 8px; background: #FFEBEE;">
+                    ⚠️ FACULTY OF PAIN MEDICINE WARNING:<br>
+                    • Reduce calculated doses by 25-50% when switching<br>
+                    • Reduce more for high doses (>200mg OME/day) or elderly<br>
+                    • Incomplete cross-tolerance between opioids<br>
+                    • Titrate carefully and monitor closely
                 </div>
                 <small style="color: #666;">
-                    Using UK Faculty of Pain Medicine conversion factors<br>
-                    Original: ${currentDose} ${currentOpioid.replace('-', ' ')} = ${Math.round(morphineEquivalent)} mg oral morphine equiv.<br>
-                    Full calculated dose: ${Math.round(fullTargetDose * 10) / 10} ${dosageForm} (reduced for safety)
+                    Using UK Faculty of Pain Medicine & MHRA guidance<br>
+                    Original: ${currentDose} ${currentOpioid.replace('-', ' ')}<br>
+                    Estimated OME: ${Math.round(morphineEquivalent)} mg/day<br>
+                    Full calculated: ${Math.round(fullTargetDose * 10) / 10} ${dosageForm} (50% reduction applied)<br>
+                    <em>This is a simplified calculator - seek specialist advice for complex conversions</em>
                 </small>
             </div>
         `;
@@ -12725,42 +12736,37 @@ MLAQuizApp.prototype.calculateCockcroftGault = function() {
         return;
     }
     
-    const K = sex === 'male' ? 1.23 : 1.04;
+    const K = sex === 'male' ? 1.23 : 1.04;  // UK constants for μmol/L
     const crCl = ((140 - age) * weight * K) / creatinine;
     
-    let interpretation = '';
-    let stage = '';
+    let doseAdjustment = '';
+    let color = '';
     
-    if (crCl >= 90) {
-        interpretation = 'Normal kidney function';
-        stage = 'CKD Stage 1 (if kidney damage present)';
-    } else if (crCl >= 60) {
-        interpretation = 'Mildly decreased kidney function';
-        stage = 'CKD Stage 2';
-    } else if (crCl >= 45) {
-        interpretation = 'Mild to moderately decreased kidney function';
-        stage = 'CKD Stage 3a';
+    if (crCl >= 60) {
+        doseAdjustment = 'No dose adjustment typically required for most medications';
+        color = '#4CAF50';
     } else if (crCl >= 30) {
-        interpretation = 'Moderately to severely decreased kidney function';
-        stage = 'CKD Stage 3b';
+        doseAdjustment = 'Dose adjustment required for many renally-excreted drugs (e.g., metformin, DOACs, antibiotics)';
+        color = '#FF9800';
     } else if (crCl >= 15) {
-        interpretation = 'Severely decreased kidney function';
-        stage = 'CKD Stage 4';
+        doseAdjustment = 'Significant dose adjustment or contraindications for many drugs. Specialist review advised';
+        color = '#F44336';
     } else {
-        interpretation = 'Kidney failure';
-        stage = 'CKD Stage 5';
+        doseAdjustment = 'Severe renal impairment - many drugs contraindicated. Urgent specialist review';
+        color = '#D32F2F';
     }
     
     document.getElementById('cg-result').innerHTML = `
         <div class="result-section">
             <h5>Cockcroft-Gault Results</h5>
             <div class="result-grid">
-                <div><strong>Creatinine Clearance:</strong> ${crCl.toFixed(1)} ml/min</div>
-                <div><strong>Interpretation:</strong> ${interpretation}</div>
-                <div><strong>CKD Stage:</strong> ${stage}</div>
+                <div><strong>Creatinine Clearance:</strong> ${crCl.toFixed(1)} mL/min</div>
+                <div style="color: ${color};"><strong>Dose Adjustment Guidance:</strong> ${doseAdjustment}</div>
             </div>
-            <div class="alert alert-info">
-                💡 Consider dose adjustment for medications if CrCl < 60 ml/min
+            <div class="alert alert-warning">
+                ⚠️ CrCl is used for drug dosing, NOT CKD staging<br>
+                <small>UK CKD staging uses eGFR (G1-G5) + albuminuria (A1-A3)<br>
+                Use eGFR calculator for CKD staging and monitoring</small>
             </div>
         </div>
     `;
