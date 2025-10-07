@@ -2874,6 +2874,14 @@ class MLAQuizApp {
                 calculatorTitle = 'GAD-7 Anxiety Scale';
                 calculatorContent += this.getGAD7Calculator();
                 break;
+            case 'mse':
+                calculatorTitle = 'Mental State Examination';
+                calculatorContent += this.getMSECalculator();
+                break;
+            case 'mmse':
+                calculatorTitle = 'Mini Mental State Examination';
+                calculatorContent += this.getMMSECalculator();
+                break;
             case 'insulin-sliding':
                 calculatorTitle = 'Insulin Sliding Scale';
                 calculatorContent += this.getInsulinSlidingCalculator();
@@ -11150,6 +11158,262 @@ MLAQuizApp.prototype.getGAD7Calculator = function() {
     `;
 };
 
+// Mental State Examination (MSE) Calculator
+MLAQuizApp.prototype.getMSECalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Mental State Examination (MSE)</h4>
+            <p class="calc-description">Comprehensive psychiatric clinical assessment tool</p>
+            
+            <div class="calc-input-group">
+                <label><strong>1. Appearance & Behavior</strong></label>
+                <textarea id="mse-appearance" placeholder="E.g., Well-groomed, casually dressed, good eye contact, calm and cooperative" rows="2"></textarea>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>2. Speech</strong></label>
+                <select id="mse-speech">
+                    <option value="">Select...</option>
+                    <option value="Normal rate, rhythm, volume">Normal rate, rhythm, volume</option>
+                    <option value="Pressured">Pressured</option>
+                    <option value="Slowed">Slowed</option>
+                    <option value="Monotone">Monotone</option>
+                    <option value="Loud">Loud</option>
+                    <option value="Soft/Quiet">Soft/Quiet</option>
+                    <option value="Stuttering">Stuttering</option>
+                </select>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>3. Mood (Subjective)</strong></label>
+                <input type="text" id="mse-mood" placeholder="Patient's own words, e.g., 'I feel depressed'">
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>4. Affect (Objective)</strong></label>
+                <select id="mse-affect">
+                    <option value="">Select...</option>
+                    <option value="Euthymic, full range, appropriate">Euthymic, full range, appropriate</option>
+                    <option value="Anxious">Anxious</option>
+                    <option value="Depressed">Depressed</option>
+                    <option value="Elevated/Euphoric">Elevated/Euphoric</option>
+                    <option value="Irritable">Irritable</option>
+                    <option value="Flat/Blunted">Flat/Blunted</option>
+                    <option value="Labile">Labile</option>
+                    <option value="Incongruent">Incongruent</option>
+                </select>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>5. Thought Process</strong></label>
+                <select id="mse-thought-process">
+                    <option value="">Select...</option>
+                    <option value="Linear, logical, goal-directed">Linear, logical, goal-directed</option>
+                    <option value="Tangential">Tangential</option>
+                    <option value="Circumstantial">Circumstantial</option>
+                    <option value="Flight of ideas">Flight of ideas</option>
+                    <option value="Loose associations">Loose associations</option>
+                    <option value="Perseveration">Perseveration</option>
+                    <option value="Thought blocking">Thought blocking</option>
+                </select>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>6. Thought Content</strong></label>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="mse-delusions"> Delusions</label>
+                    <label><input type="checkbox" id="mse-suicidal"> Suicidal ideation</label>
+                    <label><input type="checkbox" id="mse-homicidal"> Homicidal ideation</label>
+                    <label><input type="checkbox" id="mse-paranoia"> Paranoia</label>
+                    <label><input type="checkbox" id="mse-obsessions"> Obsessions</label>
+                </div>
+                <textarea id="mse-thought-content" placeholder="Additional details..." rows="2"></textarea>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>7. Perception</strong></label>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="mse-hallucinations-auditory"> Auditory hallucinations</label>
+                    <label><input type="checkbox" id="mse-hallucinations-visual"> Visual hallucinations</label>
+                    <label><input type="checkbox" id="mse-hallucinations-other"> Other hallucinations</label>
+                    <label><input type="checkbox" id="mse-illusions"> Illusions</label>
+                </div>
+                <textarea id="mse-perception" placeholder="Additional details..." rows="2"></textarea>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>8. Cognition</strong></label>
+                <select id="mse-orientation">
+                    <option value="Oriented x3 (person, place, time)">Oriented x3 (person, place, time)</option>
+                    <option value="Oriented x2">Oriented x2</option>
+                    <option value="Oriented x1">Oriented x1</option>
+                    <option value="Disoriented">Disoriented</option>
+                </select>
+                <select id="mse-memory" style="margin-top: 8px;">
+                    <option value="Intact immediate, recent, remote memory">Intact immediate, recent, remote memory</option>
+                    <option value="Impaired recent memory">Impaired recent memory</option>
+                    <option value="Impaired remote memory">Impaired remote memory</option>
+                    <option value="Global memory impairment">Global memory impairment</option>
+                </select>
+                <select id="mse-concentration" style="margin-top: 8px;">
+                    <option value="Good concentration/attention">Good concentration/attention</option>
+                    <option value="Mildly impaired">Mildly impaired concentration</option>
+                    <option value="Moderately impaired">Moderately impaired concentration</option>
+                    <option value="Severely impaired">Severely impaired concentration</option>
+                </select>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>9. Insight</strong></label>
+                <select id="mse-insight">
+                    <option value="">Select...</option>
+                    <option value="Good - recognizes illness, need for treatment">Good - recognizes illness, need for treatment</option>
+                    <option value="Partial - some awareness of problems">Partial - some awareness of problems</option>
+                    <option value="Poor - minimal awareness">Poor - minimal awareness</option>
+                    <option value="Absent - denies illness completely">Absent - denies illness completely</option>
+                </select>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>10. Judgment</strong></label>
+                <select id="mse-judgment">
+                    <option value="">Select...</option>
+                    <option value="Good - able to make appropriate decisions">Good - able to make appropriate decisions</option>
+                    <option value="Fair - some impairment in decision-making">Fair - some impairment in decision-making</option>
+                    <option value="Poor - significant impairment">Poor - significant impairment</option>
+                    <option value="Very poor - unable to make safe decisions">Very poor - unable to make safe decisions</option>
+                </select>
+            </div>
+            
+            <button onclick="window.quizApp.calculateMSE()">Generate MSE Summary</button>
+            <div id="mse-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Note:</strong> MSE is a comprehensive clinical interview documenting all aspects of mental status</small>
+            </div>
+        </div>
+    `;
+};
+
+// Mini Mental State Examination (MMSE) Calculator
+MLAQuizApp.prototype.getMMSECalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Mini Mental State Examination (MMSE)</h4>
+            <p class="calc-description">Cognitive screening tool for dementia (Maximum score: 30)</p>
+            
+            <div class="calc-input-group">
+                <label><strong>1. Orientation to Time (5 points)</strong></label>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="mmse-year"> Year (1 point)</label>
+                    <label><input type="checkbox" id="mmse-season"> Season (1 point)</label>
+                    <label><input type="checkbox" id="mmse-date"> Date (1 point)</label>
+                    <label><input type="checkbox" id="mmse-day"> Day (1 point)</label>
+                    <label><input type="checkbox" id="mmse-month"> Month (1 point)</label>
+                </div>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>2. Orientation to Place (5 points)</strong></label>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="mmse-country"> Country (1 point)</label>
+                    <label><input type="checkbox" id="mmse-county"> County (1 point)</label>
+                    <label><input type="checkbox" id="mmse-town"> Town (1 point)</label>
+                    <label><input type="checkbox" id="mmse-hospital"> Hospital (1 point)</label>
+                    <label><input type="checkbox" id="mmse-floor"> Floor (1 point)</label>
+                </div>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>3. Registration (3 points)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">Ask patient to repeat 3 words (e.g., "apple, table, penny")</p>
+                <label>Number of words correctly repeated on first attempt:</label>
+                <select id="mmse-registration">
+                    <option value="3">3 words (3 points)</option>
+                    <option value="2">2 words (2 points)</option>
+                    <option value="1">1 word (1 point)</option>
+                    <option value="0">0 words (0 points)</option>
+                </select>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>4. Attention & Calculation (5 points)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">Serial 7s: 100-7, -7, -7, -7, -7 (93, 86, 79, 72, 65)<br>OR spell "WORLD" backwards (D-L-R-O-W)</p>
+                <label>Number of correct answers:</label>
+                <select id="mmse-attention">
+                    <option value="5">5 correct (5 points)</option>
+                    <option value="4">4 correct (4 points)</option>
+                    <option value="3">3 correct (3 points)</option>
+                    <option value="2">2 correct (2 points)</option>
+                    <option value="1">1 correct (1 point)</option>
+                    <option value="0">0 correct (0 points)</option>
+                </select>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>5. Recall (3 points)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">Ask patient to recall the 3 words from Registration</p>
+                <label>Number of words correctly recalled:</label>
+                <select id="mmse-recall">
+                    <option value="3">3 words (3 points)</option>
+                    <option value="2">2 words (2 points)</option>
+                    <option value="1">1 word (1 point)</option>
+                    <option value="0">0 words (0 points)</option>
+                </select>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>6. Naming (2 points)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">Show patient a watch and a pen, ask them to name each</p>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="mmse-naming-1"> Named first object (1 point)</label>
+                    <label><input type="checkbox" id="mmse-naming-2"> Named second object (1 point)</label>
+                </div>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>7. Repetition (1 point)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">Ask patient to repeat: "No ifs, ands, or buts"</p>
+                <label><input type="checkbox" id="mmse-repetition"> Correctly repeated (1 point)</label>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>8. Three-Stage Command (3 points)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">"Take this paper in your right hand, fold it in half, and put it on the floor"</p>
+                <div class="calc-checkbox-group">
+                    <label><input type="checkbox" id="mmse-command-1"> Takes paper (1 point)</label>
+                    <label><input type="checkbox" id="mmse-command-2"> Folds paper (1 point)</label>
+                    <label><input type="checkbox" id="mmse-command-3"> Places on floor (1 point)</label>
+                </div>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>9. Reading (1 point)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">Show patient "CLOSE YOUR EYES" and ask them to do what it says</p>
+                <label><input type="checkbox" id="mmse-reading"> Closes eyes (1 point)</label>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>10. Writing (1 point)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">Ask patient to write a complete sentence</p>
+                <label><input type="checkbox" id="mmse-writing"> Writes grammatically correct sentence (1 point)</label>
+            </div>
+            
+            <div class="calc-input-group">
+                <label><strong>11. Copying (1 point)</strong></label>
+                <p style="font-size: 14px; margin: 5px 0;">Ask patient to copy two intersecting pentagons</p>
+                <label><input type="checkbox" id="mmse-copying"> Correctly copies diagram (1 point)</label>
+            </div>
+            
+            <button onclick="window.quizApp.calculateMMSE()">Calculate MMSE Score</button>
+            <div id="mmse-result" class="calc-result"></div>
+            <div class="calc-reference">
+                <small><strong>Interpretation:</strong> 24-30 Normal | 18-23 Mild impairment | 10-17 Moderate | <10 Severe<br>
+                <strong>Note:</strong> Adjust for age and education level. Not diagnostic alone - clinical judgment required.</small>
+            </div>
+        </div>
+    `;
+};
+
 // Insulin Sliding Scale Calculator
 MLAQuizApp.prototype.getInsulinSlidingCalculator = function() {
     return `
@@ -11487,6 +11751,246 @@ MLAQuizApp.prototype.calculateGAD7 = function() {
         <p><strong>Recommendation:</strong> ${recommendation}</p>
         <div class="clinical-note">
             <p><strong>Note:</strong> Score ≥10 has good sensitivity and specificity for GAD</p>
+        </div>
+    `;
+};
+
+// Mental State Examination (MSE) Calculation
+MLAQuizApp.prototype.calculateMSE = function() {
+    const appearance = document.getElementById('mse-appearance').value;
+    const speech = document.getElementById('mse-speech').value;
+    const mood = document.getElementById('mse-mood').value;
+    const affect = document.getElementById('mse-affect').value;
+    const thoughtProcess = document.getElementById('mse-thought-process').value;
+    const thoughtContent = document.getElementById('mse-thought-content').value;
+    const perception = document.getElementById('mse-perception').value;
+    const orientation = document.getElementById('mse-orientation').value;
+    const memory = document.getElementById('mse-memory').value;
+    const concentration = document.getElementById('mse-concentration').value;
+    const insight = document.getElementById('mse-insight').value;
+    const judgment = document.getElementById('mse-judgment').value;
+    
+    // Check for concerning findings
+    const delusions = document.getElementById('mse-delusions').checked;
+    const suicidal = document.getElementById('mse-suicidal').checked;
+    const homicidal = document.getElementById('mse-homicidal').checked;
+    const paranoia = document.getElementById('mse-paranoia').checked;
+    const obsessions = document.getElementById('mse-obsessions').checked;
+    const auditoryHalluc = document.getElementById('mse-hallucinations-auditory').checked;
+    const visualHalluc = document.getElementById('mse-hallucinations-visual').checked;
+    const otherHalluc = document.getElementById('mse-hallucinations-other').checked;
+    const illusions = document.getElementById('mse-illusions').checked;
+    
+    // Build thought content section
+    let thoughtContentDetails = [];
+    if (delusions) thoughtContentDetails.push('delusions present');
+    if (suicidal) thoughtContentDetails.push('⚠️ SUICIDAL IDEATION');
+    if (homicidal) thoughtContentDetails.push('⚠️ HOMICIDAL IDEATION');
+    if (paranoia) thoughtContentDetails.push('paranoid ideation');
+    if (obsessions) thoughtContentDetails.push('obsessive thoughts');
+    if (thoughtContent) thoughtContentDetails.push(thoughtContent);
+    
+    const thoughtContentSummary = thoughtContentDetails.length > 0 
+        ? thoughtContentDetails.join(', ') 
+        : 'No abnormalities noted';
+    
+    // Build perception section
+    let perceptionDetails = [];
+    if (auditoryHalluc) perceptionDetails.push('auditory hallucinations');
+    if (visualHalluc) perceptionDetails.push('visual hallucinations');
+    if (otherHalluc) perceptionDetails.push('other hallucinations');
+    if (illusions) perceptionDetails.push('illusions');
+    if (perception) perceptionDetails.push(perception);
+    
+    const perceptionSummary = perceptionDetails.length > 0 
+        ? perceptionDetails.join(', ') 
+        : 'No perceptual disturbances';
+    
+    // Risk assessment
+    let riskWarning = '';
+    if (suicidal || homicidal) {
+        riskWarning = `
+            <div class="clinical-note" style="background: #fee2e2; border-color: #dc2626; margin-top: 15px;">
+                <h4 style="color: #dc2626; margin-top: 0;">⚠️ RISK ALERT</h4>
+                <p><strong>IMMEDIATE ACTION REQUIRED:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    ${suicidal ? '<li>Suicidal ideation present - assess risk, ensure safety, consider crisis team</li>' : ''}
+                    ${homicidal ? '<li>Homicidal ideation present - assess risk, ensure safety, consider urgent psychiatric review and duty to warn</li>' : ''}
+                </ul>
+            </div>
+        `;
+    }
+    
+    // Generate MSE summary
+    const mseSummary = `
+        <h4 style="color: #007AFF;">Mental State Examination Summary</h4>
+        <div class="mse-summary" style="text-align: left; line-height: 1.8;">
+            <p><strong>Appearance & Behavior:</strong> ${appearance || 'Not documented'}</p>
+            <p><strong>Speech:</strong> ${speech || 'Not documented'}</p>
+            <p><strong>Mood:</strong> ${mood ? `"${mood}"` : 'Not documented'}</p>
+            <p><strong>Affect:</strong> ${affect || 'Not documented'}</p>
+            <p><strong>Thought Process:</strong> ${thoughtProcess || 'Not documented'}</p>
+            <p><strong>Thought Content:</strong> ${thoughtContentSummary}</p>
+            <p><strong>Perception:</strong> ${perceptionSummary}</p>
+            <p><strong>Cognition:</strong></p>
+            <ul style="margin: 5px 0 10px 20px;">
+                <li>Orientation: ${orientation}</li>
+                <li>Memory: ${memory}</li>
+                <li>Concentration: ${concentration}</li>
+            </ul>
+            <p><strong>Insight:</strong> ${insight || 'Not documented'}</p>
+            <p><strong>Judgment:</strong> ${judgment || 'Not documented'}</p>
+        </div>
+        ${riskWarning}
+        <div class="calc-reference" style="margin-top: 15px;">
+            <small><strong>Clinical Use:</strong> Document this MSE in the patient's medical record. Repeat MSE if mental status changes.</small>
+        </div>
+    `;
+    
+    document.getElementById('mse-result').innerHTML = mseSummary;
+};
+
+// Mini Mental State Examination (MMSE) Calculation
+MLAQuizApp.prototype.calculateMMSE = function() {
+    let score = 0;
+    
+    // Orientation to Time (5 points)
+    if (document.getElementById('mmse-year').checked) score++;
+    if (document.getElementById('mmse-season').checked) score++;
+    if (document.getElementById('mmse-date').checked) score++;
+    if (document.getElementById('mmse-day').checked) score++;
+    if (document.getElementById('mmse-month').checked) score++;
+    
+    // Orientation to Place (5 points)
+    if (document.getElementById('mmse-country').checked) score++;
+    if (document.getElementById('mmse-county').checked) score++;
+    if (document.getElementById('mmse-town').checked) score++;
+    if (document.getElementById('mmse-hospital').checked) score++;
+    if (document.getElementById('mmse-floor').checked) score++;
+    
+    // Registration (3 points)
+    score += parseInt(document.getElementById('mmse-registration').value);
+    
+    // Attention & Calculation (5 points)
+    score += parseInt(document.getElementById('mmse-attention').value);
+    
+    // Recall (3 points)
+    score += parseInt(document.getElementById('mmse-recall').value);
+    
+    // Naming (2 points)
+    if (document.getElementById('mmse-naming-1').checked) score++;
+    if (document.getElementById('mmse-naming-2').checked) score++;
+    
+    // Repetition (1 point)
+    if (document.getElementById('mmse-repetition').checked) score++;
+    
+    // Three-Stage Command (3 points)
+    if (document.getElementById('mmse-command-1').checked) score++;
+    if (document.getElementById('mmse-command-2').checked) score++;
+    if (document.getElementById('mmse-command-3').checked) score++;
+    
+    // Reading (1 point)
+    if (document.getElementById('mmse-reading').checked) score++;
+    
+    // Writing (1 point)
+    if (document.getElementById('mmse-writing').checked) score++;
+    
+    // Copying (1 point)
+    if (document.getElementById('mmse-copying').checked) score++;
+    
+    // Interpretation
+    let interpretation, color, severity, recommendations;
+    
+    if (score >= 24) {
+        interpretation = 'Normal Cognition';
+        color = '#16a34a';
+        severity = 'No cognitive impairment detected';
+        recommendations = 'No further cognitive testing required at this time. Consider reassessment if concerns arise.';
+    } else if (score >= 18) {
+        interpretation = 'Mild Cognitive Impairment';
+        color = '#eab308';
+        severity = 'Mild impairment - may indicate early dementia or delirium';
+        recommendations = 'Consider: Full cognitive assessment, medication review, exclude delirium (infection, metabolic), neuroimaging if new onset, referral to memory clinic.';
+    } else if (score >= 10) {
+        interpretation = 'Moderate Cognitive Impairment';
+        color = '#f97316';
+        severity = 'Moderate impairment - likely dementia or severe delirium';
+        recommendations = 'Urgent actions: Exclude reversible causes (delirium, medication, B12, thyroid), neuroimaging, specialist referral, assess capacity, discuss safety and support needs.';
+    } else {
+        interpretation = 'Severe Cognitive Impairment';
+        color = '#dc2626';
+        severity = 'Severe impairment - advanced dementia or acute confusion';
+        recommendations = 'Immediate actions: Exclude acute delirium (sepsis, stroke, metabolic), assess safety, urgent geriatric or psychiatric review, consider safeguarding needs.';
+    }
+    
+    // Score breakdown
+    const orientationTime = [
+        document.getElementById('mmse-year').checked,
+        document.getElementById('mmse-season').checked,
+        document.getElementById('mmse-date').checked,
+        document.getElementById('mmse-day').checked,
+        document.getElementById('mmse-month').checked
+    ].filter(x => x).length;
+    
+    const orientationPlace = [
+        document.getElementById('mmse-country').checked,
+        document.getElementById('mmse-county').checked,
+        document.getElementById('mmse-town').checked,
+        document.getElementById('mmse-hospital').checked,
+        document.getElementById('mmse-floor').checked
+    ].filter(x => x).length;
+    
+    const registration = parseInt(document.getElementById('mmse-registration').value);
+    const attention = parseInt(document.getElementById('mmse-attention').value);
+    const recall = parseInt(document.getElementById('mmse-recall').value);
+    
+    const naming = [
+        document.getElementById('mmse-naming-1').checked,
+        document.getElementById('mmse-naming-2').checked
+    ].filter(x => x).length;
+    
+    const repetition = document.getElementById('mmse-repetition').checked ? 1 : 0;
+    
+    const command = [
+        document.getElementById('mmse-command-1').checked,
+        document.getElementById('mmse-command-2').checked,
+        document.getElementById('mmse-command-3').checked
+    ].filter(x => x).length;
+    
+    const reading = document.getElementById('mmse-reading').checked ? 1 : 0;
+    const writing = document.getElementById('mmse-writing').checked ? 1 : 0;
+    const copying = document.getElementById('mmse-copying').checked ? 1 : 0;
+    
+    const languageScore = naming + repetition + command + reading + writing + copying;
+    
+    document.getElementById('mmse-result').innerHTML = `
+        <h4 style="color: ${color}">MMSE Score: ${score}/30</h4>
+        <p><strong>Interpretation:</strong> ${interpretation}</p>
+        <p><strong>Severity:</strong> ${severity}</p>
+        
+        <div class="mmse-breakdown" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: left;">
+            <h5 style="margin-top: 0;">Score Breakdown:</h5>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li>📍 Orientation to Time: ${orientationTime}/5</li>
+                <li>🗺️ Orientation to Place: ${orientationPlace}/5</li>
+                <li>📝 Registration: ${registration}/3</li>
+                <li>🧮 Attention & Calculation: ${attention}/5</li>
+                <li>🧠 Recall: ${recall}/3</li>
+                <li>💬 Language: ${languageScore}/9</li>
+            </ul>
+        </div>
+        
+        <div class="clinical-note">
+            <p><strong>Recommendations:</strong></p>
+            <p>${recommendations}</p>
+        </div>
+        
+        <div class="calc-reference" style="margin-top: 15px;">
+            <small><strong>Important Notes:</strong><br>
+            • MMSE should be adjusted for age, education, and cultural factors<br>
+            • Not diagnostic alone - use alongside clinical assessment and history<br>
+            • Consider MoCA for subtle cognitive impairment (more sensitive)<br>
+            • Repeat testing useful to track progression</small>
         </div>
     `;
 };
