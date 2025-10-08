@@ -186,6 +186,11 @@ class MLAQuizApp {
     loadExternalQRISK() {
         // Try several CDN locations for the sisuwellness-qrisk3 UMD/UMD-like bundle
         const urls = [
+            // Prefer a locally vendored copy first (drop upstream UMD build here)
+            '/static/js/qrisk3/qrisk3.umd.js',
+            // Then run a local shim to normalize exports if necessary
+            '/static/js/qrisk3/qrisk3-loader.js',
+            // Fallback to common CDNs
             'https://unpkg.com/sisuwellness-qrisk3@latest/dist/qrisk3.umd.js',
             'https://cdn.jsdelivr.net/npm/sisuwellness-qrisk3@latest/dist/qrisk3.umd.js',
             'https://unpkg.com/sisuwellness-qrisk3@latest/src/qrisk3.js',
@@ -3735,6 +3740,7 @@ class MLAQuizApp {
 
         // If upstream QRISK library is available, use it for accurate result
         let risk = null;
+        console.log('🔎 QRISK input prepared:', qriskInput);
         if (window.qrisk3 && typeof window.qrisk3.calculateScore === 'function') {
             try {
                 const calculated = window.qrisk3.calculateScore(qriskInput);
@@ -3747,11 +3753,34 @@ class MLAQuizApp {
 
         // Fallback: convert simplified log-score to approximate percentage
         if (risk === null) {
-            // Convert to probability (simplified survival function)
+            // Upstream library not available or failed. Provide a clear warning and an option to try loading upstream.
             const baselineRisk = sex === 'male' ? 0.15 : 0.08;
             let approxRisk = baselineRisk * Math.exp(score);
             approxRisk = Math.min(approxRisk * 100, 95); // Cap at 95%
             risk = approxRisk;
+
+            // Insert a more prominent caution in the UI about approximation
+            const warnHtml = `
+                <div style="padding:8px;margin-bottom:8px;border-left:4px solid #FFA726;background:#FFF8E1;color:#333;">
+                    <strong>Approximate result:</strong> The upstream QRISK3 library is not available, so this value is an approximation and may differ substantially from the official QRISK3 calculator.
+                    <div style="margin-top:6px;font-size:0.9em">To get the official QRISK3 value, click <button id="qrisk-retry-upstream" style="margin-left:6px;padding:4px 8px;">Try upstream now</button> — the app will attempt to load the canonical implementation and recalculate.</div>
+                </div>
+            `;
+
+            // Show interim result with warning; the final render continues below but we inject a retry handler after DOM update
+            document.getElementById('qrisk-result').innerHTML = warnHtml + `
+                <div style="color: #999;">Calculating approximate risk...</div>
+            `;
+
+            // Add handler to retry loading the upstream library and recalculate
+            setTimeout(() => {
+                const btn = document.getElementById('qrisk-retry-upstream');
+                if (btn) {
+                    btn.addEventListener('click', () => {
+                        this.reloadQRISKAndRecalculate();
+                    });
+                }
+            }, 50);
         }
         
         let riskLevel = '';
@@ -3786,6 +3815,21 @@ class MLAQuizApp {
                 </div>
             </div>
         `;
+    }
+
+    reloadQRISKAndRecalculate() {
+        // Attempt to load external QRISK library and then recalculate after a short delay
+        console.log('🔁 User requested upstream QRISK3 retry - attempting to load library...');
+        this.loadExternalQRISK();
+
+        // Wait a short time for script to load and then re-run calculation. If not loaded, user will see the same approximation.
+        setTimeout(() => {
+            try {
+                this.calculateQRISK();
+            } catch (err) {
+                console.error('❌ Failed to recalculate after loading upstream QRISK:', err);
+            }
+        }, 1500);
     }
 
     getMADDERSCalculator() {
