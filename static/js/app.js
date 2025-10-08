@@ -175,10 +175,59 @@ class MLAQuizApp {
         this.initializeFontSize();
         this.initializeQuizLength();
         this.initializeVibration();
+        // Try to load upstream QRISK3 library for accurate calculations
+        this.loadExternalQRISK();
         console.log('🩺 About to initialize medical tools...');
         this.initializeMedicalTools();
         this.initializeInteractiveFeatures();
         console.log('✅ App initialization complete');
+    }
+
+    loadExternalQRISK() {
+        // Try several CDN locations for the sisuwellness-qrisk3 UMD/UMD-like bundle
+        const urls = [
+            'https://unpkg.com/sisuwellness-qrisk3@latest/dist/qrisk3.umd.js',
+            'https://cdn.jsdelivr.net/npm/sisuwellness-qrisk3@latest/dist/qrisk3.umd.js',
+            'https://unpkg.com/sisuwellness-qrisk3@latest/src/qrisk3.js',
+            'https://cdn.jsdelivr.net/npm/sisuwellness-qrisk3@latest/src/qrisk3.js'
+        ];
+
+        const tryLoad = (index) => {
+            if (index >= urls.length) {
+                console.log('⚠️ QRISK3 CDN not available; using fallback calculator');
+                return;
+            }
+
+            const url = urls[index];
+            console.log('🔁 Attempting to load QRISK3 library from', url);
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+            script.onload = () => {
+                // Some UMD builds attach to window.qrisk3 or module; try to normalize
+                if (window.qrisk3 && typeof window.qrisk3.calculateScore === 'function') {
+                    console.log('✅ Loaded QRISK3 library from', url);
+                } else if (window.qrisk && typeof window.qrisk.calculateScore === 'function') {
+                    window.qrisk3 = window.qrisk; // normalize
+                    console.log('✅ Loaded QRISK3 library (normalized window.qrisk -> window.qrisk3) from', url);
+                } else if (window.calculateScore && window.inputBuilder) {
+                    // Some builds might export globals directly
+                    window.qrisk3 = { calculateScore: window.calculateScore, inputBuilder: window.inputBuilder };
+                    console.log('✅ Loaded QRISK3 globals from', url);
+                } else {
+                    console.log('⚠️ QRISK3 loaded from', url, 'but expected globals not found; trying next CDN');
+                    // try next
+                    tryLoad(index + 1);
+                }
+            };
+            script.onerror = () => {
+                console.log('❌ Failed to load QRISK3 from', url, '- trying next');
+                tryLoad(index + 1);
+            };
+            document.head.appendChild(script);
+        };
+
+        tryLoad(0);
     }
     
     bindEvents() {
@@ -3517,6 +3566,27 @@ class MLAQuizApp {
                     <input type="number" id="qrisk-hdl" placeholder="1.2" min="0.5" max="5" step="0.1">
                 </div>
                 
+                <div class="calc-input-group">
+                    <label>Smoking status:</label>
+                    <select id="qrisk-smoking-cat">
+                        <option value="0">Non-smoker</option>
+                        <option value="1">Former smoker</option>
+                        <option value="2">Light (1-9/day)</option>
+                        <option value="3">Moderate (10-19/day)</option>
+                        <option value="4">Heavy (≥20/day)</option>
+                    </select>
+                </div>
+
+                <div class="calc-input-group">
+                    <label>Systolic BP standard deviation (mmHg, optional):</label>
+                    <input type="number" id="qrisk-sbpsd" placeholder="8" min="0" max="50">
+                </div>
+
+                <div class="calc-input-group">
+                    <label>Townsend deprivation score (optional):</label>
+                    <input type="number" id="qrisk-townsend" placeholder="0" step="0.1">
+                </div>
+                
                 <div class="calc-checkbox-group">
                     <label><input type="checkbox" id="qrisk-smoking"> Current smoker</label>
                     <label><input type="checkbox" id="qrisk-diabetes-type1"> Type 1 diabetes</label>
@@ -3553,9 +3623,12 @@ class MLAQuizApp {
         const sbp = parseFloat(document.getElementById('qrisk-sbp').value) || 0;
         const cholesterol = parseFloat(document.getElementById('qrisk-cholesterol').value) || 0;
         const hdl = parseFloat(document.getElementById('qrisk-hdl').value) || 0;
+        const smokingCat = parseInt(document.getElementById('qrisk-smoking-cat').value) || 0;
+        const sbpSD = parseFloat(document.getElementById('qrisk-sbpsd').value) || 0;
+        const townsend = parseFloat(document.getElementById('qrisk-townsend').value) || 0;
         
         if (!age || !sex || !bmi || !sbp || !cholesterol || !hdl) {
-            document.getElementById('qrisk-result').innerHTML = '<p style="color: red;">Please fill in all required fields (age, sex, BMI, BP, cholesterol)</p>';
+            document.getElementById('qrisk-result').innerHTML = '<p style="color: red;">Please fill in all required fields (age, sex, BMI, BP, cholesterol and HDL)</p>';
             return;
         }
 
@@ -3617,10 +3690,69 @@ class MLAQuizApp {
         if (document.getElementById('qrisk-erectile').checked && sex === 'male') score += 0.22;
         if (document.getElementById('qrisk-migraine').checked) score += 0.25;
         
-        // Convert to probability (simplified survival function)
-        const baselineRisk = sex === 'male' ? 0.15 : 0.08;
-        let risk = baselineRisk * Math.exp(score);
-        risk = Math.min(risk * 100, 95); // Cap at 95%
+        // Prepare QRISK input (compatible with sisuwellness/qrisk3 inputBuilder)
+        const chdl = cholesterol / hdl; // cholesterol to HDL ratio
+
+        const qriskInput = {
+            sex: sex,
+            age: age,
+            atrialFibrillation: document.getElementById('qrisk-af').checked,
+            onAtypicalAntipsychoticsMedication: document.getElementById('qrisk-antipsychotic').checked,
+            onRegularSteroidTablets: document.getElementById('qrisk-steroid').checked,
+            diagnosisOrTreatmentOfErectileDisfunction: document.getElementById('qrisk-erectile').checked,
+            migraine: document.getElementById('qrisk-migraine').checked,
+            rheumatoidArthritis: document.getElementById('qrisk-ra').checked,
+            chronicKidneyDiseaseStage345: document.getElementById('qrisk-ckd').checked,
+            severeMentalIllness: false,
+            systemicLupusErythematosus: document.getElementById('qrisk-lupus').checked,
+            bloodPressureTreatment: document.getElementById('qrisk-bp-treatment').checked,
+            diabetesType1: document.getElementById('qrisk-diabetes-type1').checked,
+            diabetesType2: document.getElementById('qrisk-diabetes-type2').checked,
+            bmi: bmi,
+            ethnicity: (function mapEth() {
+                const v = document.getElementById('qrisk-ethnicity').value;
+                const map = {
+                    'white': 1,
+                    'indian': 2,
+                    'pakistani': 3,
+                    'bangladeshi': 4,
+                    'other-asian': 5,
+                    'caribbean': 6,
+                    'black-african': 7,
+                    'chinese': 8,
+                    'other': 9
+                };
+                return map[v] || 1;
+            })(),
+            familyAnginaOrHeartAttack: document.getElementById('qrisk-family-history').checked,
+            cholesterolHdlRatio: chdl,
+            systolicBloodPressure: sbp,
+            systolicStandardDeviation: sbpSD || 0,
+            smokerStatus: smokingCat,
+            survivorSpan: 10,
+            townsendScore: townsend
+        };
+
+        // If upstream QRISK library is available, use it for accurate result
+        let risk = null;
+        if (window.qrisk3 && typeof window.qrisk3.calculateScore === 'function') {
+            try {
+                const calculated = window.qrisk3.calculateScore(qriskInput);
+                risk = parseFloat(calculated);
+            } catch (err) {
+                console.log('QRISK library failed, falling back to simplified algorithm', err);
+                risk = null;
+            }
+        }
+
+        // Fallback: convert simplified log-score to approximate percentage
+        if (risk === null) {
+            // Convert to probability (simplified survival function)
+            const baselineRisk = sex === 'male' ? 0.15 : 0.08;
+            let approxRisk = baselineRisk * Math.exp(score);
+            approxRisk = Math.min(approxRisk * 100, 95); // Cap at 95%
+            risk = approxRisk;
+        }
         
         let riskLevel = '';
         let color = '';
@@ -3649,8 +3781,8 @@ class MLAQuizApp {
                     ${recommendation}
                 </div>
                 <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
-                    Cholesterol ratio: ${cholRatio.toFixed(1)}:1 | BMI: ${bmi} kg/m²<br>
-                    Simplified QRISK3 algorithm. Use official tool for clinical decisions.
+                    Cholesterol ratio: ${chdl.toFixed(2)} | BMI: ${bmi} kg/m²<br>
+                    ${window.qrisk3 && typeof window.qrisk3.calculateScore === 'function' ? 'Calculated using embedded QRISK3 implementation.' : 'Approximate simplified calculation. For clinical decisions, use the official QRISK3 tool at qrisk.org.'}
                 </div>
             </div>
         `;
