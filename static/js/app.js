@@ -2948,6 +2948,14 @@ class MLAQuizApp {
                 calculatorTitle = 'FRAX Calculator';
                 calculatorContent += this.getFRAXCalculator();
                 break;
+            case 'unit-converter':
+                calculatorTitle = 'Clinical Unit Converter';
+                calculatorContent += this.getUnitConverterCalculator();
+                break;
+            case 'drug-volume':
+                calculatorTitle = 'Drug Volume Calculator';
+                calculatorContent += this.getDrugVolumeCalculator();
+                break;
             case 'news2':
                 calculatorTitle = 'NEWS2 Score';
                 calculatorContent += this.getNEWS2Calculator();
@@ -4862,6 +4870,615 @@ class MLAQuizApp {
                 </div>
             </div>
         `;
+    }
+
+    getUnitConverterCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Clinical Unit Converter</h4>
+                <p><small>Convert between common medical units</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Conversion Type:</label>
+                    <select id="unit-type" onchange="window.quizApp.updateUnitConverter()">
+                        <option value="">Select conversion type</option>
+                        <option value="glucose">Glucose (mmol/L ⇄ mg/dL)</option>
+                        <option value="cholesterol">Cholesterol/Lipids (mmol/L ⇄ mg/dL)</option>
+                        <option value="creatinine">Creatinine (μmol/L ⇄ mg/dL)</option>
+                        <option value="bilirubin">Bilirubin (μmol/L ⇄ mg/dL)</option>
+                        <option value="hba1c">HbA1c (% ⇄ mmol/mol)</option>
+                        <option value="weight">Weight (kg ⇄ lbs)</option>
+                        <option value="height">Height (cm ⇄ inches/feet)</option>
+                        <option value="temperature">Temperature (°C ⇄ °F)</option>
+                        <option value="pressure">Pressure (mmHg ⇄ kPa)</option>
+                    </select>
+                </div>
+                
+                <div id="unit-converter-fields"></div>
+                
+                <div id="unit-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small id="conversion-info"></small>
+                </div>
+            </div>
+        `;
+    }
+
+    updateUnitConverter() {
+        const unitType = document.getElementById('unit-type').value;
+        const fieldsContainer = document.getElementById('unit-converter-fields');
+        const conversionInfo = document.getElementById('conversion-info');
+        
+        if (!unitType) {
+            fieldsContainer.innerHTML = '';
+            conversionInfo.innerHTML = '';
+            document.getElementById('unit-result').innerHTML = '';
+            return;
+        }
+        
+        let fieldsHtml = '';
+        let infoText = '';
+        
+        switch(unitType) {
+            case 'glucose':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>mmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="5.5" step="0.1" 
+                               oninput="window.quizApp.convertUnits('glucose', 'mmol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="100" step="1" 
+                               oninput="window.quizApp.convertUnits('glucose', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 18 | Normal fasting: 3.9-5.6 mmol/L (70-100 mg/dL)';
+                break;
+                
+            case 'cholesterol':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>mmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="5.0" step="0.1" 
+                               oninput="window.quizApp.convertUnits('cholesterol', 'mmol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="193" step="1" 
+                               oninput="window.quizApp.convertUnits('cholesterol', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 38.67 | Target total cholesterol: <5.0 mmol/L (<193 mg/dL)';
+                break;
+                
+            case 'creatinine':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>μmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="100" step="1" 
+                               oninput="window.quizApp.convertUnits('creatinine', 'umol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="1.13" step="0.01" 
+                               oninput="window.quizApp.convertUnits('creatinine', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = μmol/L × 0.0113 | Normal: M 62-115 μmol/L, F 53-97 μmol/L';
+                break;
+                
+            case 'bilirubin':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>μmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="20" step="1" 
+                               oninput="window.quizApp.convertUnits('bilirubin', 'umol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="1.17" step="0.01" 
+                               oninput="window.quizApp.convertUnits('bilirubin', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = μmol/L × 0.0585 | Normal: 5-20 μmol/L (0.3-1.2 mg/dL)';
+                break;
+                
+            case 'hba1c':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>% (DCCT):</label>
+                        <input type="number" id="unit-input-1" placeholder="6.5" step="0.1" 
+                               oninput="window.quizApp.convertUnits('hba1c', 'percent')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mmol/mol (IFCC):</label>
+                        <input type="number" id="unit-input-2" placeholder="48" step="1" 
+                               oninput="window.quizApp.convertUnits('hba1c', 'mmol')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mmol/mol = (% - 2.15) × 10.929 | Diabetes: ≥48 mmol/mol (≥6.5%)';
+                break;
+                
+            case 'weight':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>Kilograms (kg):</label>
+                        <input type="number" id="unit-input-1" placeholder="70" step="0.1" 
+                               oninput="window.quizApp.convertUnits('weight', 'kg')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Pounds (lbs):</label>
+                        <input type="number" id="unit-input-2" placeholder="154" step="0.1" 
+                               oninput="window.quizApp.convertUnits('weight', 'lbs')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> 1 kg = 2.20462 lbs | 1 lb = 0.453592 kg';
+                break;
+                
+            case 'height':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>Centimeters (cm):</label>
+                        <input type="number" id="unit-input-1" placeholder="175" step="0.1" 
+                               oninput="window.quizApp.convertUnits('height', 'cm')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Feet:</label>
+                        <input type="number" id="unit-input-2" placeholder="5" step="1" 
+                               oninput="window.quizApp.convertUnits('height', 'feet')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Inches:</label>
+                        <input type="number" id="unit-input-3" placeholder="9" step="1" 
+                               oninput="window.quizApp.convertUnits('height', 'inches')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> 1 inch = 2.54 cm | 1 foot = 12 inches = 30.48 cm';
+                break;
+                
+            case 'temperature':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>Celsius (°C):</label>
+                        <input type="number" id="unit-input-1" placeholder="37" step="0.1" 
+                               oninput="window.quizApp.convertUnits('temperature', 'celsius')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Fahrenheit (°F):</label>
+                        <input type="number" id="unit-input-2" placeholder="98.6" step="0.1" 
+                               oninput="window.quizApp.convertUnits('temperature', 'fahrenheit')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> °F = (°C × 9/5) + 32 | Normal body temp: 36.5-37.5°C (97.7-99.5°F)';
+                break;
+                
+            case 'pressure':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>mmHg:</label>
+                        <input type="number" id="unit-input-1" placeholder="120" step="1" 
+                               oninput="window.quizApp.convertUnits('pressure', 'mmhg')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>kPa:</label>
+                        <input type="number" id="unit-input-2" placeholder="16" step="0.1" 
+                               oninput="window.quizApp.convertUnits('pressure', 'kpa')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> 1 kPa = 7.50062 mmHg | Normal BP: <120/80 mmHg (<16/10.7 kPa)';
+                break;
+        }
+        
+        fieldsContainer.innerHTML = fieldsHtml;
+        conversionInfo.innerHTML = infoText;
+        document.getElementById('unit-result').innerHTML = '';
+    }
+
+    convertUnits(unitType, sourceUnit) {
+        const input1 = document.getElementById('unit-input-1');
+        const input2 = document.getElementById('unit-input-2');
+        const input3 = document.getElementById('unit-input-3');
+        const resultDiv = document.getElementById('unit-result');
+        
+        let value, converted, resultText = '';
+        
+        switch(unitType) {
+            case 'glucose':
+                if (sourceUnit === 'mmol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 18;
+                        input2.value = converted.toFixed(1);
+                        resultText = `${value} mmol/L = ${converted.toFixed(1)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 18;
+                        input1.value = converted.toFixed(1);
+                        resultText = `${value} mg/dL = ${converted.toFixed(1)} mmol/L`;
+                    }
+                }
+                break;
+                
+            case 'cholesterol':
+                if (sourceUnit === 'mmol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 38.67;
+                        input2.value = converted.toFixed(0);
+                        resultText = `${value} mmol/L = ${converted.toFixed(0)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 38.67;
+                        input1.value = converted.toFixed(2);
+                        resultText = `${value} mg/dL = ${converted.toFixed(2)} mmol/L`;
+                    }
+                }
+                break;
+                
+            case 'creatinine':
+                if (sourceUnit === 'umol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 0.0113;
+                        input2.value = converted.toFixed(2);
+                        resultText = `${value} μmol/L = ${converted.toFixed(2)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 0.0113;
+                        input1.value = converted.toFixed(0);
+                        resultText = `${value} mg/dL = ${converted.toFixed(0)} μmol/L`;
+                    }
+                }
+                break;
+                
+            case 'bilirubin':
+                if (sourceUnit === 'umol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 0.0585;
+                        input2.value = converted.toFixed(2);
+                        resultText = `${value} μmol/L = ${converted.toFixed(2)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 0.0585;
+                        input1.value = converted.toFixed(0);
+                        resultText = `${value} mg/dL = ${converted.toFixed(0)} μmol/L`;
+                    }
+                }
+                break;
+                
+            case 'hba1c':
+                if (sourceUnit === 'percent') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = (value - 2.15) * 10.929;
+                        input2.value = converted.toFixed(0);
+                        resultText = `${value}% = ${converted.toFixed(0)} mmol/mol`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = (value / 10.929) + 2.15;
+                        input1.value = converted.toFixed(1);
+                        resultText = `${value} mmol/mol = ${converted.toFixed(1)}%`;
+                    }
+                }
+                break;
+                
+            case 'weight':
+                if (sourceUnit === 'kg') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 2.20462;
+                        input2.value = converted.toFixed(1);
+                        resultText = `${value} kg = ${converted.toFixed(1)} lbs`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value * 0.453592;
+                        input1.value = converted.toFixed(1);
+                        resultText = `${value} lbs = ${converted.toFixed(1)} kg`;
+                    }
+                }
+                break;
+                
+            case 'height':
+                if (sourceUnit === 'cm') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        const totalInches = value / 2.54;
+                        const feet = Math.floor(totalInches / 12);
+                        const inches = Math.round(totalInches % 12);
+                        input2.value = feet;
+                        input3.value = inches;
+                        resultText = `${value} cm = ${feet}' ${inches}"`;
+                    }
+                } else {
+                    const feet = parseFloat(input2.value) || 0;
+                    const inches = parseFloat(input3.value) || 0;
+                    if (feet || inches) {
+                        const totalInches = (feet * 12) + inches;
+                        converted = totalInches * 2.54;
+                        input1.value = converted.toFixed(1);
+                        resultText = `${feet}' ${inches}" = ${converted.toFixed(1)} cm`;
+                    }
+                }
+                break;
+                
+            case 'temperature':
+                if (sourceUnit === 'celsius') {
+                    value = parseFloat(input1.value);
+                    if (value !== undefined && value !== null && value !== '') {
+                        converted = (value * 9/5) + 32;
+                        input2.value = converted.toFixed(1);
+                        resultText = `${value}°C = ${converted.toFixed(1)}°F`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value !== undefined && value !== null && value !== '') {
+                        converted = (value - 32) * 5/9;
+                        input1.value = converted.toFixed(1);
+                        resultText = `${value}°F = ${converted.toFixed(1)}°C`;
+                    }
+                }
+                break;
+                
+            case 'pressure':
+                if (sourceUnit === 'mmhg') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value / 7.50062;
+                        input2.value = converted.toFixed(1);
+                        resultText = `${value} mmHg = ${converted.toFixed(1)} kPa`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value * 7.50062;
+                        input1.value = converted.toFixed(0);
+                        resultText = `${value} kPa = ${converted.toFixed(0)} mmHg`;
+                    }
+                }
+                break;
+        }
+        
+        if (resultText) {
+            resultDiv.innerHTML = `<div style="color: #1976D2; font-weight: bold; padding: 10px; background: #E3F2FD; border-radius: 4px;">${resultText}</div>`;
+        }
+    }
+
+    getDrugVolumeCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Drug Volume Calculator</h4>
+                <p><small>Calculate volume to draw up for required dose</small></p>
+                
+                <div class="calc-input-group">
+                    <label>Dose Required:</label>
+                    <input type="number" id="drug-dose-required" placeholder="500" step="0.1" min="0">
+                    <select id="drug-dose-unit">
+                        <option value="mg">mg</option>
+                        <option value="g">g</option>
+                        <option value="mcg">mcg</option>
+                        <option value="units">units</option>
+                        <option value="mmol">mmol</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>Stock Concentration:</label>
+                    <input type="number" id="drug-stock-amount" placeholder="1000" step="0.1" min="0">
+                    <select id="drug-stock-unit">
+                        <option value="mg">mg</option>
+                        <option value="g">g</option>
+                        <option value="mcg">mcg</option>
+                        <option value="units">units</option>
+                        <option value="mmol">mmol</option>
+                    </select>
+                    <span> per </span>
+                    <input type="number" id="drug-stock-volume" placeholder="10" step="0.1" min="0" style="width: 80px;">
+                    <select id="drug-volume-unit">
+                        <option value="ml">ml</option>
+                        <option value="L">L</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>Drug Name (optional):</label>
+                    <input type="text" id="drug-name" placeholder="e.g., Amoxicillin">
+                </div>
+                
+                <button onclick="window.quizApp.calculateDrugVolume()">Calculate Volume</button>
+                <div id="drug-volume-result" class="calc-result"></div>
+                
+                <div class="calc-reference">
+                    <small><strong>Formula:</strong> Volume = (Dose Required ÷ Stock Concentration) × Stock Volume<br>
+                    <strong>Example:</strong> Need 500mg, Stock is 1000mg/10ml → Draw up 5ml</small>
+                </div>
+                
+                <div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
+                    <h5>Quick Common Drug Calculations:</h5>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <button class="quick-drug-btn" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.quizApp.quickDrugCalc('adrenaline')">Adrenaline 1:1000</button>
+                        <button class="quick-drug-btn" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.quizApp.quickDrugCalc('benzylpenicillin')">Benzylpenicillin</button>
+                        <button class="quick-drug-btn" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.quizApp.quickDrugCalc('gentamicin')">Gentamicin</button>
+                        <button class="quick-drug-btn" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.quizApp.quickDrugCalc('morphine')">Morphine</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateDrugVolume() {
+        const doseRequired = parseFloat(document.getElementById('drug-dose-required').value);
+        const doseUnit = document.getElementById('drug-dose-unit').value;
+        const stockAmount = parseFloat(document.getElementById('drug-stock-amount').value);
+        const stockUnit = document.getElementById('drug-stock-unit').value;
+        const stockVolume = parseFloat(document.getElementById('drug-stock-volume').value);
+        const volumeUnit = document.getElementById('drug-volume-unit').value;
+        const drugName = document.getElementById('drug-name').value;
+        
+        if (!doseRequired || !stockAmount || !stockVolume) {
+            document.getElementById('drug-volume-result').innerHTML = 
+                '<div style="color: #f44336; padding: 10px; background: #ffebee; border-radius: 4px;">Please fill in all required fields</div>';
+            return;
+        }
+        
+        // Convert units to same base (mg)
+        const unitConversion = {
+            'g': 1000,
+            'mg': 1,
+            'mcg': 0.001,
+            'units': 1,
+            'mmol': 1
+        };
+        
+        // Check units match
+        if ((doseUnit === 'units' && stockUnit !== 'units') || 
+            (doseUnit === 'mmol' && stockUnit !== 'mmol') ||
+            (doseUnit !== 'units' && doseUnit !== 'mmol' && (stockUnit === 'units' || stockUnit === 'mmol'))) {
+            document.getElementById('drug-volume-result').innerHTML = 
+                '<div style="color: #ff9800; padding: 10px; background: #fff3e0; border-radius: 4px;">⚠️ Warning: Dose and stock units should match (both mass units, units, or mmol)</div>';
+            return;
+        }
+        
+        // Convert to base units
+        const doseInBase = doseRequired * unitConversion[doseUnit];
+        const stockInBase = stockAmount * unitConversion[stockUnit];
+        
+        // Convert stock volume to ml if in L
+        const stockVolumeInMl = volumeUnit === 'L' ? stockVolume * 1000 : stockVolume;
+        
+        // Calculate volume to draw up
+        const volumeToDraw = (doseInBase / stockInBase) * stockVolumeInMl;
+        
+        // Determine if volume is practical
+        let practicality = '';
+        let color = '#4CAF50';
+        let bgColor = '#E8F5E9';
+        
+        if (volumeToDraw < 0.1) {
+            practicality = '⚠️ Very small volume - difficult to draw up accurately. Consider alternative concentration.';
+            color = '#ff9800';
+            bgColor = '#fff3e0';
+        } else if (volumeToDraw < 0.5) {
+            practicality = '⚠️ Small volume - use 1ml syringe for accuracy';
+            color = '#ff9800';
+            bgColor = '#fff3e0';
+        } else if (volumeToDraw > 20) {
+            practicality = '⚠️ Large volume - may need to give as infusion or split into multiple injections';
+            color = '#ff9800';
+            bgColor = '#fff3e0';
+        } else if (volumeToDraw > 50) {
+            practicality = '⚠️ Very large volume - definitely give as infusion, check calculation';
+            color = '#f44336';
+            bgColor = '#ffebee';
+        } else {
+            practicality = '✓ Practical volume to draw up';
+        }
+        
+        const drugNameDisplay = drugName ? `<div style="margin-bottom: 10px;"><strong>Drug:</strong> ${drugName}</div>` : '';
+        
+        document.getElementById('drug-volume-result').innerHTML = `
+            <div style="border-left: 4px solid ${color}; padding: 15px; background: #f9f9f9; border-radius: 4px;">
+                ${drugNameDisplay}
+                <div style="margin-bottom: 10px;">
+                    <div><strong>Dose Required:</strong> ${doseRequired} ${doseUnit}</div>
+                    <div><strong>Stock Concentration:</strong> ${stockAmount} ${stockUnit} per ${stockVolume} ${volumeUnit}</div>
+                </div>
+                <div style="background: ${bgColor}; padding: 15px; margin: 15px 0; border-radius: 8px; border: 2px solid ${color};">
+                    <div style="font-size: 1.3em; font-weight: bold; color: ${color}; margin-bottom: 8px;">
+                        Draw up: ${volumeToDraw.toFixed(2)} ml
+                    </div>
+                    <div style="color: ${color}; font-weight: 500;">${practicality}</div>
+                </div>
+                <div style="font-size: 0.9em; color: #666; padding: 10px; background: white; border-radius: 4px;">
+                    <div style="font-weight: bold; margin-bottom: 5px;">Working:</div>
+                    <div>Volume = (${doseRequired} ${doseUnit} ÷ ${stockAmount} ${stockUnit}) × ${stockVolume} ${volumeUnit}</div>
+                    <div>Volume = (${doseInBase} ÷ ${stockInBase}) × ${stockVolumeInMl} ml = <strong>${volumeToDraw.toFixed(2)} ml</strong></div>
+                </div>
+            </div>
+        `;
+    }
+
+    quickDrugCalc(drugType) {
+        const drugs = {
+            'adrenaline': {
+                name: 'Adrenaline (Anaphylaxis)',
+                dose: 500,
+                doseUnit: 'mcg',
+                stock: 1,
+                stockUnit: 'mg',
+                volume: 1,
+                volumeUnit: 'ml',
+                info: 'Adult IM dose for anaphylaxis. 1:1000 = 1mg/ml'
+            },
+            'benzylpenicillin': {
+                name: 'Benzylpenicillin',
+                dose: 1.2,
+                doseUnit: 'g',
+                stock: 600,
+                stockUnit: 'mg',
+                volume: 1,
+                volumeUnit: 'ml',
+                info: 'Reconstitute 600mg vial with 1.6ml WFI to give 600mg/ml'
+            },
+            'gentamicin': {
+                name: 'Gentamicin',
+                dose: 280,
+                doseUnit: 'mg',
+                stock: 80,
+                stockUnit: 'mg',
+                volume: 2,
+                volumeUnit: 'ml',
+                info: 'Typical 70kg patient dose. Stock usually 80mg/2ml'
+            },
+            'morphine': {
+                name: 'Morphine',
+                dose: 10,
+                doseUnit: 'mg',
+                stock: 10,
+                stockUnit: 'mg',
+                volume: 1,
+                volumeUnit: 'ml',
+                info: 'Standard stock concentration 10mg/ml'
+            }
+        };
+        
+        const drug = drugs[drugType];
+        
+        document.getElementById('drug-dose-required').value = drug.dose;
+        document.getElementById('drug-dose-unit').value = drug.doseUnit;
+        document.getElementById('drug-stock-amount').value = drug.stock;
+        document.getElementById('drug-stock-unit').value = drug.stockUnit;
+        document.getElementById('drug-stock-volume').value = drug.volume;
+        document.getElementById('drug-volume-unit').value = drug.volumeUnit;
+        document.getElementById('drug-name').value = drug.name;
+        
+        this.calculateDrugVolume();
+        
+        // Add info to result
+        setTimeout(() => {
+            const resultDiv = document.getElementById('drug-volume-result');
+            if (resultDiv.innerHTML) {
+                resultDiv.innerHTML += `
+                    <div style="margin-top: 10px; padding: 10px; background: #E3F2FD; border-left: 4px solid #2196F3; border-radius: 4px;">
+                        <strong>ℹ️ ${drug.name}:</strong> ${drug.info}
+                    </div>
+                `;
+            }
+        }, 100);
     }
 
     getNEWS2Calculator() {
