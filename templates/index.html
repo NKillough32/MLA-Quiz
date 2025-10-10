@@ -669,6 +669,55 @@
             color: var(--text-secondary);
         }
         
+        /* Dark mode for Unit Converter */
+        [data-theme="dark"] .unit-converter-result {
+            color: #63b3ed !important;
+            background: rgba(99, 179, 237, 0.1) !important;
+        }
+        
+        /* Dark mode for Drug Volume Calculator */
+        [data-theme="dark"] .drug-calc-result-container {
+            background: var(--bg-tertiary) !important;
+            border-color: var(--border-color) !important;
+        }
+        
+        [data-theme="dark"] .drug-calc-dose-display {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .drug-calc-working {
+            background: var(--bg-secondary) !important;
+            color: var(--text-secondary) !important;
+        }
+        
+        [data-theme="dark"] .quick-drug-btn {
+            background: var(--button-bg) !important;
+            color: white !important;
+        }
+        
+        [data-theme="dark"] .quick-drug-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Dark mode warning colors */
+        [data-theme="dark"] .drug-warning-orange {
+            color: #ffa726 !important;
+            background: rgba(255, 167, 38, 0.1) !important;
+            border-color: #ffa726 !important;
+        }
+        
+        [data-theme="dark"] .drug-warning-red {
+            color: #ef5350 !important;
+            background: rgba(239, 83, 80, 0.1) !important;
+            border-color: #ef5350 !important;
+        }
+        
+        [data-theme="dark"] .drug-warning-green {
+            color: #66bb6a !important;
+            background: rgba(102, 187, 106, 0.1) !important;
+            border-color: #66bb6a !important;
+        }
+        
         /* Tools Navigation */
         .tools-navigation {
             display: flex;
@@ -2618,6 +2667,63 @@
             border: 1px solid #e5e5ea;
             border-radius: 8px;
             margin-bottom: 12px;
+        }
+        
+        /* Unit Converter Styles */
+        .unit-converter-result {
+            color: #1976D2;
+            background: #E3F2FD;
+        }
+        
+        /* Drug Volume Calculator Styles */
+        .drug-calc-result-container {
+            background: #f9f9f9;
+        }
+        
+        .drug-calc-dose-display {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .drug-calc-working {
+            font-size: 0.9em;
+            color: #666;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .quick-drug-btn {
+            padding: 8px 12px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .quick-drug-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .drug-warning-orange {
+            color: #ff9800;
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+        
+        .drug-warning-red {
+            color: #f44336;
+            background: #ffebee;
+            border-color: #f44336;
+        }
+        
+        .drug-warning-green {
+            color: #4caf50;
+            background: #e8f5e9;
+            border-color: #4caf50;
         }
         
         .calc-reference {

@@ -5254,7 +5254,7 @@ class MLAQuizApp {
         }
         
         if (resultText) {
-            resultDiv.innerHTML = `<div style="color: #1976D2; font-weight: bold; padding: 10px; background: #E3F2FD; border-radius: 4px;">${resultText}</div>`;
+            resultDiv.innerHTML = `<div class="unit-converter-result" style="font-weight: bold; padding: 10px; border-radius: 4px;">${resultText}</div>`;
         }
     }
 
@@ -5310,10 +5310,14 @@ class MLAQuizApp {
                 <div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
                     <h5>Quick Common Drug Calculations:</h5>
                     <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                        <button class="quick-drug-btn" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.quizApp.quickDrugCalc('adrenaline')">Adrenaline 1:1000</button>
-                        <button class="quick-drug-btn" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.quizApp.quickDrugCalc('benzylpenicillin')">Benzylpenicillin</button>
-                        <button class="quick-drug-btn" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.quizApp.quickDrugCalc('gentamicin')">Gentamicin</button>
-                        <button class="quick-drug-btn" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.quizApp.quickDrugCalc('morphine')">Morphine</button>
+                        <button class="quick-drug-btn" onclick="window.quizApp.quickDrugCalc('adrenaline1000')">Adrenaline 1:1000</button>
+                        <button class="quick-drug-btn" onclick="window.quizApp.quickDrugCalc('adrenaline10000')">Adrenaline 1:10000 (ALS)</button>
+                        <button class="quick-drug-btn" onclick="window.quizApp.quickDrugCalc('atropine')">Atropine</button>
+                        <button class="quick-drug-btn" onclick="window.quizApp.quickDrugCalc('amiodarone')">Amiodarone</button>
+                        <button class="quick-drug-btn" onclick="window.quizApp.quickDrugCalc('naloxone')">Naloxone</button>
+                        <button class="quick-drug-btn" onclick="window.quizApp.quickDrugCalc('benzylpenicillin')">Benzylpenicillin</button>
+                        <button class="quick-drug-btn" onclick="window.quizApp.quickDrugCalc('gentamicin')">Gentamicin</button>
+                        <button class="quick-drug-btn" onclick="window.quizApp.quickDrugCalc('morphine')">Morphine</button>
                     </div>
                 </div>
             </div>
@@ -5365,25 +5369,20 @@ class MLAQuizApp {
         
         // Determine if volume is practical
         let practicality = '';
-        let color = '#4CAF50';
-        let bgColor = '#E8F5E9';
+        let warningClass = 'drug-warning-green';
         
         if (volumeToDraw < 0.1) {
             practicality = '⚠️ Very small volume - difficult to draw up accurately. Consider alternative concentration.';
-            color = '#ff9800';
-            bgColor = '#fff3e0';
+            warningClass = 'drug-warning-orange';
         } else if (volumeToDraw < 0.5) {
             practicality = '⚠️ Small volume - use 1ml syringe for accuracy';
-            color = '#ff9800';
-            bgColor = '#fff3e0';
+            warningClass = 'drug-warning-orange';
         } else if (volumeToDraw > 20) {
             practicality = '⚠️ Large volume - may need to give as infusion or split into multiple injections';
-            color = '#ff9800';
-            bgColor = '#fff3e0';
+            warningClass = 'drug-warning-orange';
         } else if (volumeToDraw > 50) {
             practicality = '⚠️ Very large volume - definitely give as infusion, check calculation';
-            color = '#f44336';
-            bgColor = '#ffebee';
+            warningClass = 'drug-warning-red';
         } else {
             practicality = '✓ Practical volume to draw up';
         }
@@ -5391,19 +5390,19 @@ class MLAQuizApp {
         const drugNameDisplay = drugName ? `<div style="margin-bottom: 10px;"><strong>Drug:</strong> ${drugName}</div>` : '';
         
         document.getElementById('drug-volume-result').innerHTML = `
-            <div style="border-left: 4px solid ${color}; padding: 15px; background: #f9f9f9; border-radius: 4px;">
+            <div class="drug-calc-result-container" style="border-left: 4px solid; padding: 15px; border-radius: 4px;">
                 ${drugNameDisplay}
                 <div style="margin-bottom: 10px;">
                     <div><strong>Dose Required:</strong> ${doseRequired} ${doseUnit}</div>
                     <div><strong>Stock Concentration:</strong> ${stockAmount} ${stockUnit} per ${stockVolume} ${volumeUnit}</div>
                 </div>
-                <div style="background: ${bgColor}; padding: 15px; margin: 15px 0; border-radius: 8px; border: 2px solid ${color};">
-                    <div style="font-size: 1.3em; font-weight: bold; color: ${color}; margin-bottom: 8px;">
+                <div class="${warningClass}" style="padding: 15px; margin: 15px 0; border-radius: 8px; border: 2px solid;">
+                    <div class="drug-calc-dose-display">
                         Draw up: ${volumeToDraw.toFixed(2)} ml
                     </div>
-                    <div style="color: ${color}; font-weight: 500;">${practicality}</div>
+                    <div style="font-weight: 500;">${practicality}</div>
                 </div>
-                <div style="font-size: 0.9em; color: #666; padding: 10px; background: white; border-radius: 4px;">
+                <div class="drug-calc-working" style="font-weight: bold; margin-bottom: 5px;">
                     <div style="font-weight: bold; margin-bottom: 5px;">Working:</div>
                     <div>Volume = (${doseRequired} ${doseUnit} ÷ ${stockAmount} ${stockUnit}) × ${stockVolume} ${volumeUnit}</div>
                     <div>Volume = (${doseInBase} ÷ ${stockInBase}) × ${stockVolumeInMl} ml = <strong>${volumeToDraw.toFixed(2)} ml</strong></div>
@@ -5414,15 +5413,55 @@ class MLAQuizApp {
 
     quickDrugCalc(drugType) {
         const drugs = {
-            'adrenaline': {
-                name: 'Adrenaline (Anaphylaxis)',
+            'adrenaline1000': {
+                name: 'Adrenaline 1:1000 (Anaphylaxis)',
                 dose: 500,
                 doseUnit: 'mcg',
                 stock: 1,
                 stockUnit: 'mg',
                 volume: 1,
                 volumeUnit: 'ml',
-                info: 'Adult IM dose for anaphylaxis. 1:1000 = 1mg/ml'
+                info: 'Adult IM dose for anaphylaxis. 1:1000 = 1mg/ml. Repeat after 5 min if needed.'
+            },
+            'adrenaline10000': {
+                name: 'Adrenaline 1:10000 (ALS/Cardiac Arrest)',
+                dose: 1,
+                doseUnit: 'mg',
+                stock: 0.1,
+                stockUnit: 'mg',
+                volume: 1,
+                volumeUnit: 'ml',
+                info: 'Cardiac arrest: 1mg IV (10ml of 1:10000). Repeat every 3-5 mins during CPR.'
+            },
+            'atropine': {
+                name: 'Atropine (Bradycardia)',
+                dose: 600,
+                doseUnit: 'mcg',
+                stock: 600,
+                stockUnit: 'mcg',
+                volume: 1,
+                volumeUnit: 'ml',
+                info: 'Adult dose for bradycardia. May repeat to max 3mg. Stock usually 600mcg/ml or 1mg/ml.'
+            },
+            'amiodarone': {
+                name: 'Amiodarone (VT/VF)',
+                dose: 300,
+                doseUnit: 'mg',
+                stock: 50,
+                stockUnit: 'mg',
+                volume: 1,
+                volumeUnit: 'ml',
+                info: 'Cardiac arrest VT/VF: 300mg IV after 3rd shock. Further 150mg after 5th shock. Stock 50mg/ml.'
+            },
+            'naloxone': {
+                name: 'Naloxone (Opioid Reversal)',
+                dose: 400,
+                doseUnit: 'mcg',
+                stock: 400,
+                stockUnit: 'mcg',
+                volume: 1,
+                volumeUnit: 'ml',
+                info: 'Opioid overdose: 400mcg IV/IM/SC, repeat every 2-3 mins if needed. Max 2mg initially.'
             },
             'benzylpenicillin': {
                 name: 'Benzylpenicillin',
@@ -5432,7 +5471,7 @@ class MLAQuizApp {
                 stockUnit: 'mg',
                 volume: 1,
                 volumeUnit: 'ml',
-                info: 'Reconstitute 600mg vial with 1.6ml WFI to give 600mg/ml'
+                info: 'Reconstitute 600mg vial with 1.6ml WFI to give 600mg/ml. Meningitis dose.'
             },
             'gentamicin': {
                 name: 'Gentamicin',
@@ -5442,7 +5481,7 @@ class MLAQuizApp {
                 stockUnit: 'mg',
                 volume: 2,
                 volumeUnit: 'ml',
-                info: 'Typical 70kg patient dose. Stock usually 80mg/2ml'
+                info: 'Typical 70kg patient dose (4-7mg/kg). Stock usually 80mg/2ml. Check levels.'
             },
             'morphine': {
                 name: 'Morphine',
@@ -5452,7 +5491,7 @@ class MLAQuizApp {
                 stockUnit: 'mg',
                 volume: 1,
                 volumeUnit: 'ml',
-                info: 'Standard stock concentration 10mg/ml'
+                info: 'Standard stock concentration 10mg/ml. Titrate to effect in pain/acute dyspnoea.'
             }
         };
         
