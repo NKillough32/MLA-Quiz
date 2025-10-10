@@ -4882,15 +4882,39 @@ class MLAQuizApp {
                     <label>Conversion Type:</label>
                     <select id="unit-type" onchange="window.quizApp.updateUnitConverter()">
                         <option value="">Select conversion type</option>
-                        <option value="glucose">Glucose (mmol/L ⇄ mg/dL)</option>
-                        <option value="cholesterol">Cholesterol/Lipids (mmol/L ⇄ mg/dL)</option>
-                        <option value="creatinine">Creatinine (μmol/L ⇄ mg/dL)</option>
-                        <option value="bilirubin">Bilirubin (μmol/L ⇄ mg/dL)</option>
-                        <option value="hba1c">HbA1c (% ⇄ mmol/mol)</option>
-                        <option value="weight">Weight (kg ⇄ lbs)</option>
-                        <option value="height">Height (cm ⇄ inches/feet)</option>
-                        <option value="temperature">Temperature (°C ⇄ °F)</option>
-                        <option value="pressure">Pressure (mmHg ⇄ kPa)</option>
+                        <optgroup label="Laboratory Values - Common">
+                            <option value="glucose">Glucose (mmol/L ⇄ mg/dL)</option>
+                            <option value="cholesterol">Cholesterol/Lipids (mmol/L ⇄ mg/dL)</option>
+                            <option value="creatinine">Creatinine (μmol/L ⇄ mg/dL)</option>
+                            <option value="bilirubin">Bilirubin (μmol/L ⇄ mg/dL)</option>
+                            <option value="hba1c">HbA1c (% ⇄ mmol/mol)</option>
+                            <option value="hemoglobin">Hemoglobin (g/dL ⇄ g/L)</option>
+                        </optgroup>
+                        <optgroup label="Electrolytes & Minerals">
+                            <option value="calcium">Calcium (mmol/L ⇄ mg/dL)</option>
+                            <option value="magnesium">Magnesium (mmol/L ⇄ mg/dL)</option>
+                            <option value="phosphate">Phosphate (mmol/L ⇄ mg/dL)</option>
+                            <option value="urea">Urea/BUN (mmol/L ⇄ mg/dL)</option>
+                        </optgroup>
+                        <optgroup label="Proteins & Lipids">
+                            <option value="albumin">Albumin (g/L ⇄ g/dL)</option>
+                            <option value="triglycerides">Triglycerides (mmol/L ⇄ mg/dL)</option>
+                        </optgroup>
+                        <optgroup label="Other Lab Values">
+                            <option value="uric-acid">Uric Acid (μmol/L ⇄ mg/dL)</option>
+                            <option value="vitamin-d">Vitamin D (nmol/L ⇄ ng/mL)</option>
+                            <option value="ferritin">Ferritin (μg/L ⇄ ng/mL)</option>
+                        </optgroup>
+                        <optgroup label="Physical Measurements">
+                            <option value="weight">Weight (kg ⇄ lbs)</option>
+                            <option value="height">Height (cm ⇄ inches/feet)</option>
+                            <option value="temperature">Temperature (°C ⇄ °F)</option>
+                        </optgroup>
+                        <optgroup label="Clinical Measurements">
+                            <option value="pressure">Pressure (mmHg ⇄ kPa)</option>
+                            <option value="blood-volume">Blood Volume (mL ⇄ units/pints)</option>
+                            <option value="inr">INR ⇄ Prothrombin %</option>
+                        </optgroup>
                     </select>
                 </div>
                 
@@ -5068,6 +5092,203 @@ class MLAQuizApp {
                     </div>
                 `;
                 infoText = '<strong>Conversion:</strong> 1 kPa = 7.50062 mmHg | Normal BP: <120/80 mmHg (<16/10.7 kPa)';
+                break;
+                
+            case 'hemoglobin':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>g/dL:</label>
+                        <input type="number" id="unit-input-1" placeholder="14.5" step="0.1" 
+                               oninput="window.quizApp.convertUnits('hemoglobin', 'gdl')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>g/L:</label>
+                        <input type="number" id="unit-input-2" placeholder="145" step="1" 
+                               oninput="window.quizApp.convertUnits('hemoglobin', 'gl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> g/L = g/dL × 10 | Normal: M 130-180 g/L (13-18 g/dL), F 120-160 g/L (12-16 g/dL)';
+                break;
+                
+            case 'calcium':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>mmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="2.4" step="0.01" 
+                               oninput="window.quizApp.convertUnits('calcium', 'mmol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="9.6" step="0.1" 
+                               oninput="window.quizApp.convertUnits('calcium', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 4.008 | Normal: 2.2-2.6 mmol/L (8.8-10.4 mg/dL) | Adjust for albumin';
+                break;
+                
+            case 'magnesium':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>mmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="0.85" step="0.01" 
+                               oninput="window.quizApp.convertUnits('magnesium', 'mmol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="2.07" step="0.01" 
+                               oninput="window.quizApp.convertUnits('magnesium', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 2.431 | Normal: 0.7-1.0 mmol/L (1.7-2.4 mg/dL)';
+                break;
+                
+            case 'phosphate':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>mmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="1.0" step="0.01" 
+                               oninput="window.quizApp.convertUnits('phosphate', 'mmol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="3.1" step="0.1" 
+                               oninput="window.quizApp.convertUnits('phosphate', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 3.097 | Normal: 0.8-1.5 mmol/L (2.5-4.5 mg/dL)';
+                break;
+                
+            case 'urea':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>mmol/L (Urea):</label>
+                        <input type="number" id="unit-input-1" placeholder="5.0" step="0.1" 
+                               oninput="window.quizApp.convertUnits('urea', 'mmol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL (BUN):</label>
+                        <input type="number" id="unit-input-2" placeholder="14" step="1" 
+                               oninput="window.quizApp.convertUnits('urea', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> BUN (mg/dL) = Urea (mmol/L) × 2.8 | Normal: 2.5-7.8 mmol/L (7-22 mg/dL BUN)';
+                break;
+                
+            case 'albumin':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>g/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="40" step="1" 
+                               oninput="window.quizApp.convertUnits('albumin', 'gl')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>g/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="4.0" step="0.1" 
+                               oninput="window.quizApp.convertUnits('albumin', 'gdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> g/dL = g/L × 0.1 | Normal: 35-50 g/L (3.5-5.0 g/dL)';
+                break;
+                
+            case 'triglycerides':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>mmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="1.5" step="0.1" 
+                               oninput="window.quizApp.convertUnits('triglycerides', 'mmol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="133" step="1" 
+                               oninput="window.quizApp.convertUnits('triglycerides', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 88.57 | Target: <1.7 mmol/L (<150 mg/dL)';
+                break;
+                
+            case 'uric-acid':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>μmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="350" step="10" 
+                               oninput="window.quizApp.convertUnits('uric-acid', 'umol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>mg/dL:</label>
+                        <input type="number" id="unit-input-2" placeholder="5.9" step="0.1" 
+                               oninput="window.quizApp.convertUnits('uric-acid', 'mgdl')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> mg/dL = μmol/L × 0.0168 | Normal: M 200-430 μmol/L, F 140-360 μmol/L | Gout: >360 μmol/L';
+                break;
+                
+            case 'vitamin-d':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>nmol/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="75" step="1" 
+                               oninput="window.quizApp.convertUnits('vitamin-d', 'nmol')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>ng/mL:</label>
+                        <input type="number" id="unit-input-2" placeholder="30" step="1" 
+                               oninput="window.quizApp.convertUnits('vitamin-d', 'ngml')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> ng/mL = nmol/L × 0.4 | Deficient: <25 nmol/L (<10 ng/mL) | Sufficient: >50 nmol/L (>20 ng/mL)';
+                break;
+                
+            case 'ferritin':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>μg/L:</label>
+                        <input type="number" id="unit-input-1" placeholder="100" step="1" 
+                               oninput="window.quizApp.convertUnits('ferritin', 'ugl')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>ng/mL:</label>
+                        <input type="number" id="unit-input-2" placeholder="100" step="1" 
+                               oninput="window.quizApp.convertUnits('ferritin', 'ngml')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> 1 μg/L = 1 ng/mL (same value, different units) | Normal: M 30-400, F 15-150 μg/L';
+                break;
+                
+            case 'blood-volume':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>Milliliters (mL):</label>
+                        <input type="number" id="unit-input-1" placeholder="450" step="10" 
+                               oninput="window.quizApp.convertUnits('blood-volume', 'ml')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Units (blood transfusion):</label>
+                        <input type="number" id="unit-input-2" placeholder="1" step="0.1" 
+                               oninput="window.quizApp.convertUnits('blood-volume', 'units')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Pints:</label>
+                        <input type="number" id="unit-input-3" placeholder="0.95" step="0.01" 
+                               oninput="window.quizApp.convertUnits('blood-volume', 'pints')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> 1 unit ≈ 450-500 mL ≈ 0.95 pints | 1 pint = 473 mL | RBC increases Hb by ~10 g/L per unit';
+                break;
+                
+            case 'inr':
+                fieldsHtml = `
+                    <div class="calc-input-group">
+                        <label>INR:</label>
+                        <input type="number" id="unit-input-1" placeholder="2.5" step="0.1" 
+                               oninput="window.quizApp.convertUnits('inr', 'inr')">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Prothrombin Time (%):</label>
+                        <input type="number" id="unit-input-2" placeholder="40" step="1" 
+                               oninput="window.quizApp.convertUnits('inr', 'percent')">
+                    </div>
+                `;
+                infoText = '<strong>Conversion:</strong> PT% = 100 ÷ INR | Normal INR: 0.8-1.2 (100-83%) | Therapeutic: AF 2-3, DVT/PE 2-3, Mechanical valve 2.5-3.5';
                 break;
         }
         
@@ -5248,6 +5469,233 @@ class MLAQuizApp {
                         converted = value * 7.50062;
                         input1.value = converted.toFixed(0);
                         resultText = `${value} kPa = ${converted.toFixed(0)} mmHg`;
+                    }
+                }
+                break;
+                
+            case 'hemoglobin':
+                if (sourceUnit === 'gdl') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 10;
+                        input2.value = converted.toFixed(0);
+                        resultText = `${value} g/dL = ${converted.toFixed(0)} g/L`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 10;
+                        input1.value = converted.toFixed(1);
+                        resultText = `${value} g/L = ${converted.toFixed(1)} g/dL`;
+                    }
+                }
+                break;
+                
+            case 'calcium':
+                if (sourceUnit === 'mmol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 4.008;
+                        input2.value = converted.toFixed(1);
+                        resultText = `${value} mmol/L = ${converted.toFixed(1)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 4.008;
+                        input1.value = converted.toFixed(2);
+                        resultText = `${value} mg/dL = ${converted.toFixed(2)} mmol/L`;
+                    }
+                }
+                break;
+                
+            case 'magnesium':
+                if (sourceUnit === 'mmol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 2.431;
+                        input2.value = converted.toFixed(2);
+                        resultText = `${value} mmol/L = ${converted.toFixed(2)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 2.431;
+                        input1.value = converted.toFixed(2);
+                        resultText = `${value} mg/dL = ${converted.toFixed(2)} mmol/L`;
+                    }
+                }
+                break;
+                
+            case 'phosphate':
+                if (sourceUnit === 'mmol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 3.097;
+                        input2.value = converted.toFixed(1);
+                        resultText = `${value} mmol/L = ${converted.toFixed(1)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 3.097;
+                        input1.value = converted.toFixed(2);
+                        resultText = `${value} mg/dL = ${converted.toFixed(2)} mmol/L`;
+                    }
+                }
+                break;
+                
+            case 'urea':
+                if (sourceUnit === 'mmol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 2.8;
+                        input2.value = converted.toFixed(0);
+                        resultText = `${value} mmol/L (Urea) = ${converted.toFixed(0)} mg/dL (BUN)`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 2.8;
+                        input1.value = converted.toFixed(1);
+                        resultText = `${value} mg/dL (BUN) = ${converted.toFixed(1)} mmol/L (Urea)`;
+                    }
+                }
+                break;
+                
+            case 'albumin':
+                if (sourceUnit === 'gl') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 0.1;
+                        input2.value = converted.toFixed(1);
+                        resultText = `${value} g/L = ${converted.toFixed(1)} g/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value * 10;
+                        input1.value = converted.toFixed(0);
+                        resultText = `${value} g/dL = ${converted.toFixed(0)} g/L`;
+                    }
+                }
+                break;
+                
+            case 'triglycerides':
+                if (sourceUnit === 'mmol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 88.57;
+                        input2.value = converted.toFixed(0);
+                        resultText = `${value} mmol/L = ${converted.toFixed(0)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 88.57;
+                        input1.value = converted.toFixed(2);
+                        resultText = `${value} mg/dL = ${converted.toFixed(2)} mmol/L`;
+                    }
+                }
+                break;
+                
+            case 'uric-acid':
+                if (sourceUnit === 'umol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 0.0168;
+                        input2.value = converted.toFixed(1);
+                        resultText = `${value} μmol/L = ${converted.toFixed(1)} mg/dL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 0.0168;
+                        input1.value = converted.toFixed(0);
+                        resultText = `${value} mg/dL = ${converted.toFixed(0)} μmol/L`;
+                    }
+                }
+                break;
+                
+            case 'vitamin-d':
+                if (sourceUnit === 'nmol') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        converted = value * 0.4;
+                        input2.value = converted.toFixed(0);
+                        resultText = `${value} nmol/L = ${converted.toFixed(0)} ng/mL`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        converted = value / 0.4;
+                        input1.value = converted.toFixed(0);
+                        resultText = `${value} ng/mL = ${converted.toFixed(0)} nmol/L`;
+                    }
+                }
+                break;
+                
+            case 'ferritin':
+                if (sourceUnit === 'ugl') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        input2.value = value;
+                        resultText = `${value} μg/L = ${value} ng/mL (same numeric value)`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        input1.value = value;
+                        resultText = `${value} ng/mL = ${value} μg/L (same numeric value)`;
+                    }
+                }
+                break;
+                
+            case 'blood-volume':
+                if (sourceUnit === 'ml') {
+                    value = parseFloat(input1.value);
+                    if (value) {
+                        const units = value / 475; // Average of 450-500
+                        const pints = value / 473;
+                        input2.value = units.toFixed(2);
+                        if (input3) input3.value = pints.toFixed(2);
+                        resultText = `${value} mL = ${units.toFixed(2)} units = ${pints.toFixed(2)} pints`;
+                    }
+                } else if (sourceUnit === 'units') {
+                    value = parseFloat(input2.value);
+                    if (value) {
+                        const ml = value * 475;
+                        const pints = ml / 473;
+                        input1.value = ml.toFixed(0);
+                        if (input3) input3.value = pints.toFixed(2);
+                        resultText = `${value} units = ${ml.toFixed(0)} mL = ${pints.toFixed(2)} pints`;
+                    }
+                } else if (sourceUnit === 'pints') {
+                    value = parseFloat(input3.value);
+                    if (value) {
+                        const ml = value * 473;
+                        const units = ml / 475;
+                        input1.value = ml.toFixed(0);
+                        input2.value = units.toFixed(2);
+                        resultText = `${value} pints = ${ml.toFixed(0)} mL = ${units.toFixed(2)} units`;
+                    }
+                }
+                break;
+                
+            case 'inr':
+                if (sourceUnit === 'inr') {
+                    value = parseFloat(input1.value);
+                    if (value && value > 0) {
+                        converted = 100 / value;
+                        input2.value = converted.toFixed(0);
+                        resultText = `INR ${value} = ${converted.toFixed(0)}% prothrombin time`;
+                    }
+                } else {
+                    value = parseFloat(input2.value);
+                    if (value && value > 0) {
+                        converted = 100 / value;
+                        input1.value = converted.toFixed(1);
+                        resultText = `${value}% prothrombin time = INR ${converted.toFixed(1)}`;
                     }
                 }
                 break;
@@ -5512,7 +5960,7 @@ class MLAQuizApp {
             const resultDiv = document.getElementById('drug-volume-result');
             if (resultDiv.innerHTML) {
                 resultDiv.innerHTML += `
-                    <div style="margin-top: 10px; padding: 10px; background: #E3F2FD; border-left: 4px solid #2196F3; border-radius: 4px;">
+                    <div class="drug-info-box">
                         <strong>ℹ️ ${drug.name}:</strong> ${drug.info}
                     </div>
                 `;
