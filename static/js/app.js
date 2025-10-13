@@ -1930,6 +1930,10 @@ class MLAQuizApp {
         
         let formatted = investigationsText.trim();
         
+        // First, handle lines that start with "- " to ensure they stay on separate lines
+        // Replace newlines followed by "- " with a placeholder that won't be collapsed
+        formatted = formatted.replace(/\n-\s+/g, '<br>- ');
+        
         // Split investigations at natural break points:
         // 1. After reference ranges in parentheses followed by a capital letter
         // 2. After test results with colons followed by a capital letter
@@ -1937,11 +1941,10 @@ class MLAQuizApp {
             // Pattern: "Value unit (range) NextTest" -> "Value unit (range)<br>NextTest"
             .replace(/(\([^)]+\))\s+([A-Z][A-Za-z])/g, '$1<br>$2')
             // Pattern: "Test: result NextTest" -> "Test: result<br>NextTest" 
-            formatted = formatted
-                .replace(/(\([^)]+\))\s+([A-Z][A-Za-z])/g, '$1<br>$2')
-                .replace(/(:\s*[a-z][^:]*?)\s+([A-Z][A-Za-z])/g, '$1<br>$2')
-                .replace(/\s+/g, ' ')
-                .trim();
+            .replace(/(:\s*[a-z][^:]*?)\s+([A-Z][A-Za-z])/g, '$1<br>$2')
+            // Collapse multiple spaces but preserve <br> tags
+            .replace(/\s+/g, ' ')
+            .trim();
             
         return this.formatText(formatted);
     }
@@ -8391,7 +8394,14 @@ class MLAQuizApp {
             contentHtml += `
                 <div class="info-section">
                     <h4>🏃‍♂️ Lifestyle Modifications</h4>
-                    <p>${guideline.lifestyle}</p>
+                    ${typeof guideline.lifestyle === 'string' ? 
+                        `<p>${guideline.lifestyle}</p>` :
+                        Object.entries(guideline.lifestyle).map(([aspect, description]) => `
+                            <div class="lifestyle-item">
+                                <strong>${aspect}:</strong> ${description}
+                            </div>
+                        `).join('')
+                    }
                 </div>
             `;
         }
@@ -8560,11 +8570,14 @@ class MLAQuizApp {
             contentHtml += `
                 <div class="info-section">
                     <h4>📋 Assessment</h4>
-                    ${Object.entries(guideline.assessment).map(([aspect, description]) => `
-                        <div class="assessment-item">
-                            <strong>${aspect}:</strong> ${description}
-                        </div>
-                    `).join('')}
+                    ${typeof guideline.assessment === 'string' ? 
+                        `<p>${guideline.assessment}</p>` :
+                        Object.entries(guideline.assessment).map(([aspect, description]) => `
+                            <div class="assessment-item">
+                                <strong>${aspect}:</strong> ${description}
+                            </div>
+                        `).join('')
+                    }
                 </div>
             `;
         }
