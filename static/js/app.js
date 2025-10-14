@@ -2979,6 +2979,14 @@ class MLAQuizApp {
                 calculatorTitle = 'Infusion Rate Calculator';
                 calculatorContent += this.getInfusionRateCalculator();
                 break;
+            case 'rass':
+                calculatorTitle = 'RASS Scale';
+                calculatorContent += this.getRASSCalculator();
+                break;
+            case 'frax-fracture':
+                calculatorTitle = 'FRAX Fracture Risk';
+                calculatorContent += this.getFractureRiskCalculator();
+                break;
             case 'cockcroft-gault':
                 calculatorTitle = 'Cockcroft-Gault eGFR';
                 calculatorContent += this.getCockcroftGaultCalculator();
@@ -14402,6 +14410,102 @@ MLAQuizApp.prototype.getModifiedRankinCalculator = function() {
     `;
 };
 
+// RASS Scale Calculator
+MLAQuizApp.prototype.getRASSCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Richmond Agitation-Sedation Scale (RASS)</h4>
+            <p><small>Assessment of sedation and agitation levels in critically ill patients</small></p>
+            
+            <div class="calc-input-group">
+                <label>Patient's Current State:</label>
+                <select id="rass-level">
+                    <option value="+4">+4 - Combative (violent, immediate danger)</option>
+                    <option value="+3">+3 - Very agitated (pulls/removes tubes, aggressive)</option>
+                    <option value="+2">+2 - Agitated (frequent non-purposeful movement)</option>
+                    <option value="+1">+1 - Restless (anxious, apprehensive, not aggressive)</option>
+                    <option value="0" selected>0 - Alert and calm</option>
+                    <option value="-1">-1 - Drowsy (not fully alert, sustained awakening to voice)</option>
+                    <option value="-2">-2 - Light sedation (briefly awakens to voice <10 sec)</option>
+                    <option value="-3">-3 - Moderate sedation (movement/eye opening to voice, no eye contact)</option>
+                    <option value="-4">-4 - Deep sedation (no response to voice, movement to physical stimulation)</option>
+                    <option value="-5">-5 - Unarousable (no response to voice or physical stimulation)</option>
+                </select>
+            </div>
+            
+            <button onclick="window.quizApp.calculateRASS()">Assess RASS Level</button>
+            <div id="rass-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small>
+                    <strong>Assessment:</strong><br>
+                    • +4 to +1: Agitation states<br>
+                    • 0: Alert and calm (target for most patients)<br>
+                    • -1 to -3: Varying levels of sedation<br>
+                    • -4 to -5: Deep sedation/unconscious<br>
+                    <strong>Target:</strong> Usually 0 to -2 for mechanically ventilated patients
+                </small>
+            </div>
+        </div>
+    `;
+};
+
+// FRAX Fracture Risk Calculator
+MLAQuizApp.prototype.getFractureRiskCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>FRAX Fracture Risk Assessment</h4>
+            <p><small>10-year probability of major osteoporotic fracture (UK version)</small></p>
+            
+            <div class="calc-input-group">
+                <label>Age (years):</label>
+                <input type="number" id="frax-age" placeholder="65" min="40" max="90">
+            </div>
+            <div class="calc-checkbox-group">
+                <label><input type="radio" name="frax-sex" value="female"> Female</label>
+                <label><input type="radio" name="frax-sex" value="male"> Male</label>
+            </div>
+            <div class="calc-input-group">
+                <label>Weight (kg):</label>
+                <input type="number" id="frax-weight" placeholder="70" min="25" max="125">
+            </div>
+            <div class="calc-input-group">
+                <label>Height (cm):</label>
+                <input type="number" id="frax-height" placeholder="160" min="100" max="220">
+            </div>
+            
+            <h5>Risk Factors:</h5>
+            <div class="calc-checkbox-group">
+                <label><input type="checkbox" id="frax-previous-fracture"> Previous fracture after age 50</label>
+                <label><input type="checkbox" id="frax-parent-fracture"> Parent fractured hip</label>
+                <label><input type="checkbox" id="frax-smoking"> Current smoking</label>
+                <label><input type="checkbox" id="frax-steroids"> Glucocorticoids (≥3 months)</label>
+                <label><input type="checkbox" id="frax-ra"> Rheumatoid arthritis</label>
+                <label><input type="checkbox" id="frax-secondary"> Secondary osteoporosis</label>
+                <label><input type="checkbox" id="frax-alcohol"> Alcohol 3+ units daily</label>
+            </div>
+            
+            <div class="calc-input-group">
+                <label>Femoral neck BMD T-score (optional):</label>
+                <input type="number" id="frax-bmd" placeholder="-2.5" min="-5" max="3" step="0.1">
+                <small>Leave blank if unknown</small>
+            </div>
+            
+            <button onclick="window.quizApp.calculateFractureRisk()">Calculate Fracture Risk</button>
+            <div id="frax-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <small>
+                    <strong>Intervention thresholds (NICE):</strong><br>
+                    • Major osteoporotic fracture: ≥10% (consider treatment)<br>
+                    • Hip fracture: ≥3% (consider treatment)<br>
+                    <strong>Note:</strong> This is a simplified assessment. Use official FRAX tool for clinical decisions.
+                </small>
+            </div>
+        </div>
+    `;
+};
+
 // Calculation Functions for Missing Calculators
 
 // Paediatric Dosing Calculation
@@ -14886,6 +14990,176 @@ MLAQuizApp.prototype.calculateModifiedRankin = function() {
             </div>
             <div class="alert alert-info">
                 💡 <strong>Clinical Use:</strong> Primary outcome measure in stroke trials. mRS 0-2 considered good functional outcome.
+            </div>
+        </div>
+    `;
+};
+
+// RASS Scale Calculation
+MLAQuizApp.prototype.calculateRASS = function() {
+    const level = document.getElementById('rass-level').value;
+    const score = parseInt(level);
+    
+    let category = '';
+    let description = '';
+    let management = '';
+    let targetRange = '';
+    
+    if (score >= 3) {
+        category = 'Severe Agitation';
+        description = 'Patient is combative or very agitated';
+        management = '• Consider sedation (propofol, midazolam)<br>• Assess for pain, delirium, hypoxia<br>• Ensure patient safety<br>• Consider physical restraints if necessary';
+        targetRange = 'Aim to reduce to 0 to -2 range';
+    } else if (score >= 1) {
+        category = 'Mild-Moderate Agitation';
+        description = 'Patient is restless or mildly agitated';
+        management = '• Investigate underlying causes<br>• Consider non-pharmacological interventions<br>• Light sedation if needed<br>• Frequent reassessment';
+        targetRange = 'Aim for 0 to -1 range';
+    } else if (score === 0) {
+        category = 'Alert and Calm';
+        description = 'Ideal conscious level for most patients';
+        management = '• No intervention needed<br>• Continue current management<br>• Monitor for changes';
+        targetRange = 'Optimal level for most patients';
+    } else if (score >= -2) {
+        category = 'Light Sedation';
+        description = 'Appropriate sedation level for many ICU patients';
+        management = '• Appropriate for mechanically ventilated patients<br>• Consider daily sedation holds<br>• Monitor for oversedation';
+        targetRange = 'Often target range for ventilated patients';
+    } else if (score >= -3) {
+        category = 'Moderate Sedation';
+        description = 'Deeper sedation - assess necessity';
+        management = '• Review sedation requirements<br>• Consider reducing sedation if appropriate<br>• Daily sedation interruption';
+        targetRange = 'May be appropriate for specific indications';
+    } else {
+        category = 'Deep Sedation/Unconscious';
+        description = 'Very deep sedation or unconscious';
+        management = '• Review indication for deep sedation<br>• Consider reducing if possible<br>• Assess neurological status<br>• May indicate paralysis or coma';
+        targetRange = 'Usually avoid unless specific indication';
+    }
+    
+    document.getElementById('rass-result').innerHTML = `
+        <div class="result-section">
+            <h5>RASS Assessment Results</h5>
+            <div class="result-grid">
+                <div><strong>RASS Score:</strong> ${level}</div>
+                <div><strong>Category:</strong> ${category}</div>
+                <div><strong>Description:</strong> ${description}</div>
+            </div>
+            <div class="management-section">
+                <h6>Management Recommendations:</h6>
+                <div class="management-text">${management}</div>
+            </div>
+            <div class="alert alert-info">
+                <strong>Target Range:</strong> ${targetRange}
+            </div>
+            <div class="alert alert-warning">
+                💡 <strong>Remember:</strong> Assess RASS regularly. Target is usually 0 to -2 for mechanically ventilated patients.
+            </div>
+        </div>
+    `;
+};
+
+// FRAX Fracture Risk Calculation
+MLAQuizApp.prototype.calculateFractureRisk = function() {
+    const age = parseInt(document.getElementById('frax-age').value);
+    const sex = document.querySelector('input[name="frax-sex"]:checked')?.value;
+    const weight = parseFloat(document.getElementById('frax-weight').value);
+    const height = parseFloat(document.getElementById('frax-height').value);
+    const bmd = document.getElementById('frax-bmd').value;
+    
+    if (!age || !sex || !weight || !height) {
+        document.getElementById('frax-result').innerHTML = '<div class="error">Please fill in all required fields</div>';
+        return;
+    }
+    
+    // Calculate BMI
+    const bmi = weight / ((height / 100) ** 2);
+    
+    // Count risk factors
+    let riskFactors = 0;
+    const riskInputs = [
+        'frax-previous-fracture',
+        'frax-parent-fracture', 
+        'frax-smoking',
+        'frax-steroids',
+        'frax-ra',
+        'frax-secondary',
+        'frax-alcohol'
+    ];
+    
+    riskInputs.forEach(id => {
+        if (document.getElementById(id).checked) {
+            riskFactors++;
+        }
+    });
+    
+    // Simplified risk calculation (real FRAX uses complex algorithms)
+    let baseRisk = 0;
+    
+    // Age factor (increases significantly with age)
+    if (age < 50) baseRisk += 2;
+    else if (age < 60) baseRisk += 5;
+    else if (age < 70) baseRisk += 10;
+    else if (age < 80) baseRisk += 20;
+    else baseRisk += 35;
+    
+    // Sex factor (women higher risk post-menopause)
+    if (sex === 'female' && age >= 50) {
+        baseRisk += 5;
+    }
+    
+    // BMI factor (low BMI increases risk)
+    if (bmi < 20) baseRisk += 3;
+    else if (bmi < 22) baseRisk += 1;
+    
+    // Risk factors (each adds to risk)
+    baseRisk += riskFactors * 3;
+    
+    // BMD adjustment if provided
+    if (bmd) {
+        const bmdValue = parseFloat(bmd);
+        if (bmdValue < -2.5) baseRisk += 8;
+        else if (bmdValue < -2.0) baseRisk += 5;
+        else if (bmdValue < -1.0) baseRisk += 2;
+    }
+    
+    // Cap at reasonable maximum
+    const majorFractureRisk = Math.min(baseRisk, 50);
+    const hipFractureRisk = Math.round(majorFractureRisk * 0.3); // Hip fractures are subset
+    
+    let riskCategory = '';
+    let recommendation = '';
+    
+    if (majorFractureRisk < 10) {
+        riskCategory = 'Low Risk';
+        recommendation = 'Lifestyle measures: adequate calcium (1000-1200mg/day), vitamin D (800-1000 IU/day), weight-bearing exercise, fall prevention';
+    } else if (majorFractureRisk < 20) {
+        riskCategory = 'Moderate Risk';
+        recommendation = 'Consider treatment. DEXA scan recommended. First-line: Alendronate 70mg weekly or Risedronate 35mg weekly';
+    } else {
+        riskCategory = 'High Risk';
+        recommendation = 'Treatment recommended. Consider bisphosphonates, denosumab, or other anti-osteoporotic therapy. Specialist referral may be needed';
+    }
+    
+    document.getElementById('frax-result').innerHTML = `
+        <div class="result-section">
+            <h5>FRAX Fracture Risk Results</h5>
+            <div class="result-grid">
+                <div><strong>BMI:</strong> ${bmi.toFixed(1)} kg/m²</div>
+                <div><strong>Risk Factors:</strong> ${riskFactors}/7</div>
+                <div><strong>Major Fracture Risk:</strong> ${majorFractureRisk}% (10-year)</div>
+                <div><strong>Hip Fracture Risk:</strong> ${hipFractureRisk}% (10-year)</div>
+                <div><strong>Risk Category:</strong> ${riskCategory}</div>
+            </div>
+            <div class="recommendation-section">
+                <h6>Management Recommendations:</h6>
+                <p>${recommendation}</p>
+            </div>
+            <div class="alert alert-warning">
+                ⚠️ <strong>Important:</strong> This is a simplified calculation. Use official FRAX tool (www.sheffield.ac.uk/FRAX) for clinical decision-making.
+            </div>
+            <div class="alert alert-info">
+                💡 <strong>NICE Thresholds:</strong> Consider treatment if major fracture risk ≥10% or hip fracture risk ≥3%
             </div>
         </div>
     `;
