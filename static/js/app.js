@@ -3418,59 +3418,435 @@ class MLAQuizApp {
     getAPACHECalculator() {
         return `
             <div class="calculator-form">
-                <h4>APACHE II Score</h4>
-                <p><small>Simplified version - ICU mortality prediction</small></p>
-                <p><em>Note: This is a complex score requiring multiple physiologic variables. This is a basic implementation.</em></p>
+                <h4>APACHE II Score Calculator</h4>
+                <p><small>Acute Physiology and Chronic Health Evaluation II - ICU mortality prediction</small></p>
                 
-                <div class="calc-input-group">
-                    <label>Age:</label>
-                    <input type="number" id="apache-age" placeholder="65" min="0" max="120">
+                <div class="apache-sections">
+                    <div class="apache-section">
+                        <h5>🌡️ Physiologic Variables (worst values in first 24 hours)</h5>
+                        
+                        <div class="calc-input-group">
+                            <label>Temperature (°C):</label>
+                            <input type="number" id="apache-temp" placeholder="37.0" step="0.1" min="25" max="45">
+                            <small>Normal: 36-38°C</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Mean Arterial Pressure (MAP) mmHg:</label>
+                            <input type="number" id="apache-map" placeholder="70" min="30" max="200">
+                            <small>Normal: 70-100 mmHg</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Heart Rate (bpm):</label>
+                            <input type="number" id="apache-hr" placeholder="80" min="30" max="250">
+                            <small>Normal: 60-100 bpm</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Respiratory Rate (breaths/min):</label>
+                            <input type="number" id="apache-rr" placeholder="16" min="5" max="60">
+                            <small>Normal: 12-20 breaths/min</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>FiO2 (%):</label>
+                            <input type="number" id="apache-fio2" placeholder="21" min="21" max="100">
+                            <small>Room air: 21%, Ventilated: typically >50%</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>PaO2 (mmHg) - if FiO2 ≥50%:</label>
+                            <input type="number" id="apache-pao2" placeholder="80" min="30" max="500">
+                            <small>Normal: 80-100 mmHg</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>A-a Gradient (mmHg) - if FiO2 <50%:</label>
+                            <input type="number" id="apache-aa-grad" placeholder="15" min="0" max="600">
+                            <small>Normal: <20 mmHg</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Arterial pH:</label>
+                            <input type="number" id="apache-ph" placeholder="7.40" step="0.01" min="6.8" max="7.8">
+                            <small>Normal: 7.35-7.45</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Serum Sodium (mEq/L):</label>
+                            <input type="number" id="apache-sodium" placeholder="140" min="110" max="180">
+                            <small>Normal: 136-145 mEq/L</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Serum Potassium (mEq/L):</label>
+                            <input type="number" id="apache-potassium" placeholder="4.0" step="0.1" min="1.5" max="8.0">
+                            <small>Normal: 3.5-5.0 mEq/L</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Serum Creatinine (mg/dL):</label>
+                            <input type="number" id="apache-creatinine" placeholder="1.0" step="0.1" min="0.2" max="15.0">
+                            <small>Normal: 0.6-1.2 mg/dL</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Hematocrit (%):</label>
+                            <input type="number" id="apache-hematocrit" placeholder="40" step="0.1" min="10" max="70">
+                            <small>Normal: Men 41-50%, Women 36-44%</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>WBC Count (×10³/μL):</label>
+                            <input type="number" id="apache-wbc" placeholder="8.0" step="0.1" min="0.1" max="100">
+                            <small>Normal: 4.0-11.0 ×10³/μL</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Glasgow Coma Scale (3-15):</label>
+                            <input type="number" id="apache-gcs" placeholder="15" min="3" max="15">
+                            <small>Normal: 15, Severe impairment: ≤8</small>
+                        </div>
+                    </div>
+                    
+                    <div class="apache-section">
+                        <h5>👤 Demographics & Health Status</h5>
+                        
+                        <div class="calc-input-group">
+                            <label>Age (years):</label>
+                            <input type="number" id="apache-age" placeholder="65" min="0" max="120">
+                        </div>
+                        
+                        <div class="calc-checkbox-group">
+                            <label><strong>Chronic Health Problems:</strong></label>
+                            <label><input type="checkbox" id="apache-liver"> Severe liver disease (cirrhosis, portal hypertension)</label>
+                            <label><input type="checkbox" id="apache-cardiovascular"> Severe cardiovascular disease (NYHA Class IV)</label>
+                            <label><input type="checkbox" id="apache-pulmonary"> Severe pulmonary disease (severe restriction/obstruction)</label>
+                            <label><input type="checkbox" id="apache-renal"> Chronic renal failure (on dialysis)</label>
+                            <label><input type="checkbox" id="apache-immunocompromised"> Immunocompromised state</label>
+                        </div>
+                        
+                        <div class="calc-checkbox-group">
+                            <label><strong>Operative Status:</strong></label>
+                            <label><input type="radio" name="apache-surgery" value="none"> No surgery</label>
+                            <label><input type="radio" name="apache-surgery" value="elective"> Elective surgery</label>
+                            <label><input type="radio" name="apache-surgery" value="emergency"> Emergency surgery</label>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="calc-checkbox-group">
-                    <label><input type="checkbox" id="apache-chronic"> Chronic health problems</label>
-                    <label><input type="checkbox" id="apache-emergency"> Emergency surgery</label>
-                </div>
-                
-                <button onclick="window.quizApp.calculateAPACHE()">Estimate Score</button>
+                <button onclick="window.quizApp.calculateAPACHE()">Calculate APACHE II Score</button>
                 <div id="apache-result" class="calc-result"></div>
                 
                 <div class="calc-reference">
-                    <small><strong>Note:</strong> Complete APACHE II requires 12 physiologic variables, chronic health evaluation, and surgical status. This is a simplified version for educational purposes.</small>
+                    <h5>APACHE II Interpretation:</h5>
+                    <ul>
+                        <li><strong>0-4:</strong> Very low risk (~4% mortality)</li>
+                        <li><strong>5-9:</strong> Low risk (~8% mortality)</li>
+                        <li><strong>10-14:</strong> Moderate risk (~15% mortality)</li>
+                        <li><strong>15-19:</strong> High risk (~25% mortality)</li>
+                        <li><strong>20-24:</strong> Very high risk (~40% mortality)</li>
+                        <li><strong>≥25:</strong> Extremely high risk (~55%+ mortality)</li>
+                    </ul>
+                    <small><strong>Note:</strong> APACHE II predicts hospital mortality for groups of critically ill patients, not individual patient outcomes.</small>
                 </div>
             </div>
         `;
     }
 
     calculateAPACHE() {
+        // Get all input values
+        const temp = parseFloat(document.getElementById('apache-temp').value);
+        const map = parseFloat(document.getElementById('apache-map').value);
+        const hr = parseFloat(document.getElementById('apache-hr').value);
+        const rr = parseFloat(document.getElementById('apache-rr').value);
+        const fio2 = parseFloat(document.getElementById('apache-fio2').value);
+        const pao2 = parseFloat(document.getElementById('apache-pao2').value);
+        const aaGrad = parseFloat(document.getElementById('apache-aa-grad').value);
+        const ph = parseFloat(document.getElementById('apache-ph').value);
+        const sodium = parseFloat(document.getElementById('apache-sodium').value);
+        const potassium = parseFloat(document.getElementById('apache-potassium').value);
+        const creatinine = parseFloat(document.getElementById('apache-creatinine').value);
+        const hematocrit = parseFloat(document.getElementById('apache-hematocrit').value);
+        const wbc = parseFloat(document.getElementById('apache-wbc').value);
+        const gcs = parseInt(document.getElementById('apache-gcs').value);
         const age = parseInt(document.getElementById('apache-age').value);
         
-        if (!age) {
-            document.getElementById('apache-result').innerHTML = '<p class="error">Please enter age</p>';
-            return;
+        // Check required fields
+        const requiredFields = [temp, map, hr, rr, fio2, ph, sodium, potassium, creatinine, hematocrit, wbc, gcs, age];
+        const requiredNames = ['Temperature', 'MAP', 'Heart Rate', 'Respiratory Rate', 'FiO2', 'pH', 'Sodium', 'Potassium', 'Creatinine', 'Hematocrit', 'WBC', 'GCS', 'Age'];
+        
+        for (let i = 0; i < requiredFields.length; i++) {
+            if (isNaN(requiredFields[i]) || requiredFields[i] === null) {
+                document.getElementById('apache-result').innerHTML = `<p class="error">Please enter ${requiredNames[i]}</p>`;
+                return;
+            }
         }
         
-        let score = 0;
+        let physScore = 0;
+        let scoreBreakdown = [];
         
-        // Age points
-        if (age >= 75) score += 6;
-        else if (age >= 65) score += 5;
-        else if (age >= 55) score += 3;
-        else if (age >= 45) score += 2;
+        // Temperature scoring
+        let tempScore = 0;
+        if (temp >= 41) tempScore = 4;
+        else if (temp >= 39) tempScore = 3;
+        else if (temp >= 38.5) tempScore = 1;
+        else if (temp >= 36) tempScore = 0;
+        else if (temp >= 34) tempScore = 1;
+        else if (temp >= 32) tempScore = 2;
+        else if (temp >= 30) tempScore = 3;
+        else tempScore = 4;
+        physScore += tempScore;
+        scoreBreakdown.push(`Temperature (${temp}°C): ${tempScore} points`);
         
-        // Chronic health
-        if (document.getElementById('apache-chronic').checked) score += 5;
+        // MAP scoring
+        let mapScore = 0;
+        if (map >= 160) mapScore = 4;
+        else if (map >= 130) mapScore = 3;
+        else if (map >= 110) mapScore = 2;
+        else if (map >= 70) mapScore = 0;
+        else if (map >= 50) mapScore = 2;
+        else mapScore = 4;
+        physScore += mapScore;
+        scoreBreakdown.push(`MAP (${map} mmHg): ${mapScore} points`);
         
-        // Emergency surgery
-        if (document.getElementById('apache-emergency').checked) score += 5;
+        // Heart Rate scoring
+        let hrScore = 0;
+        if (hr >= 180) hrScore = 4;
+        else if (hr >= 140) hrScore = 3;
+        else if (hr >= 110) hrScore = 2;
+        else if (hr >= 70) hrScore = 0;
+        else if (hr >= 55) hrScore = 2;
+        else if (hr >= 40) hrScore = 3;
+        else hrScore = 4;
+        physScore += hrScore;
+        scoreBreakdown.push(`Heart Rate (${hr} bpm): ${hrScore} points`);
+        
+        // Respiratory Rate scoring
+        let rrScore = 0;
+        if (rr >= 50) rrScore = 4;
+        else if (rr >= 35) rrScore = 3;
+        else if (rr >= 25) rrScore = 1;
+        else if (rr >= 12) rrScore = 0;
+        else if (rr >= 10) rrScore = 1;
+        else if (rr >= 6) rrScore = 2;
+        else rrScore = 4;
+        physScore += rrScore;
+        scoreBreakdown.push(`Respiratory Rate (${rr}/min): ${rrScore} points`);
+        
+        // Oxygenation scoring (PaO2 if FiO2 ≥50%, A-a gradient if FiO2 <50%)
+        let oxyScore = 0;
+        if (fio2 >= 50) {
+            // Use PaO2
+            if (!isNaN(pao2)) {
+                if (pao2 >= 500) oxyScore = 4;
+                else if (pao2 >= 350) oxyScore = 3;
+                else if (pao2 >= 200) oxyScore = 2;
+                else if (pao2 >= 70) oxyScore = 0;
+                else if (pao2 >= 61) oxyScore = 1;
+                else if (pao2 >= 55) oxyScore = 3;
+                else oxyScore = 4;
+                scoreBreakdown.push(`PaO2 (${pao2} mmHg, FiO2 ${fio2}%): ${oxyScore} points`);
+            }
+        } else {
+            // Use A-a gradient
+            if (!isNaN(aaGrad)) {
+                if (aaGrad >= 500) oxyScore = 4;
+                else if (aaGrad >= 350) oxyScore = 3;
+                else if (aaGrad >= 200) oxyScore = 2;
+                else oxyScore = 0;
+                scoreBreakdown.push(`A-a Gradient (${aaGrad} mmHg, FiO2 ${fio2}%): ${oxyScore} points`);
+            }
+        }
+        physScore += oxyScore;
+        
+        // pH scoring
+        let phScore = 0;
+        if (ph >= 7.7) phScore = 4;
+        else if (ph >= 7.6) phScore = 3;
+        else if (ph >= 7.5) phScore = 1;
+        else if (ph >= 7.33) phScore = 0;
+        else if (ph >= 7.25) phScore = 2;
+        else if (ph >= 7.15) phScore = 3;
+        else phScore = 4;
+        physScore += phScore;
+        scoreBreakdown.push(`pH (${ph}): ${phScore} points`);
+        
+        // Sodium scoring
+        let naScore = 0;
+        if (sodium >= 180) naScore = 4;
+        else if (sodium >= 160) naScore = 3;
+        else if (sodium >= 155) naScore = 2;
+        else if (sodium >= 150) naScore = 1;
+        else if (sodium >= 130) naScore = 0;
+        else if (sodium >= 120) naScore = 2;
+        else if (sodium >= 111) naScore = 3;
+        else naScore = 4;
+        physScore += naScore;
+        scoreBreakdown.push(`Sodium (${sodium} mEq/L): ${naScore} points`);
+        
+        // Potassium scoring
+        let kScore = 0;
+        if (potassium >= 7) kScore = 4;
+        else if (potassium >= 6) kScore = 3;
+        else if (potassium >= 5.5) kScore = 1;
+        else if (potassium >= 3.5) kScore = 0;
+        else if (potassium >= 3) kScore = 1;
+        else if (potassium >= 2.5) kScore = 2;
+        else kScore = 4;
+        physScore += kScore;
+        scoreBreakdown.push(`Potassium (${potassium} mEq/L): ${kScore} points`);
+        
+        // Creatinine scoring
+        let creatScore = 0;
+        if (creatinine >= 3.5) creatScore = 4;
+        else if (creatinine >= 2) creatScore = 3;
+        else if (creatinine >= 1.5) creatScore = 2;
+        else creatScore = 0;
+        physScore += creatScore;
+        scoreBreakdown.push(`Creatinine (${creatinine} mg/dL): ${creatScore} points`);
+        
+        // Hematocrit scoring
+        let hctScore = 0;
+        if (hematocrit >= 60) hctScore = 4;
+        else if (hematocrit >= 50) hctScore = 2;
+        else if (hematocrit >= 46) hctScore = 1;
+        else if (hematocrit >= 30) hctScore = 0;
+        else if (hematocrit >= 20) hctScore = 2;
+        else hctScore = 4;
+        physScore += hctScore;
+        scoreBreakdown.push(`Hematocrit (${hematocrit}%): ${hctScore} points`);
+        
+        // WBC scoring
+        let wbcScore = 0;
+        if (wbc >= 40) wbcScore = 4;
+        else if (wbc >= 20) wbcScore = 2;
+        else if (wbc >= 15) wbcScore = 1;
+        else if (wbc >= 3) wbcScore = 0;
+        else if (wbc >= 1) wbcScore = 2;
+        else wbcScore = 4;
+        physScore += wbcScore;
+        scoreBreakdown.push(`WBC (${wbc} ×10³/μL): ${wbcScore} points`);
+        
+        // GCS scoring (15 - actual GCS)
+        const gcsScore = 15 - gcs;
+        physScore += gcsScore;
+        scoreBreakdown.push(`GCS (${gcs}): ${gcsScore} points`);
+        
+        // Age scoring
+        let ageScore = 0;
+        if (age >= 75) ageScore = 6;
+        else if (age >= 65) ageScore = 5;
+        else if (age >= 55) ageScore = 3;
+        else if (age >= 45) ageScore = 2;
+        else ageScore = 0;
+        
+        // Chronic health scoring
+        let chronicScore = 0;
+        const hasLiver = document.getElementById('apache-liver').checked;
+        const hasCV = document.getElementById('apache-cardiovascular').checked;
+        const hasPulm = document.getElementById('apache-pulmonary').checked;
+        const hasRenal = document.getElementById('apache-renal').checked;
+        const hasImmuno = document.getElementById('apache-immunocompromised').checked;
+        
+        if (hasLiver || hasCV || hasPulm || hasRenal || hasImmuno) {
+            const surgery = document.querySelector('input[name="apache-surgery"]:checked')?.value;
+            if (surgery === 'emergency') {
+                chronicScore = 5;
+            } else if (surgery === 'elective' || surgery === 'none') {
+                chronicScore = 2;
+            }
+        }
+        
+        const totalScore = physScore + ageScore + chronicScore;
+        
+        // Mortality estimation
+        let mortality = '';
+        let mortalityColor = '';
+        if (totalScore <= 4) {
+            mortality = '~4%';
+            mortalityColor = '#4CAF50';
+        } else if (totalScore <= 9) {
+            mortality = '~8%';
+            mortalityColor = '#8BC34A';
+        } else if (totalScore <= 14) {
+            mortality = '~15%';
+            mortalityColor = '#FF9800';
+        } else if (totalScore <= 19) {
+            mortality = '~25%';
+            mortalityColor = '#FF5722';
+        } else if (totalScore <= 24) {
+            mortality = '~40%';
+            mortalityColor = '#F44336';
+        } else {
+            mortality = '≥55%';
+            mortalityColor = '#9C27B0';
+        }
+        
+        let chronicHealthText = '';
+        if (chronicScore > 0) {
+            const conditions = [];
+            if (hasLiver) conditions.push('Liver disease');
+            if (hasCV) conditions.push('Cardiovascular disease');
+            if (hasPulm) conditions.push('Pulmonary disease');
+            if (hasRenal) conditions.push('Renal failure');
+            if (hasImmuno) conditions.push('Immunocompromised');
+            chronicHealthText = `Chronic health (${conditions.join(', ')}): ${chronicScore} points`;
+        }
         
         document.getElementById('apache-result').innerHTML = `
             <div class="apache-result-display">
-                <div class="apache-partial">
-                    Partial Score: <strong>${score}</strong>
+                <div class="result-summary">
+                    <div class="result-value" style="color: ${mortalityColor}">
+                        <strong>APACHE II Score: ${totalScore}</strong>
+                    </div>
+                    <div class="result-interpretation" style="color: ${mortalityColor}">
+                        <strong>Predicted Hospital Mortality: ${mortality}</strong>
+                    </div>
                 </div>
-                <div class="apache-note">
-                    <small>Complete APACHE II score requires additional physiologic variables (temperature, MAP, heart rate, respiratory rate, oxygenation, arterial pH, sodium, potassium, creatinine, hematocrit, WBC count, GCS)</small>
+                
+                <div class="score-breakdown">
+                    <h5>Score Breakdown:</h5>
+                    <div class="breakdown-section">
+                        <strong>Physiologic Score: ${physScore}</strong>
+                        <ul style="font-size: 0.9em; margin: 5px 0;">
+                            ${scoreBreakdown.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="breakdown-section">
+                        <strong>Age Score: ${ageScore}</strong> (Age: ${age} years)
+                    </div>
+                    
+                    ${chronicScore > 0 ? `
+                    <div class="breakdown-section">
+                        <strong>Chronic Health Score: ${chronicScore}</strong><br>
+                        <small>${chronicHealthText}</small>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div class="clinical-guidance">
+                    <h5>Clinical Interpretation:</h5>
+                    <div style="background-color: rgba(${mortalityColor === '#4CAF50' ? '76,175,80' : mortalityColor === '#8BC34A' ? '139,195,74' : mortalityColor === '#FF9800' ? '255,152,0' : mortalityColor === '#FF5722' ? '255,87,34' : mortalityColor === '#F44336' ? '244,67,54' : '156,39,176'}, 0.1); padding: 10px; border-radius: 5px; margin-top: 8px;">
+                        ${totalScore <= 4 ? 'Very low risk group. Good prognosis with appropriate care.' : 
+                          totalScore <= 9 ? 'Low risk group. Standard ICU care indicated.' :
+                          totalScore <= 14 ? 'Moderate risk group. Close monitoring and aggressive care.' :
+                          totalScore <= 19 ? 'High risk group. Consider goals of care discussion.' :
+                          totalScore <= 24 ? 'Very high risk group. Intensive care with careful consideration of prognosis.' :
+                          'Extremely high risk group. Palliative care consultation may be appropriate.'}
+                    </div>
+                </div>
+                
+                <div class="important-notes">
+                    <h5>Important Notes:</h5>
+                    <ul>
+                        <li>APACHE II predicts <strong>group mortality</strong>, not individual patient outcomes</li>
+                        <li>Use worst physiologic values from first 24 hours of ICU admission</li>
+                        <li>Score should be interpreted in clinical context</li>
+                        <li>Higher scores indicate need for more intensive monitoring and care</li>
+                    </ul>
                 </div>
             </div>
         `;
@@ -3546,177 +3922,174 @@ class MLAQuizApp {
                 <h4>QRISK3 Calculator</h4>
                 <p><small>10-year cardiovascular disease risk assessment (UK validated)</small></p>
                 
-                <div class="calc-input-group">
-                    <label>Age (25-84 years):</label>
-                    <input type="number" id="qrisk-age" placeholder="50" min="25" max="84">
-                </div>
-                <div class="calc-checkbox-group">
-                    <label><input type="radio" name="qrisk-sex" value="male"> Male</label>
-                    <label><input type="radio" name="qrisk-sex" value="female"> Female</label>
+                <div class="qrisk-sections">
+                    <div class="qrisk-section">
+                        <h5>👤 About You</h5>
+                        
+                        <div class="calc-input-group">
+                            <label>Age (25-84 years):</label>
+                            <input type="number" id="qrisk-age" placeholder="50" min="25" max="84">
+                            <small>QRISK3 is validated for ages 25-84 years</small>
+                        </div>
+                        
+                        <div class="calc-checkbox-group">
+                            <label><strong>Sex:</strong></label>
+                            <label><input type="radio" name="qrisk-sex" value="male"> Male</label>
+                            <label><input type="radio" name="qrisk-sex" value="female"> Female</label>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Ethnicity:</label>
+                            <select id="qrisk-ethnicity">
+                                <option value="1">White/not stated</option>
+                                <option value="2">Indian</option>
+                                <option value="3">Pakistani</option>
+                                <option value="4">Bangladeshi</option>
+                                <option value="5">Other Asian</option>
+                                <option value="6">Caribbean</option>
+                                <option value="7">Black African</option>
+                                <option value="8">Chinese</option>
+                                <option value="9">Other ethnic group</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="qrisk-section">
+                        <h5>📊 Measurements</h5>
+                        
+                        <div class="calc-input-group">
+                            <label>BMI (kg/m²):</label>
+                            <input type="number" id="qrisk-bmi" placeholder="25.0" min="15" max="50" step="0.1">
+                            <small>Normal: 18.5-24.9 kg/m²</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Systolic Blood Pressure (mmHg):</label>
+                            <input type="number" id="qrisk-sbp" placeholder="130" min="80" max="250">
+                            <small>Normal: <120 mmHg</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Total Cholesterol (mmol/L):</label>
+                            <input type="number" id="qrisk-cholesterol" placeholder="5.0" min="2" max="15" step="0.1">
+                            <small>Desirable: <5.0 mmol/L</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>HDL Cholesterol (mmol/L):</label>
+                            <input type="number" id="qrisk-hdl" placeholder="1.2" min="0.5" max="5" step="0.1">
+                            <small>Good: >1.0 (men), >1.3 (women) mmol/L</small>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Systolic BP Standard Deviation (optional):</label>
+                            <input type="number" id="qrisk-sbpsd" placeholder="0" min="0" max="50" step="0.1">
+                            <small>Measure of BP variability, 0 if unknown</small>
+                        </div>
+                    </div>
+                    
+                    <div class="qrisk-section">
+                        <h5>🚬 Smoking</h5>
+                        <div class="calc-input-group">
+                            <label>Smoking Status:</label>
+                            <select id="qrisk-smoking">
+                                <option value="0">Non-smoker</option>
+                                <option value="1">Former smoker</option>
+                                <option value="2">Light smoker (1-9/day)</option>
+                                <option value="3">Moderate smoker (10-19/day)</option>
+                                <option value="4">Heavy smoker (≥20/day)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="qrisk-section">
+                        <h5>🏥 Medical Conditions</h5>
+                        <div class="calc-checkbox-group">
+                            <label><input type="checkbox" id="qrisk-diabetes-type1"> Type 1 diabetes</label>
+                            <label><input type="checkbox" id="qrisk-diabetes-type2"> Type 2 diabetes</label>
+                            <label><input type="checkbox" id="qrisk-family-history"> Family history of CHD in first degree relative <60 years</label>
+                            <label><input type="checkbox" id="qrisk-ckd"> Chronic kidney disease (stage 4/5)</label>
+                            <label><input type="checkbox" id="qrisk-af"> Atrial fibrillation</label>
+                            <label><input type="checkbox" id="qrisk-bp-treatment"> On blood pressure treatment</label>
+                            <label><input type="checkbox" id="qrisk-ra"> Rheumatoid arthritis</label>
+                            <label><input type="checkbox" id="qrisk-lupus"> Systemic lupus erythematosus</label>
+                            <label><input type="checkbox" id="qrisk-smi"> Severe mental illness</label>
+                            <label><input type="checkbox" id="qrisk-antipsychotic"> On atypical antipsychotics</label>
+                            <label><input type="checkbox" id="qrisk-steroid"> On regular steroid tablets</label>
+                            <label><input type="checkbox" id="qrisk-erectile"> Erectile dysfunction (males only)</label>
+                            <label><input type="checkbox" id="qrisk-migraine"> Migraine</label>
+                        </div>
+                    </div>
+                    
+                    <div class="qrisk-section">
+                        <h5>📍 Social (Optional)</h5>
+                        <div class="calc-input-group">
+                            <label>Townsend Deprivation Score:</label>
+                            <input type="number" id="qrisk-townsend" placeholder="0" step="0.1" min="-6" max="15">
+                            <small>Postcode-based deprivation measure, 0 if unknown</small>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="calc-input-group">
-                    <label>Ethnicity:</label>
-                    <select id="qrisk-ethnicity">
-                        <option value="white">White/not stated</option>
-                        <option value="indian">Indian</option>
-                        <option value="pakistani">Pakistani</option>
-                        <option value="bangladeshi">Bangladeshi</option>
-                        <option value="other-asian">Other Asian</option>
-                        <option value="caribbean">Caribbean</option>
-                        <option value="black-african">Black African</option>
-                        <option value="chinese">Chinese</option>
-                        <option value="other">Other ethnic group</option>
-                    </select>
-                </div>
-                
-                <div class="calc-input-group">
-                    <label>BMI (kg/m²):</label>
-                    <input type="number" id="qrisk-bmi" placeholder="25" min="15" max="50" step="0.1">
-                </div>
-                
-                <div class="calc-input-group">
-                    <label>Systolic BP (mmHg):</label>
-                    <input type="number" id="qrisk-sbp" placeholder="130" min="80" max="250">
-                </div>
-                
-                <div class="calc-input-group">
-                    <label>Total Cholesterol (mmol/L):</label>
-                    <input type="number" id="qrisk-cholesterol" placeholder="5.0" min="2" max="15" step="0.1">
-                </div>
-                
-                <div class="calc-input-group">
-                    <label>HDL Cholesterol (mmol/L):</label>
-                    <input type="number" id="qrisk-hdl" placeholder="1.2" min="0.5" max="5" step="0.1">
-                </div>
-                
-                <div class="calc-input-group">
-                    <label>Smoking status:</label>
-                    <select id="qrisk-smoking-cat">
-                        <option value="0">Non-smoker</option>
-                        <option value="1">Former smoker</option>
-                        <option value="2">Light (1-9/day)</option>
-                        <option value="3">Moderate (10-19/day)</option>
-                        <option value="4">Heavy (≥20/day)</option>
-                    </select>
-                </div>
-
-                <div class="calc-input-group">
-                    <label>Systolic BP standard deviation (mmHg, optional):</label>
-                    <input type="number" id="qrisk-sbpsd" placeholder="8" min="0" max="50">
-                </div>
-
-                <div class="calc-input-group">
-                    <label>Townsend deprivation score (optional):</label>
-                    <input type="number" id="qrisk-townsend" placeholder="0" step="0.1">
-                </div>
-                
-                <div class="calc-checkbox-group">
-                    <label><input type="checkbox" id="qrisk-smoking"> Current smoker</label>
-                    <label><input type="checkbox" id="qrisk-diabetes-type1"> Type 1 diabetes</label>
-                    <label><input type="checkbox" id="qrisk-diabetes-type2"> Type 2 diabetes</label>
-                    <label><input type="checkbox" id="qrisk-family-history"> Family history of CHD in first degree relative <60 years</label>
-                    <label><input type="checkbox" id="qrisk-ckd"> Chronic kidney disease (stage 4/5)</label>
-                    <label><input type="checkbox" id="qrisk-af"> Atrial fibrillation</label>
-                    <label><input type="checkbox" id="qrisk-bp-treatment"> On blood pressure treatment</label>
-                    <label><input type="checkbox" id="qrisk-ra"> Rheumatoid arthritis</label>
-                    <label><input type="checkbox" id="qrisk-lupus"> Systemic lupus erythematosus</label>
-                    <label><input type="checkbox" id="qrisk-antipsychotic"> On atypical antipsychotics</label>
-                    <label><input type="checkbox" id="qrisk-steroid"> On corticosteroids</label>
-                    <label><input type="checkbox" id="qrisk-erectile"> Erectile dysfunction (males)</label>
-                    <label><input type="checkbox" id="qrisk-migraine"> Migraine</label>
-                </div>
-                
-                <button onclick="window.quizApp.calculateQRISK()">Calculate Risk</button>
+                <button onclick="window.quizApp.calculateQRISK()">Calculate QRISK3 Score</button>
                 <div id="qrisk-result" class="calc-result"></div>
                 
                 <div class="calc-reference">
-                    <small>
-                        <strong>Note:</strong> This is a simplified QRISK3 implementation for educational purposes.<br>
-                        For clinical decisions, use the official QRISK3 tool at <a href="https://qrisk.org" target="_blank">qrisk.org</a>
-                    </small>
+                    <h5>QRISK3 Information:</h5>
+                    <ul>
+                        <li>Predicts 10-year cardiovascular disease risk</li>
+                        <li>Based on UK population data</li>
+                        <li>Includes traditional and novel risk factors</li>
+                        <li>Used in NICE guidelines for statin therapy decisions</li>
+                    </ul>
+                    <small><strong>Clinical Use:</strong> Use official QRISK3 tool at <a href="https://qrisk.org" target="_blank">qrisk.org</a> for clinical decisions</small>
                 </div>
             </div>
         `;
     }
 
     calculateQRISK() {
-        const age = parseInt(document.getElementById('qrisk-age').value) || 0;
+        // Get input values
+        const age = parseInt(document.getElementById('qrisk-age').value);
         const sex = document.querySelector('input[name="qrisk-sex"]:checked')?.value;
-        const bmi = parseFloat(document.getElementById('qrisk-bmi').value) || 0;
-        const sbp = parseFloat(document.getElementById('qrisk-sbp').value) || 0;
-        const cholesterol = parseFloat(document.getElementById('qrisk-cholesterol').value) || 0;
-        const hdl = parseFloat(document.getElementById('qrisk-hdl').value) || 0;
-        const smokingCat = parseInt(document.getElementById('qrisk-smoking-cat').value) || 0;
+        const ethnicity = parseInt(document.getElementById('qrisk-ethnicity').value);
+        const bmi = parseFloat(document.getElementById('qrisk-bmi').value);
+        const sbp = parseFloat(document.getElementById('qrisk-sbp').value);
+        const cholesterol = parseFloat(document.getElementById('qrisk-cholesterol').value);
+        const hdl = parseFloat(document.getElementById('qrisk-hdl').value);
         const sbpSD = parseFloat(document.getElementById('qrisk-sbpsd').value) || 0;
+        const smokingStatus = parseInt(document.getElementById('qrisk-smoking').value);
         const townsend = parseFloat(document.getElementById('qrisk-townsend').value) || 0;
         
+        // Validate required fields
         if (!age || !sex || !bmi || !sbp || !cholesterol || !hdl) {
-            document.getElementById('qrisk-result').innerHTML = '<p style="color: red;">Please fill in all required fields (age, sex, BMI, BP, cholesterol and HDL)</p>';
+            document.getElementById('qrisk-result').innerHTML = 
+                '<p class="error">Please fill in all required fields (age, sex, BMI, blood pressure, cholesterol and HDL)</p>';
             return;
         }
 
-        // QRISK3 age validation (25-84 years as per NICE guidance)
+        // QRISK3 age validation
         if (age < 25 || age > 84) {
-            document.getElementById('qrisk-result').innerHTML = '<p style="color: red;">QRISK3 is validated for ages 25-84 years only</p>';
+            document.getElementById('qrisk-result').innerHTML = 
+                '<p class="error">QRISK3 is validated for ages 25-84 years only</p>';
             return;
         }
 
-        // Improved QRISK3-based algorithm (simplified but more accurate)
-        let score = 0;
+        // Get medical conditions
+        const diabetesType1 = document.getElementById('qrisk-diabetes-type1').checked;
+        const diabetesType2 = document.getElementById('qrisk-diabetes-type2').checked;
         
-        // Age component (log-linear relationship)
-        if (sex === 'male') {
-            score += Math.log(age/40) * 0.22;
-        } else {
-            score += Math.log(age/40) * 0.25;
+        // Validate diabetes - can't have both types
+        if (diabetesType1 && diabetesType2) {
+            document.getElementById('qrisk-result').innerHTML = 
+                '<p class="error">Please select only Type 1 OR Type 2 diabetes, not both</p>';
+            return;
         }
-        
-        // BMI component (J-shaped curve, optimal around 22-25)
-        const bmiDeviation = Math.abs(bmi - 23.5);
-        score += bmiDeviation * 0.008;
-        
-        // Blood pressure component
-        const sbpDeviation = Math.max(0, sbp - 120);
-        score += sbpDeviation * 0.002;
-        
-        // Cholesterol ratio component
-        const cholRatio = cholesterol / hdl;
-        score += (cholRatio - 3.5) * 0.15;
-        
-        // Ethnicity adjustments
-        const ethnicity = document.getElementById('qrisk-ethnicity').value;
-        const ethnicityFactors = {
-            'white': 1.0,
-            'indian': 1.4,
-            'pakistani': 1.6,
-            'bangladeshi': 1.8,
-            'other-asian': 1.2,
-            'caribbean': 1.2,
-            'black-african': 0.9,
-            'chinese': 0.8,
-            'other': 1.1
-        };
-        score += Math.log(ethnicityFactors[ethnicity] || 1.0);
-        
-        // Risk factors
-        if (document.getElementById('qrisk-smoking').checked) score += 0.63;
-        if (document.getElementById('qrisk-diabetes-type1').checked) score += 1.2;
-        if (document.getElementById('qrisk-diabetes-type2').checked) score += 0.8;
-        if (document.getElementById('qrisk-family-history').checked) score += 0.54;
-        if (document.getElementById('qrisk-ckd').checked) score += 0.9;
-        if (document.getElementById('qrisk-af').checked) score += 0.88;
-        if (document.getElementById('qrisk-bp-treatment').checked) score += 0.51;
-        if (document.getElementById('qrisk-ra').checked) score += 0.4;
-        if (document.getElementById('qrisk-lupus').checked) score += 0.95;
-        if (document.getElementById('qrisk-antipsychotic').checked) score += 0.31;
-        if (document.getElementById('qrisk-steroid').checked) score += 0.37;
-        if (document.getElementById('qrisk-erectile').checked && sex === 'male') score += 0.22;
-        if (document.getElementById('qrisk-migraine').checked) score += 0.25;
-        
-        // Prepare QRISK input (compatible with sisuwellness/qrisk3 inputBuilder)
-        const chdl = cholesterol / hdl; // cholesterol to HDL ratio
 
+        // Calculate cholesterol to HDL ratio
+        const cholesterolHdlRatio = cholesterol / hdl;
+
+        // Build QRISK3 input object (following sisuhealthgroup/qrisk3 format)
         const qriskInput = {
             sex: sex,
             age: age,
@@ -3727,128 +4100,190 @@ class MLAQuizApp {
             migraine: document.getElementById('qrisk-migraine').checked,
             rheumatoidArthritis: document.getElementById('qrisk-ra').checked,
             chronicKidneyDiseaseStage345: document.getElementById('qrisk-ckd').checked,
-            severeMentalIllness: false,
+            severeMentalIllness: document.getElementById('qrisk-smi').checked,
             systemicLupusErythematosus: document.getElementById('qrisk-lupus').checked,
             bloodPressureTreatment: document.getElementById('qrisk-bp-treatment').checked,
-            diabetesType1: document.getElementById('qrisk-diabetes-type1').checked,
-            diabetesType2: document.getElementById('qrisk-diabetes-type2').checked,
+            diabetesType1: diabetesType1,
+            diabetesType2: diabetesType2,
             bmi: bmi,
-            ethnicity: (function mapEth() {
-                const v = document.getElementById('qrisk-ethnicity').value;
-                const map = {
-                    'white': 1,
-                    'indian': 2,
-                    'pakistani': 3,
-                    'bangladeshi': 4,
-                    'other-asian': 5,
-                    'caribbean': 6,
-                    'black-african': 7,
-                    'chinese': 8,
-                    'other': 9
-                };
-                return map[v] || 1;
-            })(),
+            ethnicity: ethnicity,
             familyAnginaOrHeartAttack: document.getElementById('qrisk-family-history').checked,
-            cholesterolHdlRatio: chdl,
+            cholesterolHdlRatio: cholesterolHdlRatio,
             systolicBloodPressure: sbp,
-            systolicStandardDeviation: sbpSD || 0,
-            smokerStatus: smokingCat,
-            survivorSpan: 10,
+            systolicStandardDeviation: sbpSD,
+            smokerStatus: smokingStatus,
+            survivorSpan: 10, // QRISK3 only works with 10 years
             townsendScore: townsend
         };
 
-        // If upstream QRISK library is available, use it for accurate result
+        console.log('🔍 QRISK3 Input:', qriskInput);
+
         let risk = null;
-        console.log('🔎 QRISK input prepared:', qriskInput);
+        let usingOfficialLibrary = false;
+
+        // Try to use the official QRISK3 library
         if (window.qrisk3 && typeof window.qrisk3.calculateScore === 'function') {
             try {
-                const calculated = window.qrisk3.calculateScore(qriskInput);
-                risk = parseFloat(calculated);
-            } catch (err) {
-                console.log('QRISK library failed, falling back to simplified algorithm', err);
+                risk = window.qrisk3.calculateScore(qriskInput);
+                usingOfficialLibrary = true;
+                console.log('✅ Used official QRISK3 library, result:', risk);
+            } catch (error) {
+                console.warn('❌ Official QRISK3 library failed:', error);
                 risk = null;
             }
+        } else {
+            console.warn('⚠️ Official QRISK3 library not available');
         }
 
-        // Fallback: convert simplified log-score to approximate percentage
+        // Fallback to simplified calculation if official library not available
         if (risk === null) {
-            // Upstream library not available or failed. Provide a clear warning and an option to try loading upstream.
-            const baselineRisk = sex === 'male' ? 0.15 : 0.08;
-            let approxRisk = baselineRisk * Math.exp(score);
-            approxRisk = Math.min(approxRisk * 100, 95); // Cap at 95%
-            risk = approxRisk;
-
-            // Insert a more prominent caution in the UI about approximation
-            const warnHtml = `
-                <div style="padding:8px;margin-bottom:8px;border-left:4px solid #FFA726;background:#FFF8E1;color:#333;">
-                    <strong>Approximate result:</strong> The upstream QRISK3 library is not available, so this value is an approximation and may differ substantially from the official QRISK3 calculator.
-                    <div style="margin-top:6px;font-size:0.9em">To get the official QRISK3 value, click <button id="qrisk-retry-upstream" style="margin-left:6px;padding:4px 8px;">Try upstream now</button> — the app will attempt to load the canonical implementation and recalculate.</div>
-                </div>
-            `;
-
-            // Show interim result with warning; the final render continues below but we inject a retry handler after DOM update
-            document.getElementById('qrisk-result').innerHTML = warnHtml + `
-                <div style="color: #999;">Calculating approximate risk...</div>
-            `;
-
-            // Add handler to retry loading the upstream library and recalculate
-            setTimeout(() => {
-                const btn = document.getElementById('qrisk-retry-upstream');
-                if (btn) {
-                    btn.addEventListener('click', () => {
-                        this.reloadQRISKAndRecalculate();
-                    });
-                }
-            }, 50);
+            risk = this.calculateQRISKFallback(qriskInput);
+            console.log('🔄 Used fallback calculation, result:', risk);
         }
-        
+
+        // Ensure risk is a valid number
+        if (isNaN(risk) || risk < 0) {
+            document.getElementById('qrisk-result').innerHTML = 
+                '<p class="error">Unable to calculate risk. Please check your inputs.</p>';
+            return;
+        }
+
+        // Cap risk at 99% for display
+        risk = Math.min(risk, 99);
+
+        // NICE CG181 and NG238 risk categorization
         let riskLevel = '';
         let color = '';
         let recommendation = '';
 
-        // NICE NG238 (Dec 2023) cardiovascular risk guidelines
         if (risk < 10) {
             riskLevel = 'Low risk (<10%)';
             color = '#4CAF50';
-            recommendation = 'NICE NG238: Lifestyle advice and reassess in 5 years. Consider statins if additional risk factors present';
+            recommendation = 'NICE NG238: Lifestyle advice. Reassess in 5 years. Consider statin if additional risk factors or patient preference.';
         } else if (risk < 20) {
             riskLevel = 'Moderate risk (10-20%)';
             color = '#FF9800';
-            recommendation = 'NICE NG238: Offer atorvastatin 20mg with shared decision-making and lifestyle modification';
+            recommendation = 'NICE NG238: Offer atorvastatin 20mg daily with lifestyle advice. Shared decision-making important.';
         } else {
             riskLevel = 'High risk (≥20%)';
             color = '#F44336';
-            recommendation = 'NICE NG238: Offer atorvastatin 20mg with shared decision-making and lifestyle modification';
+            recommendation = 'NICE NG238: Offer atorvastatin 20mg daily with lifestyle advice. Consider higher intensity if required.';
+        }
+
+        // Additional risk factors for context
+        const riskFactors = [];
+        if (diabetesType1) riskFactors.push('Type 1 diabetes');
+        if (diabetesType2) riskFactors.push('Type 2 diabetes');
+        if (qriskInput.atrialFibrillation) riskFactors.push('Atrial fibrillation');
+        if (qriskInput.familyAnginaOrHeartAttack) riskFactors.push('Family history of CHD');
+        if (qriskInput.chronicKidneyDiseaseStage345) riskFactors.push('Chronic kidney disease');
+        if (qriskInput.rheumatoidArthritis) riskFactors.push('Rheumatoid arthritis');
+        if (qriskInput.systemicLupusErythematosus) riskFactors.push('SLE');
+        if (smokingStatus > 0) {
+            const smokingLabels = ['Non-smoker', 'Former smoker', 'Light smoker', 'Moderate smoker', 'Heavy smoker'];
+            riskFactors.push(smokingLabels[smokingStatus] || 'Smoker');
         }
 
         document.getElementById('qrisk-result').innerHTML = `
-            <div style="color: ${color}">
-                <strong>10-year CV risk: ${risk.toFixed(1)}%</strong><br>
-                <strong>${riskLevel}</strong><br>
-                <div style="margin-top: 8px; font-size: 0.9em;">
-                    ${recommendation}
+            <div class="qrisk-result-display">
+                <div class="result-summary">
+                    <div class="result-value" style="color: ${color}">
+                        <strong>10-year CVD Risk: ${risk.toFixed(1)}%</strong>
+                    </div>
+                    <div class="result-interpretation" style="color: ${color}">
+                        <strong>${riskLevel}</strong>
+                    </div>
                 </div>
-                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
-                    Cholesterol ratio: ${chdl.toFixed(2)} | BMI: ${bmi} kg/m²<br>
-                    ${window.qrisk3 && typeof window.qrisk3.calculateScore === 'function' ? 'Calculated using embedded QRISK3 implementation.' : 'Approximate simplified calculation. For clinical decisions, use the official QRISK3 tool at qrisk.org.'}
+                
+                <div class="clinical-guidance">
+                    <h5>NICE Guidance:</h5>
+                    <div style="background-color: rgba(${color === '#4CAF50' ? '76,175,80' : color === '#FF9800' ? '255,152,0' : '244,67,54'}, 0.1); padding: 10px; border-radius: 5px; margin-top: 8px;">
+                        ${recommendation}
+                    </div>
+                </div>
+                
+                <div class="risk-factors">
+                    <h5>Key Measurements:</h5>
+                    <ul>
+                        <li><strong>Cholesterol/HDL ratio:</strong> ${cholesterolHdlRatio.toFixed(2)} ${cholesterolHdlRatio > 4.5 ? '(elevated)' : '(good)'}</li>
+                        <li><strong>BMI:</strong> ${bmi} kg/m² ${bmi >= 30 ? '(obese)' : bmi >= 25 ? '(overweight)' : '(normal)'}</li>
+                        <li><strong>Blood pressure:</strong> ${sbp} mmHg ${sbp >= 140 ? '(high)' : sbp >= 120 ? '(elevated)' : '(normal)'}</li>
+                        ${riskFactors.length > 0 ? `<li><strong>Risk factors:</strong> ${riskFactors.join(', ')}</li>` : ''}
+                    </ul>
+                </div>
+                
+                <div class="calculation-info">
+                    <small>
+                        <strong>Calculation method:</strong> ${usingOfficialLibrary ? 
+                            '✅ Official QRISK3 algorithm (sisuhealthgroup implementation)' : 
+                            '⚠️ Simplified approximation - use official tool for clinical decisions'
+                        }<br>
+                        <strong>Reference:</strong> NICE NG238 (2023) - Cardiovascular disease: risk assessment and reduction
+                    </small>
                 </div>
             </div>
         `;
     }
 
-    reloadQRISKAndRecalculate() {
-        // Attempt to load external QRISK library and then recalculate after a short delay
-        console.log('🔁 User requested upstream QRISK3 retry - attempting to load library...');
-        this.loadExternalQRISK();
-
-        // Wait a short time for script to load and then re-run calculation. If not loaded, user will see the same approximation.
-        setTimeout(() => {
-            try {
-                this.calculateQRISK();
-            } catch (err) {
-                console.error('❌ Failed to recalculate after loading upstream QRISK:', err);
-            }
-        }, 1500);
+    // Fallback calculation if official QRISK3 library not available
+    calculateQRISKFallback(input) {
+        // This is a simplified approximation based on QRISK3 risk factors
+        // For clinical use, always use the official QRISK3 tool
+        
+        let logRisk = 0;
+        
+        // Age (strongest predictor)
+        const ageYears = input.age;
+        if (input.sex === 'male') {
+            logRisk += (ageYears - 40) * 0.05;
+        } else {
+            logRisk += (ageYears - 40) * 0.04;
+        }
+        
+        // BMI (J-shaped curve)
+        const bmiOptimal = 23;
+        const bmiDeviation = Math.abs(input.bmi - bmiOptimal);
+        logRisk += bmiDeviation * 0.02;
+        
+        // Blood pressure
+        const sbpDeviation = Math.max(0, input.systolicBloodPressure - 120);
+        logRisk += sbpDeviation * 0.01;
+        
+        // Cholesterol ratio
+        const cholRatioDeviation = Math.max(0, input.cholesterolHdlRatio - 3.5);
+        logRisk += cholRatioDeviation * 0.3;
+        
+        // Ethnicity multipliers (approximate)
+        const ethnicityFactors = [1.0, 1.0, 1.4, 1.6, 1.8, 1.2, 1.2, 0.9, 0.8, 1.1];
+        logRisk += Math.log(ethnicityFactors[input.ethnicity - 1] || 1.0);
+        
+        // Major risk factors
+        if (input.diabetesType1) logRisk += 1.2;
+        if (input.diabetesType2) logRisk += 0.8;
+        if (input.atrialFibrillation) logRisk += 0.9;
+        if (input.familyAnginaOrHeartAttack) logRisk += 0.5;
+        if (input.chronicKidneyDiseaseStage345) logRisk += 0.8;
+        if (input.rheumatoidArthritis) logRisk += 0.4;
+        if (input.systemicLupusErythematosus) logRisk += 0.9;
+        if (input.severeMentalIllness) logRisk += 0.3;
+        if (input.bloodPressureTreatment) logRisk += 0.4;
+        if (input.onRegularSteroidTablets) logRisk += 0.4;
+        if (input.onAtypicalAntipsychoticsMedication) logRisk += 0.3;
+        if (input.diagnosisOrTreatmentOfErectileDisfunction) logRisk += 0.2;
+        if (input.migraine) logRisk += 0.2;
+        
+        // Smoking
+        const smokingFactors = [0, 0.4, 0.5, 0.7, 0.9]; // non, former, light, moderate, heavy
+        logRisk += smokingFactors[input.smokerStatus] || 0;
+        
+        // Townsend deprivation
+        logRisk += input.townsendScore * 0.03;
+        
+        // Convert to percentage (simplified baseline risk)
+        const baselineRisk = input.sex === 'male' ? 8 : 5; // Approximate 10-year baseline risk %
+        const risk = baselineRisk * Math.exp(logRisk);
+        
+        return Math.min(risk, 99);
     }
 
     getMADDERSCalculator() {
