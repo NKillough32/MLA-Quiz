@@ -2947,10 +2947,6 @@ class MLAQuizApp {
                 calculatorTitle = 'Vasopressor Dosing';
                 calculatorContent += this.getVasopressorCalculator();
                 break;
-            case 'frax':
-                calculatorTitle = 'FRAX Calculator';
-                calculatorContent += this.getFRAXCalculator();
-                break;
             case 'unit-converter':
                 calculatorTitle = 'Clinical Unit Converter';
                 calculatorContent += this.getUnitConverterCalculator();
@@ -3010,6 +3006,10 @@ class MLAQuizApp {
             case 'rankin':
                 calculatorTitle = 'Modified Rankin Scale';
                 calculatorContent += this.getModifiedRankinCalculator();
+                break;
+            case 'anion-gap':
+                calculatorTitle = 'Anion Gap Calculator';
+                calculatorContent += this.getAnionGapCalculator();
                 break;
             default:
                 calculatorTitle = 'Calculator';
@@ -4784,100 +4784,6 @@ class MLAQuizApp {
                 <strong>${risk}</strong><br>
                 <div style="margin-top: 8px; font-size: 0.9em;">
                     ${action}
-                </div>
-            </div>
-        `;
-    }
-
-    getFRAXCalculator() {
-        return `
-            <div class="calculator-form">
-                <h4>FRAX Calculator (Simplified)</h4>
-                <p><small>10-year fracture risk assessment (simplified version)</small></p>
-                
-                <div class="calc-input-group">
-                    <label>Age (40-90 years):</label>
-                    <input type="number" id="frax-age" placeholder="65" min="40" max="90">
-                </div>
-                <div class="calc-checkbox-group">
-                    <label><input type="radio" name="frax-sex" value="male"> Male</label>
-                    <label><input type="radio" name="frax-sex" value="female"> Female</label>
-                </div>
-                <div class="calc-checkbox-group">
-                    <label><input type="checkbox" id="frax-fracture"> Previous fracture</label>
-                    <label><input type="checkbox" id="frax-parent"> Parent hip fracture</label>
-                    <label><input type="checkbox" id="frax-smoking"> Current smoking</label>
-                    <label><input type="checkbox" id="frax-glucocorticoids"> Glucocorticoids</label>
-                    <label><input type="checkbox" id="frax-ra"> Rheumatoid arthritis</label>
-                    <label><input type="checkbox" id="frax-osteoporosis"> Secondary osteoporosis</label>
-                    <label><input type="checkbox" id="frax-alcohol"> 3+ units alcohol daily</label>
-                </div>
-                
-                <button onclick="window.quizApp.calculateFRAX()">Calculate Risk</button>
-                <div id="frax-result" class="calc-result"></div>
-                
-                <div class="calc-reference">
-                    <small>
-                        <strong>Note:</strong> This is a simplified version. Use official FRAX tool for accurate assessment with BMD values.
-                    </small>
-                </div>
-            </div>
-        `;
-    }
-
-    calculateFRAX() {
-        const age = parseInt(document.getElementById('frax-age').value);
-        const sex = document.querySelector('input[name="frax-sex"]:checked')?.value;
-        
-        if (!age || !sex) {
-            document.getElementById('frax-result').innerHTML = '<p class="error">Please enter age and sex</p>';
-            return;
-        }
-        
-        // Simplified FRAX calculation
-        let baseRisk = 0;
-        
-        if (sex === 'female') {
-            baseRisk = Math.pow((age - 40) / 50, 2) * 15;
-        } else {
-            baseRisk = Math.pow((age - 40) / 50, 2) * 8;
-        }
-        
-        let multiplier = 1.0;
-        if (document.getElementById('frax-fracture').checked) multiplier *= 1.8;
-        if (document.getElementById('frax-parent').checked) multiplier *= 1.9;
-        if (document.getElementById('frax-smoking').checked) multiplier *= 1.3;
-        if (document.getElementById('frax-glucocorticoids').checked) multiplier *= 2.6;
-        if (document.getElementById('frax-ra').checked) multiplier *= 1.4;
-        if (document.getElementById('frax-osteoporosis').checked) multiplier *= 1.8;
-        if (document.getElementById('frax-alcohol').checked) multiplier *= 1.4;
-        
-        const majorRisk = Math.min(baseRisk * multiplier, 80);
-        const hipRisk = majorRisk * 0.3;
-        
-        let intervention = '';
-        let color = '';
-        
-        if (majorRisk < 10) {
-            intervention = 'Lifestyle advice only';
-            color = '#4CAF50';
-        } else if (majorRisk < 20) {
-            intervention = 'Consider treatment (NOGG guidelines)';
-            color = '#FF9800';
-        } else {
-            intervention = 'Treatment recommended';
-            color = '#F44336';
-        }
-        
-        document.getElementById('frax-result').innerHTML = `
-            <div style="color: ${color}">
-                <strong>10-year major fracture risk: ${majorRisk.toFixed(1)}%</strong><br>
-                <strong>10-year hip fracture risk: ${hipRisk.toFixed(1)}%</strong><br>
-                <div style="margin-top: 8px; font-weight: bold;">
-                    ${intervention}
-                </div>
-                <div style="margin-top: 8px; font-size: 0.8em; color: #666;">
-                    Simplified calculation - use official FRAX tool for clinical decisions
                 </div>
             </div>
         `;
@@ -15299,4 +15205,171 @@ MLAQuizApp.prototype.trackToolUsage = function(toolType, toolName) {
     usageStats[toolKey].lastUsed = new Date().toISOString();
     
     localStorage.setItem('medicalToolsUsage', JSON.stringify(usageStats));
+};
+
+// Anion Gap Calculator
+MLAQuizApp.prototype.getAnionGapCalculator = function() {
+    return `
+        <div class="calculator-form">
+            <h4>Anion Gap Calculator</h4>
+            <p><small>Calculate serum anion gap from basic metabolic panel</small></p>
+            
+            <div class="calc-input-group">
+                <label>Sodium (Na+) mEq/L:</label>
+                <input type="number" id="ag-sodium" placeholder="140" step="0.1" min="120" max="160">
+                <small>Normal: 136-145 mEq/L</small>
+            </div>
+            <div class="calc-input-group">
+                <label>Chloride (Cl-) mEq/L:</label>
+                <input type="number" id="ag-chloride" placeholder="103" step="0.1" min="90" max="120">
+                <small>Normal: 98-107 mEq/L</small>
+            </div>
+            <div class="calc-input-group">
+                <label>Bicarbonate (HCO3-) mEq/L:</label>
+                <input type="number" id="ag-bicarbonate" placeholder="24" step="0.1" min="10" max="35">
+                <small>Normal: 22-28 mEq/L</small>
+            </div>
+            
+            <button onclick="window.quizApp.calculateAnionGap()">Calculate Anion Gap</button>
+            <div id="anion-gap-result" class="calc-result"></div>
+            
+            <div class="calc-reference">
+                <h5>Reference Values:</h5>
+                <ul>
+                    <li><strong>Normal:</strong> 8-12 mEq/L</li>
+                    <li><strong>High Anion Gap (>12):</strong> Metabolic acidosis</li>
+                    <li><strong>Low Anion Gap (<8):</strong> Rare, check for errors</li>
+                </ul>
+                <h5>High Anion Gap Causes (MUDPILES):</h5>
+                <ul>
+                    <li><strong>M</strong>ethanol</li>
+                    <li><strong>U</strong>remia</li>
+                    <li><strong>D</strong>iabetic ketoacidosis</li>
+                    <li><strong>P</strong>aracetamol/Paraldehyde</li>
+                    <li><strong>I</strong>soniazid/Iron</li>
+                    <li><strong>L</strong>actic acidosis</li>
+                    <li><strong>E</strong>thylene glycol</li>
+                    <li><strong>S</strong>alicylates</li>
+                </ul>
+            </div>
+        </div>
+    `;
+};
+
+MLAQuizApp.prototype.calculateAnionGap = function() {
+    const sodium = parseFloat(document.getElementById('ag-sodium').value);
+    const chloride = parseFloat(document.getElementById('ag-chloride').value);
+    const bicarbonate = parseFloat(document.getElementById('ag-bicarbonate').value);
+    
+    if (!sodium || !chloride || !bicarbonate) {
+        document.getElementById('anion-gap-result').innerHTML = '<p class="error">Please enter all values</p>';
+        return;
+    }
+    
+    if (sodium < 120 || sodium > 160) {
+        document.getElementById('anion-gap-result').innerHTML = '<p class="error">Sodium value seems unrealistic (120-160 mEq/L expected)</p>';
+        return;
+    }
+    
+    if (chloride < 90 || chloride > 120) {
+        document.getElementById('anion-gap-result').innerHTML = '<p class="error">Chloride value seems unrealistic (90-120 mEq/L expected)</p>';
+        return;
+    }
+    
+    if (bicarbonate < 10 || bicarbonate > 35) {
+        document.getElementById('anion-gap-result').innerHTML = '<p class="error">Bicarbonate value seems unrealistic (10-35 mEq/L expected)</p>';
+        return;
+    }
+    
+    // Calculate anion gap: Na+ - (Cl- + HCO3-)
+    const anionGap = sodium - (chloride + bicarbonate);
+    
+    let interpretation = '';
+    let color = '';
+    let recommendations = '';
+    
+    if (anionGap < 8) {
+        interpretation = 'Low Anion Gap';
+        color = '#2196F3';
+        recommendations = `
+            <strong>Possible Causes:</strong><br>
+            • Laboratory error (most common)<br>
+            • Hypoalbuminemia<br>
+            • Multiple myeloma<br>
+            • Hypercalcemia, hypermagnesemia<br>
+            • Lithium intoxication<br>
+            <strong>Action:</strong> Recheck labs, consider protein electrophoresis
+        `;
+    } else if (anionGap >= 8 && anionGap <= 12) {
+        interpretation = 'Normal Anion Gap';
+        color = '#4CAF50';
+        recommendations = `
+            <strong>Normal Range:</strong> No metabolic acidosis indicated<br>
+            If acidosis present, consider:<br>
+            • Normal anion gap metabolic acidosis<br>
+            • Diarrhea, ureterosigmoidostomy<br>
+            • Renal tubular acidosis<br>
+            • Carbonic anhydrase inhibitors
+        `;
+    } else if (anionGap > 12 && anionGap <= 16) {
+        interpretation = 'Mildly Elevated Anion Gap';
+        color = '#FF9800';
+        recommendations = `
+            <strong>Mild Elevation:</strong> Monitor closely<br>
+            • Early/mild metabolic acidosis<br>
+            • Chronic kidney disease<br>
+            • Dehydration<br>
+            • Consider arterial blood gas<br>
+            <strong>Action:</strong> Check serum lactate, ketones, creatinine
+        `;
+    } else {
+        interpretation = 'High Anion Gap';
+        color = '#F44336';
+        recommendations = `
+            <strong>High Anion Gap Metabolic Acidosis!</strong><br>
+            <strong>MUDPILES causes:</strong><br>
+            • <strong>Methanol</strong> poisoning<br>
+            • <strong>Uremia</strong> (BUN >60)<br>
+            • <strong>Diabetic</strong> ketoacidosis<br>
+            • <strong>Paracetamol</strong>/Paraldehyde<br>
+            • <strong>Isoniazid</strong>/Iron<br>
+            • <strong>Lactic</strong> acidosis<br>
+            • <strong>Ethylene glycol</strong><br>
+            • <strong>Salicylates</strong><br>
+            <strong>Urgent:</strong> ABG, lactate, ketones, osmolar gap
+        `;
+    }
+    
+    document.getElementById('anion-gap-result').innerHTML = `
+        <div class="result-summary">
+            <div class="result-value" style="color: ${color}">
+                <strong>Anion Gap: ${anionGap.toFixed(1)} mEq/L</strong>
+            </div>
+            <div class="result-interpretation" style="color: ${color}">
+                <strong>${interpretation}</strong>
+            </div>
+        </div>
+        
+        <div class="calculation-details">
+            <h5>Calculation:</h5>
+            <p>Anion Gap = Na<sup>+</sup> - (Cl<sup>-</sup> + HCO<sub>3</sub><sup>-</sup>)</p>
+            <p>= ${sodium} - (${chloride} + ${bicarbonate}) = <strong>${anionGap.toFixed(1)} mEq/L</strong></p>
+        </div>
+        
+        <div class="clinical-guidance">
+            <h5>Clinical Interpretation:</h5>
+            <div style="background-color: rgba(${color === '#F44336' ? '244,67,54' : color === '#FF9800' ? '255,152,0' : color === '#4CAF50' ? '76,175,80' : '33,150,243'}, 0.1); padding: 10px; border-radius: 5px; margin-top: 8px;">
+                ${recommendations}
+            </div>
+        </div>
+        
+        <div class="additional-info">
+            <h5>Additional Considerations:</h5>
+            <ul>
+                <li><strong>Delta ratio:</strong> If high AG acidosis, check Δ(AG)/Δ(HCO3-) for mixed disorders</li>
+                <li><strong>Osmolar gap:</strong> Consider if methanol/ethylene glycol suspected</li>
+                <li><strong>Albumin correction:</strong> For every 1 g/dL ↓ albumin, AG ↓ by ~2.5</li>
+            </ul>
+        </div>
+    `;
 };
