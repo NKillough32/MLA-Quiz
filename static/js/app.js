@@ -7913,6 +7913,79 @@ class MLAQuizApp {
                 <button id="lab-search-btn">🔍</button>
             </div>
             <div id="lab-search-results" class="lab-grid"></div>
+            
+            <!-- Blood Draw Order Color Guide -->
+            <div class="blood-draw-guide">
+                <h4>🩸 Blood Collection Tube Order & Colors</h4>
+                <div class="tube-order-grid">
+                    <div class="tube-item">
+                        <div class="tube-color" style="background: linear-gradient(to bottom, #87CEEB 0%, #4169E1 100%); border: 2px solid #000080;">
+                            <span class="order-number">1</span>
+                        </div>
+                        <div class="tube-info">
+                            <strong>SODIUM CITRATE</strong><br>
+                            <small>Coagulation studies, vWF, clotting factors<br>
+                            <em>Fill to correct volume, clean venipuncture</em></small>
+                        </div>
+                    </div>
+                    
+                    <div class="tube-item">
+                        <div class="tube-color" style="background: linear-gradient(to bottom, #FFD700 0%, #FF6347 100%); border: 2px solid #8B4513;">
+                            <span class="order-number">2</span>
+                        </div>
+                        <div class="tube-info">
+                            <strong>SERUM/PLAIN</strong><br>
+                            <small>General biochemistry, endocrinology, serology<br>
+                            <em>Gel tubes unsuitable for drug monitoring</em></small>
+                        </div>
+                    </div>
+                    
+                    <div class="tube-item">
+                        <div class="tube-color" style="background: linear-gradient(to bottom, #32CD32 0%, #228B22 100%); border: 2px solid #006400;">
+                            <span class="order-number">3</span>
+                        </div>
+                        <div class="tube-info">
+                            <strong>LITHIUM HEPARIN</strong><br>
+                            <small>Avian/reptile haematology, some biochemistry<br>
+                            <em>Use only if specifically indicated</em></small>
+                        </div>
+                    </div>
+                    
+                    <div class="tube-item">
+                        <div class="tube-color" style="background: linear-gradient(to bottom, #9370DB 0%, #4B0082 100%); border: 2px solid #2F0047;">
+                            <span class="order-number">4</span>
+                        </div>
+                        <div class="tube-info">
+                            <strong>EDTA</strong><br>
+                            <small>FBC, platelets, blood typing, flow cytometry<br>
+                            <em>Fill to correct volume, submit fresh blood film</em></small>
+                        </div>
+                    </div>
+                    
+                    <div class="tube-item">
+                        <div class="tube-color" style="background: linear-gradient(to bottom, #D3D3D3 0%, #A9A9A9 100%); border: 2px solid #696969;">
+                            <span class="order-number">5</span>
+                        </div>
+                        <div class="tube-info">
+                            <strong>FLUORIDE OXALATE</strong><br>
+                            <small>Plasma glucose<br>
+                            <em>Prevents glycolysis, specific for glucose</em></small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="draw-order-notes">
+                    <h5>📋 Important Draw Order Notes:</h5>
+                    <ul>
+                        <li><strong>Order matters:</strong> Always follow 1→2→3→4→5 to prevent cross-contamination</li>
+                        <li><strong>Citrate tubes:</strong> Must be filled exactly to line for accurate coagulation results</li>
+                        <li><strong>EDTA tubes:</strong> Gently invert 8-10 times immediately after collection</li>
+                        <li><strong>Serum tubes:</strong> Allow to clot for 30-60 minutes before centrifuging</li>
+                        <li><strong>Timing:</strong> Process samples promptly - some analytes are time-sensitive</li>
+                    </ul>
+                </div>
+            </div>
+            
             <div class="lab-categories">
                 <button class="category-btn active" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('cbc'); event.stopPropagation();">CBC</button>
