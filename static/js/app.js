@@ -7913,81 +7913,9 @@ class MLAQuizApp {
                 <button id="lab-search-btn">🔍</button>
             </div>
             <div id="lab-search-results" class="lab-grid"></div>
-            
-            <!-- Blood Draw Order Color Guide -->
-            <div class="blood-draw-guide">
-                <h4>🩸 Blood Collection Tube Order & Colors</h4>
-                <div class="tube-order-grid">
-                    <div class="tube-item">
-                        <div class="tube-color" style="background: linear-gradient(to bottom, #87CEEB 0%, #4169E1 100%); border: 2px solid #000080;">
-                            <span class="order-number">1</span>
-                        </div>
-                        <div class="tube-info">
-                            <strong>SODIUM CITRATE</strong><br>
-                            <small>Coagulation studies, vWF, clotting factors<br>
-                            <em>Fill to correct volume, clean venipuncture</em></small>
-                        </div>
-                    </div>
-                    
-                    <div class="tube-item">
-                        <div class="tube-color" style="background: linear-gradient(to bottom, #FFD700 0%, #FF6347 100%); border: 2px solid #8B4513;">
-                            <span class="order-number">2</span>
-                        </div>
-                        <div class="tube-info">
-                            <strong>SERUM/PLAIN</strong><br>
-                            <small>General biochemistry, endocrinology, serology<br>
-                            <em>Gel tubes unsuitable for drug monitoring</em></small>
-                        </div>
-                    </div>
-                    
-                    <div class="tube-item">
-                        <div class="tube-color" style="background: linear-gradient(to bottom, #32CD32 0%, #228B22 100%); border: 2px solid #006400;">
-                            <span class="order-number">3</span>
-                        </div>
-                        <div class="tube-info">
-                            <strong>LITHIUM HEPARIN</strong><br>
-                            <small>Avian/reptile haematology, some biochemistry<br>
-                            <em>Use only if specifically indicated</em></small>
-                        </div>
-                    </div>
-                    
-                    <div class="tube-item">
-                        <div class="tube-color" style="background: linear-gradient(to bottom, #9370DB 0%, #4B0082 100%); border: 2px solid #2F0047;">
-                            <span class="order-number">4</span>
-                        </div>
-                        <div class="tube-info">
-                            <strong>EDTA</strong><br>
-                            <small>FBC, platelets, blood typing, flow cytometry<br>
-                            <em>Fill to correct volume, submit fresh blood film</em></small>
-                        </div>
-                    </div>
-                    
-                    <div class="tube-item">
-                        <div class="tube-color" style="background: linear-gradient(to bottom, #D3D3D3 0%, #A9A9A9 100%); border: 2px solid #696969;">
-                            <span class="order-number">5</span>
-                        </div>
-                        <div class="tube-info">
-                            <strong>FLUORIDE OXALATE</strong><br>
-                            <small>Plasma glucose<br>
-                            <em>Prevents glycolysis, specific for glucose</em></small>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="draw-order-notes">
-                    <h5>📋 Important Draw Order Notes:</h5>
-                    <ul>
-                        <li><strong>Order matters:</strong> Always follow 1→2→3→4→5 to prevent cross-contamination</li>
-                        <li><strong>Citrate tubes:</strong> Must be filled exactly to line for accurate coagulation results</li>
-                        <li><strong>EDTA tubes:</strong> Gently invert 8-10 times immediately after collection</li>
-                        <li><strong>Serum tubes:</strong> Allow to clot for 30-60 minutes before centrifuging</li>
-                        <li><strong>Timing:</strong> Process samples promptly - some analytes are time-sensitive</li>
-                    </ul>
-                </div>
-            </div>
-            
             <div class="lab-categories">
                 <button class="category-btn active" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('collection'); event.stopPropagation();">🩸 Collection</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('cbc'); event.stopPropagation();">CBC</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('bmp'); event.stopPropagation();">Chemistry</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('lft'); event.stopPropagation();">Liver</button>
@@ -8055,6 +7983,13 @@ class MLAQuizApp {
     showLabCategory(category) {
         const labDatabase = this.labDatabase;
         const labList = document.getElementById('lab-list');
+        
+        // Handle special collection category
+        if (category === 'collection') {
+            this.showCollectionGuide();
+            return;
+        }
+        
         let panels = Object.keys(labDatabase);
         
         // Update active state of category buttons
@@ -8064,6 +7999,7 @@ class MLAQuizApp {
                 btn.classList.remove('active');
                 const btnText = btn.textContent.trim();
                 if ((category === 'all' && btnText === 'All Labs') ||
+                    (category === 'collection' && btnText === '🩸 Collection') ||
                     (category === 'cbc' && btnText === 'CBC') ||
                     (category === 'bmp' && btnText === 'Chemistry') ||
                     (category === 'lft' && btnText === 'Liver') ||
@@ -8174,6 +8110,359 @@ class MLAQuizApp {
         
         // Also scroll the container itself
         container.scrollTop = 0;
+    }
+
+    showCollectionGuide() {
+        console.log('🩸 Opening comprehensive collection guide');
+        const labList = document.getElementById('lab-list');
+        
+        labList.innerHTML = `
+            <div class="blood-draw-guide">
+                <div class="guide-intro">
+                    <h4>🩸 Complete Blood Collection Guide</h4>
+                    <p><em>Knowing which blood bottles to use for different tests is essential in clinical practice. Knowledge of blood bottles is one of those practical things which is poorly taught, if at all! Even though most hospitals now have printable stickers for bottles that tell you which ones to use, it is still vital to understand which bottles are used and why to prevent mistakes and/or awkward phone calls from the laboratory.</em></p>
+                    
+                    <div class="important-notice">
+                        <strong>⚠️ Important:</strong> The colours of the vacutainer bottles are standardised. However, depending on which hospital you work in, preferences may vary between individual laboratories, especially regarding tests performed less frequently. It is important to check local guidelines or discuss with the laboratory if you're not sure.
+                    </div>
+                </div>
+
+                <div class="tube-order-summary">
+                    <h5>📋 Quick Reference - Order of Draw</h5>
+                    <div class="order-summary-grid">
+                        <div class="order-item"><span class="order-num">1</span> Blue (Citrate) - 3-4 inversions</div>
+                        <div class="order-item"><span class="order-num">2</span> Yellow/Gold (Serum) - 5-6 inversions</div>
+                        <div class="order-item"><span class="order-num">3</span> Green (Heparin) - 8 inversions</div>
+                        <div class="order-item"><span class="order-num">4</span> Purple (EDTA) - 8-10 inversions</div>
+                        <div class="order-item"><span class="order-num">5</span> Grey (Fluoride) - 8-10 inversions</div>
+                    </div>
+                </div>
+
+                <div class="detailed-bottles">
+                    <h5>🧪 Detailed Bottle Guide</h5>
+                    
+                    <!-- Blue Bottle -->
+                    <div class="bottle-detail">
+                        <div class="bottle-header">
+                            <div class="bottle-visual blue-bottle">🔵</div>
+                            <h6>Blue Blood Bottle (Sodium Citrate)</h6>
+                        </div>
+                        <div class="bottle-content">
+                            <div class="bottle-info-grid">
+                                <div class="info-section">
+                                    <strong>Additive:</strong> Buffered sodium citrate - acts as reversible anticoagulant by binding calcium ions
+                                    <br><strong>Inversions:</strong> 3-4 times
+                                    <br><strong>Fill level:</strong> Must be filled to the line - critical for accurate results!
+                                </div>
+                                <div class="info-section">
+                                    <strong>Common Tests:</strong>
+                                    <ul>
+                                        <li>Coagulation screen (PT, aPTT, TT, fibrinogen)</li>
+                                        <li>INR (warfarin monitoring)</li>
+                                        <li>D-dimer (thrombosis screening)</li>
+                                        <li>APTR (heparin monitoring)</li>
+                                        <li>Anti-Xa assay (LMWH monitoring)</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Special Tests:</strong>
+                                    <ul>
+                                        <li>Specific clotting factors (VIII, IX, vWF)</li>
+                                        <li>Thrombophilia screen</li>
+                                        <li>Lupus anticoagulant</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="clinical-tips">
+                                <strong>💡 Clinical Tips:</strong>
+                                <ul>
+                                    <li>With butterfly needles, may need 2 bottles (first removes air from tubing)</li>
+                                    <li>INR ideally done in morning</li>
+                                    <li>Anti-Xa must be taken 3-4 hours after tinzaparin</li>
+                                    <li>Under-filled tubes = over-anticoagulated results</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Yellow/Gold Bottle -->
+                    <div class="bottle-detail">
+                        <div class="bottle-header">
+                            <div class="bottle-visual yellow-bottle">🟡</div>
+                            <h6>Yellow/Gold Blood Bottle (SST - Serum Separator)</h6>
+                        </div>
+                        <div class="bottle-content">
+                            <div class="bottle-info-grid">
+                                <div class="info-section">
+                                    <strong>Additive:</strong> Silica particles (clot activator) + serum separator gel
+                                    <br><strong>Inversions:</strong> 5-6 times
+                                    <br><strong>Volume:</strong> ~12 tests from one full bottle
+                                </div>
+                                <div class="info-section">
+                                    <strong>Biochemistry:</strong>
+                                    <ul>
+                                        <li>U&E (urea, creatinine, Na+, K+)</li>
+                                        <li>LFTs (bilirubin, ALP, AST/ALT, GGT)</li>
+                                        <li>CRP, amylase, bone profile</li>
+                                        <li>Lipids, TFTs, troponin</li>
+                                        <li>Iron studies, vitamins</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Endocrinology:</strong>
+                                    <ul>
+                                        <li>Cortisol, sex hormones</li>
+                                        <li>Beta-hCG, growth hormone</li>
+                                        <li>Calcitonin*, EPO, IGF-1</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Tumour Markers:</strong>
+                                    <ul>
+                                        <li>PSA, CEA, CA-125, CA19-9</li>
+                                        <li>AFP, LDH</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Toxicology/Drugs:</strong>
+                                    <ul>
+                                        <li>Paracetamol, salicylates</li>
+                                        <li>Digoxin, lithium, gentamicin</li>
+                                        <li>Ethanol, cannabis, opiates</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Microbiology/Immunology:</strong>
+                                    <ul>
+                                        <li>Viral hepatitis, HIV serology</li>
+                                        <li>Immunoglobulins, complement</li>
+                                        <li>Autoantibodies, RF, thyroid antibodies</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="clinical-tips">
+                                <strong>💡 Clinical Tips:</strong>
+                                <ul>
+                                    <li>Don't panic if blood clots - it's supposed to!</li>
+                                    <li>Separate bottles needed for different lab departments</li>
+                                    <li>Troponin requires 2 samples at different times</li>
+                                    <li>Serum osmolality needs concurrent urine sample</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Purple Bottle -->
+                    <div class="bottle-detail">
+                        <div class="bottle-header">
+                            <div class="bottle-visual purple-bottle">🟣</div>
+                            <h6>Purple Blood Bottle (EDTA - "Lavender")</h6>
+                        </div>
+                        <div class="bottle-content">
+                            <div class="bottle-info-grid">
+                                <div class="info-section">
+                                    <strong>Additive:</strong> EDTA (ethylenediaminetetraacetic acid) - potent anticoagulant
+                                    <br><strong>Inversions:</strong> 8-10 times
+                                    <br><strong>Volume:</strong> 1ml sufficient for FBC, full bottle for ESR
+                                </div>
+                                <div class="info-section">
+                                    <strong>Common Tests:</strong>
+                                    <ul>
+                                        <li>Full Blood Count (FBC)</li>
+                                        <li>ESR (erythrocyte sedimentation rate)</li>
+                                        <li>Blood film for malaria/abnormal cells</li>
+                                        <li>HbA1C (diabetic control)</li>
+                                        <li>Reticulocytes, red cell folate</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Special Tests:</strong>
+                                    <ul>
+                                        <li>Monospot test (EBV)</li>
+                                        <li>Parathyroid hormone (PTH)*</li>
+                                        <li>Ciclosporin/tacrolimus levels</li>
+                                        <li>G6PD, ACTH level*</li>
+                                        <li>Porphyria screen*, plasma metanephrines*</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="clinical-tips">
+                                <strong>💡 Clinical Tips:</strong>
+                                <ul>
+                                    <li>EDTA binds calcium and metal ions - used in chelation therapy</li>
+                                    <li>Can be labelled with radioisotopes for EDTA scans (GFR assessment)</li>
+                                    <li>Mix gently - don't shake or sample will haemolyse</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pink Bottle -->
+                    <div class="bottle-detail">
+                        <div class="bottle-header">
+                            <div class="bottle-visual pink-bottle">🩷</div>
+                            <h6>Pink Blood Bottle (Transfusion Lab EDTA)</h6>
+                        </div>
+                        <div class="bottle-content">
+                            <div class="bottle-info-grid">
+                                <div class="info-section">
+                                    <strong>Additive:</strong> EDTA (same as purple but for transfusion lab only)
+                                    <br><strong>Inversions:</strong> 8-10 times
+                                    <br><strong>Volume:</strong> At least 1ml, more preferred
+                                </div>
+                                <div class="info-section">
+                                    <strong>Common Tests:</strong>
+                                    <ul>
+                                        <li><strong>Group & Save (G&S):</strong> Blood typed and saved (NO blood products issued)</li>
+                                        <li><strong>Crossmatch (XM):</strong> Blood matched to specific units for transfusion</li>
+                                        <li>Direct Coombs test (autoimmune haemolytic anaemia)</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Special Tests:</strong>
+                                    <ul>
+                                        <li>Specific red cell antibodies (usually 3 bottles required)</li>
+                                        <li>Can use for FBC if purple bottles unavailable</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="clinical-tips">
+                                <strong>💡 Critical Safety:</strong>
+                                <ul>
+                                    <li>Special bedside hand-written label - prevents catastrophic mismatched transfusions</li>
+                                    <li>Full crossmatch takes 45-60 minutes</li>
+                                    <li>Type-specific blood available in 10-20 minutes</li>
+                                    <li>O negative emergency blood from fridge stocks</li>
+                                    <li>Ring transfusion lab for urgent/complex requests</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grey Bottle -->
+                    <div class="bottle-detail">
+                        <div class="bottle-header">
+                            <div class="bottle-visual grey-bottle">⚫</div>
+                            <h6>Grey Blood Bottle (Fluoride Oxalate)</h6>
+                        </div>
+                        <div class="bottle-content">
+                            <div class="bottle-info-grid">
+                                <div class="info-section">
+                                    <strong>Additive:</strong> Sodium fluoride (antiglycolytic) + potassium oxalate (anticoagulant)
+                                    <br><strong>Inversions:</strong> 8-10 times
+                                    <br><strong>Volume:</strong> Tiny amount for glucose, 1ml+ for lactate
+                                </div>
+                                <div class="info-section">
+                                    <strong>Tests:</strong>
+                                    <ul>
+                                        <li><strong>Glucose:</strong> Fasting, non-fasting, GTT</li>
+                                        <li><strong>Lactate:</strong> Must be sent immediately</li>
+                                        <li>Blood ethanol (non-legal purposes)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="clinical-tips">
+                                <strong>💡 Clinical Tips:</strong>
+                                <ul>
+                                    <li>Fluoride prevents further glucose breakdown in sample</li>
+                                    <li>Venous glucose more accurate than capillary (especially hyperglycaemic patients)</li>
+                                    <li>For urgent glucose: use capillary blood glucose</li>
+                                    <li>For urgent lactate: use arterial blood gas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Bottles -->
+                    <div class="bottle-detail">
+                        <div class="bottle-header">
+                            <h6>🔴 Other Important Bottles</h6>
+                        </div>
+                        <div class="bottle-content">
+                            <div class="bottle-info-grid">
+                                <div class="info-section">
+                                    <strong>🔴 Red Bottle:</strong> Silica clot activator, no separator gel
+                                    <ul><li>Sensitive hormones, ionised calcium, cryoglobulins</li></ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟢 Dark Green:</strong> Sodium heparin
+                                    <ul><li>Ammonia*, insulin*, renin/aldosterone, chromosomes</li></ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟢 Light Green:</strong> Lithium heparin + separator (PST)
+                                    <ul><li>Routine biochemistry (alternative to yellow)</li></ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🔵 Blood Cultures:</strong> Culture medium
+                                    <ul><li>Aerobic (blue lid), anaerobic (purple lid), mycobacterial (black lid)</li></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practical-tips">
+                    <h5>💡 Essential Practical Tips</h5>
+                    <div class="tips-grid">
+                        <div class="tip-section">
+                            <h6>⚠️ Critical Points</h6>
+                            <ul>
+                                <li><strong>Tests marked with *</strong> need immediate transport on ice</li>
+                                <li><strong>Invert don't shake</strong> - be gentle or samples haemolyse</li>
+                                <li><strong>Blood cultures first</strong> - use ANTT, before antibiotics</li>
+                                <li><strong>Fill citrate tubes to line</strong> - under-filling affects results</li>
+                            </ul>
+                        </div>
+                        <div class="tip-section">
+                            <h6>🏥 Hospital Variations</h6>
+                            <ul>
+                                <li>Check local laboratory guidelines</li>
+                                <li>Different departments may require separate bottles</li>
+                                <li>Paediatric bottles have different colours</li>
+                                <li>When unsure, ask the laboratory technicians</li>
+                            </ul>
+                        </div>
+                        <div class="tip-section">
+                            <h6>🩸 Sample Quality</h6>
+                            <ul>
+                                <li>Label tubes immediately at bedside</li>
+                                <li>Transport promptly (some tests time-sensitive)</li>
+                                <li>Room temperature unless specified otherwise</li>
+                                <li>Avoid haemolysis, clots, insufficient volume</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="other-applications">
+                    <h5>🫁 Non-Blood Fluid Applications</h5>
+                    <p>These bottles can also be used for other body fluids:</p>
+                    <ul>
+                        <li><strong>Purple:</strong> Cell count (pleural, ascitic, CSF)</li>
+                        <li><strong>Yellow:</strong> Electrolytes, albumin, LDH</li>
+                        <li><strong>Grey:</strong> Glucose levels</li>
+                        <li><strong>Blood culture bottles:</strong> Fluid cultures</li>
+                    </ul>
+                    <p><em>Always specify fluid type and anatomical source on request forms!</em></p>
+                </div>
+
+                <div class="abg-section">
+                    <h5>🫁 Arterial Blood Gas (ABG) Syringes</h5>
+                    <div class="abg-info">
+                        <p><strong>Contains:</strong> Heparin to prevent clotting</p>
+                        <p><strong>Uses:</strong> Oxygenation, acid-base balance, electrolytes (K+), lactate</p>
+                        <p><strong>Key Points:</strong></p>
+                        <ul>
+                            <li>Expel heparin through needle before sampling</li>
+                            <li>Self-filling syringes preferred (pressure-driven)</li>
+                            <li>More challenging and uncomfortable than venous sampling</li>
+                            <li><strong>Must reach lab within 10 minutes</strong> - becomes denatured</li>
+                            <li>Results available within minutes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     // Clinical Guidelines Functions  
