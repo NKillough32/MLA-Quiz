@@ -1771,6 +1771,7 @@ class MLAQuizApp {
                 console.log(`✅ Stored ${storedCount}/${imageKeys.length} images in IndexedDB`);
                 
                 // Store quiz metadata with flag indicating images are in IndexedDB
+                // Minimal metadata only — avoid pushing full objects into uploadedQuizzes which may grow large
                 const quizMeta = {
                     name: quizData.name,
                     storageKey,
@@ -1782,21 +1783,26 @@ class MLAQuizApp {
                     imageKeys: imageKeys, // Store keys for reference
                     dataStored: 'indexeddb'
                 };
-                
+
+                // Add metadata to uploadedQuizzes (small footprint)
                 uploadedQuizzes.push(quizMeta);
-                
-                // Store only questions in localStorage (much smaller)
-                const questionsOnly = {
+
+                // Store full quiz object under its own storageKey
+                const fullQuiz = {
                     questions: quizData.questions,
-                    images: quizData.images // Keep references but actual data is in IndexedDB
+                    images: quizData.images, // actual image data is also in IndexedDB
+                    name: quizData.name,
+                    total_questions: quizData.total_questions,
+                    isUploaded: true,
+                    uploadTimestamp: quizData.uploadTimestamp
                 };
-                
+
                 try {
-                    localStorage.setItem(storageKey, JSON.stringify(questionsOnly));
+                    localStorage.setItem(storageKey, JSON.stringify(fullQuiz));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
-                    console.log('✅ Successfully stored quiz using IndexedDB for images');
+                    console.log('✅ Successfully stored quiz using IndexedDB for images (metadata saved separately)');
                 } catch (storageError) {
-                    console.error('❌ Failed to store quiz metadata:', storageError);
+                    console.error('❌ Failed to store quiz metadata or full quiz:', storageError);
                     throw storageError;
                 }
                 
@@ -1814,45 +1820,66 @@ class MLAQuizApp {
                     dataStored: 'split' // Flag to indicate split storage
                 };
                 
+                // Store only metadata in uploadedQuizzes
                 uploadedQuizzes.push(quizMeta);
-                
-                // Store questions and images separately
+
+                // Attempt to store full data under storageKey; fall back to questions-only if quota
                 const questionsData = {
                     questions: quizData.questions,
                     images: quizData.images
                 };
-                
-                // Try to store the full data
+
                 try {
                     localStorage.setItem(storageKey, JSON.stringify(questionsData));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
-                    console.log('🔍 STORAGE DEBUG - Successfully stored quiz using split storage');
+                    console.log('🔍 STORAGE DEBUG - Successfully stored quiz using split storage (full data under storageKey)');
                 } catch (quotaError) {
-                    console.log('🔍 STORAGE DEBUG - Still too large, removing images');
-                    
+                    console.log('🔍 STORAGE DEBUG - Still too large, removing images to save space');
+
                     // If still too large, store without images
                     const questionsOnly = {
                         questions: quizData.questions,
                         images: {} // Empty images to save space
                     };
-                    
-                    localStorage.setItem(storageKey, JSON.stringify(questionsOnly));
-                    quizMeta.imagesRemoved = true;
-                    localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
-                    
-                    // Show user warning about images
-                    this.showError('Quiz uploaded successfully, but images were not stored due to browser storage limits. Questions will work but images may not display.');
+
+                    try {
+                        localStorage.setItem(storageKey, JSON.stringify(questionsOnly));
+                        quizMeta.imagesRemoved = true;
+                        localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+                        // Show user warning about images
+                        this.showError('Quiz uploaded successfully, but images were not stored due to browser storage limits. Questions will work but images may not display.');
+                    } catch (err) {
+                        console.error('🔍 STORAGE ERROR - Failed to store even questionsOnly:', err);
+                        throw err;
+                    }
                 }
             } else {
-                // Small enough to store normally. Attach storageKey to the stored object
-                const storedQuiz = {
+                // Small enough to store normally. Store minimal metadata list and full quiz under storageKey
+                const quizMetaSmall = {
+                    name: quizData.name,
+                    storageKey,
+                    total_questions: quizData.total_questions,
+                    isUploaded: true,
+                    uploadTimestamp: quizData.uploadTimestamp,
+                    hasImages: Object.keys(quizData.images || {}).length > 0,
+                    dataStored: 'normal'
+                };
+
+                uploadedQuizzes.push(quizMetaSmall);
+
+                const fullQuiz = {
                     ...quizData,
                     storageKey
                 };
-                uploadedQuizzes.push(storedQuiz);
-                localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
-                localStorage.setItem(storageKey, JSON.stringify(storedQuiz));
-                console.log('🔍 STORAGE DEBUG - Successfully stored quiz normally');
+
+                try {
+                    localStorage.setItem(storageKey, JSON.stringify(fullQuiz));
+                    localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+                    console.log('🔍 STORAGE DEBUG - Successfully stored quiz normally under storageKey');
+                } catch (err) {
+                    console.error('🔍 STORAGE ERROR - Failed to write full quiz to localStorage:', err);
+                    throw err;
+                }
             }
             
             console.log('🔍 STORAGE DEBUG - Total uploaded quizzes stored:', uploadedQuizzes.length);
@@ -1893,29 +1920,37 @@ class MLAQuizApp {
         const reconstructedQuizzes = [];
         
         for (const quiz of quizzes) {
+            // If this entry already contains full quiz data (older format), accept it
+            if (quiz.questions && Array.isArray(quiz.questions)) {
+                reconstructedQuizzes.push(quiz);
+                continue;
+            }
+
             // Prefer storageKey in metadata; fall back to sanitized name
             const storageKey = quiz.storageKey || `quiz_${this.sanitizeStorageKey(quiz.name)}`;
 
             if (quiz.dataStored === 'indexeddb' && quiz.imagesInIndexedDB) {
                 console.log('📱 Reconstructing quiz from IndexedDB:', quiz.name, 'storageKey:', storageKey);
                 try {
-                    // Get questions from localStorage using storageKey
-                    const quizData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+                    // Try to load the full quiz object from storageKey
+                    const storedFull = JSON.parse(localStorage.getItem(storageKey) || 'null');
 
-                    // Get images from IndexedDB
+                    // Get images from IndexedDB (may be empty on desktop)
                     const imagesFromDB = await this.getAllImagesForQuiz(quiz.name);
 
                     console.log(`✅ Retrieved ${Object.keys(imagesFromDB).length} images from IndexedDB for ${quiz.name}`);
 
-                    reconstructedQuizzes.push({
-                        ...quiz,
+                    const questions = storedFull && Array.isArray(storedFull.questions) ? storedFull.questions : (storedFull?.questions || []);
+                    const images = {
+                        ...(storedFull && storedFull.images ? storedFull.images : {}),
+                        ...imagesFromDB
+                    };
+
+                    reconstructedQuizzes.push(Object.assign({}, quiz, {
                         storageKey,
-                        questions: quizData.questions || [],
-                        images: {
-                            ...quizData.images, // Keep references
-                            ...imagesFromDB // Merge actual image data from IndexedDB
-                        }
-                    });
+                        questions,
+                        images
+                    }));
                 } catch (error) {
                     console.error('❌ Failed to reconstruct quiz from IndexedDB:', quiz.name, error);
                     reconstructedQuizzes.push(quiz); // Return metadata only
@@ -1924,12 +1959,11 @@ class MLAQuizApp {
                 console.log('🔍 STORAGE DEBUG - Reconstructing split storage quiz:', quiz.name, 'storageKey:', storageKey);
                 try {
                     const quizData = JSON.parse(localStorage.getItem(storageKey) || '{}');
-                    reconstructedQuizzes.push({
-                        ...quiz,
+                    reconstructedQuizzes.push(Object.assign({}, quiz, {
                         storageKey,
                         questions: quizData.questions || [],
                         images: quizData.images || {}
-                    });
+                    }));
                 } catch (error) {
                     console.error('🔍 STORAGE ERROR - Failed to reconstruct quiz:', quiz.name, error);
                     reconstructedQuizzes.push(quiz); // Return metadata only
