@@ -1486,6 +1486,15 @@ class MLAQuizApp {
         } else {
             backBtn.style.display = 'block';
         }
+        // Track page view for analytics (if analytics wrapper is loaded)
+        try {
+            if (window.MLAAnalytics && typeof window.MLAAnalytics.pageView === 'function') {
+                window.MLAAnalytics.pageView(window.location.pathname + '#' + title, title);
+            }
+        } catch (e) {
+            // Swallow analytics errors to avoid impacting app
+            console.debug('Analytics pageView error:', e);
+        }
     }
     
     goBack() {
