@@ -1740,8 +1740,19 @@ class MLAQuizApp {
             console.log('🔍 STORAGE DEBUG - Images size:', Math.round(imagesSize / 1024), 'KB');
             console.log('🔍 STORAGE DEBUG - Questions size:', Math.round(questionsSize / 1024), 'KB');
             
+            // Derive a safe storage key for this quiz
+            const storageKey = `quiz_${this.sanitizeStorageKey(quizData.name)}`;
+
             // On mobile with large images, use IndexedDB
-            if (isMobile && this.db && imagesSize > 500 * 1024) { // > 500KB of images
+            if (isMobile && imagesSize > 500 * 1024) { // > 500KB of images
+                // Ensure IndexedDB is initialised (await if necessary)
+                if (!this.db) {
+                    try {
+                        await this.initIndexedDB();
+                    } catch (e) {
+                        console.warn('IndexedDB init failed during storeUploadedQuiz:', e);
+                    }
+                }
                 console.log('📱 Mobile device with large images - using IndexedDB for image storage');
                 
                 // Store images in IndexedDB
@@ -1762,6 +1773,7 @@ class MLAQuizApp {
                 // Store quiz metadata with flag indicating images are in IndexedDB
                 const quizMeta = {
                     name: quizData.name,
+                    storageKey,
                     total_questions: quizData.total_questions,
                     isUploaded: true,
                     uploadTimestamp: quizData.uploadTimestamp,
@@ -1780,7 +1792,7 @@ class MLAQuizApp {
                 };
                 
                 try {
-                    localStorage.setItem(`quiz_${quizData.name}`, JSON.stringify(questionsOnly));
+                    localStorage.setItem(storageKey, JSON.stringify(questionsOnly));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
                     console.log('✅ Successfully stored quiz using IndexedDB for images');
                 } catch (storageError) {
@@ -1794,6 +1806,7 @@ class MLAQuizApp {
                 // Store quiz metadata separately
                 const quizMeta = {
                     name: quizData.name,
+                    storageKey,
                     total_questions: quizData.total_questions,
                     isUploaded: true,
                     uploadTimestamp: quizData.uploadTimestamp,
@@ -1811,7 +1824,7 @@ class MLAQuizApp {
                 
                 // Try to store the full data
                 try {
-                    localStorage.setItem(`quiz_${quizData.name}`, JSON.stringify(questionsData));
+                    localStorage.setItem(storageKey, JSON.stringify(questionsData));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
                     console.log('🔍 STORAGE DEBUG - Successfully stored quiz using split storage');
                 } catch (quotaError) {
@@ -1823,7 +1836,7 @@ class MLAQuizApp {
                         images: {} // Empty images to save space
                     };
                     
-                    localStorage.setItem(`quiz_${quizData.name}`, JSON.stringify(questionsOnly));
+                    localStorage.setItem(storageKey, JSON.stringify(questionsOnly));
                     quizMeta.imagesRemoved = true;
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
                     
@@ -1831,9 +1844,14 @@ class MLAQuizApp {
                     this.showError('Quiz uploaded successfully, but images were not stored due to browser storage limits. Questions will work but images may not display.');
                 }
             } else {
-                // Small enough to store normally
-                uploadedQuizzes.push(quizData);
+                // Small enough to store normally. Attach storageKey to the stored object
+                const storedQuiz = {
+                    ...quizData,
+                    storageKey
+                };
+                uploadedQuizzes.push(storedQuiz);
                 localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
+                localStorage.setItem(storageKey, JSON.stringify(storedQuiz));
                 console.log('🔍 STORAGE DEBUG - Successfully stored quiz normally');
             }
             
@@ -1875,19 +1893,23 @@ class MLAQuizApp {
         const reconstructedQuizzes = [];
         
         for (const quiz of quizzes) {
+            // Prefer storageKey in metadata; fall back to sanitized name
+            const storageKey = quiz.storageKey || `quiz_${this.sanitizeStorageKey(quiz.name)}`;
+
             if (quiz.dataStored === 'indexeddb' && quiz.imagesInIndexedDB) {
-                console.log('📱 Reconstructing quiz from IndexedDB:', quiz.name);
+                console.log('📱 Reconstructing quiz from IndexedDB:', quiz.name, 'storageKey:', storageKey);
                 try {
-                    // Get questions from localStorage
-                    const quizData = JSON.parse(localStorage.getItem(`quiz_${quiz.name}`) || '{}');
-                    
+                    // Get questions from localStorage using storageKey
+                    const quizData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+
                     // Get images from IndexedDB
                     const imagesFromDB = await this.getAllImagesForQuiz(quiz.name);
-                    
+
                     console.log(`✅ Retrieved ${Object.keys(imagesFromDB).length} images from IndexedDB for ${quiz.name}`);
-                    
+
                     reconstructedQuizzes.push({
                         ...quiz,
+                        storageKey,
                         questions: quizData.questions || [],
                         images: {
                             ...quizData.images, // Keep references
@@ -1899,11 +1921,12 @@ class MLAQuizApp {
                     reconstructedQuizzes.push(quiz); // Return metadata only
                 }
             } else if (quiz.dataStored === 'split') {
-                console.log('🔍 STORAGE DEBUG - Reconstructing split storage quiz:', quiz.name);
+                console.log('🔍 STORAGE DEBUG - Reconstructing split storage quiz:', quiz.name, 'storageKey:', storageKey);
                 try {
-                    const quizData = JSON.parse(localStorage.getItem(`quiz_${quiz.name}`) || '{}');
+                    const quizData = JSON.parse(localStorage.getItem(storageKey) || '{}');
                     reconstructedQuizzes.push({
                         ...quiz,
+                        storageKey,
                         questions: quizData.questions || [],
                         images: quizData.images || {}
                     });
@@ -1912,7 +1935,18 @@ class MLAQuizApp {
                     reconstructedQuizzes.push(quiz); // Return metadata only
                 }
             } else {
-                reconstructedQuizzes.push(quiz);
+                // For normally stored quizzes, try to read the full object from storageKey if present
+                try {
+                    const stored = JSON.parse(localStorage.getItem(storageKey) || 'null');
+                    if (stored) {
+                        reconstructedQuizzes.push(stored);
+                    } else {
+                        reconstructedQuizzes.push(quiz);
+                    }
+                } catch (error) {
+                    console.error('🔍 STORAGE ERROR - Failed to read stored quiz for', quiz.name, error);
+                    reconstructedQuizzes.push(quiz);
+                }
             }
         }
         
@@ -1931,6 +1965,13 @@ class MLAQuizApp {
             return allImages[refKey] || imageData; // Return actual data or original if not found
         }
         return imageData;
+    }
+
+    // Create a safe storage key for localStorage / IndexedDB keys
+    sanitizeStorageKey(name) {
+        if (!name) return 'quiz_unknown';
+        // Replace path separators and other problematic characters with underscore
+        return name.toString().trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-\.]/g, '_').substring(0, 120);
     }
     
     // Format investigations with proper line breaks
