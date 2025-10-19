@@ -2142,6 +2142,9 @@ class MLAQuizApp {
     // Study report generation methods
     generateStudyReport() {
         const reportData = this.calculateReportData();
+        // Read toggle to decide whether to include explanations
+        const includeExplanationsEl = document.getElementById('include-explanations-toggle');
+        const includeExplanations = includeExplanationsEl ? includeExplanationsEl.checked : true;
         
         // Check if there's any data to report
         if (reportData.totalQuestions === 0) {
@@ -2149,7 +2152,7 @@ class MLAQuizApp {
             return;
         }
         
-        const reportHTML = this.generateReportHTML(reportData);
+    const reportHTML = this.generateReportHTML(reportData, includeExplanations);
         
         // Create a printable window
         const printWindow = window.open('', '_blank');
@@ -2306,6 +2309,22 @@ class MLAQuizApp {
             questionsAnswered: this.sessionStats.questionsAnswered,
             date: new Date().toLocaleDateString(),
             incorrectQuestionsList: this.getIncorrectQuestions(),
+            answeredQuestionsList: (function(){
+                const answered = [];
+                Object.keys(this.submittedAnswers).forEach(questionId => {
+                    const question = this.questions.find(q => q.id == questionId);
+                    if (question) {
+                        const questionIndex = this.questions.findIndex(q => q.id == questionId);
+                        answered.push({
+                            index: questionIndex,
+                            question: question,
+                            yourAnswer: this.submittedAnswers[questionId],
+                            correctAnswer: question.correct_answer
+                        });
+                    }
+                }, this);
+                return answered;
+            }).call(this),
             timePerQuestion: this.questionTimes
         };
     }
@@ -2333,7 +2352,7 @@ class MLAQuizApp {
         return cleanText;
     }
 
-    generateReportHTML(data) {
+    generateReportHTML(data, includeExplanations = true) {
         const isPartialReport = data.totalQuestions < (this.questions?.length || 0);
         const totalQuizQuestions = this.questions?.length || data.totalQuestions;
         
@@ -2412,7 +2431,7 @@ class MLAQuizApp {
                                 <p><strong>Your Answer:</strong> Option ${String.fromCharCode(65 + q.yourAnswer)} - ${this.cleanTextForPDF(q.question.options[q.yourAnswer] || 'N/A')}</p>
                                 <p><strong>Correct Answer:</strong> Option ${String.fromCharCode(65 + q.correctAnswer)} - ${this.cleanTextForPDF(q.question.options[q.correctAnswer] || 'N/A')}</p>
                             </div>
-                            ${q.question.explanation ? `
+                            ${includeExplanations && q.question.explanation ? `
                                 <div class="explanation-section">
                                     <strong>Explanation:</strong>
                                     <div class="explanation-text">${this.cleanTextForPDF(q.question.explanation)}</div>
@@ -2423,6 +2442,36 @@ class MLAQuizApp {
                     '<p>🎉 Great job! No incorrect answers to review so far.</p>'
                 }
                 ${isPartialReport ? '<p><em>Note: Only showing answered questions. Continue the quiz for complete analysis.</em></p>' : ''}
+            </div>
+
+            <div class="answered-questions">
+                <h3>📝 Answered Questions & Explanations</h3>
+                ${includeExplanations && data.answeredQuestionsList.length > 0 ? data.answeredQuestionsList.map(q => `
+                    <div class="question-text">
+                        <strong>Question ${q.index + 1}:</strong>
+                        <div style="margin-top:8px;">${this.cleanTextForPDF(q.question.prompt || q.question.scenario || '')}</div>
+                    </div>
+                    ${q.question.options ? `
+                        <div class="question-options">
+                            <strong>Options:</strong>
+                            <ol type="A">
+                                ${q.question.options.map((option, idx) => `
+                                    <li class="${idx === q.yourAnswer ? 'your-answer' : ''} ${idx === q.correctAnswer ? 'correct-answer' : ''}">${this.cleanTextForPDF(option)}</li>
+                                `).join('')}
+                            </ol>
+                        </div>
+                    ` : ''}
+                    <div class="answer-analysis">
+                        <p><strong>Your Answer:</strong> ${q.yourAnswer != null ? 'Option ' + String.fromCharCode(65 + q.yourAnswer) + ' - ' + this.cleanTextForPDF(q.question.options[q.yourAnswer] || 'N/A') : 'N/A'}</p>
+                        <p><strong>Correct Answer:</strong> ${q.correctAnswer != null ? 'Option ' + String.fromCharCode(65 + q.correctAnswer) + ' - ' + this.cleanTextForPDF(q.question.options[q.correctAnswer] || 'N/A') : 'N/A'}</p>
+                    </div>
+                    ${includeExplanations && q.question.explanation ? `
+                        <div class="explanation-section">
+                            <strong>Explanation:</strong>
+                            <div class="explanation-text">${this.cleanTextForPDF(q.question.explanation)}</div>
+                        </div>
+                    ` : ''}
+                `).join('') : '<p>No answered questions available.</p>'}
             </div>
         `;
     }
@@ -6898,9 +6947,10 @@ class MLAQuizApp {
         
         const container = document.getElementById('drug-reference-container');
         container.innerHTML = `
-            <div class="search-container">
-                <input type="text" id="drug-search" placeholder="Search medications..." class="tool-search">
-                <button id="drug-search-btn">🔍</button>
+            <div class="search-container" style="display:flex;gap:8px;align-items:center;">
+                <input type="text" id="drug-search" placeholder="Search medications..." class="tool-search" style="flex:1;">
+                <button id="drug-search-btn" title="Search">🔍</button>
+                <button id="drug-voice-btn" title="Voice search" aria-label="Voice search" style="font-size:16px;padding:8px;border-radius:6px;">🎤</button>
             </div>
             <div id="drug-search-results"></div>
             <div class="drug-categories">
@@ -6921,8 +6971,34 @@ class MLAQuizApp {
         
         const searchInput = document.getElementById('drug-search');
         const searchBtn = document.getElementById('drug-search-btn');
+        const voiceBtn = document.getElementById('drug-voice-btn');
+
+        // Normal text input search
         searchInput.addEventListener('input', () => this.searchDrugs(drugDatabase));
         searchBtn.addEventListener('click', () => this.searchDrugs(drugDatabase));
+
+        // Voice search toggle
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // If browser doesn't support SpeechRecognition, show helpful message
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    const resultsContainer = document.getElementById('drug-search-results');
+                    if (resultsContainer) {
+                        resultsContainer.innerHTML = '<div class="no-results">Voice search not supported in this browser. Try Chrome/Edge on desktop or Android. iOS Safari has limited support.</div>';
+                    }
+                    return;
+                }
+
+                // Toggle recognition
+                if (this.drugRecognition && this.drugRecognition.active) {
+                    this.stopDrugVoiceRecognition();
+                } else {
+                    this.startDrugVoiceRecognition();
+                }
+            });
+        }
         this.drugDatabase = drugDatabase;
         this.showDrugCategory('alphabetical');
     }
@@ -6956,6 +7032,77 @@ class MLAQuizApp {
                 <div class="drug-class">${drugDatabase[drug].class}</div>
             </button>
         `).join('');
+    }
+
+    // Voice recognition for drug search
+    startDrugVoiceRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return;
+
+        // If an existing instance exists, stop it first
+        if (this.drugRecognition) {
+            try { this.drugRecognition.abort(); } catch (e) {}
+            this.drugRecognition = null;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        const searchInput = document.getElementById('drug-search');
+        const resultsContainer = document.getElementById('drug-search-results');
+        const voiceBtn = document.getElementById('drug-voice-btn');
+
+        recognition.onstart = () => {
+            recognition.active = true;
+            this.drugRecognition = recognition;
+            if (voiceBtn) voiceBtn.classList.add('active');
+            if (resultsContainer) resultsContainer.innerHTML = '<div class="loading-message">🎤 Listening... Speak the drug name clearly.</div>';
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript || '';
+            if (searchInput) {
+                searchInput.value = transcript;
+                // Trigger search immediately
+                this.searchDrugs(this.drugDatabase);
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.warn('Speech recognition error', event.error);
+            if (resultsContainer) resultsContainer.innerHTML = '<div class="no-results">Voice recognition error: ' + (event.error || 'unknown') + '</div>';
+        };
+
+        recognition.onend = () => {
+            recognition.active = false;
+            if (voiceBtn) voiceBtn.classList.remove('active');
+            // keep last result displayed; if search input is short, clear listening message
+            if (resultsContainer && (!searchInput || (searchInput && searchInput.value.length < 2))) {
+                // leave as-is or clear
+            }
+            this.drugRecognition = null;
+        };
+
+        try {
+            recognition.start();
+        } catch (e) {
+            console.warn('Failed to start speech recognition', e);
+            if (resultsContainer) resultsContainer.innerHTML = '<div class="no-results">Failed to start voice recognition.</div>';
+        }
+    }
+
+    stopDrugVoiceRecognition() {
+        if (this.drugRecognition) {
+            try {
+                this.drugRecognition.onend = null;
+                this.drugRecognition.stop();
+            } catch (e) {}
+            const voiceBtn = document.getElementById('drug-voice-btn');
+            if (voiceBtn) voiceBtn.classList.remove('active');
+            this.drugRecognition = null;
+        }
     }
     
     showDrugCategory(category) {

@@ -762,6 +762,27 @@
             border-bottom-color: #007AFF;
             background: rgba(0, 122, 255, 0.1);
         }
+
+        /* Drug search input and voice button */
+        .tool-search {
+            padding: 10px 12px;
+            border: 1px solid #e5e5ef;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        #drug-voice-btn {
+            background: #fff;
+            border: 1px solid #e5e5ef;
+            cursor: pointer;
+        }
+
+        #drug-voice-btn.active {
+            background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
+            color: #fff;
+            border-color: #004bb5;
+            box-shadow: 0 4px 12px rgba(0,122,255,0.25);
+        }
         
         [data-theme="dark"] .tools-navigation {
             background: var(--bg-tertiary);
@@ -4873,6 +4894,10 @@
                 </div>
                 <div class="card-content">
                     <button class="btn" id="retryBtn">Take Quiz Again</button>
+                    <label style="display:inline-flex;align-items:center;gap:8px;margin-right:12px;">
+                        <input type="checkbox" id="include-explanations-toggle" checked>
+                        <span style="font-size:14px;">Include explanations</span>
+                    </label>
                     <button class="btn" id="generate-report-btn" style="background-color: #34c759; margin-top: 10px;">📊 Generate Study Report</button>
                     <button class="btn btn-secondary" id="homeBtn">Back to Quizzes</button>
                 </div>
