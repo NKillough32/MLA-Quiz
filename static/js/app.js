@@ -7027,10 +7027,11 @@ class MLAQuizApp {
         matches.sort((a, b) => drugDatabase[a].name.localeCompare(drugDatabase[b].name));
         
         resultsContainer.innerHTML = matches.map(drug => `
-            <button class="drug-card" onclick="console.log('💊 Drug search result clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
+            <div class="drug-card" onclick="console.log('💊 Drug search result clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
                 <div class="drug-name">${drugDatabase[drug].name}</div>
                 <div class="drug-class">${drugDatabase[drug].class}</div>
-            </button>
+                <button class="speak-name-btn" onclick="event.stopPropagation(); window.quizApp.speakDrugName(this.dataset.name);" data-name="${drugDatabase[drug].name.replace(/\"/g, '&quot;')}">🔊</button>
+            </div>
         `).join('');
     }
 
@@ -7102,6 +7103,32 @@ class MLAQuizApp {
             const voiceBtn = document.getElementById('drug-voice-btn');
             if (voiceBtn) voiceBtn.classList.remove('active');
             this.drugRecognition = null;
+        }
+    }
+
+    // Text-to-Speech: read drug name aloud
+    speakDrugName(name) {
+        if (!name) return;
+        try {
+            const synth = window.speechSynthesis;
+            if (!synth) {
+                alert('Text-to-speech not supported in this browser. Try Chrome/Edge.');
+                return;
+            }
+
+            // Cancel any existing utterances
+            synth.cancel();
+
+            const utter = new SpeechSynthesisUtterance(name);
+            // Try to pick an English voice (prefer en-US or en-GB)
+            const voices = synth.getVoices();
+            let chosen = voices.find(v => /en[-_]?us/i.test(v.lang)) || voices.find(v => /en[-_]?gb/i.test(v.lang)) || voices[0];
+            if (chosen) utter.voice = chosen;
+            utter.rate = 0.95; // slightly slower for clarity
+            utter.pitch = 1;
+            synth.speak(utter);
+        } catch (e) {
+            console.warn('TTS error', e);
         }
     }
     
@@ -7263,7 +7290,10 @@ class MLAQuizApp {
         container.innerHTML = `
             <button class="back-btn" onclick="window.quizApp.loadDrugReference(); event.stopPropagation();">← Back to Drug List</button>
             <div class="drug-detail">
-                <h3>${drug.name}</h3>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <h3 style="margin:0;">${drug.name}</h3>
+                    <button class="speak-name-btn" onclick="event.stopPropagation(); window.quizApp.speakDrugName('${(drug.name || '').replace(/\"/g, '&quot;')}');">🔊 Read name</button>
+                </div>
                 <div class="drug-info">
                     <div class="info-section">
                         <h4>🏷️ Classification</h4>
