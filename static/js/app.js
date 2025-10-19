@@ -518,6 +518,18 @@ class MLAQuizApp {
         this.renderCurrentQuestion();
         this.updateProgress();
         this.buildQuestionList(); // Build the question list in the sidebar
+        // Analytics: quiz_start
+        try {
+            if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                window.MLAAnalytics.event('quiz_start', {
+                    name: this.quizName || null,
+                    selected_length: this.selectedQuizLength || null,
+                    question_count: (this.questions && this.questions.length) || 0
+                });
+            }
+        } catch (e) {
+            console.debug('Analytics quiz_start error:', e);
+        }
     }
     
     renderCurrentQuestion() {
@@ -1400,6 +1412,20 @@ class MLAQuizApp {
                 
                 console.log('📊 Local score calculated:', score);
                 this.showResults(score, results);
+                // Analytics: quiz_finish (local)
+                try {
+                    if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                        window.MLAAnalytics.event('quiz_finish', {
+                            name: this.quizName || null,
+                            score: score.percentage,
+                            correct: score.correct,
+                            total: score.total,
+                            method: 'local'
+                        });
+                    }
+                } catch (e) {
+                    console.debug('Analytics quiz_finish (local) error:', e);
+                }
                 
             } else {
                 // For server quizzes, submit to API
@@ -1420,6 +1446,20 @@ class MLAQuizApp {
                 
                 if (data.success) {
                     this.showResults(data.score, data.results);
+                    // Analytics: quiz_finish (server)
+                    try {
+                        if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                            window.MLAAnalytics.event('quiz_finish', {
+                                name: this.quizName || null,
+                                score: data.score.percentage,
+                                correct: data.score.correct,
+                                total: data.score.total,
+                                method: 'server'
+                            });
+                        }
+                    } catch (e) {
+                        console.debug('Analytics quiz_finish (server) error:', e);
+                    }
                 } else {
                     this.showError('Failed to submit quiz: ' + data.error);
                 }
@@ -1801,6 +1841,18 @@ class MLAQuizApp {
                     localStorage.setItem(storageKey, JSON.stringify(fullQuiz));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
                     console.log('✅ Successfully stored quiz using IndexedDB for images (metadata saved separately)');
+                    try {
+                        if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                            window.MLAAnalytics.event('quiz_upload', {
+                                name: quizData.name,
+                                total_questions: quizData.total_questions,
+                                images: imageKeys.length,
+                                storage: 'indexeddb'
+                            });
+                        }
+                    } catch (e) {
+                        console.debug('Analytics quiz_upload (indexeddb) error:', e);
+                    }
                 } catch (storageError) {
                     console.error('❌ Failed to store quiz metadata or full quiz:', storageError);
                     throw storageError;
@@ -1833,6 +1885,18 @@ class MLAQuizApp {
                     localStorage.setItem(storageKey, JSON.stringify(questionsData));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
                     console.log('🔍 STORAGE DEBUG - Successfully stored quiz using split storage (full data under storageKey)');
+                    try {
+                        if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                            window.MLAAnalytics.event('quiz_upload', {
+                                name: quizData.name,
+                                total_questions: quizData.total_questions,
+                                images: Object.keys(quizData.images || {}).length,
+                                storage: 'split'
+                            });
+                        }
+                    } catch (e) {
+                        console.debug('Analytics quiz_upload (split) error:', e);
+                    }
                 } catch (quotaError) {
                     console.log('🔍 STORAGE DEBUG - Still too large, removing images to save space');
 
@@ -1876,6 +1940,18 @@ class MLAQuizApp {
                     localStorage.setItem(storageKey, JSON.stringify(fullQuiz));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
                     console.log('🔍 STORAGE DEBUG - Successfully stored quiz normally under storageKey');
+                try {
+                    if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                        window.MLAAnalytics.event('quiz_upload', {
+                            name: quizData.name,
+                            total_questions: quizData.total_questions,
+                            images: Object.keys(quizData.images || {}).length,
+                            storage: 'normal'
+                        });
+                    }
+                } catch (e) {
+                    console.debug('Analytics quiz_upload (normal) error:', e);
+                }
                 } catch (err) {
                     console.error('🔍 STORAGE ERROR - Failed to write full quiz to localStorage:', err);
                     throw err;
@@ -1898,6 +1974,18 @@ class MLAQuizApp {
             
             console.log('🔍 STORAGE DEBUG - Stored quiz in temporary memory storage');
             this.showError('Quiz uploaded successfully but could not be saved permanently. It will be available until you refresh the page.');
+            try {
+                if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                    window.MLAAnalytics.event('quiz_upload', {
+                        name: quizData.name,
+                        total_questions: quizData.total_questions,
+                        images: Object.keys(quizData.images || {}).length,
+                        storage: 'memory_fallback'
+                    });
+                }
+            } catch (e) {
+                console.debug('Analytics quiz_upload (memory_fallback) error:', e);
+            }
         }
     }
     
