@@ -4765,19 +4765,23 @@
                             📁 Choose Quiz Files
                         </button>
                         <button class="btn btn-secondary" id="clearUploaded" style="margin-bottom: 8px; background: #ff3b30;" onclick="if(confirm('Clear all uploaded quizzes? This will free up browser storage space.')) { 
-                            // Clear localStorage
-                            const uploadedQuizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
-                            uploadedQuizzes.forEach(quiz => {
-                                if (quiz.dataStored === 'split') {
-                                    localStorage.removeItem('quiz_' + quiz.name);
-                                }
-                            });
-                            localStorage.removeItem('uploadedQuizzes'); 
-                            // Clear temporary storage
-                            if (window.tempUploadedQuizzes) {
-                                window.tempUploadedQuizzes = [];
+                            // Call the robust clear function from app.js
+                            if (window.quizApp && typeof window.quizApp.clearAllUploaded === 'function') {
+                                window.quizApp.clearAllUploaded().then(() => {
+                                    console.log('✅ All uploaded quiz data cleared successfully');
+                                    // Show confirmation and reload
+                                    alert('✅ All uploaded quizzes and their storage have been cleared.');
+                                    location.reload();
+                                }).catch(err => {
+                                    console.error('❌ Error during clear:', err);
+                                    alert('❌ Error clearing quizzes. Check console for details.');
+                                });
+                            } else {
+                                console.warn('⚠️ quizApp not available, falling back to basic clear');
+                                localStorage.removeItem('uploadedQuizzes');
+                                if (window.tempUploadedQuizzes) window.tempUploadedQuizzes = [];
+                                location.reload();
                             }
-                            location.reload(); 
                         }">
                             🗑️ Clear Uploaded
                         </button>

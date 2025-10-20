@@ -2095,6 +2095,101 @@ class MLAQuizApp {
         // Replace path separators and other problematic characters with underscore
         return name.toString().trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-\.]/g, '_').substring(0, 120);
     }
+
+    // Robust clear function that removes ALL uploaded quiz data
+    async clearAllUploaded() {
+        console.log('🗑️ CLEAR DEBUG - Starting comprehensive clear of all uploaded quizzes...');
+        try {
+            // Step 1: Get all quiz metadata from localStorage
+            const uploadedQuizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
+            console.log(`🗑️ CLEAR DEBUG - Found ${uploadedQuizzes.length} quizzes in metadata list`);
+
+            // Step 2: Remove per-quiz localStorage entries using sanitized keys
+            // This is critical: must match the exact key format used by storeUploadedQuiz
+            for (const quiz of uploadedQuizzes) {
+                const sanitizedKey = 'quiz_' + this.sanitizeStorageKey(quiz.name);
+                try {
+                    localStorage.removeItem(sanitizedKey);
+                    console.log(`🗑️ CLEAR DEBUG - Removed localStorage key: ${sanitizedKey}`);
+                } catch (e) {
+                    console.warn(`⚠️ CLEAR DEBUG - Could not remove ${sanitizedKey}:`, e);
+                }
+            }
+
+            // Step 3: Remove IndexedDB entries for all quizzes
+            if (this.db) {
+                console.log('🗑️ CLEAR DEBUG - Clearing IndexedDB images...');
+                try {
+                    const transaction = this.db.transaction(['images'], 'readwrite');
+                    const store = transaction.objectStore('images');
+                    
+                    // Delete all entries matching quiz names from metadata
+                    for (const quiz of uploadedQuizzes) {
+                        const quizName = quiz.name;
+                        // Delete entries with id pattern: `${quizName}_${imageKey}`
+                        const index = store.index('quizName');
+                        const range = IDBKeyRange.only(quizName);
+                        const deleteRequest = index.openCursor(range);
+
+                        deleteRequest.onsuccess = (event) => {
+                            const cursor = event.target.result;
+                            if (cursor) {
+                                cursor.delete();
+                                console.log(`🗑️ CLEAR DEBUG - Deleted IndexedDB entry: ${cursor.value.id}`);
+                                cursor.continue();
+                            }
+                        };
+
+                        deleteRequest.onerror = (event) => {
+                            console.warn('⚠️ CLEAR DEBUG - IndexedDB delete error:', event.target.error);
+                        };
+                    }
+
+                    console.log('🗑️ CLEAR DEBUG - IndexedDB images cleared');
+                } catch (e) {
+                    console.warn('⚠️ CLEAR DEBUG - IndexedDB clear failed:', e);
+                }
+            } else {
+                console.log('ℹ️ CLEAR DEBUG - No IndexedDB available (desktop or unavailable)');
+            }
+
+            // Step 4: Remove the uploadedQuizzes metadata list
+            try {
+                localStorage.removeItem('uploadedQuizzes');
+                console.log('🗑️ CLEAR DEBUG - Removed uploadedQuizzes metadata list');
+            } catch (e) {
+                console.warn('⚠️ CLEAR DEBUG - Could not remove uploadedQuizzes:', e);
+            }
+
+            // Step 5: Clear in-memory fallback storage
+            if (window.tempUploadedQuizzes) {
+                window.tempUploadedQuizzes = [];
+                console.log('🗑️ CLEAR DEBUG - Cleared window.tempUploadedQuizzes');
+            }
+
+            // Step 6: Verify deletion by checking what remains
+            const remainingKeys = Object.keys(localStorage).filter(k => k.startsWith('quiz_'));
+            if (remainingKeys.length > 0) {
+                console.warn(`⚠️ CLEAR DEBUG - WARNING: ${remainingKeys.length} orphaned quiz_* keys remain:`, remainingKeys);
+                // Optionally force-remove any remaining orphaned keys
+                remainingKeys.forEach(key => {
+                    try {
+                        localStorage.removeItem(key);
+                        console.log(`🗑️ CLEAR DEBUG - Force-removed orphaned key: ${key}`);
+                    } catch (e) {
+                        console.warn(`⚠️ CLEAR DEBUG - Could not force-remove ${key}:`, e);
+                    }
+                });
+            }
+
+            console.log('✅ CLEAR DEBUG - Clear operation completed successfully');
+            return true;
+
+        } catch (error) {
+            console.error('❌ CLEAR DEBUG - Unexpected error during clear:', error);
+            return false;
+        }
+    }
     
     // Format investigations with proper line breaks
     formatInvestigations(investigationsText) {
