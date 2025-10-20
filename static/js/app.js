@@ -564,6 +564,15 @@ class MLAQuizApp {
             scenarioText = scenarioText.trim() + '.';
         }
         console.log('Debug - Processed scenario:', scenarioText);
+
+        // If prompt is empty, treat the scenario as the effective prompt internally
+        // but avoid printing both scenario and prompt in the UI. We render the
+        // scenario separately only when both are present and different.
+        const hasScenario = !!(scenarioText && scenarioText.trim());
+        const hasPromptField = !!(question.prompt && question.prompt.trim());
+        const effectivePromptText = hasPromptField ? question.prompt.trim() : (hasScenario ? scenarioText.trim() : '');
+        const useScenarioAsPrompt = !hasPromptField && hasScenario; // internal use only
+        const showScenarioSeparately = hasScenario && hasPromptField && (scenarioText.trim() !== (question.prompt || '').trim());
     
         // Format investigations if present (with proper line breaks)
         let investigationsHtml = '';
@@ -586,9 +595,11 @@ class MLAQuizApp {
             console.log('⚠️ No separate image field found in question object');
         }
         
-        const promptText = question.prompt || question.question || question.title || '';
-        console.log('Debug - Prompt text found:', promptText);
-        console.log('Debug - Full question object:', question);
+    // Use effectivePromptText computed earlier which prefers explicit prompt
+    // but falls back to scenario when prompt is empty.
+    const promptText = effectivePromptText || '';
+    console.log('Debug - Prompt text found (effective):', promptText);
+    console.log('Debug - Full question object:', question);
         
         // Check if prompt is just an image reference (old format, should not happen with new parser)
         const isImageOnlyPrompt = promptText && promptText.match(/^\s*(\[IMAGE:\s*[^\]]+\]|!\[Image\]\([^)]+\))\s*$/);
@@ -689,8 +700,8 @@ class MLAQuizApp {
         // Assemble the final HTML with proper spacing
         let finalHtml = '';
     
-        // Add scenario/stem
-        if (scenarioText) {
+        // Add scenario/stem only when it should be shown separately.
+        if (showScenarioSeparately && scenarioText) {
             finalHtml += `<div class="q-text">${this.formatText(scenarioText)}</div>`;
         }
         
@@ -704,9 +715,13 @@ class MLAQuizApp {
             finalHtml += investigationsHtml;
         }
     
-        // Add question prompt (always present now, with minimal spacing)
-        if (questionPromptHtml) {
+        // Add question prompt (use effective prompt text). If we used the
+        // scenario as the prompt internally, questionPromptHtml may be empty;
+        // in that case render the effective prompt once.
+        if (questionPromptHtml && questionPromptHtml.trim() !== '<div class="prompt"></div>') {
             finalHtml += questionPromptHtml;
+        } else if (promptText) {
+            finalHtml += `<div class="prompt">${this.formatText(promptText)}</div>`;
         }
     
         // Add options (with minimal spacing)
