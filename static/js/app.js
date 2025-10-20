@@ -605,7 +605,8 @@ class MLAQuizApp {
                 questionPromptHtml = `<div class="prompt">${this.formatText(actualQuestion)}</div>`;
             } else {
                 // Fallback to default only if no other question text exists
-                questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
+                // Do not insert assumed prompt text; leave prompt container empty if no prompt provided
+                questionPromptHtml = `<div class="prompt"></div>`;
             }
         } else if (promptText && promptText.trim()) {
             // Check if prompt contains image references mixed with text
@@ -632,11 +633,13 @@ class MLAQuizApp {
                 questionPromptHtml = `<div class="prompt">${this.formatText(promptText)}</div>`;
             } else {
                 // Clean prompt is empty after removing images, use default
-                questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
+                // Do not insert assumed prompt text; leave prompt container empty if no prompt provided
+                questionPromptHtml = `<div class="prompt"></div>`;
             }
         } else {
             // If no prompt found, add a default question
-            questionPromptHtml = `<div class="prompt"><strong>What is the most likely diagnosis?</strong></div>`;
+            // Do not insert assumed prompt text; leave prompt container empty if no prompt provided
+            questionPromptHtml = `<div class="prompt"></div>`;
         }
         
         console.log('Debug - Image HTML:', imageHtml);
