@@ -274,7 +274,6 @@ class PWAQuizLoader:
             
             for line in lines:
                 line = line.strip()
-                # Match option patterns like "A) Option text" or "A. Option text"
                 option_match = re.match(r'^([A-Z])[.)]\s*(.*)', line)
                 if option_match:
                     letter, text = option_match.groups()
