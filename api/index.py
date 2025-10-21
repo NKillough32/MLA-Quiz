@@ -262,9 +262,25 @@ class PWAQuizLoader:
         answer_match = re.search(r'\*\*Ans(?:wer)?(?::\*\*|\*\*:|:\*\*|\*\*)\s*([A-Z])\.?', tail_content, re.IGNORECASE)
         answer_letter = answer_match.group(1).upper() if answer_match else None
         
-        # Convert letter to index (A=0, B=1, C=2, etc.)
-        correct_answer = ord(answer_letter) - ord('A') if answer_letter else None
-        
+        # Map detected answer letter to index. Prefer to match against extracted options
+        correct_answer = None
+        if answer_letter:
+            if options:
+                # Look for option starting with the same letter
+                letter_found = False
+                for idx, opt in enumerate(options):
+                    # opt may be labelled like 'A) text' or just 'text'
+                    m = re.match(r'^\(?([A-Z])\)?[\.)]\s*', opt)
+                    if m and m.group(1).upper() == answer_letter:
+                        correct_answer = idx
+                        letter_found = True
+                        break
+                if not letter_found:
+                    # Fallback: assume A=0 mapping
+                    correct_answer = ord(answer_letter) - ord('A')
+            else:
+                correct_answer = ord(answer_letter) - ord('A')
+
         logger.info(f"Answer detection: found pattern '{answer_match.group(0) if answer_match else 'None'}' -> letter={answer_letter}, index={correct_answer}")
         
         for part in parts[tail_start:]:
@@ -274,10 +290,12 @@ class PWAQuizLoader:
             
             for line in lines:
                 line = line.strip()
-                option_match = re.match(r'^([A-Z])[.)]\s*(.*)', line)
+                option_match = re.match(r'^\(?([A-Z])\)?[\.)]\s*(.*)', line)
                 if option_match:
                     letter, text = option_match.groups()
-                    current_options.append(f"{letter}) {text}")
+                    # Preserve labelled option for UI but keep cleaned text for internal matching
+                    labelled = f"{letter}) {text.strip()}"
+                    current_options.append(labelled)
                 
                 # Look for explanations using main.py format
                 elif line.startswith('Explanation:') or line.startswith('Answer:'):
@@ -401,6 +419,62 @@ class PWAQuizLoader:
             # Clean the prompt to only contain the question text
             prompt = '\n'.join(non_option_lines).strip()
             logger.info(f"Question {num}: Extracted {len(option_lines)} options from prompt section")
+
+        # Normalise option strings but PRESERVE the primary label (A, B, C...) so UI shows 'A) text'
+        cleaned_options = []
+        for opt in options:
+            if not isinstance(opt, str):
+                opt = str(opt)
+            text = opt.strip()
+            # Extract the primary label if present
+            label_match = re.match(r'^\(?([A-Z])\)?[\)\.]\s*(.*)', text)
+            if label_match:
+                label = label_match.group(1).upper()
+                remainder = label_match.group(2).strip()
+            else:
+                # No explicit label, leave label empty
+                label = None
+                remainder = text
+
+            # Iteratively strip any nested secondary markers (e.g. 'C. ' inside the text)
+            while True:
+                nested = re.match(r'^[\(\[]?([A-Z])[\)\.]\s*(.*)', remainder)
+                if nested:
+                    remainder = nested.group(2).strip()
+                    continue
+                nested2 = re.match(r'^([A-Z])\s*[\)\.]\s*(.*)', remainder)
+                if nested2:
+                    remainder = nested2.group(2).strip()
+                    continue
+                break
+
+            # Final cleanup of any stray leading markers
+            remainder = re.sub(r'^[A-Z][\)\.]\s*', '', remainder).strip()
+
+            if label:
+                cleaned = f"{label}) {remainder}"
+            else:
+                cleaned = remainder
+
+            cleaned_options.append(cleaned)
+
+        options = cleaned_options
+        logger.info(f"Question {num}: Cleaned options: {options}")
+
+        # Recompute correct_answer index by matching the detected answer_letter to option labels
+        if answer_letter:
+            mapped_index = None
+            for idx, opt in enumerate(options):
+                m = re.match(r'^\(?([A-Z])\)?[\)\.]\s*', opt)
+                if m and m.group(1).upper() == answer_letter:
+                    mapped_index = idx
+                    break
+            if mapped_index is not None:
+                correct_answer = mapped_index
+            else:
+                # fallback to alphabetical mapping
+                correct_answer = ord(answer_letter) - ord('A')
+            logger.info(f"Question {num}: Recomputed correct_answer from letter '{answer_letter}' -> index {correct_answer}")
 
         logger.info(f"Parsed question {num}: title='{title[:50] if len(title) > 50 else title}', prompt='{prompt[:80] if prompt else 'None'}', options={len(options)}, correct_answer={correct_answer}")
         if correct_answer is None and options:
