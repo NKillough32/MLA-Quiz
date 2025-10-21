@@ -689,7 +689,16 @@ class MLAQuizApp {
                     }
                 }
 
-                const cleanOption = option.replace(/^[A-E]\)\s*/, ''); // Remove letter prefix if present
+                // Remove any leading single-letter markers (e.g. 'A)', 'A.', '(A)', 'A) C.' etc.)
+                let cleanOption = option;
+                // Iteratively strip repeated leading markers so 'A) C. Text' -> 'Text'
+                while (/^[\(\[]?[A-Z][\)\.]\s*/i.test(cleanOption)) {
+                    cleanOption = cleanOption.replace(/^[\(\[]?[A-Z][\)\.]\s*/i, '').trim();
+                }
+                // Also strip a leading single-letter + dot (e.g. 'E. Text') if still present
+                while (/^[A-Z]\.\s*/i.test(cleanOption)) {
+                    cleanOption = cleanOption.replace(/^[A-Z]\.\s*/i, '').trim();
+                }
 
                 optionsHtml += `<label class="${optionClasses}"><input type="radio" name="question_${question.id}" value="${index}" ${isSelected ? 'checked' : ''}><div class="label"><span class="badge">${letter})</span> ${cleanOption}</div></label>`;
             });
