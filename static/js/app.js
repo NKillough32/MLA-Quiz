@@ -44,49 +44,6 @@ class MLAQuizApp {
         this.init();
     }
     
-    async initIndexedDB() {
-        try {
-            // Only use IndexedDB on mobile devices to avoid storage issues
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (!isMobile) {
-                console.log('📱 Desktop detected, using localStorage for images');
-                return;
-            }
-            
-            console.log('📱 Mobile detected, initializing IndexedDB for efficient image storage...');
-            
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open('MLAQuizDB', 1);
-                
-                request.onerror = () => {
-                    console.error('❌ IndexedDB failed to open:', request.error);
-                    resolve(); // Don't reject, just use localStorage fallback
-                };
-                
-                request.onsuccess = () => {
-                    this.db = request.result;
-                    console.log('✅ IndexedDB initialized successfully');
-                    resolve();
-                };
-                
-                request.onupgradeneeded = (event) => {
-                    const db = event.target.result;
-                    
-                    // Create object store for images
-                    if (!db.objectStoreNames.contains('images')) {
-                        const imageStore = db.createObjectStore('images', { keyPath: 'id' });
-                        imageStore.createIndex('quizName', 'quizName', { unique: false });
-                        console.log('✅ Created IndexedDB object stores');
-                    }
-                };
-            });
-        } catch (error) {
-            console.error('❌ IndexedDB initialization error:', error);
-            // Continue without IndexedDB - will use localStorage
-        }
-    }
-    
     async storeImageInDB(quizName, imageKey, imageData) {
         if (!this.db) {
             console.log('📦 IndexedDB not available, skipping image storage');
@@ -179,13 +136,8 @@ class MLAQuizApp {
         this.initializeFontSize();
         this.initializeQuizLength();
         this.initializeVibration();
-        // Add QRISK3 status indicator to navbar and try to load upstream QRISK3 library
-        this.addQRISKIndicator();
-        this.loadExternalQRISK().then((ok) => {
-            this.updateQRISKIndicator(!!ok);
-        }).catch(() => {
-            this.updateQRISKIndicator(false);
-        });
+        // QRISK3 loader is intentionally disabled; loader promise remains for compatibility
+        this.loadExternalQRISK().then(() => {/* loader resolved (disabled) */}).catch(() => {/* loader failed (disabled) */});
         console.log('🩺 About to initialize medical tools...');
         this.initializeMedicalTools();
         this.initializeInteractiveFeatures();
@@ -310,28 +262,16 @@ class MLAQuizApp {
     }
 
     async initializeQRISK3() {
-        await this.loadExternalQRISK();
-
-        if (window.qrisk3 && typeof window.qrisk3.calculateScore === 'function') {
-            this.qrisk3Available = true;
-            console.log('✅ QRISK3 ready');
-        } else {
-            console.warn('⚠️ QRISK3 not available – falling back');
-            this.qrisk3Available = false;
-        }
+        // QRISK3 intentionally disabled. Keep method for compatibility.
+        this.qrisk3Available = false;
+        console.log('⚠️ initializeQRISK3: QRISK3 integration is disabled');
+        return;
     }
 
     calculateQRISKScore(patientData) {
-        if (!this.qrisk3Available || !window.qrisk3) return null;
-
-        try {
-            const input = (typeof window.qrisk3.inputBuilder === 'function') ? window.qrisk3.inputBuilder(patientData) : patientData;
-            const result = window.qrisk3.calculateScore(input);
-            return result && (result.qrisk3_score || result.score || result.risk) ? (result.qrisk3_score || result.score || result.risk) : result;
-        } catch (e) {
-            console.error('QRISK3 calculation error:', e);
-            return null;
-        }
+        // QRISK3 disabled — always return null to force fallback behavior
+        console.warn('calculateQRISKScore called but QRISK3 integration is disabled');
+        return null;
     }
     
     bindEvents() {
@@ -3002,42 +2942,7 @@ class MLAQuizApp {
         }
     }
 
-    // QRISK3 status indicator in navbar
-    addQRISKIndicator() {
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            // Remove existing indicator if present
-            const existing = document.getElementById('qrisk-indicator');
-            if (existing) existing.remove();
-
-            const wrapper = document.createElement('div');
-            wrapper.id = 'qrisk-indicator';
-            wrapper.style.cssText = 'position: absolute; right: 16px; font-size: 13px; color: #007AFF; padding: 8px; cursor: default; z-index:1001;';
-            wrapper.title = 'QRISK3 status';
-            wrapper.textContent = 'QRISK3: Loading…';
-
-            navbar.appendChild(wrapper);
-            console.log('QRISK3 indicator added to navbar');
-        } else {
-            console.log('Navbar not found, retrying QRISK indicator in 100ms');
-            setTimeout(() => this.addQRISKIndicator(), 100);
-        }
-    }
-
-    updateQRISKIndicator(available) {
-        const el = document.getElementById('qrisk-indicator');
-        if (!el) return;
-
-        if (available) {
-            el.textContent = 'QRISK3: Available';
-            el.style.color = '#34c759'; // green
-            el.title = 'QRISK3 engine available';
-        } else {
-            el.textContent = 'QRISK3: Unavailable';
-            el.style.color = '#ff3b30'; // red
-            el.title = 'QRISK3 engine not available, using fallback';
-        }
-    }
+    // QRISK3 UI indicator removed. Loader remains disabled for compatibility.
     
     // Font size adjustment methods
     initializeFontSize() {
