@@ -2109,21 +2109,6 @@ const drugDatabase = {
                 clinicalPearls: 'Sublingual GTN for acute angina; remove patch at night to reduce tolerance. Avoid with PDE5 inhibitors',
                 indication: 'Acute angina, acute pulmonary oedema (IV), myocardial ischaemia'
             },
-            'metronidazole': {
-                // duplicate metronidazole entry removed — canonical entry retained earlier in file (mentions C.difficile guidance)
-                name: 'Metronidazole (consolidated)',
-                class: '',
-                mechanism: '',
-                dosing: '',
-                contraindications: '',
-                interactions: '',
-                monitoring: '',
-                pregnancy: '',
-                sideEffects: '',
-                pharmacokinetics: '',
-                clinicalPearls: '',
-                indication: ''
-            },
             'potassium-chloride': {
                 name: 'Potassium Chloride (KCl)',
                 class: 'Electrolyte replacement',
@@ -2825,20 +2810,6 @@ const drugDatabase = {
                 pharmacokinetics: 'Oral ≈ 70 % bioavailable; renal ± hepatic excretion; t½ ≈ 4 h',
                 clinicalPearls: 'Reserve for resistant infections; avoid in patients with history of tendon disorders or aortic aneurysm. Discontinue immediately if tendon pain, neuropathy, or mental disturbance.',
                 indication: 'Complicated UTI, severe GI/respiratory infections, Pseudomonal infections (per microbiology advice)'
-            },
-            'metronidazole': {
-                // duplicate metronidazole entry removed — canonical entry retained earlier in file (states not first-line for C.difficile)
-                name: 'Metronidazole (consolidated)',
-                class: '',
-                mechanism: '',
-                dosing: '',
-                contraindications: '',
-                interactions: '',
-                monitoring: '',
-                pregnancy: '',
-                sideEffects: '',
-                clinicalPearls: '',
-                indication: ''
             },
             'oxytocin': {
                 name: 'Oxytocin',
