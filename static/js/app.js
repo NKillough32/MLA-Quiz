@@ -2725,10 +2725,10 @@ class MLAQuizApp {
                                 <p><strong>Your Answer:</strong> Option ${String.fromCharCode(65 + q.yourAnswer)} - ${this.cleanTextForPDF(q.question.options[q.yourAnswer] || 'N/A')}</p>
                                 <p><strong>Correct Answer:</strong> Option ${String.fromCharCode(65 + q.correctAnswer)} - ${this.cleanTextForPDF(q.question.options[q.correctAnswer] || 'N/A')}</p>
                             </div>
-                            ${includeExplanations && q.question.explanation ? `
+                            ${includeExplanations && ((q.question.explanations && q.question.explanations.length) || q.question.explanation) ? `
                                 <div class="explanation-section">
                                     <strong>Explanation:</strong>
-                                    <div class="explanation-text">${this.cleanTextForPDF(q.question.explanation)}</div>
+                                    <div class="explanation-text">${this.cleanTextForPDF(Array.isArray(q.question.explanations) && q.question.explanations.length ? q.question.explanations.join('\n') : (q.question.explanation || ''))}</div>
                                 </div>
                             ` : ''}
                         </div>
@@ -2759,10 +2759,10 @@ class MLAQuizApp {
                         <p><strong>Your Answer:</strong> ${q.yourAnswer != null ? 'Option ' + String.fromCharCode(65 + q.yourAnswer) + ' - ' + this.cleanTextForPDF(q.question.options[q.yourAnswer] || 'N/A') : 'N/A'}</p>
                         <p><strong>Correct Answer:</strong> ${q.correctAnswer != null ? 'Option ' + String.fromCharCode(65 + q.correctAnswer) + ' - ' + this.cleanTextForPDF(q.question.options[q.correctAnswer] || 'N/A') : 'N/A'}</p>
                     </div>
-                    ${includeExplanations && q.question.explanation ? `
+                    ${includeExplanations && ((q.question.explanations && q.question.explanations.length) || q.question.explanation) ? `
                         <div class="explanation-section">
                             <strong>Explanation:</strong>
-                            <div class="explanation-text">${this.cleanTextForPDF(q.question.explanation)}</div>
+                            <div class="explanation-text">${this.cleanTextForPDF(Array.isArray(q.question.explanations) && q.question.explanations.length ? q.question.explanations.join('\n') : (q.question.explanation || ''))}</div>
                         </div>
                     ` : ''}
                 `).join('') : '<p>No answered questions available.</p>'}
