@@ -1273,6 +1273,15 @@ class MLAQuizApp {
                     console.log(`🔄 Orientation locked to ${lockOrientation}`);
                 } catch (lockErr) {
                     console.warn('🔄 Initial orientation.lock failed:', lockErr);
+                    // Surface the actual error to the user (helps debugging on mobile)
+                    try {
+                        const errName = lockErr && lockErr.name ? lockErr.name : 'Error';
+                        const errMsg = lockErr && lockErr.message ? lockErr.message : String(lockErr);
+                        this.showToast(`Orientation lock failed: ${errName}: ${errMsg}`);
+                    } catch (toastErr) {
+                        console.debug('Failed to show lockErr toast:', toastErr);
+                    }
+
                     // Some browsers require fullscreen or user gesture/secure context to lock.
                     // Attempt to request fullscreen and retry once.
                     try {
@@ -1291,6 +1300,15 @@ class MLAQuizApp {
                         }
                     } catch (fsErr) {
                         console.error('🔄 Failed to lock orientation even after fullscreen attempt:', fsErr);
+                        // Surface fullscreen attempt error as well
+                        try {
+                            const fsName = fsErr && fsErr.name ? fsErr.name : 'Error';
+                            const fsMsg = fsErr && fsErr.message ? fsErr.message : String(fsErr);
+                            this.showToast(`Fullscreen+lock failed: ${fsName}: ${fsMsg}`);
+                        } catch (toastErr2) {
+                            console.debug('Failed to show fsErr toast:', toastErr2);
+                        }
+
                         // Provide user-friendly guidance
                         this.showToast('Unable to lock orientation on this browser. Try installing as PWA or enabling fullscreen/auto-rotate in your device settings.');
                     }
@@ -1311,7 +1329,15 @@ class MLAQuizApp {
             
         } catch (error) {
             console.error('Error toggling rotation lock:', error);
-            this.showError('Unable to change rotation settings. This may not be supported on your device.');
+            try {
+                const name = error && error.name ? error.name : 'Error';
+                const msg = error && error.message ? error.message : String(error);
+                this.showError(`Unable to change rotation settings: ${name}: ${msg}`);
+                this.showToast(`${name}: ${msg}`);
+            } catch (e) {
+                // Fallback message if error formatting fails
+                this.showError('Unable to change rotation settings. This may not be supported on your device.');
+            }
         }
     }
     
