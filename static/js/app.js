@@ -1178,13 +1178,18 @@ class MLAQuizApp {
             const rotationBtn = document.createElement('button');
             rotationBtn.id = 'rotation-control-btn';
             rotationBtn.className = 'navbar-btn';
-            rotationBtn.style.cssText = 'position: fixed; right: 160px; top: 12px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001; user-select: none; height: 20px; display: flex; align-items: center; justify-content: center;';
+            rotationBtn.style.cssText = 'position: fixed; left: 80px; top: 12px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001; user-select: none; height: 20px; display: flex; align-items: center; justify-content: center;';
             rotationBtn.onclick = (event) => {
                 console.log('🔄 Rotation button clicked - event fired');
                 console.log('🔄 Event target:', event.target);
                 console.log('🔄 Event type:', event.type);
                 console.log('🔄 Button element:', rotationBtn);
                 console.log('🔄 Button style:', rotationBtn.style.cssText);
+                console.log('🔄 Screen Orientation API check:');
+                console.log('🔄 - screen.orientation exists:', 'orientation' in screen);
+                console.log('🔄 - screen.orientation.lock exists:', screen.orientation && 'lock' in screen.orientation);
+                console.log('🔄 - screen.orientation.unlock exists:', screen.orientation && 'unlock' in screen.orientation);
+                console.log('🔄 - Current orientation:', screen.orientation ? screen.orientation.type : 'N/A');
                 event.preventDefault();
                 event.stopPropagation();
                 console.log('🔄 Calling toggleRotationLock');
@@ -1231,6 +1236,8 @@ class MLAQuizApp {
     
     async toggleRotationLock() {
         console.log('🔄 toggleRotationLock called');
+        console.log('🔄 this.screenOrientationSupported:', this.screenOrientationSupported);
+        
         if (!this.screenOrientationSupported) {
             console.log('🔄 Screen Orientation API not supported');
             this.showError('Screen rotation control is not supported on this device.');
@@ -1244,6 +1251,7 @@ class MLAQuizApp {
             
             if (screen.orientation.type.includes('primary') || screen.orientation.type.includes('secondary')) {
                 // Currently locked, unlock it
+                console.log('🔄 Attempting to unlock orientation...');
                 await screen.orientation.unlock();
                 console.log('🔄 Orientation unlocked - auto rotation enabled');
                 
@@ -1258,6 +1266,7 @@ class MLAQuizApp {
             } else {
                 // Currently unlocked, lock to current orientation
                 const lockOrientation = currentOrientation === 'landscape' ? 'landscape' : 'portrait';
+                console.log(`🔄 Attempting to lock orientation to ${lockOrientation}...`);
                 await screen.orientation.lock(lockOrientation + '-primary');
                 console.log(`🔄 Orientation locked to ${lockOrientation}`);
                 
