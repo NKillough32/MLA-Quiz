@@ -175,6 +175,7 @@ class MLAQuizApp {
         this.initializeFontSize();
         this.initializeQuizLength();
         this.initializeVibration();
+        this.initializeOrientationDetection();
         // Try to load upstream QRISK3 library for accurate calculations
         this.loadExternalQRISK();
         console.log('🩺 About to initialize medical tools...');
@@ -1054,6 +1055,91 @@ class MLAQuizApp {
         // Add listeners for user interaction
         document.addEventListener('touchstart', enableVibrationOnInteraction, { once: true, passive: true });
         document.addEventListener('click', enableVibrationOnInteraction, { once: true });
+    }
+    
+    initializeOrientationDetection() {
+        console.log('📱 Initializing orientation detection...');
+        
+        // Store current orientation
+        this.currentOrientation = this.getCurrentOrientation();
+        console.log('📱 Initial orientation:', this.currentOrientation);
+        
+        // Listen for orientation changes
+        window.addEventListener('orientationchange', () => {
+            // Wait a bit for the orientation change to complete
+            setTimeout(() => {
+                const newOrientation = this.getCurrentOrientation();
+                console.log('📱 Orientation changed to:', newOrientation);
+                
+                // Update stored orientation
+                this.currentOrientation = newOrientation;
+                
+                // Handle orientation-specific adjustments
+                this.handleOrientationChange(newOrientation);
+            }, 100);
+        });
+        
+        // Also listen for resize events (covers some edge cases)
+        window.addEventListener('resize', () => {
+            // Debounce resize events
+            clearTimeout(this.resizeTimeout);
+            this.resizeTimeout = setTimeout(() => {
+                const newOrientation = this.getCurrentOrientation();
+                if (newOrientation !== this.currentOrientation) {
+                    console.log('📱 Orientation changed via resize to:', newOrientation);
+                    this.currentOrientation = newOrientation;
+                    this.handleOrientationChange(newOrientation);
+                }
+            }, 250);
+        });
+        
+        console.log('✅ Orientation detection initialized');
+    }
+    
+    getCurrentOrientation() {
+        // Check screen dimensions
+        const { width, height } = window.screen;
+        const { innerWidth, innerHeight } = window;
+        
+        // Use screen dimensions for more reliable detection
+        if (width > height) {
+            return 'landscape';
+        } else {
+            return 'portrait';
+        }
+    }
+    
+    handleOrientationChange(orientation) {
+        console.log('📱 Handling orientation change:', orientation);
+        
+        // Add orientation class to body for CSS targeting
+        document.body.classList.remove('orientation-portrait', 'orientation-landscape');
+        document.body.classList.add(`orientation-${orientation}`);
+        
+        // Adjust quiz layout for landscape mode
+        const quizScreen = document.getElementById('quizScreen');
+        if (quizScreen && quizScreen.style.display !== 'none') {
+            if (orientation === 'landscape') {
+                // In landscape, we might want to adjust the layout
+                console.log('📱 Landscape mode detected - quiz layout adjustments can be added here');
+                // For now, just log - future enhancements could adjust grid layouts
+            } else {
+                console.log('📱 Portrait mode detected - standard layout');
+            }
+        }
+        
+        // Analytics: orientation change
+        try {
+            if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                window.MLAAnalytics.event('orientation_change', {
+                    orientation: orientation,
+                    screen_width: window.screen.width,
+                    screen_height: window.screen.height
+                });
+            }
+        } catch (e) {
+            console.debug('Analytics orientation_change error:', e);
+        }
     }
     
     submitAnswer() {

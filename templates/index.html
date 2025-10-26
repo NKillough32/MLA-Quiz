@@ -123,6 +123,14 @@
             }
         }
 
+        @media (orientation: landscape) and (max-width: 1200px) {
+            .quiz-page {
+                grid-template-columns: 1fr var(--sidebar-w);
+                gap: 24px;
+                padding: 20px 16px;
+            }
+        }
+
         /* Cards */
         .card {
             background: #fff;
