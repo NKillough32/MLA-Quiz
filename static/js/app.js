@@ -1,4 +1,4 @@
-/**
+﻿/**
  * MLA Quiz PWA - Main JavaScript Application
  * Handles quiz interaction, API communication, and state management
  */
@@ -46,7 +46,7 @@ class MLAQuizApp {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (!isMobile) {
-                console.log('💻 Desktop detected, using localStorage for images');
+                console.log('📱 Desktop detected, using localStorage for images');
                 return;
             }
             
@@ -56,13 +56,13 @@ class MLAQuizApp {
                 const request = indexedDB.open('MLAQuizDB', 1);
                 
                 request.onerror = () => {
-                    console.error('? IndexedDB failed to open:', request.error);
+                    console.error('❌ IndexedDB failed to open:', request.error);
                     resolve(); // Don't reject, just use localStorage fallback
                 };
                 
                 request.onsuccess = () => {
                     this.db = request.result;
-                    console.log('? IndexedDB initialized successfully');
+                    console.log('✅ IndexedDB initialized successfully');
                     resolve();
                 };
                 
@@ -73,19 +73,19 @@ class MLAQuizApp {
                     if (!db.objectStoreNames.contains('images')) {
                         const imageStore = db.createObjectStore('images', { keyPath: 'id' });
                         imageStore.createIndex('quizName', 'quizName', { unique: false });
-                        console.log('? Created IndexedDB object stores');
+                        console.log('✅ Created IndexedDB object stores');
                     }
                 };
             });
         } catch (error) {
-            console.error('? IndexedDB initialization error:', error);
+            console.error('❌ IndexedDB initialization error:', error);
             // Continue without IndexedDB - will use localStorage
         }
     }
     
     async storeImageInDB(quizName, imageKey, imageData) {
         if (!this.db) {
-            console.log('❌ IndexedDB not available, skipping image storage');
+            console.log('📦 IndexedDB not available, skipping image storage');
             return false;
         }
         
@@ -102,10 +102,10 @@ class MLAQuizApp {
             };
             
             await store.put(data);
-            console.log(`? Stored image in IndexedDB: ${imageKey}`);
+            console.log(`✅ Stored image in IndexedDB: ${imageKey}`);
             return true;
         } catch (error) {
-            console.error('? Failed to store image in IndexedDB:', error);
+            console.error('❌ Failed to store image in IndexedDB:', error);
             return false;
         }
     }
@@ -123,7 +123,7 @@ class MLAQuizApp {
             return new Promise((resolve, reject) => {
                 request.onsuccess = () => {
                     if (request.result) {
-                        console.log(`? Retrieved image from IndexedDB: ${imageKey}`);
+                        console.log(`✅ Retrieved image from IndexedDB: ${imageKey}`);
                         resolve(request.result.imageData);
                     } else {
                         resolve(null);
@@ -132,7 +132,7 @@ class MLAQuizApp {
                 request.onerror = () => resolve(null);
             });
         } catch (error) {
-            console.error('? Failed to get image from IndexedDB:', error);
+            console.error('❌ Failed to get image from IndexedDB:', error);
             return null;
         }
     }
@@ -154,13 +154,13 @@ class MLAQuizApp {
                     request.result.forEach(item => {
                         images[item.imageKey] = item.imageData;
                     });
-                    console.log(`? Retrieved ${Object.keys(images).length} images from IndexedDB for ${quizName}`);
+                    console.log(`✅ Retrieved ${Object.keys(images).length} images from IndexedDB for ${quizName}`);
                     resolve(images);
                 };
                 request.onerror = () => resolve({});
             });
         } catch (error) {
-            console.error('? Failed to get images from IndexedDB:', error);
+            console.error('❌ Failed to get images from IndexedDB:', error);
             return {};
         }
     }
@@ -182,7 +182,7 @@ class MLAQuizApp {
         console.log('🩺 About to initialize medical tools...');
         this.initializeMedicalTools();
         this.initializeInteractiveFeatures();
-        console.log('? App initialization complete');
+        console.log('✅ App initialization complete');
     }
 
     loadExternalQRISK() {
@@ -206,21 +206,21 @@ class MLAQuizApp {
             }
 
             const url = urls[index];
-            console.log('📊 Attempting to load QRISK3 library from', url);
+            console.log('🔁 Attempting to load QRISK3 library from', url);
             const script = document.createElement('script');
             script.src = url;
             script.async = true;
             script.onload = () => {
                 // Some UMD builds attach to window.qrisk3 or module; try to normalize
                 if (window.qrisk3 && typeof window.qrisk3.calculateScore === 'function') {
-                    console.log('? Loaded QRISK3 library from', url);
+                    console.log('✅ Loaded QRISK3 library from', url);
                 } else if (window.qrisk && typeof window.qrisk.calculateScore === 'function') {
                     window.qrisk3 = window.qrisk; // normalize
-                    console.log('? Loaded QRISK3 library (normalized window.qrisk -> window.qrisk3) from', url);
+                    console.log('✅ Loaded QRISK3 library (normalized window.qrisk -> window.qrisk3) from', url);
                 } else if (window.calculateScore && window.inputBuilder) {
                     // Some builds might export globals directly
                     window.qrisk3 = { calculateScore: window.calculateScore, inputBuilder: window.inputBuilder };
-                    console.log('? Loaded QRISK3 globals from', url);
+                    console.log('✅ Loaded QRISK3 globals from', url);
                 } else {
                     console.log('⚠️ QRISK3 loaded from', url, 'but expected globals not found; trying next CDN');
                     // try next
@@ -228,7 +228,7 @@ class MLAQuizApp {
                 }
             };
             script.onerror = () => {
-                console.log('? Failed to load QRISK3 from', url, '- trying next');
+                console.log('❌ Failed to load QRISK3 from', url, '- trying next');
                 tryLoad(index + 1);
             };
             document.head.appendChild(script);
@@ -300,21 +300,21 @@ class MLAQuizApp {
     updateQuizLengthInfo() {
         const infoEl = document.getElementById('quiz-length-info');
         if (!infoEl) {
-            console.log('❌ Quiz length info element not found');
+            console.log('🎯 Quiz length info element not found');
             return;
         }
         
         let message = '';
         if (this.selectedQuizLength === 'all') {
-            message = '🎯 Selected: All available questions for comprehensive practice';
+            message = '📚 Selected: All available questions for comprehensive practice';
         } else if (this.selectedQuizLength === 100) {
             message = '🎯 Selected: 100 questions for standard test simulation';
         } else {
-            message = '🎯 Selected: 20 questions for quick practice session';
+            message = '📝 Selected: 20 questions for quick practice session';
         }
         
         infoEl.textContent = message;
-        console.log('📝 Updated quiz length info:', message);
+        console.log('🎯 Updated quiz length info:', message);
     }
     
     filterQuestionsByLength(questions) {
@@ -368,10 +368,10 @@ class MLAQuizApp {
             html += `
                 <div class="quiz-item uploaded-quiz" data-quiz-name="${quiz.name}" data-is-uploaded="true">
                     <div class="quiz-info">
-                        <h3 class="quiz-name">📚 ${quiz.name}</h3>
-                        <p class="quiz-details">Uploaded � ${quiz.total_questions} questions</p>
+                        <h3 class="quiz-name">📁 ${quiz.name}</h3>
+                        <p class="quiz-details">Uploaded • ${quiz.total_questions} questions</p>
                     </div>
-                    <span class="chevron">�</span>
+                    <span class="chevron">›</span>
                 </div>
             `;
         });
@@ -383,9 +383,9 @@ class MLAQuizApp {
                 <div class="quiz-item" data-quiz-name="${quiz.name}">
                     <div class="quiz-info">
                         <h3 class="quiz-name">${quiz.name}</h3>
-                        <p class="quiz-details">${sizeKB}KB � ${quiz.filename}</p>
+                        <p class="quiz-details">${sizeKB}KB • ${quiz.filename}</p>
                     </div>
-                    <span class="chevron">�</span>
+                    <span class="chevron">›</span>
                 </div>
             `;
         });
@@ -418,18 +418,18 @@ class MLAQuizApp {
                 
                 // Check if this is a split storage quiz that needs reconstruction
                 if (quiz.dataStored === 'split' && (!quiz.questions || quiz.questions.length === 0)) {
-                    console.log('📦 LOADING - Reconstructing split storage quiz');
+                    console.log('🔍 LOADING - Reconstructing split storage quiz');
                     try {
                         const quizData = JSON.parse(localStorage.getItem(`quiz_${quiz.name}`) || '{}');
                         if (quizData.questions && quizData.questions.length > 0) {
                             quiz.questions = quizData.questions;
                             quiz.images = quizData.images || {};
-                            console.log('✅ LOADING - Successfully reconstructed quiz with', quiz.questions.length, 'questions');
+                            console.log('🔍 LOADING - Successfully reconstructed quiz with', quiz.questions.length, 'questions');
                         } else {
                             throw new Error('No questions found in split storage');
                         }
                     } catch (error) {
-                        console.error('❌ LOADING ERROR - Failed to reconstruct quiz:', error);
+                        console.error('🔍 LOADING ERROR - Failed to reconstruct quiz:', error);
                         this.showError('Failed to load quiz data. Please re-upload the file.');
                         return;
                     }
@@ -454,8 +454,8 @@ class MLAQuizApp {
                     return;
                 }
                 
-                console.log('✅ LOADING - Successfully loaded uploaded quiz with', this.questions.length, 'questions');
-                console.log('🖼️ Images available:', Object.keys(quiz.images || {}).length);
+                console.log('🔍 LOADING - Successfully loaded uploaded quiz with', this.questions.length, 'questions');
+                console.log('📱 Images available:', Object.keys(quiz.images || {}).length);
                 if (quiz.imagesRemoved) {
                     this.showError('Note: Images were not stored due to browser limits. Questions will work but images may not display.');
                 }
@@ -590,11 +590,11 @@ class MLAQuizApp {
         
         // Check if there's a separate image field (new parser format)
         if (question.image && question.image.trim()) {
-            console.log('? NEW FORMAT - Found separate image field:', question.image);
+            console.log('✅ NEW FORMAT - Found separate image field:', question.image);
             imageHtml = this.formatText(question.image);
-            console.log('? NEW FORMAT - Generated imageHtml:', imageHtml.substring(0, 200));
+            console.log('✅ NEW FORMAT - Generated imageHtml:', imageHtml.substring(0, 200));
         } else {
-            console.log('🖼️ No separate image field found in question object');
+            console.log('⚠️ No separate image field found in question object');
         }
         
     // Use effectivePromptText computed earlier which prefers explicit prompt
@@ -898,11 +898,11 @@ class MLAQuizApp {
     
     performHapticFeedback(type = 'light') {
         // Enhanced haptic feedback with Android support and opt-in checking
-        console.log('📳 Attempting haptic feedback:', type);
+        console.log('🔊 Attempting haptic feedback:', type);
         
         // Check if user has opted in to haptics
         if (!this.hapticsOptIn) {
-            console.log('📵 Haptics disabled - user has not opted in');
+            console.log('🔊 Haptics disabled - user has not opted in');
             this.performVisualFeedback(type);
             return false;
         }
@@ -910,7 +910,7 @@ class MLAQuizApp {
         // Check for prefers-reduced-motion system preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReducedMotion) {
-            console.log('♿ Haptics disabled - user prefers reduced motion');
+            console.log('🔊 Haptics disabled - user prefers reduced motion');
             this.performVisualFeedback(type);
             return false;
         }
@@ -942,13 +942,13 @@ class MLAQuizApp {
                 // Add small delay to ensure cancellation, then trigger new vibration
                 setTimeout(() => {
                     const success = navigator.vibrate(pattern);
-                    console.log('📳 Vibration triggered:', pattern, 'Success:', success);
+                    console.log('🔊 Vibration triggered:', pattern, 'Success:', success);
                     
                     // Fallback for some Android browsers that return false but still work
                     if (!success && pattern.length === 1) {
                         // Try with single number instead of array
                         navigator.vibrate(pattern[0]);
-                        console.log('🔄 Fallback vibration attempt:', pattern[0]);
+                        console.log('🔊 Fallback vibration attempt:', pattern[0]);
                     }
                 }, 10);
                 
@@ -957,11 +957,11 @@ class MLAQuizApp {
                 
                 return true;
             } catch (error) {
-                console.log('❌ Vibration failed:', error);
+                console.log('🔊 Vibration failed:', error);
                 this.vibrationSupported = false; // Disable future attempts
             }
         } else {
-            console.log('❌ Vibration API not supported or disabled');
+            console.log('🔊 Vibration API not supported or disabled');
         }
         
         // Check for iOS haptic feedback
@@ -970,10 +970,10 @@ class MLAQuizApp {
                 // iOS doesn't support vibrate() but we can try other methods
                 if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
                     // This is iOS 13+ with permission-based haptics
-                    console.log('📱 iOS haptic feedback attempted');
+                    console.log('🔊 iOS haptic feedback attempted');
                 }
             } catch (error) {
-                console.log('❌ iOS haptic feedback failed:', error);
+                console.log('🔊 iOS haptic feedback failed:', error);
             }
         }
         
@@ -993,14 +993,14 @@ class MLAQuizApp {
                 document.documentElement.style.setProperty('--haptic-flash', '0');
             }, duration);
             
-            console.log('👁️ Visual feedback applied:', type);
+            console.log('🔊 Visual feedback applied:', type);
         } catch (error) {
-            console.log('❌ Visual feedback failed:', error);
+            console.log('🔊 Visual feedback failed:', error);
         }
     }
     
     initializeVibration() {
-        console.log('📳 Initializing vibration support...');
+        console.log('🔊 Initializing vibration support...');
         
         // Read haptics preference from localStorage (default: false - opt-in required)
         const savedPreference = localStorage.getItem('hapticsEnabled');
@@ -1010,24 +1010,24 @@ class MLAQuizApp {
         // Check for prefers-reduced-motion
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReducedMotion) {
-            console.log('♿ User prefers reduced motion - haptics will be disabled');
+            console.log('⚠️ User prefers reduced motion - haptics will be disabled');
         }
         
         // Test vibration availability
         if ('vibrate' in navigator) {
-            console.log('? Vibration API available');
+            console.log('✅ Vibration API available');
             
             // Test with a very short vibration to ensure it works
             try {
                 navigator.vibrate(1);
-                console.log('? Vibration test successful');
+                console.log('✅ Vibration test successful');
                 this.vibrationSupported = true;
             } catch (error) {
-                console.log('❌ Vibration test failed:', error);
+                console.log('⚠️ Vibration test failed:', error);
                 this.vibrationSupported = false;
             }
         } else {
-            console.log('❌ Vibration API not available');
+            console.log('⚠️ Vibration API not available');
             this.vibrationSupported = false;
         }
         
@@ -1043,12 +1043,12 @@ class MLAQuizApp {
                 try {
                     navigator.vibrate(1);
                     this.vibrationEnabled = true;
-                    console.log('? Vibration enabled after user interaction');
+                    console.log('✅ Vibration enabled after user interaction');
                     // Remove listener after first successful interaction
                     document.removeEventListener('touchstart', enableVibrationOnInteraction);
                     document.removeEventListener('click', enableVibrationOnInteraction);
                 } catch (error) {
-                    console.log('❌ Failed to enable vibration:', error);
+                    console.log('⚠️ Failed to enable vibration:', error);
                 }
             }
         };
@@ -1070,7 +1070,7 @@ class MLAQuizApp {
             // Wait a bit for the orientation change to complete
             setTimeout(() => {
                 const newOrientation = this.getCurrentOrientation();
-                console.log('🔄 Orientation changed to:', newOrientation);
+                console.log('📱 Orientation changed to:', newOrientation);
                 
                 // Update stored orientation
                 this.currentOrientation = newOrientation;
@@ -1087,14 +1087,14 @@ class MLAQuizApp {
             this.resizeTimeout = setTimeout(() => {
                 const newOrientation = this.getCurrentOrientation();
                 if (newOrientation !== this.currentOrientation) {
-                    console.log('🔄 Orientation changed via resize to:', newOrientation);
+                    console.log('📱 Orientation changed via resize to:', newOrientation);
                     this.currentOrientation = newOrientation;
                     this.handleOrientationChange(newOrientation);
                 }
             }, 250);
         });
         
-        console.log('? Orientation detection initialized');
+        console.log('✅ Orientation detection initialized');
     }
     
     getCurrentOrientation() {
@@ -1111,7 +1111,7 @@ class MLAQuizApp {
     }
     
     handleOrientationChange(orientation) {
-        console.log('🔄 Handling orientation change:', orientation);
+        console.log('📱 Handling orientation change:', orientation);
         
         // Add orientation class to body for CSS targeting
         document.body.classList.remove('orientation-portrait', 'orientation-landscape');
@@ -1150,18 +1150,18 @@ class MLAQuizApp {
         // Check if Screen Orientation API is supported
         if ('orientation' in screen && 'lock' in screen.orientation && 'unlock' in screen.orientation) {
             this.screenOrientationSupported = true;
-            console.log('📱 Screen Orientation API supported');
+            console.log('🔄 Screen Orientation API supported');
             
             // Add rotation control button to navbar
             this.addRotationControlButton();
             
             // Listen for orientation lock changes
             screen.orientation.addEventListener('change', (event) => {
-                console.log('🔒 Orientation lock changed:', event.target.type);
+                console.log('🔄 Orientation lock changed:', event.target.type);
                 this.updateRotationButtonState();
             });
         } else {
-            console.log('❌ Screen Orientation API not supported');
+            console.log('🔄 Screen Orientation API not supported');
             this.screenOrientationSupported = false;
         }
     }
@@ -1178,43 +1178,19 @@ class MLAQuizApp {
             const rotationBtn = document.createElement('button');
             rotationBtn.id = 'rotation-control-btn';
             rotationBtn.className = 'navbar-btn';
-            rotationBtn.style.cssText = 'position: fixed; left: 80px; top: 12px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001; user-select: none; height: 20px; display: flex; align-items: center; justify-content: center;';
+            rotationBtn.style.cssText = 'position: absolute; right: 110px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
+            rotationBtn.onclick = () => this.toggleRotationLock();
+            rotationBtn.title = 'Control screen rotation';
             
-            // Simple test function that doesn't rely on Screen Orientation API
-            rotationBtn.onclick = (event) => {
-                this.toggleRotationLock();
-                
-                // Show current screen info
-                const screenInfo = {
-                    width: screen.width,
-                    height: screen.height,
-                    availWidth: screen.availWidth,
-                    availHeight: screen.availHeight,
-                    orientation: screen.orientation ? screen.orientation.type : 'Not supported',
-                    angle: screen.orientation ? screen.orientation.angle : 'Not supported'
-                };
-                
-                console.log('? Screen Info:', screenInfo);
-                
-                // Try basic orientation detection
-                const isLandscape = window.innerWidth > window.innerHeight;
-                console.log('? Window dimensions:', window.innerWidth + 'x' + window.innerHeight);
-                console.log('? Detected orientation:', isLandscape ? 'landscape' : 'portrait');
-                
-                event.preventDefault();
-                return false;
-            };
-            
-        rotationBtn.title = 'Toggle rotation lock';
-        rotationBtn.textContent = '🔄 Auto';
-        
-        document.body.appendChild(rotationBtn);
+            navbar.appendChild(rotationBtn);
+            this.updateRotationButtonState();
+            console.log('🔄 Rotation control button added to navbar');
         } else {
-            console.log('? Navbar not found, retrying...');
+            console.log('🔄 Navbar not found, retrying in 100ms');
             setTimeout(() => this.addRotationControlButton(), 100);
         }
     }
-
+    
     updateRotationButtonState() {
         const rotationBtn = document.getElementById('rotation-control-btn');
         if (!rotationBtn || !this.screenOrientationSupported) return;
@@ -1243,23 +1219,16 @@ class MLAQuizApp {
     }
     
     async toggleRotationLock() {
-        console.log('🔄 toggleRotationLock called');
-        console.log('📱 this.screenOrientationSupported:', this.screenOrientationSupported);
-        
         if (!this.screenOrientationSupported) {
-            console.log('❌ Screen Orientation API not supported');
             this.showError('Screen rotation control is not supported on this device.');
             return;
         }
         
         try {
-            console.log('📱 Current orientation type:', screen.orientation.type);
             const currentOrientation = this.getCurrentOrientation();
-            console.log('🔄 Current orientation (detected):', currentOrientation);
             
             if (screen.orientation.type.includes('primary') || screen.orientation.type.includes('secondary')) {
                 // Currently locked, unlock it
-                console.log('🔓 Attempting to unlock orientation...');
                 await screen.orientation.unlock();
                 console.log('🔄 Orientation unlocked - auto rotation enabled');
                 
@@ -1274,9 +1243,8 @@ class MLAQuizApp {
             } else {
                 // Currently unlocked, lock to current orientation
                 const lockOrientation = currentOrientation === 'landscape' ? 'landscape' : 'portrait';
-                console.log(`🔒 Attempting to lock orientation to ${lockOrientation}...`);
                 await screen.orientation.lock(lockOrientation + '-primary');
-                console.log(`🔒 Orientation locked to ${lockOrientation}`);
+                console.log(`🔄 Orientation locked to ${lockOrientation}`);
                 
                 // Analytics: rotation locked
                 try {
@@ -1386,7 +1354,7 @@ class MLAQuizApp {
             const isCurrent = index === this.currentQuestionIndex;
             const isFlagged = this.flaggedQuestions.has(question.id);
             
-            let statusIcon = '○'; // Not answered
+            let statusIcon = '⚪'; // Not answered
             if (isAnswered) {
                 statusIcon = isCorrect ? '✅' : '❌';
             }
@@ -1678,7 +1646,7 @@ class MLAQuizApp {
                     percentage: Math.round((correctCount / this.questions.length) * 100)
                 };
                 
-                console.log('✅ Local score calculated:', score);
+                console.log('📊 Local score calculated:', score);
                 this.showResults(score, results);
                 // Analytics: quiz_finish (local)
                 try {
@@ -1697,7 +1665,7 @@ class MLAQuizApp {
                 
             } else {
                 // For server quizzes, submit to API
-                console.log('📤 Submitting to server for scoring');
+                console.log('📊 Submitting to server for scoring');
                 
                 const response = await fetch('/api/quiz/submit', {
                     method: 'POST',
@@ -1896,7 +1864,7 @@ class MLAQuizApp {
                 color: white;
                 font-size: 18px;
                 cursor: pointer;
-            ">�</button>
+            ">×</button>
         `;
         
         document.body.appendChild(alert);
@@ -1935,7 +1903,7 @@ class MLAQuizApp {
     }
     
     async uploadSingleFile(file) {
-        console.log('📤 UPLOAD START - File details:', {
+        console.log('🔄 UPLOAD START - File details:', {
             name: file.name,
             size: file.size,
             type: file.type,
@@ -1946,42 +1914,42 @@ class MLAQuizApp {
             const formData = new FormData();
             formData.append('quiz_file', file);
             
-            console.log('📤 UPLOAD - Sending request to /api/upload-quiz');
+            console.log('🔄 UPLOAD - Sending request to /api/upload-quiz');
             
             const response = await fetch('/api/upload-quiz', {
                 method: 'POST',
                 body: formData
             });
             
-            console.log('📤 UPLOAD DEBUG - Response received:', response.status, response.statusText);
+            console.log('🔍 UPLOAD DEBUG - Response received:', response.status, response.statusText);
             
             // Check if response is ok
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('? UPLOAD ERROR - Response not ok:', response.status, errorText);
-                console.error('? UPLOAD ERROR - Full response text:', errorText);
+                console.error('❌ UPLOAD ERROR - Response not ok:', response.status, errorText);
+                console.error('❌ UPLOAD ERROR - Full response text:', errorText);
                 
                 // Try to parse as JSON, fallback to text
                 try {
                     const errorData = JSON.parse(errorText);
-                    console.error('? UPLOAD ERROR - Parsed error:', errorData);
+                    console.error('❌ UPLOAD ERROR - Parsed error:', errorData);
                     throw new Error(errorData.error || `Server error: ${response.status}`);
                 } catch (parseError) {
-                    console.error('? UPLOAD ERROR - Could not parse as JSON:', parseError);
+                    console.error('❌ UPLOAD ERROR - Could not parse as JSON:', parseError);
                     throw new Error(`Server error: ${response.status} - ${errorText.substring(0, 200)}`);
                 }
             }
             
-            console.log('📤 UPLOAD DEBUG - Raw response status:', response.status);
-            console.log('📤 UPLOAD DEBUG - Response headers:', [...response.headers.entries()]);
+            console.log('🔍 UPLOAD DEBUG - Raw response status:', response.status);
+            console.log('🔍 UPLOAD DEBUG - Response headers:', [...response.headers.entries()]);
             
             const data = await response.json();
-            console.log('📤 UPLOAD DEBUG - Full server response:', data);
-            console.log('📤 UPLOAD DEBUG - Response keys:', Object.keys(data));
-            console.log('📤 UPLOAD DEBUG - Questions received:', data.questions?.length);
-            console.log('📤 UPLOAD DEBUG - Images in response:', data.images);
-            console.log('📤 UPLOAD DEBUG - Images keys:', data.images ? Object.keys(data.images) : 'No images property');
-            console.log('📤 UPLOAD DEBUG - First question sample:', data.questions?.[0]);
+            console.log('🔍 UPLOAD DEBUG - Full server response:', data);
+            console.log('🔍 UPLOAD DEBUG - Response keys:', Object.keys(data));
+            console.log('🔍 UPLOAD DEBUG - Questions received:', data.questions?.length);
+            console.log('🔍 UPLOAD DEBUG - Images in response:', data.images);
+            console.log('🔍 UPLOAD DEBUG - Images keys:', data.images ? Object.keys(data.images) : 'No images property');
+            console.log('🔍 UPLOAD DEBUG - First question sample:', data.questions?.[0]);
             
             if (!data.success) {
                 throw new Error(data.error || 'Upload failed');
@@ -1997,14 +1965,14 @@ class MLAQuizApp {
                 uploadTimestamp: Date.now()
             };
             
-            console.log('📤 UPLOAD DEBUG - Quiz data to store:', quizData);
+            console.log('🔍 UPLOAD DEBUG - Quiz data to store:', quizData);
             
             // Count actual images vs references for debugging
             const actualImages = Object.values(quizData.images).filter(v => typeof v === 'string' && v.startsWith('data:')).length;
             const references = Object.values(quizData.images).filter(v => typeof v === 'string' && v.startsWith('__REF__:')).length;
             const totalKeys = Object.keys(quizData.images || {}).length;
             
-            console.log('📤 UPLOAD DEBUG - Image storage breakdown:', {
+            console.log('🔍 UPLOAD DEBUG - Image storage breakdown:', {
                 totalKeys,
                 actualImages,
                 references,
@@ -2023,8 +1991,8 @@ class MLAQuizApp {
     }
     
     async storeUploadedQuiz(quizData) {
-        console.log('💾 STORAGE DEBUG - Storing quiz:', quizData.name);
-        console.log('💾 STORAGE DEBUG - Quiz has images:', Object.keys(quizData.images || {}));
+        console.log('🔍 STORAGE DEBUG - Storing quiz:', quizData.name);
+        console.log('🔍 STORAGE DEBUG - Quiz has images:', Object.keys(quizData.images || {}));
         
         try {
             // Store in localStorage for persistence
@@ -2042,11 +2010,11 @@ class MLAQuizApp {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const maxLocalStorageSize = isMobile ? 2.5 * 1024 * 1024 : 5 * 1024 * 1024;
             
-            console.log('💾 STORAGE DEBUG - Device type:', isMobile ? 'Mobile' : 'Desktop');
-            console.log('💾 STORAGE DEBUG - Storage limit:', Math.round(maxLocalStorageSize / 1024), 'KB');
-            console.log('💾 STORAGE DEBUG - Total size:', Math.round(dataSize / 1024), 'KB');
-            console.log('💾 STORAGE DEBUG - Images size:', Math.round(imagesSize / 1024), 'KB');
-            console.log('💾 STORAGE DEBUG - Questions size:', Math.round(questionsSize / 1024), 'KB');
+            console.log('🔍 STORAGE DEBUG - Device type:', isMobile ? 'Mobile' : 'Desktop');
+            console.log('🔍 STORAGE DEBUG - Storage limit:', Math.round(maxLocalStorageSize / 1024), 'KB');
+            console.log('🔍 STORAGE DEBUG - Total size:', Math.round(dataSize / 1024), 'KB');
+            console.log('🔍 STORAGE DEBUG - Images size:', Math.round(imagesSize / 1024), 'KB');
+            console.log('🔍 STORAGE DEBUG - Questions size:', Math.round(questionsSize / 1024), 'KB');
             
             // Derive a safe storage key for this quiz
             const storageKey = `quiz_${this.sanitizeStorageKey(quizData.name)}`;
@@ -2076,10 +2044,10 @@ class MLAQuizApp {
                     }
                 }
                 
-                console.log(`? Stored ${storedCount}/${imageKeys.length} images in IndexedDB`);
+                console.log(`✅ Stored ${storedCount}/${imageKeys.length} images in IndexedDB`);
                 
                 // Store quiz metadata with flag indicating images are in IndexedDB
-                // Minimal metadata only � avoid pushing full objects into uploadedQuizzes which may grow large
+                // Minimal metadata only — avoid pushing full objects into uploadedQuizzes which may grow large
                 const quizMeta = {
                     name: quizData.name,
                     storageKey,
@@ -2108,7 +2076,7 @@ class MLAQuizApp {
                 try {
                     localStorage.setItem(storageKey, JSON.stringify(fullQuiz));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
-                    console.log('? Successfully stored quiz using IndexedDB for images (metadata saved separately)');
+                    console.log('✅ Successfully stored quiz using IndexedDB for images (metadata saved separately)');
                     try {
                         if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
                             window.MLAAnalytics.event('quiz_upload', {
@@ -2122,12 +2090,12 @@ class MLAQuizApp {
                         console.debug('Analytics quiz_upload (indexeddb) error:', e);
                     }
                 } catch (storageError) {
-                    console.error('? Failed to store quiz metadata or full quiz:', storageError);
+                    console.error('❌ Failed to store quiz metadata or full quiz:', storageError);
                     throw storageError;
                 }
                 
             } else if (dataSize > maxLocalStorageSize) {
-                console.log('💾 STORAGE DEBUG - Quiz too large for localStorage, using split storage');
+                console.log('🔍 STORAGE DEBUG - Quiz too large for localStorage, using split storage');
                 
                 // Store quiz metadata separately
                 const quizMeta = {
@@ -2152,7 +2120,7 @@ class MLAQuizApp {
                 try {
                     localStorage.setItem(storageKey, JSON.stringify(questionsData));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
-                    console.log('💾 STORAGE DEBUG - Successfully stored quiz using split storage (full data under storageKey)');
+                    console.log('🔍 STORAGE DEBUG - Successfully stored quiz using split storage (full data under storageKey)');
                     try {
                         if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
                             window.MLAAnalytics.event('quiz_upload', {
@@ -2166,7 +2134,7 @@ class MLAQuizApp {
                         console.debug('Analytics quiz_upload (split) error:', e);
                     }
                 } catch (quotaError) {
-                    console.log('💾 STORAGE DEBUG - Still too large, removing images to save space');
+                    console.log('🔍 STORAGE DEBUG - Still too large, removing images to save space');
 
                     // If still too large, store without images
                     const questionsOnly = {
@@ -2181,7 +2149,7 @@ class MLAQuizApp {
                         // Show user warning about images
                         this.showError('Quiz uploaded successfully, but images were not stored due to browser storage limits. Questions will work but images may not display.');
                     } catch (err) {
-                        console.error('❌ STORAGE ERROR - Failed to store even questionsOnly:', err);
+                        console.error('🔍 STORAGE ERROR - Failed to store even questionsOnly:', err);
                         throw err;
                     }
                 }
@@ -2207,7 +2175,7 @@ class MLAQuizApp {
                 try {
                     localStorage.setItem(storageKey, JSON.stringify(fullQuiz));
                     localStorage.setItem('uploadedQuizzes', JSON.stringify(uploadedQuizzes));
-                    console.log('💾 STORAGE DEBUG - Successfully stored quiz normally under storageKey');
+                    console.log('🔍 STORAGE DEBUG - Successfully stored quiz normally under storageKey');
                 try {
                     if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
                         window.MLAAnalytics.event('quiz_upload', {
@@ -2221,15 +2189,15 @@ class MLAQuizApp {
                     console.debug('Analytics quiz_upload (normal) error:', e);
                 }
                 } catch (err) {
-                    console.error('❌ STORAGE ERROR - Failed to write full quiz to localStorage:', err);
+                    console.error('🔍 STORAGE ERROR - Failed to write full quiz to localStorage:', err);
                     throw err;
                 }
             }
             
-            console.log('💾 STORAGE DEBUG - Total uploaded quizzes stored:', uploadedQuizzes.length);
+            console.log('🔍 STORAGE DEBUG - Total uploaded quizzes stored:', uploadedQuizzes.length);
             
         } catch (error) {
-            console.error('❌ STORAGE ERROR - Failed to store quiz:', error);
+            console.error('🔍 STORAGE ERROR - Failed to store quiz:', error);
             
             // Fallback: store only in memory for this session
             if (!window.tempUploadedQuizzes) {
@@ -2240,7 +2208,7 @@ class MLAQuizApp {
             window.tempUploadedQuizzes = window.tempUploadedQuizzes.filter(quiz => quiz.name !== quizData.name);
             window.tempUploadedQuizzes.push(quizData);
             
-            console.log('💾 STORAGE DEBUG - Stored quiz in temporary memory storage');
+            console.log('🔍 STORAGE DEBUG - Stored quiz in temporary memory storage');
             this.showError('Quiz uploaded successfully but could not be saved permanently. It will be available until you refresh the page.');
             try {
                 if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
@@ -2258,14 +2226,14 @@ class MLAQuizApp {
     }
     
     async getUploadedQuizzes() {
-        console.log('💾 STORAGE DEBUG - Retrieving uploaded quizzes');
+        console.log('🔍 STORAGE DEBUG - Retrieving uploaded quizzes');
         
         // Get quizzes from localStorage
         let quizzes = JSON.parse(localStorage.getItem('uploadedQuizzes') || '[]');
         
         // Also check temporary storage
         if (window.tempUploadedQuizzes && window.tempUploadedQuizzes.length > 0) {
-            console.log('💾 STORAGE DEBUG - Found', window.tempUploadedQuizzes.length, 'quizzes in temporary storage');
+            console.log('🔍 STORAGE DEBUG - Found', window.tempUploadedQuizzes.length, 'quizzes in temporary storage');
             // Merge with persistent storage, removing duplicates
             const tempNames = window.tempUploadedQuizzes.map(q => q.name);
             quizzes = quizzes.filter(q => !tempNames.includes(q.name));
@@ -2286,7 +2254,7 @@ class MLAQuizApp {
             const storageKey = quiz.storageKey || `quiz_${this.sanitizeStorageKey(quiz.name)}`;
 
             if (quiz.dataStored === 'indexeddb' && quiz.imagesInIndexedDB) {
-                console.log('💾 Reconstructing quiz from IndexedDB:', quiz.name, 'storageKey:', storageKey);
+                console.log('📱 Reconstructing quiz from IndexedDB:', quiz.name, 'storageKey:', storageKey);
                 try {
                     // Try to load the full quiz object from storageKey
                     const storedFull = JSON.parse(localStorage.getItem(storageKey) || 'null');
@@ -2294,7 +2262,7 @@ class MLAQuizApp {
                     // Get images from IndexedDB (may be empty on desktop)
                     const imagesFromDB = await this.getAllImagesForQuiz(quiz.name);
 
-                    console.log(`? Retrieved ${Object.keys(imagesFromDB).length} images from IndexedDB for ${quiz.name}`);
+                    console.log(`✅ Retrieved ${Object.keys(imagesFromDB).length} images from IndexedDB for ${quiz.name}`);
 
                     const questions = storedFull && Array.isArray(storedFull.questions) ? storedFull.questions : (storedFull?.questions || []);
                     const images = {
@@ -2308,11 +2276,11 @@ class MLAQuizApp {
                         images
                     }));
                 } catch (error) {
-                    console.error('? Failed to reconstruct quiz from IndexedDB:', quiz.name, error);
+                    console.error('❌ Failed to reconstruct quiz from IndexedDB:', quiz.name, error);
                     reconstructedQuizzes.push(quiz); // Return metadata only
                 }
             } else if (quiz.dataStored === 'split') {
-                console.log('💾 STORAGE DEBUG - Reconstructing split storage quiz:', quiz.name, 'storageKey:', storageKey);
+                console.log('🔍 STORAGE DEBUG - Reconstructing split storage quiz:', quiz.name, 'storageKey:', storageKey);
                 try {
                     const quizData = JSON.parse(localStorage.getItem(storageKey) || '{}');
                     reconstructedQuizzes.push(Object.assign({}, quiz, {
@@ -2321,7 +2289,7 @@ class MLAQuizApp {
                         images: quizData.images || {}
                     }));
                 } catch (error) {
-                    console.error('❌ STORAGE ERROR - Failed to reconstruct quiz:', quiz.name, error);
+                    console.error('🔍 STORAGE ERROR - Failed to reconstruct quiz:', quiz.name, error);
                     reconstructedQuizzes.push(quiz); // Return metadata only
                 }
             } else {
@@ -2334,15 +2302,15 @@ class MLAQuizApp {
                         reconstructedQuizzes.push(quiz);
                     }
                 } catch (error) {
-                    console.error('❌ STORAGE ERROR - Failed to read stored quiz for', quiz.name, error);
+                    console.error('🔍 STORAGE ERROR - Failed to read stored quiz for', quiz.name, error);
                     reconstructedQuizzes.push(quiz);
                 }
             }
         }
         
-        console.log('💾 STORAGE DEBUG - Retrieved', reconstructedQuizzes.length, 'uploaded quizzes');
+        console.log('🔍 STORAGE DEBUG - Retrieved', reconstructedQuizzes.length, 'uploaded quizzes');
         reconstructedQuizzes.forEach((quiz, index) => {
-            console.log(`💾 STORAGE DEBUG - Quiz ${index + 1}: ${quiz.name}, Images:`, Object.keys(quiz.images || {}).length);
+            console.log(`🔍 STORAGE DEBUG - Quiz ${index + 1}: ${quiz.name}, Images:`, Object.keys(quiz.images || {}).length);
         });
         
         return reconstructedQuizzes;
@@ -2380,7 +2348,7 @@ class MLAQuizApp {
                     localStorage.removeItem(sanitizedKey);
                     console.log(`🗑️ CLEAR DEBUG - Removed localStorage key: ${sanitizedKey}`);
                 } catch (e) {
-                    console.warn(`❌ CLEAR DEBUG - Could not remove ${sanitizedKey}:`, e);
+                    console.warn(`⚠️ CLEAR DEBUG - Could not remove ${sanitizedKey}:`, e);
                 }
             }
 
@@ -2409,16 +2377,16 @@ class MLAQuizApp {
                         };
 
                         deleteRequest.onerror = (event) => {
-                            console.warn('❌ CLEAR DEBUG - IndexedDB delete error:', event.target.error);
+                            console.warn('⚠️ CLEAR DEBUG - IndexedDB delete error:', event.target.error);
                         };
                     }
 
                     console.log('🗑️ CLEAR DEBUG - IndexedDB images cleared');
                 } catch (e) {
-                    console.warn('❌ CLEAR DEBUG - IndexedDB clear failed:', e);
+                    console.warn('⚠️ CLEAR DEBUG - IndexedDB clear failed:', e);
                 }
             } else {
-                console.log('❌ CLEAR DEBUG - No IndexedDB available (desktop or unavailable)');
+                console.log('ℹ️ CLEAR DEBUG - No IndexedDB available (desktop or unavailable)');
             }
 
             // Step 4: Remove the uploadedQuizzes metadata list
@@ -2426,7 +2394,7 @@ class MLAQuizApp {
                 localStorage.removeItem('uploadedQuizzes');
                 console.log('🗑️ CLEAR DEBUG - Removed uploadedQuizzes metadata list');
             } catch (e) {
-                console.warn('❌ CLEAR DEBUG - Could not remove uploadedQuizzes:', e);
+                console.warn('⚠️ CLEAR DEBUG - Could not remove uploadedQuizzes:', e);
             }
 
             // Step 5: Clear in-memory fallback storage
@@ -2445,16 +2413,16 @@ class MLAQuizApp {
                         localStorage.removeItem(key);
                         console.log(`🗑️ CLEAR DEBUG - Force-removed orphaned key: ${key}`);
                     } catch (e) {
-                        console.warn(`❌ CLEAR DEBUG - Could not force-remove ${key}:`, e);
+                        console.warn(`⚠️ CLEAR DEBUG - Could not force-remove ${key}:`, e);
                     }
                 });
             }
 
-            console.log('? CLEAR DEBUG - Clear operation completed successfully');
+            console.log('✅ CLEAR DEBUG - Clear operation completed successfully');
             return true;
 
         } catch (error) {
-            console.error('? CLEAR DEBUG - Unexpected error during clear:', error);
+            console.error('❌ CLEAR DEBUG - Unexpected error during clear:', error);
             return false;
         }
     }
@@ -2491,7 +2459,7 @@ class MLAQuizApp {
         let formattedText = text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
             .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
-            .replace(/- (.*?)(?=\n|$)/g, '� $1') // Bullet points
+            .replace(/- (.*?)(?=\n|$)/g, '• $1') // Bullet points
             .trim();
         
         // Handle [IMAGE: filename] format first - improved handling with better path resolution
@@ -2552,10 +2520,10 @@ class MLAQuizApp {
                             console.log('🖼️ IMAGE DEBUG - Image data after resolution:', typeof imageData, imageData?.substring(0, 50) + '...');
                         }
                     } else {
-                        console.log('❌ Image not found in currentQuiz.images. Available keys:', Object.keys(this.currentQuiz.images).slice(0, 10));
+                        console.log('⚠️ Image not found in currentQuiz.images. Available keys:', Object.keys(this.currentQuiz.images).slice(0, 10));
                     }
                 } else {
-                    console.log('❌ currentQuiz or currentQuiz.images not available');
+                    console.log('⚠️ currentQuiz or currentQuiz.images not available');
                 }
                 
                 console.log('🖼️ IMAGE DEBUG - No embedded image found, showing as link');
@@ -2592,19 +2560,19 @@ class MLAQuizApp {
                         
                         if (imageData && imageData.startsWith('data:')) {
                             actualUrl = imageData;
-                            console.log('? Resolved markdown reference to base64 data');
+                            console.log('✅ Resolved markdown reference to base64 data');
                         } else {
                             console.log('⚠️ Found data but not base64:', typeof imageData, imageData?.substring(0, 50));
                         }
                     } else {
-                        console.log('❌ Key not found:', refKey, 'Available keys:', Object.keys(this.currentQuiz.images).slice(0, 10));
+                        console.log('⚠️ Key not found:', refKey, 'Available keys:', Object.keys(this.currentQuiz.images).slice(0, 10));
                     }
                 } else {
-                    console.log('❌ currentQuiz or currentQuiz.images not available');
+                    console.log('⚠️ currentQuiz or currentQuiz.images not available');
                 }
                 
                 if (actualUrl === url) {
-                    console.log('? Failed to resolve reference:', refKey);
+                    console.log('❌ Failed to resolve reference:', refKey);
                 }
             }
             
@@ -2896,7 +2864,7 @@ class MLAQuizApp {
                 <h1>📊 MLA Quiz Study Report</h1>
                 <h2>${data.quizName}</h2>
                 <p>Generated on ${data.date}</p>
-                ${isPartialReport ? '<p><em>📝 Partial Report - Quiz in progress</em></p>' : ''}
+                ${isPartialReport ? '<p><em>⚠️ Partial Report - Quiz in progress</em></p>' : ''}
             </div>
             
             ${isPartialReport ? `
@@ -2909,7 +2877,7 @@ class MLAQuizApp {
             
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h3>📊 Performance</h3>
+                    <h3>📈 Performance</h3>
                     <p><strong>Accuracy:</strong> ${data.accuracy}%</p>
                     <p><strong>Correct:</strong> ${data.correctAnswers}</p>
                     <p><strong>Incorrect:</strong> ${data.incorrectAnswers}</p>
@@ -3099,7 +3067,7 @@ class MLAQuizApp {
         // Update button icon and tooltip
         const toggleBtn = document.getElementById('haptics-toggle');
         if (toggleBtn) {
-            toggleBtn.textContent = enabled ? '📵' : '📵';
+            toggleBtn.textContent = enabled ? '🔔' : '🔕';
             toggleBtn.title = enabled ? 'Haptics: On (click to disable)' : 'Haptics: Off (click to enable)';
         }
         
@@ -3132,7 +3100,7 @@ class MLAQuizApp {
             toggleBtn.className = 'haptics-btn';
             toggleBtn.onclick = () => this.setHapticsEnabled(!this.hapticsOptIn);
             
-            toggleBtn.textContent = this.hapticsOptIn ? '📳' : '📵';
+            toggleBtn.textContent = this.hapticsOptIn ? '🔔' : '🔕';
             toggleBtn.title = this.hapticsOptIn ? 'Haptics: On (click to disable)' : 'Haptics: Off (click to enable)';
             
             hapticsControls.appendChild(toggleBtn);
@@ -3165,20 +3133,20 @@ class MLAQuizApp {
                 defaultButton.classList.add('active');
             }
             
-            console.log('📵 Quiz length initialized:', this.selectedQuizLength);
+            console.log('🎯 Quiz length initialized:', this.selectedQuizLength);
         }, 100);
     }
 
     initializeMedicalTools() {
         // Medical tools panel functionality
-        console.log('📵 Initializing medical tools...');
+        console.log('🩺 Initializing medical tools...');
         const toolsToggle = document.getElementById('medical-tools-toggle');
         const toolsPanel = document.getElementById('medical-tools-panel');
         const toolsClose = document.getElementById('tools-close-btn');
         const toolNavBtns = document.querySelectorAll('.tool-nav-btn');
         const toolPanels = document.querySelectorAll('.tool-panel');
 
-        console.log('📵 Elements found:', {
+        console.log('🩺 Elements found:', {
             toolsToggle: !!toolsToggle,
             toolsPanel: !!toolsPanel,
             toolsClose: !!toolsClose,
@@ -3198,7 +3166,7 @@ class MLAQuizApp {
                     this.medicalToolsInitialized = true;
                 }
                 
-                console.log('📵 Medical tools panel toggled');
+                console.log('🩺 Medical tools panel toggled');
             });
         }
 
@@ -3215,7 +3183,7 @@ class MLAQuizApp {
                 // Don't close if clicking inside the panel content area
                 if (!toolsPanel.contains(e.target) && !toolsToggle.contains(e.target)) {
                     toolsPanel.classList.remove('open');
-                    console.log('📵 Medical tools panel closed (clicked outside)');
+                    console.log('🩺 Medical tools panel closed (clicked outside)');
                 }
             }
         });
@@ -3239,7 +3207,7 @@ class MLAQuizApp {
         // Setup mobile back button behavior
         this.setupMobileBackButton();
         
-        console.log('📵 Medical tools initialized');
+        console.log('🩺 Medical tools initialized');
     }
 
     setupMobileBackButton() {
@@ -3299,12 +3267,12 @@ class MLAQuizApp {
         // Remove any existing calculator event listeners to prevent duplicates
         this.cleanupCalculatorEvents();
         
-        console.log('📵 Initializing calculator events...');
+        console.log('🧮 Initializing calculator events...');
         
         // Use targeted event delegation instead of global listeners
         const calculatorPanel = document.getElementById('calculator-panel');
         if (!calculatorPanel) {
-            console.error('? Calculator panel not found!');
+            console.error('❌ Calculator panel not found!');
             return;
         }
         
@@ -3336,7 +3304,7 @@ class MLAQuizApp {
         this.calculatorPanelHandler = (e) => {
             // Check if we're scrolling
             if (isScrolling) {
-                console.log('📵 Ignoring interaction - currently scrolling');
+                console.log('🧮 Ignoring interaction - currently scrolling');
                 return;
             }
             
@@ -3349,7 +3317,7 @@ class MLAQuizApp {
                 
                 // If touch moved more than threshold, it's likely a scroll gesture
                 if (deltaY > scrollThreshold || deltaX > scrollThreshold) {
-                    console.log('📵 Ignoring interaction - detected scroll gesture');
+                    console.log('🧮 Ignoring interaction - detected scroll gesture');
                     return;
                 }
             }
@@ -3360,7 +3328,7 @@ class MLAQuizApp {
                 e.preventDefault();
                 e.stopPropagation();
                 const calcType = calcBtn.getAttribute('data-calc');
-                console.log('📵 Calculator triggered via panel delegation:', calcType);
+                console.log('🧮 Calculator triggered via panel delegation:', calcType);
                 this.loadCalculator(calcType);
             }
         };
@@ -3371,7 +3339,7 @@ class MLAQuizApp {
         calculatorPanel.addEventListener('touchend', this.calculatorPanelHandler);
         calculatorPanel.addEventListener('click', this.calculatorPanelHandler);
         
-        console.log('? Calculator events initialized with scroll detection');
+        console.log('✅ Calculator events initialized with scroll detection');
     }
 
     cleanupCalculatorEvents() {
@@ -3402,7 +3370,7 @@ class MLAQuizApp {
             document.removeEventListener('click', this.calculatorClickHandler);
             this.calculatorClickHandler = null;
         }
-        console.log('📵 Calculator event listeners cleaned up');
+        console.log('🧮 Calculator event listeners cleaned up');
     }
 
     loadCalculator(calcType) {
@@ -3418,7 +3386,7 @@ class MLAQuizApp {
         // Add back button and structured content
         let calculatorContent = `
             <div class="calculator-header">
-                <button class="back-btn" onclick="window.quizApp.switchMedicalTool('calculators'); event.stopPropagation();">? Back to Calculators</button>
+                <button class="back-btn" onclick="window.quizApp.switchMedicalTool('calculators'); event.stopPropagation();">← Back to Calculators</button>
                 <h3 id="calculator-title"></h3>
             </div>
             <div class="calculator-content">
@@ -3432,7 +3400,7 @@ class MLAQuizApp {
                 calculatorContent += this.getBMICalculator();
                 break;
             case 'chads2vasc':
-                calculatorTitle = 'CHA2DS2-VASc Score';
+                calculatorTitle = 'CHA₂DS₂-VASc Score';
                 calculatorContent += this.getCHADS2VAScCalculator();
                 break;
             case 'hasbled':
@@ -3488,7 +3456,7 @@ class MLAQuizApp {
                 calculatorContent += this.getUreaCreatinineCalculator();
                 break;
             case 'abcd2':
-                calculatorTitle = 'ABCD� Score';
+                calculatorTitle = 'ABCD² Score';
                 calculatorContent += this.getABCD2Calculator();
                 break;
             case 'must':
@@ -3604,7 +3572,7 @@ class MLAQuizApp {
         calculatorContent = calculatorContent.replace('<h3 id="calculator-title"></h3>', `<h3 id="calculator-title">${calculatorTitle}</h3>`);
         container.innerHTML = calculatorContent;
         
-        console.log('📵 Loaded calculator:', calcType);
+        console.log('🧮 Loaded calculator:', calcType);
     }
 
     getBMICalculator() {
@@ -3641,8 +3609,8 @@ class MLAQuizApp {
                     <small>
                         <strong>BMI Categories (WHO):</strong><br>
                         Underweight: &lt;18.5 | Normal: 18.5-24.9<br>
-                        Overweight: 25-29.9 | Obese: =30<br>
-                        <strong>Asian populations:</strong> Overweight =23, Obese =27.5
+                        Overweight: 25-29.9 | Obese: ≥30<br>
+                        <strong>Asian populations:</strong> Overweight ≥23, Obese ≥27.5
                     </small>
                 </div>
             </div>
@@ -3740,7 +3708,7 @@ class MLAQuizApp {
         document.getElementById('bmi-result').innerHTML = `
             <div class="bmi-result-display">
                 <div class="bmi-value" style="color: ${color}; font-size: 1.2em;">
-                    <strong>BMI: ${bmi.toFixed(1)} kg/m�</strong>
+                    <strong>BMI: ${bmi.toFixed(1)} kg/m²</strong>
                 </div>
                 <div class="bmi-category" style="color: ${color}; font-weight: bold; margin: 4px 0;">
                     ${category}
@@ -3759,13 +3727,13 @@ class MLAQuizApp {
     getCHADS2VAScCalculator() {
         return `
             <div class="calculator-form">
-                <h4>CHA2DS2-VASc Score</h4>
+                <h4>CHA₂DS₂-VASc Score</h4>
                 <p><small>Stroke risk assessment in atrial fibrillation</small></p>
                 
                 <div class="calc-checkbox-group">
                     <label><input type="checkbox" id="chads-chf"> Congestive heart failure (+1)</label>
                     <label><input type="checkbox" id="chads-htn"> Hypertension (+1)</label>
-                    <label><input type="checkbox" id="chads-age75"> Age =75 years (+2)</label>
+                    <label><input type="checkbox" id="chads-age75"> Age ≥75 years (+2)</label>
                     <label><input type="checkbox" id="chads-diabetes"> Diabetes mellitus (+1)</label>
                     <label><input type="checkbox" id="chads-stroke"> Stroke/TIA/thromboembolism (+2)</label>
                     <label><input type="checkbox" id="chads-vascular"> Vascular disease (+1)</label>
@@ -3811,12 +3779,12 @@ class MLAQuizApp {
             } else {
                 // Male with score 1 or female with other risk factors
                 risk = 'Low-moderate risk (0.6%/year)';
-                recommendation = 'Consider anticoagulation (men =1 or women =2 with non-sex risk factors)';
+                recommendation = 'Consider anticoagulation (men ≥1 or women ≥2 with non-sex risk factors)';
                 color = '#FF9800';
             }
         } else {
-            // Score =2
-            risk = 'High risk (=2.2%/year)';
+            // Score ≥2
+            risk = 'High risk (≥2.2%/year)';
             recommendation = 'Anticoagulation recommended unless contraindicated';
             color = '#F44336';
         }
@@ -4007,12 +3975,12 @@ class MLAQuizApp {
                 
                 <div class="apache-sections">
                     <div class="apache-section">
-                        <h5>📵? Physiologic Variables (worst values in first 24 hours)</h5>
+                        <h5>🌡️ Physiologic Variables (worst values in first 24 hours)</h5>
                         
                         <div class="calc-input-group">
-                            <label>Temperature (�C):</label>
+                            <label>Temperature (°C):</label>
                             <input type="number" id="apache-temp" placeholder="37.0" step="0.1" min="25" max="45">
-                            <small>Normal: 36-38�C</small>
+                            <small>Normal: 36-38°C</small>
                         </div>
                         
                         <div class="calc-input-group">
@@ -4040,7 +4008,7 @@ class MLAQuizApp {
                         </div>
                         
                         <div class="calc-input-group">
-                            <label>PaO2 (mmHg) - if FiO2 =50%:</label>
+                            <label>PaO2 (mmHg) - if FiO2 ≥50%:</label>
                             <input type="number" id="apache-pao2" placeholder="80" min="30" max="500">
                             <small>Normal: 80-100 mmHg</small>
                         </div>
@@ -4082,20 +4050,20 @@ class MLAQuizApp {
                         </div>
                         
                         <div class="calc-input-group">
-                            <label>WBC Count (�10�/�L):</label>
+                            <label>WBC Count (×10³/μL):</label>
                             <input type="number" id="apache-wbc" placeholder="8.0" step="0.1" min="0.1" max="100">
-                            <small>Normal: 4.0-11.0 �10�/�L</small>
+                            <small>Normal: 4.0-11.0 ×10³/μL</small>
                         </div>
                         
                         <div class="calc-input-group">
                             <label>Glasgow Coma Scale (3-15):</label>
                             <input type="number" id="apache-gcs" placeholder="15" min="3" max="15">
-                            <small>Normal: 15, Severe impairment: =8</small>
+                            <small>Normal: 15, Severe impairment: ≤8</small>
                         </div>
                     </div>
                     
                     <div class="apache-section">
-                        <h5>📵 Demographics & Health Status</h5>
+                        <h5>👤 Demographics & Health Status</h5>
                         
                         <div class="calc-input-group">
                             <label>Age (years):</label>
@@ -4131,7 +4099,7 @@ class MLAQuizApp {
                         <li><strong>10-14:</strong> Moderate risk (~15% mortality)</li>
                         <li><strong>15-19:</strong> High risk (~25% mortality)</li>
                         <li><strong>20-24:</strong> Very high risk (~40% mortality)</li>
-                        <li><strong>=25:</strong> Extremely high risk (~55%+ mortality)</li>
+                        <li><strong>≥25:</strong> Extremely high risk (~55%+ mortality)</li>
                     </ul>
                     <small><strong>Note:</strong> APACHE II predicts hospital mortality for groups of critically ill patients, not individual patient outcomes.</small>
                 </div>
@@ -4182,7 +4150,7 @@ class MLAQuizApp {
         else if (temp >= 30) tempScore = 3;
         else tempScore = 4;
         physScore += tempScore;
-        scoreBreakdown.push(`Temperature (${temp}�C): ${tempScore} points`);
+        scoreBreakdown.push(`Temperature (${temp}°C): ${tempScore} points`);
         
         // MAP scoring
         let mapScore = 0;
@@ -4219,7 +4187,7 @@ class MLAQuizApp {
         physScore += rrScore;
         scoreBreakdown.push(`Respiratory Rate (${rr}/min): ${rrScore} points`);
         
-        // Oxygenation scoring (PaO2 if FiO2 =50%, A-a gradient if FiO2 <50%)
+        // Oxygenation scoring (PaO2 if FiO2 ≥50%, A-a gradient if FiO2 <50%)
         let oxyScore = 0;
         if (fio2 >= 50) {
             // Use PaO2
@@ -4311,7 +4279,7 @@ class MLAQuizApp {
         else if (wbc >= 1) wbcScore = 2;
         else wbcScore = 4;
         physScore += wbcScore;
-        scoreBreakdown.push(`WBC (${wbc} �10�/�L): ${wbcScore} points`);
+        scoreBreakdown.push(`WBC (${wbc} ×10³/μL): ${wbcScore} points`);
         
         // GCS scoring (15 - actual GCS)
         const gcsScore = 15 - gcs;
@@ -4364,7 +4332,7 @@ class MLAQuizApp {
             mortality = '~40%';
             mortalityColor = '#F44336';
         } else {
-            mortality = '=55%';
+            mortality = '≥55%';
             mortalityColor = '#9C27B0';
         }
         
@@ -4474,7 +4442,7 @@ class MLAQuizApp {
         let color = '';
         
         if (score <= 4) {
-            probability = 'Low probability (=4)';
+            probability = 'Low probability (≤4)';
             recommendation = 'D-dimer; if negative, PE unlikely';
             color = '#4CAF50';
         } else if (score <= 6) {
@@ -4508,7 +4476,7 @@ class MLAQuizApp {
                 
                 <div class="qrisk-sections">
                     <div class="qrisk-section">
-                        <h5>📵 About You</h5>
+                        <h5>👤 About You</h5>
                         
                         <div class="calc-input-group">
                             <label>Age (25-84 years):</label>
@@ -4539,12 +4507,12 @@ class MLAQuizApp {
                     </div>
                     
                     <div class="qrisk-section">
-                        <h5>📵 Measurements</h5>
+                        <h5>📊 Measurements</h5>
                         
                         <div class="calc-input-group">
-                            <label>BMI (kg/m�):</label>
+                            <label>BMI (kg/m²):</label>
                             <input type="number" id="qrisk-bmi" placeholder="25.0" min="15" max="50" step="0.1">
-                            <small>Normal: 18.5-24.9 kg/m�</small>
+                            <small>Normal: 18.5-24.9 kg/m²</small>
                         </div>
                         
                         <div class="calc-input-group">
@@ -4573,7 +4541,7 @@ class MLAQuizApp {
                     </div>
                     
                     <div class="qrisk-section">
-                        <h5>📵 Smoking</h5>
+                        <h5>🚬 Smoking</h5>
                         <div class="calc-input-group">
                             <label>Smoking Status:</label>
                             <select id="qrisk-smoking">
@@ -4581,13 +4549,13 @@ class MLAQuizApp {
                                 <option value="1">Former smoker</option>
                                 <option value="2">Light smoker (1-9/day)</option>
                                 <option value="3">Moderate smoker (10-19/day)</option>
-                                <option value="4">Heavy smoker (=20/day)</option>
+                                <option value="4">Heavy smoker (≥20/day)</option>
                             </select>
                         </div>
                     </div>
                     
                     <div class="qrisk-section">
-                        <h5>📵 Medical Conditions</h5>
+                        <h5>🏥 Medical Conditions</h5>
                         <div class="calc-checkbox-group">
                             <label><input type="checkbox" id="qrisk-diabetes-type1"> Type 1 diabetes</label>
                             <label><input type="checkbox" id="qrisk-diabetes-type2"> Type 2 diabetes</label>
@@ -4606,7 +4574,7 @@ class MLAQuizApp {
                     </div>
                     
                     <div class="qrisk-section">
-                        <h5>📵 Social (Optional)</h5>
+                        <h5>📍 Social (Optional)</h5>
                         <div class="calc-input-group">
                             <label>Townsend Deprivation Score:</label>
                             <input type="number" id="qrisk-townsend" placeholder="0" step="0.1" min="-6" max="15">
@@ -4700,7 +4668,7 @@ class MLAQuizApp {
             townsendScore: townsend
         };
 
-        console.log('📵 QRISK3 Input:', qriskInput);
+        console.log('🔍 QRISK3 Input:', qriskInput);
 
         let risk = null;
         let usingOfficialLibrary = false;
@@ -4710,19 +4678,19 @@ class MLAQuizApp {
             try {
                 risk = window.qrisk3.calculateScore(qriskInput);
                 usingOfficialLibrary = true;
-                console.log('? Used official QRISK3 library, result:', risk);
+                console.log('✅ Used official QRISK3 library, result:', risk);
             } catch (error) {
-                console.warn('? Official QRISK3 library failed:', error);
+                console.warn('❌ Official QRISK3 library failed:', error);
                 risk = null;
             }
         } else {
-            console.warn('📵 Official QRISK3 library not available');
+            console.warn('⚠️ Official QRISK3 library not available');
         }
 
         // Fallback to simplified calculation if official library not available
         if (risk === null) {
             risk = this.calculateQRISKFallback(qriskInput);
-            console.log('📵 Used fallback calculation, result:', risk);
+            console.log('🔄 Used fallback calculation, result:', risk);
         }
 
         // Ensure risk is a valid number
@@ -4749,7 +4717,7 @@ class MLAQuizApp {
             color = '#FF9800';
             recommendation = 'NICE NG238: Offer atorvastatin 20mg daily with lifestyle advice. Shared decision-making important.';
         } else {
-            riskLevel = 'High risk (=20%)';
+            riskLevel = 'High risk (≥20%)';
             color = '#F44336';
             recommendation = 'NICE NG238: Offer atorvastatin 20mg daily with lifestyle advice. Consider higher intensity if required.';
         }
@@ -4790,7 +4758,7 @@ class MLAQuizApp {
                     <h5>Key Measurements:</h5>
                     <ul>
                         <li><strong>Cholesterol/HDL ratio:</strong> ${cholesterolHdlRatio.toFixed(2)} ${cholesterolHdlRatio > 4.5 ? '(elevated)' : '(good)'}</li>
-                        <li><strong>BMI:</strong> ${bmi} kg/m� ${bmi >= 30 ? '(obese)' : bmi >= 25 ? '(overweight)' : '(normal)'}</li>
+                        <li><strong>BMI:</strong> ${bmi} kg/m² ${bmi >= 30 ? '(obese)' : bmi >= 25 ? '(overweight)' : '(normal)'}</li>
                         <li><strong>Blood pressure:</strong> ${sbp} mmHg ${sbp >= 140 ? '(high)' : sbp >= 120 ? '(elevated)' : '(normal)'}</li>
                         ${riskFactors.length > 0 ? `<li><strong>Risk factors:</strong> ${riskFactors.join(', ')}</li>` : ''}
                     </ul>
@@ -4799,8 +4767,8 @@ class MLAQuizApp {
                 <div class="calculation-info">
                     <small>
                         <strong>Calculation method:</strong> ${usingOfficialLibrary ? 
-                            '? Official QRISK3 algorithm (sisuhealthgroup implementation)' : 
-                            '📵 Simplified approximation - use official tool for clinical decisions'
+                            '✅ Official QRISK3 algorithm (sisuhealthgroup implementation)' : 
+                            '⚠️ Simplified approximation - use official tool for clinical decisions'
                         }<br>
                         <strong>Reference:</strong> NICE NG238 (2023) - Cardiovascular disease: risk assessment and reduction
                     </small>
@@ -4947,7 +4915,7 @@ class MLAQuizApp {
                     <input type="number" id="mews-rr" placeholder="16">
                 </div>
                 <div class="calc-input-group">
-                    <label>Temperature (�C):</label>
+                    <label>Temperature (°C):</label>
                     <input type="number" id="mews-temp" placeholder="36.5" step="0.1">
                 </div>
                 <div class="calc-checkbox-group">
@@ -5033,10 +5001,10 @@ class MLAQuizApp {
                 <p><small>Community-acquired pneumonia severity assessment</small></p>
                 
                 <div class="calc-checkbox-group">
-                    <label><input type="checkbox" id="crb-confusion"> Confusion (AMT =8)</label>
-                    <label><input type="checkbox" id="crb-rr"> Respiratory rate =30/min</label>
-                    <label><input type="checkbox" id="crb-bp"> Systolic BP <90 or Diastolic BP =60</label>
-                    <label><input type="checkbox" id="crb-age"> Age =65 years</label>
+                    <label><input type="checkbox" id="crb-confusion"> Confusion (AMT ≤8)</label>
+                    <label><input type="checkbox" id="crb-rr"> Respiratory rate ≥30/min</label>
+                    <label><input type="checkbox" id="crb-bp"> Systolic BP <90 or Diastolic BP ≤60</label>
+                    <label><input type="checkbox" id="crb-age"> Age ≥65 years</label>
                 </div>
                 
                 <button onclick="window.quizApp.calculateCRB65()">Calculate Score</button>
@@ -5070,7 +5038,7 @@ class MLAQuizApp {
             management = 'Hospital admission recommended';
             color = '#FF9800';
         } else if (score >= 3) {
-            mortality = '=14% 30-day mortality';
+            mortality = '≥14% 30-day mortality';
             management = 'Urgent hospital admission (consider ICU assessment)';
             color = '#F44336';
         }
@@ -5095,7 +5063,7 @@ class MLAQuizApp {
                     <select id="rockall-age">
                         <option value="0"><60 years (0 points)</option>
                         <option value="1">60-79 years (1 point)</option>
-                        <option value="2">=80 years (2 points)</option>
+                        <option value="2">≥80 years (2 points)</option>
                     </select>
                 </div>
                 <div class="calc-input-group">
@@ -5184,11 +5152,11 @@ class MLAQuizApp {
                 <p><small>Liver function assessment in cirrhosis</small></p>
                 
                 <div class="calc-input-group">
-                    <label>Bilirubin (�mol/L) - UK units:</label>
+                    <label>Bilirubin (μmol/L) - UK units:</label>
                     <select id="cp-bilirubin">
-                        <option value="1"><34 �mol/L (Normal: <20) (1 point)</option>
-                        <option value="2">34-50 �mol/L (2 points)</option>
-                        <option value="3">>50 �mol/L (3 points)</option>
+                        <option value="1"><34 μmol/L (Normal: <20) (1 point)</option>
+                        <option value="2">34-50 μmol/L (2 points)</option>
+                        <option value="3">>50 μmol/L (3 points)</option>
                     </select>
                 </div>
                 <div class="calc-input-group">
@@ -5344,7 +5312,7 @@ class MLAQuizApp {
                     <label><input type="radio" name="egfr-sex" value="female"> Female</label>
                 </div>
                 <div class="calc-input-group">
-                    <label>Serum Creatinine (�mol/L):</label>
+                    <label>Serum Creatinine (μmol/L):</label>
                     <input type="number" id="egfr-creatinine" placeholder="80" min="20" max="2000">
                 </div>
                 
@@ -5354,7 +5322,7 @@ class MLAQuizApp {
                 <div class="calc-reference">
                     <small>
                         <strong>CKD Stages (UK):</strong><br>
-                        G1: =90 (normal/high)<br>
+                        G1: ≥90 (normal/high)<br>
                         G2: 60-89 (mildly decreased)<br>
                         G3a: 45-59 (mild-moderate)<br>
                         G3b: 30-44 (moderate-severe)<br>
@@ -5376,11 +5344,11 @@ class MLAQuizApp {
             return;
         }
         
-        // Convert �mol/L to mg/dL
+        // Convert μmol/L to mg/dL
         const creatinine_mg = creatinine * 0.0113;
         
         // CKD-EPI 2021 equation (race-neutral) - NIDDK
-        // 142 � min(Scr/?,1)^a � max(Scr/?,1)^-1.200 � 0.9938^Age � (�1.012 if female)
+        // 142 × min(Scr/κ,1)^α × max(Scr/κ,1)^−1.200 × 0.9938^Age × (×1.012 if female)
         let k, alpha;
         if (sex === 'female') {
             k = 0.7;
@@ -5431,7 +5399,7 @@ class MLAQuizApp {
         
         document.getElementById('egfr-result').innerHTML = `
             <div style="color: ${color}">
-                <strong>eGFR: ${egfr} mL/min/1.73m�</strong><br>
+                <strong>eGFR: ${egfr} mL/min/1.73m²</strong><br>
                 <strong>CKD Stage: ${stage}</strong><br>
                 <div style="margin-top: 8px; font-size: 0.9em;">
                     ${clinical}
@@ -5455,9 +5423,9 @@ class MLAQuizApp {
                     <small>Normal range: 2.5-7.5 mmol/L</small>
                 </div>
                 <div class="calc-input-group">
-                    <label>Serum Creatinine (�mol/L):</label>
+                    <label>Serum Creatinine (μmol/L):</label>
                     <input type="number" id="creatinine-value" placeholder="80" min="20" max="2000">
-                    <small>Normal range: 60-110 �mol/L (men), 45-90 �mol/L (women)</small>
+                    <small>Normal range: 60-110 μmol/L (men), 45-90 μmol/L (women)</small>
                 </div>
                 
                 <button onclick="window.quizApp.calculateUreaCreatinine()">Calculate Ratio</button>
@@ -5465,11 +5433,11 @@ class MLAQuizApp {
                 
                 <div class="calc-reference">
                     <small>
-                        <strong>📵 Note:</strong> U:C ratio is NOT used for AKI diagnosis<br>
+                        <strong>⚠️ Note:</strong> U:C ratio is NOT used for AKI diagnosis<br>
                         <strong>AKI Diagnostic Criteria (KDIGO/NICE CG169):</strong><br>
-                        � Creatinine rise =26 �mol/L in 48h, OR<br>
-                        � Creatinine =1.5� baseline in 7 days, OR<br>
-                        � Urine output <0.5 mL/kg/hr for >6 hours<br><br>
+                        • Creatinine rise ≥26 μmol/L in 48h, OR<br>
+                        • Creatinine ≥1.5× baseline in 7 days, OR<br>
+                        • Urine output <0.5 mL/kg/hr for >6 hours<br><br>
                         <strong>U:C Ratio (contextual only):</strong><br>
                         40-100:1 typical | >100:1 may suggest prerenal causes<br>
                         <em>Always interpret with clinical context, AKI staging, and eGFR</em>
@@ -5482,21 +5450,21 @@ class MLAQuizApp {
     getABCD2Calculator() {
         return `
             <div class="calculator-form">
-                <h4>ABCD� Score</h4>
+                <h4>ABCD² Score</h4>
                 <p><small>Stroke risk after TIA (NICE CG68)</small></p>
                 
                 <div class="calc-input-group">
                     <label>Age:</label>
                     <select id="abcd2-age">
                         <option value="0"><60 years (0 points)</option>
-                        <option value="1">=60 years (1 point)</option>
+                        <option value="1">≥60 years (1 point)</option>
                     </select>
                 </div>
                 <div class="calc-input-group">
                     <label>Blood Pressure:</label>
                     <select id="abcd2-bp">
                         <option value="0">SBP <140 and DBP <90 (0 points)</option>
-                        <option value="1">SBP =140 or DBP =90 (1 point)</option>
+                        <option value="1">SBP ≥140 or DBP ≥90 (1 point)</option>
                     </select>
                 </div>
                 <div class="calc-input-group">
@@ -5512,7 +5480,7 @@ class MLAQuizApp {
                     <select id="abcd2-duration">
                         <option value="0"><10 minutes (0 points)</option>
                         <option value="1">10-59 minutes (1 point)</option>
-                        <option value="2">=60 minutes (2 points)</option>
+                        <option value="2">≥60 minutes (2 points)</option>
                     </select>
                 </div>
                 <div class="calc-checkbox-group">
@@ -5536,7 +5504,7 @@ class MLAQuizApp {
         }
         
         // Calculate urea:creatinine ratio (UK standard: both in mmol/L)
-        // Convert creatinine from �mol/L to mmol/L for ratio calculation
+        // Convert creatinine from μmol/L to mmol/L for ratio calculation
         const creatinineMmol = creatinine / 1000;
         const ratio = urea / creatinineMmol;
         
@@ -5570,10 +5538,10 @@ class MLAQuizApp {
         // Additional context based on absolute values
         let additionalNotes = '';
         if (urea > 20) {
-            additionalNotes += '📵 Significantly elevated urea - consider urgent nephrology review. ';
+            additionalNotes += '⚠️ Significantly elevated urea - consider urgent nephrology review. ';
         }
         if (creatinine > 300) {
-            additionalNotes += '📵 Severely elevated creatinine - may require acute dialysis. ';
+            additionalNotes += '⚠️ Severely elevated creatinine - may require acute dialysis. ';
         }
         
         document.getElementById('urea-creatinine-result').innerHTML = `
@@ -5588,7 +5556,7 @@ class MLAQuizApp {
                 </div>
                 ${additionalNotes ? `<div style="margin-top: 8px; font-size: 0.9em; color: #D84315;"><strong>${additionalNotes}</strong></div>` : ''}
                 <div style="margin-top: 12px; font-size: 0.8em; color: #666; border-top: 1px solid #eee; padding-top: 8px;">
-                    <strong>Values:</strong> Urea ${urea} mmol/L | Creatinine ${creatinine} �mol/L<br>
+                    <strong>Values:</strong> Urea ${urea} mmol/L | Creatinine ${creatinine} μmol/L<br>
                     <em>Always interpret alongside eGFR, clinical history, and AKI staging (KDIGO criteria)</em>
                 </div>
             </div>
@@ -5624,14 +5592,14 @@ class MLAQuizApp {
         
         document.getElementById('abcd2-result').innerHTML = `
             <div style="color: ${color}">
-                <strong>ABCD� Score: ${score}/7</strong><br>
+                <strong>ABCD² Score: ${score}/7</strong><br>
                 <strong>${risk}</strong><br>
                 ${dayStroke}<br>
                 <div style="margin-top: 8px; font-weight: bold; color: #2196F3;">
-                    All suspected TIA ? same-day specialist assessment (within 24h)
+                    All suspected TIA → same-day specialist assessment (within 24h)
                 </div>
                 <div style="margin-top: 6px; font-size: 0.85em; color: #666;">
-                    Current UK guidance: ABCD� used for stroke risk stratification, not triage timing
+                    Current UK guidance: ABCD² used for stroke risk stratification, not triage timing
                 </div>
             </div>
         `;
@@ -5646,7 +5614,7 @@ class MLAQuizApp {
                 <div class="calc-input-group">
                     <label>BMI:</label>
                     <select id="must-bmi">
-                        <option value="0">BMI >20 (=18.5 if >65yrs) (0 points)</option>
+                        <option value="0">BMI >20 (≥18.5 if >65yrs) (0 points)</option>
                         <option value="1">BMI 18.5-20 (1 point)</option>
                         <option value="2">BMI <18.5 (2 points)</option>
                     </select>
@@ -5671,7 +5639,7 @@ class MLAQuizApp {
                         <strong>MUST Actions:</strong><br>
                         0: Low risk - routine care<br>
                         1: Medium risk - observe/document<br>
-                        =2: High risk - treat/refer dietitian
+                        ≥2: High risk - treat/refer dietitian
                     </small>
                 </div>
             </div>
@@ -5819,37 +5787,37 @@ class MLAQuizApp {
                     <select id="unit-type" onchange="window.quizApp.updateUnitConverter()">
                         <option value="">Select conversion type</option>
                         <optgroup label="Laboratory Values - Common">
-                            <option value="glucose">Glucose (mmol/L ? mg/dL)</option>
-                            <option value="cholesterol">Cholesterol/Lipids (mmol/L ? mg/dL)</option>
-                            <option value="creatinine">Creatinine (�mol/L ? mg/dL)</option>
-                            <option value="bilirubin">Bilirubin (�mol/L ? mg/dL)</option>
-                            <option value="hba1c">HbA1c (% ? mmol/mol)</option>
-                            <option value="hemoglobin">Hemoglobin (g/dL ? g/L)</option>
+                            <option value="glucose">Glucose (mmol/L ⇄ mg/dL)</option>
+                            <option value="cholesterol">Cholesterol/Lipids (mmol/L ⇄ mg/dL)</option>
+                            <option value="creatinine">Creatinine (μmol/L ⇄ mg/dL)</option>
+                            <option value="bilirubin">Bilirubin (μmol/L ⇄ mg/dL)</option>
+                            <option value="hba1c">HbA1c (% ⇄ mmol/mol)</option>
+                            <option value="hemoglobin">Hemoglobin (g/dL ⇄ g/L)</option>
                         </optgroup>
                         <optgroup label="Electrolytes & Minerals">
-                            <option value="calcium">Calcium (mmol/L ? mg/dL)</option>
-                            <option value="magnesium">Magnesium (mmol/L ? mg/dL)</option>
-                            <option value="phosphate">Phosphate (mmol/L ? mg/dL)</option>
-                            <option value="urea">Urea/BUN (mmol/L ? mg/dL)</option>
+                            <option value="calcium">Calcium (mmol/L ⇄ mg/dL)</option>
+                            <option value="magnesium">Magnesium (mmol/L ⇄ mg/dL)</option>
+                            <option value="phosphate">Phosphate (mmol/L ⇄ mg/dL)</option>
+                            <option value="urea">Urea/BUN (mmol/L ⇄ mg/dL)</option>
                         </optgroup>
                         <optgroup label="Proteins & Lipids">
-                            <option value="albumin">Albumin (g/L ? g/dL)</option>
-                            <option value="triglycerides">Triglycerides (mmol/L ? mg/dL)</option>
+                            <option value="albumin">Albumin (g/L ⇄ g/dL)</option>
+                            <option value="triglycerides">Triglycerides (mmol/L ⇄ mg/dL)</option>
                         </optgroup>
                         <optgroup label="Other Lab Values">
-                            <option value="uric-acid">Uric Acid (�mol/L ? mg/dL)</option>
-                            <option value="vitamin-d">Vitamin D (nmol/L ? ng/mL)</option>
-                            <option value="ferritin">Ferritin (�g/L ? ng/mL)</option>
+                            <option value="uric-acid">Uric Acid (μmol/L ⇄ mg/dL)</option>
+                            <option value="vitamin-d">Vitamin D (nmol/L ⇄ ng/mL)</option>
+                            <option value="ferritin">Ferritin (μg/L ⇄ ng/mL)</option>
                         </optgroup>
                         <optgroup label="Physical Measurements">
-                            <option value="weight">Weight (kg ? lbs)</option>
-                            <option value="height">Height (cm ? inches/feet)</option>
-                            <option value="temperature">Temperature (�C ? �F)</option>
+                            <option value="weight">Weight (kg ⇄ lbs)</option>
+                            <option value="height">Height (cm ⇄ inches/feet)</option>
+                            <option value="temperature">Temperature (°C ⇄ °F)</option>
                         </optgroup>
                         <optgroup label="Clinical Measurements">
-                            <option value="pressure">Pressure (mmHg ? kPa)</option>
-                            <option value="blood-volume">Blood Volume (mL ? units/pints)</option>
-                            <option value="inr">INR ? Prothrombin %</option>
+                            <option value="pressure">Pressure (mmHg ⇄ kPa)</option>
+                            <option value="blood-volume">Blood Volume (mL ⇄ units/pints)</option>
+                            <option value="inr">INR ⇄ Prothrombin %</option>
                         </optgroup>
                     </select>
                 </div>
@@ -5894,7 +5862,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('glucose', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L � 18 | Normal fasting: 3.9-5.6 mmol/L (70-100 mg/dL)';
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 18 | Normal fasting: 3.9-5.6 mmol/L (70-100 mg/dL)';
                 break;
                 
             case 'cholesterol':
@@ -5910,13 +5878,13 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('cholesterol', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L � 38.67 | Target total cholesterol: <5.0 mmol/L (<193 mg/dL)';
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 38.67 | Target total cholesterol: <5.0 mmol/L (<193 mg/dL)';
                 break;
                 
             case 'creatinine':
                 fieldsHtml = `
                     <div class="calc-input-group">
-                        <label>�mol/L:</label>
+                        <label>μmol/L:</label>
                         <input type="number" id="unit-input-1" placeholder="100" step="1" 
                                oninput="window.quizApp.convertUnits('creatinine', 'umol')">
                     </div>
@@ -5926,13 +5894,13 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('creatinine', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = �mol/L � 0.0113 | Normal: M 62-115 �mol/L, F 53-97 �mol/L';
+                infoText = '<strong>Conversion:</strong> mg/dL = μmol/L × 0.0113 | Normal: M 62-115 μmol/L, F 53-97 μmol/L';
                 break;
                 
             case 'bilirubin':
                 fieldsHtml = `
                     <div class="calc-input-group">
-                        <label>�mol/L:</label>
+                        <label>μmol/L:</label>
                         <input type="number" id="unit-input-1" placeholder="20" step="1" 
                                oninput="window.quizApp.convertUnits('bilirubin', 'umol')">
                     </div>
@@ -5942,7 +5910,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('bilirubin', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = �mol/L � 0.0585 | Normal: 5-20 �mol/L (0.3-1.2 mg/dL)';
+                infoText = '<strong>Conversion:</strong> mg/dL = μmol/L × 0.0585 | Normal: 5-20 μmol/L (0.3-1.2 mg/dL)';
                 break;
                 
             case 'hba1c':
@@ -5958,7 +5926,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('hba1c', 'mmol')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mmol/mol = (% - 2.15) � 10.929 | Diabetes: =48 mmol/mol (=6.5%)';
+                infoText = '<strong>Conversion:</strong> mmol/mol = (% - 2.15) × 10.929 | Diabetes: ≥48 mmol/mol (≥6.5%)';
                 break;
                 
             case 'weight':
@@ -6001,17 +5969,17 @@ class MLAQuizApp {
             case 'temperature':
                 fieldsHtml = `
                     <div class="calc-input-group">
-                        <label>Celsius (�C):</label>
+                        <label>Celsius (°C):</label>
                         <input type="number" id="unit-input-1" placeholder="37" step="0.1" 
                                oninput="window.quizApp.convertUnits('temperature', 'celsius')">
                     </div>
                     <div class="calc-input-group">
-                        <label>Fahrenheit (�F):</label>
+                        <label>Fahrenheit (°F):</label>
                         <input type="number" id="unit-input-2" placeholder="98.6" step="0.1" 
                                oninput="window.quizApp.convertUnits('temperature', 'fahrenheit')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> �F = (�C � 9/5) + 32 | Normal body temp: 36.5-37.5�C (97.7-99.5�F)';
+                infoText = '<strong>Conversion:</strong> °F = (°C × 9/5) + 32 | Normal body temp: 36.5-37.5°C (97.7-99.5°F)';
                 break;
                 
             case 'pressure':
@@ -6043,7 +6011,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('hemoglobin', 'gl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> g/L = g/dL � 10 | Normal: M 130-180 g/L (13-18 g/dL), F 120-160 g/L (12-16 g/dL)';
+                infoText = '<strong>Conversion:</strong> g/L = g/dL × 10 | Normal: M 130-180 g/L (13-18 g/dL), F 120-160 g/L (12-16 g/dL)';
                 break;
                 
             case 'calcium':
@@ -6059,7 +6027,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('calcium', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L � 4.008 | Normal: 2.2-2.6 mmol/L (8.8-10.4 mg/dL) | Adjust for albumin';
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 4.008 | Normal: 2.2-2.6 mmol/L (8.8-10.4 mg/dL) | Adjust for albumin';
                 break;
                 
             case 'magnesium':
@@ -6075,7 +6043,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('magnesium', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L � 2.431 | Normal: 0.7-1.0 mmol/L (1.7-2.4 mg/dL)';
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 2.431 | Normal: 0.7-1.0 mmol/L (1.7-2.4 mg/dL)';
                 break;
                 
             case 'phosphate':
@@ -6091,7 +6059,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('phosphate', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L � 3.097 | Normal: 0.8-1.5 mmol/L (2.5-4.5 mg/dL)';
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 3.097 | Normal: 0.8-1.5 mmol/L (2.5-4.5 mg/dL)';
                 break;
                 
             case 'urea':
@@ -6107,7 +6075,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('urea', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> BUN (mg/dL) = Urea (mmol/L) � 2.8 | Normal: 2.5-7.8 mmol/L (7-22 mg/dL BUN)';
+                infoText = '<strong>Conversion:</strong> BUN (mg/dL) = Urea (mmol/L) × 2.8 | Normal: 2.5-7.8 mmol/L (7-22 mg/dL BUN)';
                 break;
                 
             case 'albumin':
@@ -6123,7 +6091,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('albumin', 'gdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> g/dL = g/L � 0.1 | Normal: 35-50 g/L (3.5-5.0 g/dL)';
+                infoText = '<strong>Conversion:</strong> g/dL = g/L × 0.1 | Normal: 35-50 g/L (3.5-5.0 g/dL)';
                 break;
                 
             case 'triglycerides':
@@ -6139,13 +6107,13 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('triglycerides', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L � 88.57 | Target: <1.7 mmol/L (<150 mg/dL)';
+                infoText = '<strong>Conversion:</strong> mg/dL = mmol/L × 88.57 | Target: <1.7 mmol/L (<150 mg/dL)';
                 break;
                 
             case 'uric-acid':
                 fieldsHtml = `
                     <div class="calc-input-group">
-                        <label>�mol/L:</label>
+                        <label>μmol/L:</label>
                         <input type="number" id="unit-input-1" placeholder="350" step="10" 
                                oninput="window.quizApp.convertUnits('uric-acid', 'umol')">
                     </div>
@@ -6155,7 +6123,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('uric-acid', 'mgdl')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> mg/dL = �mol/L � 0.0168 | Normal: M 200-430 �mol/L, F 140-360 �mol/L | Gout: >360 �mol/L';
+                infoText = '<strong>Conversion:</strong> mg/dL = μmol/L × 0.0168 | Normal: M 200-430 μmol/L, F 140-360 μmol/L | Gout: >360 μmol/L';
                 break;
                 
             case 'vitamin-d':
@@ -6171,13 +6139,13 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('vitamin-d', 'ngml')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> ng/mL = nmol/L � 0.4 | Deficient: <25 nmol/L (<10 ng/mL) | Sufficient: >50 nmol/L (>20 ng/mL)';
+                infoText = '<strong>Conversion:</strong> ng/mL = nmol/L × 0.4 | Deficient: <25 nmol/L (<10 ng/mL) | Sufficient: >50 nmol/L (>20 ng/mL)';
                 break;
                 
             case 'ferritin':
                 fieldsHtml = `
                     <div class="calc-input-group">
-                        <label>�g/L:</label>
+                        <label>μg/L:</label>
                         <input type="number" id="unit-input-1" placeholder="100" step="1" 
                                oninput="window.quizApp.convertUnits('ferritin', 'ugl')">
                     </div>
@@ -6187,7 +6155,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('ferritin', 'ngml')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> 1 �g/L = 1 ng/mL (same value, different units) | Normal: M 30-400, F 15-150 �g/L';
+                infoText = '<strong>Conversion:</strong> 1 μg/L = 1 ng/mL (same value, different units) | Normal: M 30-400, F 15-150 μg/L';
                 break;
                 
             case 'blood-volume':
@@ -6208,7 +6176,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('blood-volume', 'pints')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> 1 unit � 450-500 mL � 0.95 pints | 1 pint = 473 mL | RBC increases Hb by ~10 g/L per unit';
+                infoText = '<strong>Conversion:</strong> 1 unit ≈ 450-500 mL ≈ 0.95 pints | 1 pint = 473 mL | RBC increases Hb by ~10 g/L per unit';
                 break;
                 
             case 'inr':
@@ -6224,7 +6192,7 @@ class MLAQuizApp {
                                oninput="window.quizApp.convertUnits('inr', 'percent')">
                     </div>
                 `;
-                infoText = '<strong>Conversion:</strong> PT% = 100 � INR | Normal INR: 0.8-1.2 (100-83%) | Therapeutic: AF 2-3, DVT/PE 2-3, Mechanical valve 2.5-3.5';
+                infoText = '<strong>Conversion:</strong> PT% = 100 ÷ INR | Normal INR: 0.8-1.2 (100-83%) | Therapeutic: AF 2-3, DVT/PE 2-3, Mechanical valve 2.5-3.5';
                 break;
         }
         
@@ -6284,14 +6252,14 @@ class MLAQuizApp {
                     if (value) {
                         converted = value * 0.0113;
                         input2.value = converted.toFixed(2);
-                        resultText = `${value} �mol/L = ${converted.toFixed(2)} mg/dL`;
+                        resultText = `${value} μmol/L = ${converted.toFixed(2)} mg/dL`;
                     }
                 } else {
                     value = parseFloat(input2.value);
                     if (value) {
                         converted = value / 0.0113;
                         input1.value = converted.toFixed(0);
-                        resultText = `${value} mg/dL = ${converted.toFixed(0)} �mol/L`;
+                        resultText = `${value} mg/dL = ${converted.toFixed(0)} μmol/L`;
                     }
                 }
                 break;
@@ -6302,14 +6270,14 @@ class MLAQuizApp {
                     if (value) {
                         converted = value * 0.0585;
                         input2.value = converted.toFixed(2);
-                        resultText = `${value} �mol/L = ${converted.toFixed(2)} mg/dL`;
+                        resultText = `${value} μmol/L = ${converted.toFixed(2)} mg/dL`;
                     }
                 } else {
                     value = parseFloat(input2.value);
                     if (value) {
                         converted = value / 0.0585;
                         input1.value = converted.toFixed(0);
-                        resultText = `${value} mg/dL = ${converted.toFixed(0)} �mol/L`;
+                        resultText = `${value} mg/dL = ${converted.toFixed(0)} μmol/L`;
                     }
                 }
                 break;
@@ -6379,14 +6347,14 @@ class MLAQuizApp {
                     if (value !== undefined && value !== null && value !== '') {
                         converted = (value * 9/5) + 32;
                         input2.value = converted.toFixed(1);
-                        resultText = `${value}�C = ${converted.toFixed(1)}�F`;
+                        resultText = `${value}°C = ${converted.toFixed(1)}°F`;
                     }
                 } else {
                     value = parseFloat(input2.value);
                     if (value !== undefined && value !== null && value !== '') {
                         converted = (value - 32) * 5/9;
                         input1.value = converted.toFixed(1);
-                        resultText = `${value}�F = ${converted.toFixed(1)}�C`;
+                        resultText = `${value}°F = ${converted.toFixed(1)}°C`;
                     }
                 }
                 break;
@@ -6541,14 +6509,14 @@ class MLAQuizApp {
                     if (value) {
                         converted = value * 0.0168;
                         input2.value = converted.toFixed(1);
-                        resultText = `${value} �mol/L = ${converted.toFixed(1)} mg/dL`;
+                        resultText = `${value} μmol/L = ${converted.toFixed(1)} mg/dL`;
                     }
                 } else {
                     value = parseFloat(input2.value);
                     if (value) {
                         converted = value / 0.0168;
                         input1.value = converted.toFixed(0);
-                        resultText = `${value} mg/dL = ${converted.toFixed(0)} �mol/L`;
+                        resultText = `${value} mg/dL = ${converted.toFixed(0)} μmol/L`;
                     }
                 }
                 break;
@@ -6576,13 +6544,13 @@ class MLAQuizApp {
                     value = parseFloat(input1.value);
                     if (value) {
                         input2.value = value;
-                        resultText = `${value} �g/L = ${value} ng/mL (same numeric value)`;
+                        resultText = `${value} μg/L = ${value} ng/mL (same numeric value)`;
                     }
                 } else {
                     value = parseFloat(input2.value);
                     if (value) {
                         input1.value = value;
-                        resultText = `${value} ng/mL = ${value} �g/L (same numeric value)`;
+                        resultText = `${value} ng/mL = ${value} μg/L (same numeric value)`;
                     }
                 }
                 break;
@@ -6687,8 +6655,8 @@ class MLAQuizApp {
                 <div id="drug-volume-result" class="calc-result"></div>
                 
                 <div class="calc-reference">
-                    <small><strong>Formula:</strong> Volume = (Dose Required � Stock Concentration) � Stock Volume<br>
-                    <strong>Example:</strong> Need 500mg, Stock is 1000mg/10ml ? Draw up 5ml</small>
+                    <small><strong>Formula:</strong> Volume = (Dose Required ÷ Stock Concentration) × Stock Volume<br>
+                    <strong>Example:</strong> Need 500mg, Stock is 1000mg/10ml → Draw up 5ml</small>
                 </div>
                 
                 <div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
@@ -6737,7 +6705,7 @@ class MLAQuizApp {
             (doseUnit === 'mmol' && stockUnit !== 'mmol') ||
             (doseUnit !== 'units' && doseUnit !== 'mmol' && (stockUnit === 'units' || stockUnit === 'mmol'))) {
             document.getElementById('drug-volume-result').innerHTML = 
-                '<div style="color: #ff9800; padding: 10px; background: #fff3e0; border-radius: 4px;">📵 Warning: Dose and stock units should match (both mass units, units, or mmol)</div>';
+                '<div style="color: #ff9800; padding: 10px; background: #fff3e0; border-radius: 4px;">⚠️ Warning: Dose and stock units should match (both mass units, units, or mmol)</div>';
             return;
         }
         
@@ -6756,19 +6724,19 @@ class MLAQuizApp {
         let warningClass = 'drug-warning-green';
         
         if (volumeToDraw < 0.1) {
-            practicality = '📵 Very small volume - difficult to draw up accurately. Consider alternative concentration.';
+            practicality = '⚠️ Very small volume - difficult to draw up accurately. Consider alternative concentration.';
             warningClass = 'drug-warning-orange';
         } else if (volumeToDraw < 0.5) {
-            practicality = '📵 Small volume - use 1ml syringe for accuracy';
+            practicality = '⚠️ Small volume - use 1ml syringe for accuracy';
             warningClass = 'drug-warning-orange';
         } else if (volumeToDraw > 20) {
-            practicality = '📵 Large volume - may need to give as infusion or split into multiple injections';
+            practicality = '⚠️ Large volume - may need to give as infusion or split into multiple injections';
             warningClass = 'drug-warning-orange';
         } else if (volumeToDraw > 50) {
-            practicality = '📵 Very large volume - definitely give as infusion, check calculation';
+            practicality = '⚠️ Very large volume - definitely give as infusion, check calculation';
             warningClass = 'drug-warning-red';
         } else {
-            practicality = '? Practical volume to draw up';
+            practicality = '✓ Practical volume to draw up';
         }
         
         const drugNameDisplay = drugName ? `<div style="margin-bottom: 10px;"><strong>Drug:</strong> ${drugName}</div>` : '';
@@ -6788,8 +6756,8 @@ class MLAQuizApp {
                 </div>
                 <div class="drug-calc-working" style="font-weight: bold; margin-bottom: 5px;">
                     <div style="font-weight: bold; margin-bottom: 5px;">Working:</div>
-                    <div>Volume = (${doseRequired} ${doseUnit} � ${stockAmount} ${stockUnit}) � ${stockVolume} ${volumeUnit}</div>
-                    <div>Volume = (${doseInBase} � ${stockInBase}) � ${stockVolumeInMl} ml = <strong>${volumeToDraw.toFixed(2)} ml</strong></div>
+                    <div>Volume = (${doseRequired} ${doseUnit} ÷ ${stockAmount} ${stockUnit}) × ${stockVolume} ${volumeUnit}</div>
+                    <div>Volume = (${doseInBase} ÷ ${stockInBase}) × ${stockVolumeInMl} ml = <strong>${volumeToDraw.toFixed(2)} ml</strong></div>
                 </div>
             </div>
         `;
@@ -6897,7 +6865,7 @@ class MLAQuizApp {
             if (resultDiv.innerHTML) {
                 resultDiv.innerHTML += `
                     <div class="drug-info-box">
-                        <strong>📵 ${drug.name}:</strong> ${drug.info}
+                        <strong>ℹ️ ${drug.name}:</strong> ${drug.info}
                     </div>
                 `;
             }
@@ -6915,7 +6883,7 @@ class MLAQuizApp {
                     <input type="number" id="news2-rr" placeholder="16" min="5" max="60">
                 </div>
                 <div class="calc-input-group">
-                    <label>SpO2 (%): <span id="spo2-scale">Scale 1</span></label>
+                    <label>SpO₂ (%): <span id="spo2-scale">Scale 1</span></label>
                     <input type="number" id="news2-spo2" placeholder="98" min="70" max="100">
                 </div>
                 <div class="calc-checkbox-group">
@@ -6938,7 +6906,7 @@ class MLAQuizApp {
                     </select>
                 </div>
                 <div class="calc-input-group">
-                    <label>Temperature (�C):</label>
+                    <label>Temperature (°C):</label>
                     <input type="number" id="news2-temp" placeholder="36.5" step="0.1" min="30" max="45">
                 </div>
                 
@@ -7053,11 +7021,11 @@ class MLAQuizApp {
                 <p><small>Enhanced CAP severity assessment (includes urea)</small></p>
                 
                 <div class="calc-checkbox-group">
-                    <label><input type="checkbox" id="curb-confusion"> Confusion (AMT =8 or new disorientation)</label>
+                    <label><input type="checkbox" id="curb-confusion"> Confusion (AMT ≤8 or new disorientation)</label>
                     <label><input type="checkbox" id="curb-urea"> Urea >7 mmol/L</label>
-                    <label><input type="checkbox" id="curb-rr"> Respiratory rate =30/min</label>
-                    <label><input type="checkbox" id="curb-bp"> Systolic BP <90 or Diastolic BP =60</label>
-                    <label><input type="checkbox" id="curb-age"> Age =65 years</label>
+                    <label><input type="checkbox" id="curb-rr"> Respiratory rate ≥30/min</label>
+                    <label><input type="checkbox" id="curb-bp"> Systolic BP <90 or Diastolic BP ≤60</label>
+                    <label><input type="checkbox" id="curb-age"> Age ≥65 years</label>
                 </div>
                 
                 <button onclick="window.quizApp.calculateCURB65()">Calculate Score</button>
@@ -7103,7 +7071,7 @@ class MLAQuizApp {
             management = 'Hospital admission - consider ICU assessment';
             color = '#F44336';
         } else if (score >= 4) {
-            mortality = '=27% 30-day mortality';
+            mortality = '≥27% 30-day mortality';
             management = 'Urgent hospital admission - high dependency/ICU care';
             color = '#D32F2F';
         }
@@ -7120,11 +7088,11 @@ class MLAQuizApp {
     getPalliativeCalculator() {
         return `
             <div class="calculator-form">
-                <h4>📵 Palliative Care Drug Calculator</h4>
+                <h4>🌸 Palliative Care Drug Calculator</h4>
                 <p><small>Morphine equivalents, breakthrough dosing, and symptom management</small></p>
                 
                 <div class="calc-section">
-                    <h5>📵 Opioid Conversion</h5>
+                    <h5>📊 Opioid Conversion</h5>
                     <div class="calc-input-group">
                         <label>Current Opioid:</label>
                         <select id="palliative-current-opioid">
@@ -7156,7 +7124,7 @@ class MLAQuizApp {
                 </div>
 
                 <div class="calc-section">
-                    <h5>📵 Breakthrough Dosing</h5>
+                    <h5>💉 Breakthrough Dosing</h5>
                     <div class="calc-input-group">
                         <label>Total Daily Morphine Equivalent (mg):</label>
                         <input type="number" id="palliative-daily-morphine" placeholder="60" step="1">
@@ -7166,7 +7134,7 @@ class MLAQuizApp {
                 </div>
 
                 <div class="calc-section">
-                    <h5>📵 Anti-emetic Calculator</h5>
+                    <h5>🤧 Anti-emetic Calculator</h5>
                     <div class="calc-input-group">
                         <label>Patient Weight (kg):</label>
                         <input type="number" id="palliative-weight" placeholder="70" step="1">
@@ -7187,7 +7155,7 @@ class MLAQuizApp {
                 </div>
 
                 <div class="calc-section">
-                    <h5>📵 Respiratory Secretions</h5>
+                    <h5>🫁 Respiratory Secretions</h5>
                     <div class="calc-input-group">
                         <label>Patient Weight (kg):</label>
                         <input type="number" id="palliative-secretions-weight" placeholder="70" step="1">
@@ -7206,12 +7174,12 @@ class MLAQuizApp {
 
                 <div class="calc-reference">
                     <small>
-                        <strong>📵 Important Notes:</strong><br>
-                        � All doses are starting suggestions - titrate to effect<br>
-                        � Consider 25-50% dose reduction if frail/elderly<br>
-                        � Monitor for sedation and respiratory depression<br>
-                        � Seek specialist palliative care advice for complex cases<br>
-                        � These calculations are guidelines only
+                        <strong>⚠️ Important Notes:</strong><br>
+                        • All doses are starting suggestions - titrate to effect<br>
+                        • Consider 25-50% dose reduction if frail/elderly<br>
+                        • Monitor for sedation and respiratory depression<br>
+                        • Seek specialist palliative care advice for complex cases<br>
+                        • These calculations are guidelines only
                     </small>
                 </div>
             </div>
@@ -7230,15 +7198,15 @@ class MLAQuizApp {
         }
 
         // UK opioid conversion factors - Faculty of Pain Medicine guidance
-        // 📵 CRITICAL: Patch conversions are per mcg/hr, NOT total daily dose
+        // ⚠️ CRITICAL: Patch conversions are per mcg/hr, NOT total daily dose
         const toMorphineFactors = {
             'morphine-oral': 1,
             'morphine-sc': 2,  // SC morphine is twice as potent as oral
             'oxycodone-oral': 1.5,  // Oxycodone 1mg = 1.5mg morphine
-            'fentanyl-patch': 2.4,  // UK: Fentanyl 12 mcg/hr � 30-45mg OME/day ? ~2.4-3.75 mg per mcg/hr
+            'fentanyl-patch': 2.4,  // UK: Fentanyl 12 mcg/hr ≈ 30-45mg OME/day → ~2.4-3.75 mg per mcg/hr
             'codeine': 0.1,  // Codeine 10mg = 1mg morphine
             'tramadol': 0.1,  // Tramadol 10mg = 1mg morphine
-            'buprenorphine-patch': 2.4  // UK: Buprenorphine 5 mcg/hr � 12mg OME/day ? ~2.4 mg per mcg/hr
+            'buprenorphine-patch': 2.4  // UK: Buprenorphine 5 mcg/hr ≈ 12mg OME/day → ~2.4 mg per mcg/hr
         };
 
         // Conversion factors from oral morphine equivalents
@@ -7297,11 +7265,11 @@ class MLAQuizApp {
                 <em>Administration:</em> ${administration}<br>
                 <em>Breakthrough:</em> ${frequency}<br><br>
                 <div style="color: #D32F2F; font-weight: bold; margin: 8px 0; border: 2px solid #D32F2F; padding: 8px; background: #FFEBEE;">
-                    📵 FACULTY OF PAIN MEDICINE WARNING:<br>
-                    � Reduce calculated doses by 25-50% when switching<br>
-                    � Reduce more for high doses (>200mg OME/day) or elderly<br>
-                    � Incomplete cross-tolerance between opioids<br>
-                    � Titrate carefully and monitor closely
+                    ⚠️ FACULTY OF PAIN MEDICINE WARNING:<br>
+                    • Reduce calculated doses by 25-50% when switching<br>
+                    • Reduce more for high doses (>200mg OME/day) or elderly<br>
+                    • Incomplete cross-tolerance between opioids<br>
+                    • Titrate carefully and monitor closely
                 </div>
                 <small style="color: #666;">
                     Using UK Faculty of Pain Medicine & MHRA guidance<br>
@@ -7336,7 +7304,7 @@ class MLAQuizApp {
                 <em>Frequency:</em> Maximum 6 doses per 24 hours<br>
                 <em>Review:</em> If >2 breakthrough doses/day, consider increasing background dose<br><br>
                 <small class="calc-note">
-                    📵 Rule: Breakthrough = 1/6 of total daily dose
+                    💡 Rule: Breakthrough = 1/6 of total daily dose
                 </small>
             </div>
         `;
@@ -7370,7 +7338,7 @@ class MLAQuizApp {
                            <strong>Haloperidol:</strong> 2.5-10mg/24h SC`;
                 secondLine = `<strong>Octreotide:</strong> 300-600mcg/24h SC<br>
                             <strong>Hyoscine butylbromide:</strong> 60-120mg/24h SC`;
-                notes = '📵 AVOID metoclopramide - may worsen colic';
+                notes = '⚠️ AVOID metoclopramide - may worsen colic';
                 break;
             case 'raised-icp':
                 firstLine = `<strong>Dexamethasone:</strong> 8-16mg daily<br>
@@ -7401,8 +7369,8 @@ class MLAQuizApp {
                 ${secondLine}<br><br>
                 <em>Clinical Notes:</em> ${notes}<br><br>
                 <small style="color: #666;">
-                    📵 Weight: ${weight}kg considered. Adjust doses for renal/hepatic impairment<br>
-                    📵 Can combine drugs with different mechanisms if single agent insufficient
+                    ⚠️ Weight: ${weight}kg considered. Adjust doses for renal/hepatic impairment<br>
+                    💊 Can combine drugs with different mechanisms if single agent insufficient
                 </small>
             </div>
         `;
@@ -7419,9 +7387,9 @@ class MLAQuizApp {
         switch (secretionType) {
             case 'bronchial':
                 primaryDrug = `<strong>Hyoscine hydrobromide:</strong><br>
-                             � 0.4-0.6mg SC TDS-QDS<br>
-                             � Or 1.2-2.4mg SC/24h via syringe driver<br>
-                             � Patches: 1mg/72h (change every 3 days)`;
+                             • 0.4-0.6mg SC TDS-QDS<br>
+                             • Or 1.2-2.4mg SC/24h via syringe driver<br>
+                             • Patches: 1mg/72h (change every 3 days)`;
                 alternativeDrugs = `<strong>Glycopyrronium:</strong> 200-400mcg SC TDS-QDS<br>
                                   <strong>Atropine:</strong> 0.4-0.6mg SC QDS<br>
                                   <strong>Hyoscine butylbromide:</strong> 20mg SC TDS (less CNS effects)`;
@@ -7429,8 +7397,8 @@ class MLAQuizApp {
                 break;
             case 'salivary':
                 primaryDrug = `<strong>Glycopyrronium:</strong><br>
-                             � 200-400mcg SC TDS<br>
-                             � Or 800-1200mcg SC/24h via syringe driver`;
+                             • 200-400mcg SC TDS<br>
+                             • Or 800-1200mcg SC/24h via syringe driver`;
                 alternativeDrugs = `<strong>Hyoscine patches:</strong> 1mg/72h<br>
                                   <strong>Atropine drops:</strong> 1% drops sublingually<br>
                                   <strong>Amitriptyline:</strong> 25-75mg at night (if swallowing possible)`;
@@ -7438,9 +7406,9 @@ class MLAQuizApp {
                 break;
             case 'death-rattle':
                 primaryDrug = `<strong>Hyoscine hydrobromide:</strong><br>
-                             � 0.4-0.6mg SC STAT, then every 4-8h PRN<br>
-                             � Or 1.2-2.4mg SC/24h continuous<br>
-                             � Start early - less effective once established`;
+                             • 0.4-0.6mg SC STAT, then every 4-8h PRN<br>
+                             • Or 1.2-2.4mg SC/24h continuous<br>
+                             • Start early - less effective once established`;
                 alternativeDrugs = `<strong>Glycopyrronium:</strong> 200-400mcg SC TDS<br>
                                   <strong>Atropine:</strong> 0.6mg SC TDS<br>
                                   <strong>Hyoscine butylbromide:</strong> 20mg SC TDS`;
@@ -7458,9 +7426,9 @@ class MLAQuizApp {
                 <strong>Non-pharmacological:</strong><br>
                 ${nonPharmacological}<br><br>
                 <small class="calc-note">
-                    📵 Weight: ${weight}kg - doses shown are standard adult doses<br>
-                    📵 All anticholinergics can cause drowsiness, confusion, and dry mouth<br>
-                    📵 Review effectiveness after 24-48 hours and adjust accordingly
+                    💊 Weight: ${weight}kg - doses shown are standard adult doses<br>
+                    ⚠️ All anticholinergics can cause drowsiness, confusion, and dry mouth<br>
+                    🕒 Review effectiveness after 24-48 hours and adjust accordingly
                 </small>
             </div>
         `;
@@ -7473,7 +7441,7 @@ class MLAQuizApp {
             console.error('Drug database not loaded. Make sure drugDatabase.js is included before app.js');
             const container = document.getElementById('drug-reference-container');
             if (container) {
-                container.innerHTML = '<div class="error-message">📵 Drug database not available. Please refresh the page.</div>';
+                container.innerHTML = '<div class="error-message">⚠️ Drug database not available. Please refresh the page.</div>';
             }
             return;
         }
@@ -7484,8 +7452,8 @@ class MLAQuizApp {
         container.innerHTML = `
             <div class="search-container" style="display:flex;gap:8px;align-items:center;">
                 <input type="text" id="drug-search" placeholder="Search medications..." class="tool-search" style="flex:1;">
-                <button id="drug-search-btn" title="Search">📵</button>
-                <button id="drug-voice-btn" title="Voice search" aria-label="Voice search" style="font-size:16px;padding:8px;border-radius:6px;">📵</button>
+                <button id="drug-search-btn" title="Search">🔍</button>
+                <button id="drug-voice-btn" title="Voice search" aria-label="Voice search" style="font-size:16px;padding:8px;border-radius:6px;">🎤</button>
             </div>
             <div id="drug-search-results"></div>
             <div class="drug-categories">
@@ -7562,10 +7530,10 @@ class MLAQuizApp {
         matches.sort((a, b) => drugDatabase[a].name.localeCompare(drugDatabase[b].name));
         
         resultsContainer.innerHTML = matches.map(drug => `
-            <div class="drug-card" onclick="console.log('📵 Drug search result clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
+            <div class="drug-card" onclick="console.log('💊 Drug search result clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
                 <div class="drug-name">${drugDatabase[drug].name}</div>
                 <div class="drug-class">${drugDatabase[drug].class}</div>
-                <button class="speak-name-btn" onclick="event.stopPropagation(); window.quizApp.speakDrugName(this.dataset.name);" data-name="${drugDatabase[drug].name.replace(/\"/g, '&quot;')}">📵</button>
+                <button class="speak-name-btn" onclick="event.stopPropagation(); window.quizApp.speakDrugName(this.dataset.name);" data-name="${drugDatabase[drug].name.replace(/\"/g, '&quot;')}">🔊</button>
             </div>
         `).join('');
     }
@@ -7594,7 +7562,7 @@ class MLAQuizApp {
             recognition.active = true;
             this.drugRecognition = recognition;
             if (voiceBtn) voiceBtn.classList.add('active');
-            if (resultsContainer) resultsContainer.innerHTML = '<div class="loading-message">📵 Listening... Speak the drug name clearly.</div>';
+            if (resultsContainer) resultsContainer.innerHTML = '<div class="loading-message">🎤 Listening... Speak the drug name clearly.</div>';
         };
 
         recognition.onresult = (event) => {
@@ -7811,7 +7779,7 @@ class MLAQuizApp {
         }
         
         drugList.innerHTML = drugs.map(drug => `
-            <div class="drug-card" onclick="console.log('📵 Drug card clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
+            <div class="drug-card" onclick="console.log('💊 Drug card clicked:', '${drug}'); window.quizApp.showDrugDetail('${drug}'); event.stopPropagation();">
                 <div class="drug-name">${drugDatabase[drug].name}</div>
                 <div class="drug-class">${drugDatabase[drug].class}</div>
             </div>
@@ -7823,75 +7791,75 @@ class MLAQuizApp {
         const container = document.getElementById('drug-reference-container');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.loadDrugReference(); event.stopPropagation();">? Back to Drug List</button>
+            <button class="back-btn" onclick="window.quizApp.loadDrugReference(); event.stopPropagation();">← Back to Drug List</button>
             <div class="drug-detail">
                 <div style="display:flex;align-items:center;gap:10px;">
                     <h3 style="margin:0;">${drug.name}</h3>
-                    <button class="speak-name-btn" onclick="event.stopPropagation(); window.quizApp.speakDrugName('${(drug.name || '').replace(/\"/g, '&quot;')}');">📵 Read name</button>
+                    <button class="speak-name-btn" onclick="event.stopPropagation(); window.quizApp.speakDrugName('${(drug.name || '').replace(/\"/g, '&quot;')}');">🔊 Read name</button>
                 </div>
                 <div class="drug-info">
                     <div class="info-section">
-                        <h4>📵? Classification</h4>
+                        <h4>🏷️ Classification</h4>
                         <p>${drug.class}</p>
                     </div>
                     <div class="info-section">
-                        <h4>📵 Mechanism of Action</h4>
+                        <h4>⚙️ Mechanism of Action</h4>
                         <p>${drug.mechanism}</p>
                     </div>
                     <div class="info-section">
-                        <h4>📵 Dosing & Administration</h4>
+                        <h4>💊 Dosing & Administration</h4>
                         <p>${drug.dosing}</p>
                         ${drug.maxDose ? `<p><strong>Maximum Dose:</strong> ${drug.maxDose}</p>` : ''}
                     </div>
                     <div class="info-section">
-                        <h4>📵 Contraindications</h4>
+                        <h4>⚠️ Contraindications</h4>
                         <p>${drug.contraindications}</p>
                     </div>
                     <div class="info-section">
-                        <h4>📵 Drug Interactions</h4>
+                        <h4>🔄 Drug Interactions</h4>
                         <p>${drug.interactions}</p>
                     </div>
                     <div class="info-section">
-                        <h4>📵 Monitoring Parameters</h4>
+                        <h4>📊 Monitoring Parameters</h4>
                         <p>${drug.monitoring}</p>
                     </div>
                     <div class="info-section">
-                        <h4>📵 Pregnancy Safety</h4>
+                        <h4>🤰 Pregnancy Safety</h4>
                         <p>${drug.pregnancy}</p>
                     </div>
                     ${drug.sideEffects ? `
                     <div class="info-section">
-                        <h4>📵 Side Effects</h4>
+                        <h4>🚨 Side Effects</h4>
                         <p>${drug.sideEffects}</p>
                     </div>` : ''}
                     ${drug.pharmacokinetics ? `
                     <div class="info-section">
-                        <h4>📵 Pharmacokinetics</h4>
+                        <h4>⏱️ Pharmacokinetics</h4>
                         <p>${drug.pharmacokinetics}</p>
                     </div>` : ''}
                     ${drug.clinicalPearls ? `
                     <div class="info-section">
-                        <h4>📵 Clinical Pearls</h4>
+                        <h4>💎 Clinical Pearls</h4>
                         <p>${drug.clinicalPearls}</p>
                     </div>` : ''}
                     ${drug.coverage ? `
                     <div class="info-section">
-                        <h4>📵 Antimicrobial Coverage</h4>
+                        <h4>🦠 Antimicrobial Coverage</h4>
                         <p>${drug.coverage}</p>
                     </div>` : ''}
                     ${drug.targets ? `
                     <div class="info-section">
-                        <h4>📵 Treatment Targets</h4>
+                        <h4>🎯 Treatment Targets</h4>
                         <p>${drug.targets}</p>
                     </div>` : ''}
                     ${drug.efficacy ? `
                     <div class="info-section">
-                        <h4>📵 Clinical Efficacy</h4>
+                        <h4>📈 Clinical Efficacy</h4>
                         <p>${drug.efficacy}</p>
                     </div>` : ''}
                     ${drug.indications ? `
                     <div class="info-section">
-                        <h4>📵 Indications</h4>
+                        <h4>🎯 Indications</h4>
                         <p>${drug.indications}</p>
                     </div>` : ''}
                 </div>
@@ -7913,24 +7881,24 @@ class MLAQuizApp {
 
     // Lab Values Functions
     loadLabValues() {
-        console.log('📵 Loading lab values...');
+        console.log('🧪 Loading lab values...');
         const labDatabase = {
             'cbc': {
                 name: 'Complete Blood Count (CBC)',
                 values: {
                     'WBC': { 
-                        normal: '4.0-11.0 � 10?/L', 
+                        normal: '4.0-11.0 × 10⁹/L', 
                         low: 'Immunosuppression, viral infection, autoimmune disease, chemotherapy', 
                         high: 'Bacterial infection, leukaemia, stress, tissue necrosis, smoking',
-                        critical: '<1.0 or >30 � 10?/L',
+                        critical: '<1.0 or >30 × 10⁹/L',
                         ageVariations: 'Neonate: 9-30, Child: 5-17, Adult: 4.0-11.0',
                         clinicalSignificance: 'Left shift suggests bacterial infection. Lymphocytosis in viral infections.'
                     },
                     'RBC': { 
-                        normal: 'M: 4.5-6.5, F: 3.8-5.8 � 10��/L', 
+                        normal: 'M: 4.5-6.5, F: 3.8-5.8 × 10¹²/L', 
                         low: 'Anaemia (iron deficiency, chronic disease, haemolysis), bleeding, kidney disease', 
                         high: 'Polycythaemia vera, dehydration, COPD, high altitude',
-                        critical: '<2.5 or >7.0 � 10��/L',
+                        critical: '<2.5 or >7.0 × 10¹²/L',
                         ageVariations: 'Neonate: 4.0-6.6, Child: 3.7-5.3',
                         clinicalSignificance: 'Combined with Hb/Hct for anaemia classification. MCV helps determine type.'
                     },
@@ -7948,13 +7916,13 @@ class MLAQuizApp {
                         high: 'Dehydration, polycythaemia, COPD, diuretic use',
                         critical: '<0.20 or >0.60',
                         ageVariations: 'Neonate: 0.42-0.75, Child: 0.33-0.45',
-                        clinicalSignificance: 'Rule of 3: Hct � 3 � Hb (in g/dL). Falsely elevated in dehydration.'
+                        clinicalSignificance: 'Rule of 3: Hct ≈ 3 × Hb (in g/dL). Falsely elevated in dehydration.'
                     },
                     'Platelets': { 
-                        normal: '150-450 � 10?/L', 
+                        normal: '150-450 × 10⁹/L', 
                         low: 'ITP, drug-induced, hypersplenism, viral infection, heparin', 
                         high: 'Essential thrombocythaemia, reactive (infection, malignancy), iron deficiency',
-                        critical: '<20 or >1000 � 10?/L',
+                        critical: '<20 or >1000 × 10⁹/L',
                         ageVariations: 'Consistent across ages',
                         clinicalSignificance: 'Bleeding risk increases <50. Spontaneous bleeding <10. Thrombosis risk >1000.'
                     },
@@ -7988,18 +7956,18 @@ class MLAQuizApp {
                         clinicalSignificance: 'Urea:Creatinine ratio >100:1 suggests prerenal azotemia. <40:1 suggests liver disease.'
                     },
                     'Creatinine': { 
-                        normal: 'M: 62-115 �mol/L, F: 53-97 �mol/L', 
+                        normal: 'M: 62-115 μmol/L, F: 53-97 μmol/L', 
                         low: 'Low muscle mass, malnutrition, pregnancy', 
                         high: 'Acute/chronic kidney disease, dehydration, muscle breakdown',
-                        critical: '>354 �mol/L or >3� baseline',
+                        critical: '>354 μmol/L or >3× baseline',
                         ageVariations: 'Child: 27-62, Adult varies by muscle mass, Elderly: lower baseline',
-                        clinicalSignificance: 'Use eGFR for kidney function. =26 �mol/L rise in 48h = AKI. Delayed rise after injury.'
+                        clinicalSignificance: 'Use eGFR for kidney function. ≥26 μmol/L rise in 48h = AKI. Delayed rise after injury.'
                     },
                     'eGFR': {
-                        normal: '>90 mL/min/1.73m�',
+                        normal: '>90 mL/min/1.73m²',
                         low: 'CKD stages: 60-89 (stage 2), 45-59 (3a), 30-44 (3b), 15-29 (4), <15 (5)',
                         high: 'Hyperfiltration (early diabetes), pregnancy',
-                        critical: '<15 mL/min/1.73m� (dialysis consideration)',
+                        critical: '<15 mL/min/1.73m² (dialysis consideration)',
                         ageVariations: 'Declines ~1 mL/min/year after age 40',
                         clinicalSignificance: 'More accurate than creatinine alone. Adjust medications at <60. Nephrology referral <30.'
                     },
@@ -8060,7 +8028,7 @@ class MLAQuizApp {
                         normal: '30-130 U/L (adult)', 
                         low: 'Hypothyroidism, malnutrition, Wilson disease', 
                         high: 'Cholestasis, bone disease, pregnancy, malignancy, Paget disease',
-                        critical: '>5� upper limit',
+                        critical: '>5× upper limit',
                         ageVariations: 'Child/adolescent: 100-390 (bone growth), Pregnancy: elevated',
                         clinicalSignificance: 'Elevated with GGT suggests hepatic source. Isolated elevation: bone disease, pregnancy.'
                     },
@@ -8068,23 +8036,23 @@ class MLAQuizApp {
                         normal: 'M: 5-55 U/L, F: 5-35 U/L',
                         low: 'Rarely significant',
                         high: 'Alcohol use, cholestasis, drugs, NASH',
-                        critical: '>10� upper limit',
+                        critical: '>10× upper limit',
                         ageVariations: 'Increases with age',
                         clinicalSignificance: 'Most sensitive for alcohol use. Helps differentiate hepatic vs. bone source of elevated ALP.'
                     },
                     'Total Bilirubin': { 
-                        normal: '5-20 �mol/L', 
+                        normal: '5-20 μmol/L', 
                         low: 'Rarely significant', 
                         high: 'Haemolysis, liver disease, Gilbert syndrome, cholestasis',
-                        critical: '>340 �mol/L',
+                        critical: '>340 μmol/L',
                         ageVariations: 'Newborn: physiologic elevation first week',
-                        clinicalSignificance: 'Conjugated >34 �mol/L suggests hepatic/post-hepatic cause. Unconjugated elevation: haemolysis, Gilbert.'
+                        clinicalSignificance: 'Conjugated >34 μmol/L suggests hepatic/post-hepatic cause. Unconjugated elevation: haemolysis, Gilbert.'
                     },
                     'Direct Bilirubin': {
-                        normal: '0-5 �mol/L',
+                        normal: '0-5 μmol/L',
                         low: 'Normal',
                         high: 'Hepatocellular injury, cholestasis, Dubin-Johnson syndrome',
-                        critical: '>255 �mol/L',
+                        critical: '>255 μmol/L',
                         ageVariations: 'Consistent across ages',
                         clinicalSignificance: 'Conjugated bilirubin. Elevation suggests hepatic processing defect or biliary obstruction.'
                     },
@@ -8115,7 +8083,7 @@ class MLAQuizApp {
                         high: 'Familial hypercholesterolaemia, diabetes, hypothyroidism, diet',
                         critical: '>400 mg/dL',
                         ageVariations: 'Increases with age until menopause (women)',
-                        clinicalSignificance: 'Borderline high: 200-239. High: =240. Less important than LDL for risk assessment.'
+                        clinicalSignificance: 'Borderline high: 200-239. High: ≥240. Less important than LDL for risk assessment.'
                     },
                     'LDL': { 
                         normal: '<2.6 mmol/L (optimal), <1.8 (high risk)', 
@@ -8139,7 +8107,7 @@ class MLAQuizApp {
                         high: 'Diabetes, alcohol, obesity, familial hypertriglyceridaemia',
                         critical: '>11.3 mmol/L (pancreatitis risk)',
                         ageVariations: 'Increases with age',
-                        clinicalSignificance: 'High: 200-499. Very high: =500. Pancreatitis risk >1000. Fasting required for accuracy.'
+                        clinicalSignificance: 'High: 200-499. Very high: ≥500. Pancreatitis risk >1000. Fasting required for accuracy.'
                     },
                     'Non-HDL Cholesterol': {
                         normal: '<130 mg/dL',
@@ -8208,18 +8176,18 @@ class MLAQuizApp {
                         clinicalSignificance: 'Urea:creatinine ratio >100 suggests prerenal cause. Affected by protein metabolism.'
                     },
                     'Creatinine': {
-                        normal: 'M: 70-120 �mol/L, F: 50-100 �mol/L',
+                        normal: 'M: 70-120 μmol/L, F: 50-100 μmol/L',
                         low: 'Low muscle mass, pregnancy, amputation',
                         high: 'Acute/chronic kidney disease, dehydration, muscle breakdown, some drugs',
-                        critical: '>500 �mol/L',
+                        critical: '>500 μmol/L',
                         ageVariations: 'Lower in elderly due to reduced muscle mass',
                         clinicalSignificance: 'Used to calculate eGFR. More specific for kidney function than urea. Creatinine rise lags behind GFR fall.'
                     },
                     'eGFR': {
-                        normal: '>90 mL/min/1.73m�',
+                        normal: '>90 mL/min/1.73m²',
                         low: 'Chronic kidney disease, acute kidney injury, dehydration',
                         high: 'Hyperfiltration (early diabetes), young age',
-                        critical: '<15 mL/min/1.73m� (consider dialysis)',
+                        critical: '<15 mL/min/1.73m² (consider dialysis)',
                         ageVariations: 'Declines ~1 mL/min/year after age 30',
                         clinicalSignificance: 'CKD stages: G1(>90), G2(60-89), G3a(45-59), G3b(30-44), G4(15-29), G5(<15). Adjusted for ethnicity.'
                     }
@@ -8257,7 +8225,7 @@ class MLAQuizApp {
                         low: 'No clinical significance',
                         high: 'VTE, DIC, malignancy, infection, pregnancy, surgery, advanced age',
                         critical: '>10 mg/L',
-                        ageVariations: 'Increases with age (age�10 �g/L cutoff >50 years)',
+                        ageVariations: 'Increases with age (age×10 μg/L cutoff >50 years)',
                         clinicalSignificance: 'High sensitivity, low specificity for VTE. Normal D-dimer excludes PE/DVT in low-risk patients.'
                     }
                 }
@@ -8266,18 +8234,18 @@ class MLAQuizApp {
                 name: 'Cardiac Markers',
                 values: {
                     'Troponin I': {
-                        normal: '<0.04 �g/L',
+                        normal: '<0.04 μg/L',
                         low: 'No clinical significance',
                         high: 'MI, myocarditis, PE, renal failure, sepsis, heart failure',
-                        critical: '>10� upper limit',
+                        critical: '>10× upper limit',
                         ageVariations: 'May be slightly elevated in elderly',
                         clinicalSignificance: 'Most specific for myocardial injury. Rise 3-6h, peak 12-24h, elevated 7-14 days. High-sensitivity assays available.'
                     },
                     'CK-MB': {
-                        normal: '<6.3 �g/L',
+                        normal: '<6.3 μg/L',
                         low: 'No clinical significance',
                         high: 'MI, myocarditis, cardiac surgery, skeletal muscle disease',
-                        critical: '>25 �g/L',
+                        critical: '>25 μg/L',
                         ageVariations: 'Consistent across ages',
                         clinicalSignificance: 'Less specific than troponin. Rise 3-6h, peak 12-24h, normalize 48-72h. Still used in some centers.'
                     },
@@ -8311,10 +8279,10 @@ class MLAQuizApp {
                         clinicalSignificance: 'Non-specific. Takes days to change. Still useful in temporal arteritis, polymyalgia rheumatica.'
                     },
                     'Procalcitonin': {
-                        normal: '<0.1 �g/L',
+                        normal: '<0.1 μg/L',
                         low: 'Viral infection, localized bacterial infection',
                         high: 'Bacterial sepsis, severe bacterial infection',
-                        critical: '>10 �g/L',
+                        critical: '>10 μg/L',
                         ageVariations: 'Consistent across ages',
                         clinicalSignificance: 'More specific for bacterial infection than CRP. Guides antibiotic duration. Useful in sepsis diagnosis.'
                     }
@@ -8329,7 +8297,7 @@ class MLAQuizApp {
                         high: 'Diabetes mellitus, poor glycemic control',
                         critical: '>75 mmol/mol (9.0%)',
                         ageVariations: 'Target may be higher in elderly/frail',
-                        clinicalSignificance: 'Diabetes: =48 mmol/mol. Pre-diabetes: 42-47. Target usually <53 mmol/mol. Reflects 8-12 week average glucose.'
+                        clinicalSignificance: 'Diabetes: ≥48 mmol/mol. Pre-diabetes: 42-47. Target usually <53 mmol/mol. Reflects 8-12 week average glucose.'
                     },
                     'Random Glucose': {
                         normal: '3.5-7.8 mmol/L',
@@ -8337,7 +8305,7 @@ class MLAQuizApp {
                         high: 'Diabetes, stress, steroids, acute illness',
                         critical: '<2.2 or >22 mmol/L',
                         ageVariations: 'Glucose tolerance decreases with age',
-                        clinicalSignificance: 'Random =11.1 mmol/L suggests diabetes if symptomatic. Fasting =7.0 mmol/L diagnostic for diabetes.'
+                        clinicalSignificance: 'Random ≥11.1 mmol/L suggests diabetes if symptomatic. Fasting ≥7.0 mmol/L diagnostic for diabetes.'
                     },
                     'Cortisol (9am)': {
                         normal: '200-700 nmol/L',
@@ -8372,10 +8340,10 @@ class MLAQuizApp {
                         clinicalSignificance: 'Measure total and free testosterone. Sample in morning (9-11am). Low testosterone with low LH/FSH = secondary hypogonadism.'
                     },
                     'Prolactin': {
-                        normal: 'M: <15 �g/L, F (non-pregnant): <25 �g/L',
+                        normal: 'M: <15 μg/L, F (non-pregnant): <25 μg/L',
                         low: 'Rarely clinically significant, hypopituitarism',
                         high: 'Prolactinoma, medications (antipsychotics, metoclopramide), hypothyroidism, pregnancy',
-                        critical: '>200 �g/L (likely prolactinoma)',
+                        critical: '>200 μg/L (likely prolactinoma)',
                         ageVariations: 'Elevated during pregnancy and lactation',
                         clinicalSignificance: 'Causes galactorrhea, hypogonadism. Macroprolactin can cause false elevations. MRI pituitary if >100.'
                     }
@@ -8393,10 +8361,10 @@ class MLAQuizApp {
                         clinicalSignificance: 'Deficiency causes macrocytic anaemia, neuropathy. Check MMA/homocysteine if borderline. Treat empirically if symptomatic.'
                     },
                     'Folate': {
-                        normal: '3-20 �g/L',
+                        normal: '3-20 μg/L',
                         low: 'Poor diet, malabsorption, alcohol, antifolate drugs (methotrexate), pregnancy',
                         high: 'Folate supplementation, rarely clinically significant',
-                        critical: '<2 �g/L',
+                        critical: '<2 μg/L',
                         ageVariations: 'Requirements increase in pregnancy',
                         clinicalSignificance: 'Deficiency causes macrocytic anaemia. Always check B12 concurrently. Treat B12 deficiency before folate.'
                     },
@@ -8409,15 +8377,15 @@ class MLAQuizApp {
                         clinicalSignificance: 'Deficiency causes osteomalacia, osteoporosis. Supplement if <50. Check PTH if low. Common in UK population.'
                     },
                     'Ferritin': {
-                        normal: 'M: 30-300 �g/L, F: 15-200 �g/L',
+                        normal: 'M: 30-300 μg/L, F: 15-200 μg/L',
                         low: 'Iron deficiency anaemia, blood loss, poor intake, malabsorption',
                         high: 'Inflammation, infection, liver disease, haemochromatosis, malignancy',
-                        critical: '<15 �g/L (iron deficiency)',
+                        critical: '<15 μg/L (iron deficiency)',
                         ageVariations: 'Lower in premenopausal women due to menstruation',
                         clinicalSignificance: 'Best test for iron stores. <30 suggests iron deficiency even if not anaemic. Acute phase protein - can be falsely elevated.'
                     },
                     'Iron': {
-                        normal: '10-30 �mol/L',
+                        normal: '10-30 μmol/L',
                         low: 'Iron deficiency, chronic disease, poor intake',
                         high: 'Haemochromatosis, iron supplementation, haemolysis, repeated transfusions',
                         critical: 'Not typically defined',
@@ -8425,12 +8393,12 @@ class MLAQuizApp {
                         clinicalSignificance: 'Shows diurnal variation. Best interpreted with TIBC and ferritin. Low with high TIBC suggests iron deficiency.'
                     },
                     'TIBC': {
-                        normal: '45-70 �mol/L',
+                        normal: '45-70 μmol/L',
                         low: 'Chronic disease, malnutrition, liver disease, nephrotic syndrome',
                         high: 'Iron deficiency, pregnancy, oral contraceptives',
                         critical: 'Not typically defined',
                         ageVariations: 'Slightly higher in pregnancy',
-                        clinicalSignificance: 'Transferrin saturation = (Iron/TIBC) � 100%. Normal: 20-45%. <20% = iron deficiency. >45% = iron overload.'
+                        clinicalSignificance: 'Transferrin saturation = (Iron/TIBC) × 100%. Normal: 20-45%. <20% = iron deficiency. >45% = iron overload.'
                     },
                     'Transferrin Saturation': {
                         normal: '20-45%',
@@ -8446,7 +8414,7 @@ class MLAQuizApp {
                         high: 'Primary hyperparathyroidism, malignancy, vitamin D toxicity, thiazide diuretics',
                         critical: '<1.90 or >3.00 mmol/L',
                         ageVariations: 'Consistent across ages',
-                        clinicalSignificance: 'Correct for albumin: Corrected Ca = measured Ca + 0.02 � (40 - albumin g/L). Check PTH if abnormal.'
+                        clinicalSignificance: 'Correct for albumin: Corrected Ca = measured Ca + 0.02 × (40 - albumin g/L). Check PTH if abnormal.'
                     },
                     'Magnesium': {
                         normal: '0.70-1.00 mmol/L',
@@ -8481,7 +8449,7 @@ class MLAQuizApp {
                         normal: '20-130 U/L',
                         low: 'Hypothyroidism, malnutrition',
                         high: 'Paget disease, bone metastases, fracture healing, osteomalacia, hyperparathyroidism',
-                        critical: '>5� upper limit',
+                        critical: '>5× upper limit',
                         ageVariations: 'Elevated in children (growth) and elderly (bone turnover)',
                         clinicalSignificance: 'Use to differentiate bone vs liver cause of elevated total ALP. Order if total ALP elevated without GGT elevation.'
                     }
@@ -8493,7 +8461,7 @@ class MLAQuizApp {
                     'Rheumatoid Factor': {
                         normal: '<20 IU/mL',
                         low: 'No clinical significance',
-                        high: 'Rheumatoid arthritis, Sj�gren syndrome, SLE, chronic infections, elderly',
+                        high: 'Rheumatoid arthritis, Sjögren syndrome, SLE, chronic infections, elderly',
                         critical: '>100 IU/mL (high titre)',
                         ageVariations: 'Can be positive in 5-10% of healthy elderly',
                         clinicalSignificance: 'Positive in 70-80% of RA. Not specific - also in other autoimmune diseases. High titre more significant.'
@@ -8509,7 +8477,7 @@ class MLAQuizApp {
                     'ANA': {
                         normal: '<1:80 (negative)',
                         low: 'No clinical significance',
-                        high: 'SLE, drug-induced lupus, Sj�gren, scleroderma, mixed connective tissue disease',
+                        high: 'SLE, drug-induced lupus, Sjögren, scleroderma, mixed connective tissue disease',
                         critical: '>1:640 (high titre)',
                         ageVariations: 'Low titres can be positive in healthy individuals, especially elderly',
                         clinicalSignificance: 'Screening test for autoimmune disease. Pattern matters (speckled, homogeneous, nucleolar). Positive in 5-10% healthy.'
@@ -8562,7 +8530,7 @@ class MLAQuizApp {
                 name: 'Additional Hematology',
                 values: {
                     'Reticulocyte Count': {
-                        normal: '0.5-2.0% (25-100 � 10?/L)',
+                        normal: '0.5-2.0% (25-100 × 10⁹/L)',
                         low: 'Bone marrow failure, aplastic anaemia, B12/folate deficiency',
                         high: 'Haemolytic anaemia, bleeding, response to treatment',
                         critical: '<0.2% or >6%',
@@ -8602,7 +8570,7 @@ class MLAQuizApp {
                         normal: '30-110 U/L',
                         low: 'Chronic pancreatitis, pancreatic insufficiency',
                         high: 'Acute pancreatitis, perforated peptic ulcer, mesenteric ischaemia, mumps',
-                        critical: '>3� upper limit (suggests pancreatitis)',
+                        critical: '>3× upper limit (suggests pancreatitis)',
                         ageVariations: 'Consistent across ages',
                         clinicalSignificance: 'Rises within 6-12h of acute pancreatitis. Not specific - also elevated in other acute abdomens. Lipase more specific.'
                     },
@@ -8610,7 +8578,7 @@ class MLAQuizApp {
                         normal: '10-140 U/L',
                         low: 'Chronic pancreatitis (late stage)',
                         high: 'Acute pancreatitis, pancreatic cancer, renal failure, bowel obstruction',
-                        critical: '>3� upper limit',
+                        critical: '>3× upper limit',
                         ageVariations: 'Consistent across ages',
                         clinicalSignificance: 'More specific and sensitive than amylase for acute pancreatitis. Remains elevated longer (7-14 days vs 3-5 days).'
                     }
@@ -8622,12 +8590,12 @@ class MLAQuizApp {
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="lab-search" placeholder="Search lab values..." class="tool-search">
-                <button id="lab-search-btn">📵</button>
+                <button id="lab-search-btn">🔍</button>
             </div>
             <div id="lab-search-results" class="lab-grid"></div>
             <div class="lab-categories">
                 <button class="category-btn active" onclick="window.quizApp.showLabCategory('all'); event.stopPropagation();">All Labs</button>
-                <button class="category-btn" onclick="window.quizApp.showLabCategory('collection'); event.stopPropagation();">📵 Collection</button>
+                <button class="category-btn" onclick="window.quizApp.showLabCategory('collection'); event.stopPropagation();">🩸 Collection</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('cbc'); event.stopPropagation();">CBC</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('bmp'); event.stopPropagation();">Chemistry</button>
                 <button class="category-btn" onclick="window.quizApp.showLabCategory('lft'); event.stopPropagation();">Liver</button>
@@ -8655,7 +8623,7 @@ class MLAQuizApp {
         searchBtn.addEventListener('click', () => this.searchLabValues(labDatabase));
         this.labDatabase = labDatabase;
         this.showLabCategory('all');
-        console.log('📵 Lab values interface loaded successfully');
+        console.log('🧪 Lab values interface loaded successfully');
     }
 
     searchLabValues(labDatabase) {
@@ -8685,7 +8653,7 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(match => `
-            <button class="lab-value-btn" onclick="${match.type === 'panel' ? `console.log('📵 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('📵 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
+            <button class="lab-value-btn" onclick="${match.type === 'panel' ? `console.log('🧪 Search result panel clicked:', '${match.key}'); window.quizApp.showLabPanel('${match.key}'); event.stopPropagation();` : `console.log('🧪 Search result test clicked:', '${match.key}'); window.quizApp.showLabTest('${match.panel}', '${match.key}'); event.stopPropagation();`}">
                 <div class="lab-name">${match.name}</div>
                 <div class="lab-count">${match.type === 'panel' ? 'Lab Panel' : 'Individual Test'}</div>
             </button>
@@ -8711,7 +8679,7 @@ class MLAQuizApp {
                 btn.classList.remove('active');
                 const btnText = btn.textContent.trim();
                 if ((category === 'all' && btnText === 'All Labs') ||
-                    (category === 'collection' && btnText === '📵 Collection') ||
+                    (category === 'collection' && btnText === '🩸 Collection') ||
                     (category === 'cbc' && btnText === 'CBC') ||
                     (category === 'bmp' && btnText === 'Chemistry') ||
                     (category === 'lft' && btnText === 'Liver') ||
@@ -8726,7 +8694,7 @@ class MLAQuizApp {
                 }
             });
         } else {
-            console.log('📵 Lab category buttons not found');
+            console.log('⚠️ Lab category buttons not found');
         }
         
         if (category !== 'all') {
@@ -8734,7 +8702,7 @@ class MLAQuizApp {
         }
         
         labList.innerHTML = panels.map(panel => `
-            <button class="lab-value-btn" onclick="console.log('📵 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
+            <button class="lab-value-btn" onclick="console.log('🧪 Lab panel clicked:', '${panel}'); window.quizApp.showLabPanel('${panel}'); event.stopPropagation();">
                 <div class="lab-name">${labDatabase[panel].name}</div>
                 <div class="lab-count">${Object.keys(labDatabase[panel].values).length} tests</div>
             </button>
@@ -8742,19 +8710,19 @@ class MLAQuizApp {
     }
     
     showLabPanel(panelKey) {
-        console.log('📵 Opening lab panel:', panelKey);
+        console.log('🧪 Opening lab panel:', panelKey);
         const panel = this.labDatabase[panelKey];
         const container = document.getElementById('lab-values-container');
         
         const testsHtml = Object.entries(panel.values).map(([test, data]) => `
-            <button class="lab-value-btn" onclick="console.log('📵 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
+            <button class="lab-value-btn" onclick="console.log('🧪 Lab test clicked:', '${test}'); window.quizApp.showLabTest('${panelKey}', '${test}'); event.stopPropagation();">
                 <div class="lab-name">${test}</div>
                 <div class="lab-count">${data.normal}</div>
             </button>
         `).join('');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.loadLabValues(); event.stopPropagation();">? Back to Lab Categories</button>
+            <button class="back-btn" onclick="window.quizApp.loadLabValues(); event.stopPropagation();">← Back to Lab Categories</button>
             <div class="lab-panel-detail">
                 <h3>${panel.name}</h3>
                 <div class="lab-tests lab-grid">
@@ -8774,40 +8742,40 @@ class MLAQuizApp {
     }
     
     showLabTest(panelKey, testKey) {
-        console.log('📵 Opening lab test detail:', panelKey, testKey);
+        console.log('🧪 Opening lab test detail:', panelKey, testKey);
         const test = this.labDatabase[panelKey].values[testKey];
         const container = document.getElementById('lab-values-container');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.showLabPanel('${panelKey}'); event.stopPropagation();">? Back to ${this.labDatabase[panelKey].name}</button>
+            <button class="back-btn" onclick="window.quizApp.showLabPanel('${panelKey}'); event.stopPropagation();">← Back to ${this.labDatabase[panelKey].name}</button>
             <div class="lab-test-detail">
-                <h3>📵 ${testKey}</h3>
+                <h3>📊 ${testKey}</h3>
                 <div class="test-info">
                     <div class="info-section">
-                        <h4>📵 Normal Range</h4>
+                        <h4>🎯 Normal Range</h4>
                         <p>${test.normal}</p>
                     </div>
                     ${test.ageVariations ? `
                     <div class="info-section">
-                        <h4>📵📵 Age Variations</h4>
+                        <h4>👶🧓 Age Variations</h4>
                         <p>${test.ageVariations}</p>
                     </div>` : ''}
                     <div class="info-section">
-                        <h4>📵 Low Values (Causes)</h4>
+                        <h4>⬇️ Low Values (Causes)</h4>
                         <p>${test.low}</p>
                     </div>
                     <div class="info-section">
-                        <h4>📵 High Values (Causes)</h4>
+                        <h4>⬆️ High Values (Causes)</h4>
                         <p>${test.high}</p>
                     </div>
                     ${test.critical ? `
                     <div class="info-section critical-values">
-                        <h4>📵 Critical Values</h4>
+                        <h4>🚨 Critical Values</h4>
                         <p>${test.critical}</p>
                     </div>` : ''}
                     ${test.clinicalSignificance ? `
                     <div class="info-section">
-                        <h4>📵 Clinical Significance</h4>
+                        <h4>🔬 Clinical Significance</h4>
                         <p>${test.clinicalSignificance}</p>
                     </div>` : ''}
                 </div>
@@ -8825,22 +8793,22 @@ class MLAQuizApp {
     }
 
     showCollectionGuide() {
-        console.log('📵 Opening comprehensive collection guide');
+        console.log('🩸 Opening comprehensive collection guide');
         const labList = document.getElementById('lab-list');
         
         labList.innerHTML = `
             <div class="blood-draw-guide">
                 <div class="guide-intro">
-                    <h4>📵 Complete Blood Collection Guide</h4>
+                    <h4>🩸 Complete Blood Collection Guide</h4>
                     <p><em>Knowing which blood bottles to use for different tests is essential in clinical practice. Knowledge of blood bottles is one of those practical things which is poorly taught, if at all! Even though most hospitals now have printable stickers for bottles that tell you which ones to use, it is still vital to understand which bottles are used and why to prevent mistakes and/or awkward phone calls from the laboratory.</em></p>
                     
                     <div class="important-notice">
-                        <strong>📵 Important:</strong> The colours of the vacutainer bottles are standardised. However, depending on which hospital you work in, preferences may vary between individual laboratories, especially regarding tests performed less frequently. It is important to check local guidelines or discuss with the laboratory if you're not sure.
+                        <strong>⚠️ Important:</strong> The colours of the vacutainer bottles are standardised. However, depending on which hospital you work in, preferences may vary between individual laboratories, especially regarding tests performed less frequently. It is important to check local guidelines or discuss with the laboratory if you're not sure.
                     </div>
                 </div>
 
                 <div class="tube-order-summary">
-                    <h5>📵 Quick Reference - Order of Draw</h5>
+                    <h5>📋 Quick Reference - Order of Draw</h5>
                     <div class="order-summary-grid">
                         <div class="order-item"><span class="order-num">1</span> Blue (Citrate) - 3-4 inversions</div>
                         <div class="order-item"><span class="order-num">2</span> Yellow/Gold (Serum) - 5-6 inversions</div>
@@ -8851,12 +8819,12 @@ class MLAQuizApp {
                 </div>
 
                 <div class="detailed-bottles">
-                    <h5>📵 Detailed Bottle Guide</h5>
+                    <h5>🧪 Detailed Bottle Guide</h5>
                     
                     <!-- Blue Bottle -->
                     <div class="bottle-detail">
                         <div class="bottle-header">
-                            <div class="bottle-visual blue-bottle">📵</div>
+                            <div class="bottle-visual blue-bottle">🔵</div>
                             <h6>Blue Blood Bottle (Sodium Citrate)</h6>
                         </div>
                         <div class="bottle-content">
@@ -8886,7 +8854,7 @@ class MLAQuizApp {
                                 </div>
                             </div>
                             <div class="clinical-tips">
-                                <strong>📵 Clinical Tips:</strong>
+                                <strong>💡 Clinical Tips:</strong>
                                 <ul>
                                     <li>With butterfly needles, may need 2 bottles (first removes air from tubing)</li>
                                     <li>INR ideally done in morning</li>
@@ -8900,7 +8868,7 @@ class MLAQuizApp {
                     <!-- Yellow/Gold Bottle -->
                     <div class="bottle-detail">
                         <div class="bottle-header">
-                            <div class="bottle-visual yellow-bottle">📵</div>
+                            <div class="bottle-visual yellow-bottle">🟡</div>
                             <h6>Yellow/Gold Blood Bottle (SST - Serum Separator)</h6>
                         </div>
                         <div class="bottle-content">
@@ -8953,7 +8921,7 @@ class MLAQuizApp {
                                 </div>
                             </div>
                             <div class="clinical-tips">
-                                <strong>📵 Clinical Tips:</strong>
+                                <strong>💡 Clinical Tips:</strong>
                                 <ul>
                                     <li>Don't panic if blood clots - it's supposed to!</li>
                                     <li>Separate bottles needed for different lab departments</li>
@@ -8967,7 +8935,7 @@ class MLAQuizApp {
                     <!-- Purple Bottle -->
                     <div class="bottle-detail">
                         <div class="bottle-header">
-                            <div class="bottle-visual purple-bottle">📵</div>
+                            <div class="bottle-visual purple-bottle">🟣</div>
                             <h6>Purple Blood Bottle (EDTA - "Lavender")</h6>
                         </div>
                         <div class="bottle-content">
@@ -8999,7 +8967,7 @@ class MLAQuizApp {
                                 </div>
                             </div>
                             <div class="clinical-tips">
-                                <strong>📵 Clinical Tips:</strong>
+                                <strong>💡 Clinical Tips:</strong>
                                 <ul>
                                     <li>EDTA binds calcium and metal ions - used in chelation therapy</li>
                                     <li>Can be labelled with radioisotopes for EDTA scans (GFR assessment)</li>
@@ -9012,7 +8980,7 @@ class MLAQuizApp {
                     <!-- Pink Bottle -->
                     <div class="bottle-detail">
                         <div class="bottle-header">
-                            <div class="bottle-visual pink-bottle">📵</div>
+                            <div class="bottle-visual pink-bottle">🩷</div>
                             <h6>Pink Blood Bottle (Transfusion Lab EDTA)</h6>
                         </div>
                         <div class="bottle-content">
@@ -9039,7 +9007,7 @@ class MLAQuizApp {
                                 </div>
                             </div>
                             <div class="clinical-tips">
-                                <strong>📵 Critical Safety:</strong>
+                                <strong>💡 Critical Safety:</strong>
                                 <ul>
                                     <li>Special bedside hand-written label - prevents catastrophic mismatched transfusions</li>
                                     <li>Full crossmatch takes 45-60 minutes</li>
@@ -9054,7 +9022,7 @@ class MLAQuizApp {
                     <!-- Grey Bottle -->
                     <div class="bottle-detail">
                         <div class="bottle-header">
-                            <div class="bottle-visual grey-bottle">?</div>
+                            <div class="bottle-visual grey-bottle">⚫</div>
                             <h6>Grey Blood Bottle (Fluoride Oxalate)</h6>
                         </div>
                         <div class="bottle-content">
@@ -9074,7 +9042,7 @@ class MLAQuizApp {
                                 </div>
                             </div>
                             <div class="clinical-tips">
-                                <strong>📵 Clinical Tips:</strong>
+                                <strong>💡 Clinical Tips:</strong>
                                 <ul>
                                     <li>Fluoride prevents further glucose breakdown in sample</li>
                                     <li>Venous glucose more accurate than capillary (especially hyperglycaemic patients)</li>
@@ -9088,24 +9056,24 @@ class MLAQuizApp {
                     <!-- Additional Bottles -->
                     <div class="bottle-detail">
                         <div class="bottle-header">
-                            <h6>📵 Other Important Bottles</h6>
+                            <h6>🔴 Other Important Bottles</h6>
                         </div>
                         <div class="bottle-content">
                             <div class="bottle-info-grid">
                                 <div class="info-section">
-                                    <strong>📵 Red Bottle:</strong> Silica clot activator, no separator gel
+                                    <strong>🔴 Red Bottle:</strong> Silica clot activator, no separator gel
                                     <ul><li>Sensitive hormones, ionised calcium, cryoglobulins</li></ul>
                                 </div>
                                 <div class="info-section">
-                                    <strong>🌙 Dark Green:</strong> Sodium heparin
+                                    <strong>🟢 Dark Green:</strong> Sodium heparin
                                     <ul><li>Ammonia*, insulin*, renin/aldosterone, chromosomes</li></ul>
                                 </div>
                                 <div class="info-section">
-                                    <strong>☀️ Light Green:</strong> Lithium heparin + separator (PST)
+                                    <strong>🟢 Light Green:</strong> Lithium heparin + separator (PST)
                                     <ul><li>Routine biochemistry (alternative to yellow)</li></ul>
                                 </div>
                                 <div class="info-section">
-                                    <strong>📵 Blood Cultures:</strong> Culture medium
+                                    <strong>🔵 Blood Cultures:</strong> Culture medium
                                     <ul><li>Aerobic (blue lid), anaerobic (purple lid), mycobacterial (black lid)</li></ul>
                                 </div>
                             </div>
@@ -9114,10 +9082,10 @@ class MLAQuizApp {
                 </div>
 
                 <div class="practical-tips">
-                    <h5>📵 Essential Practical Tips</h5>
+                    <h5>💡 Essential Practical Tips</h5>
                     <div class="tips-grid">
                         <div class="tip-section">
-                            <h6>📵 Critical Points</h6>
+                            <h6>⚠️ Critical Points</h6>
                             <ul>
                                 <li><strong>Tests marked with *</strong> need immediate transport on ice</li>
                                 <li><strong>Invert don't shake</strong> - be gentle or samples haemolyse</li>
@@ -9126,7 +9094,7 @@ class MLAQuizApp {
                             </ul>
                         </div>
                         <div class="tip-section">
-                            <h6>📵 Hospital Variations</h6>
+                            <h6>🏥 Hospital Variations</h6>
                             <ul>
                                 <li>Check local laboratory guidelines</li>
                                 <li>Different departments may require separate bottles</li>
@@ -9135,7 +9103,7 @@ class MLAQuizApp {
                             </ul>
                         </div>
                         <div class="tip-section">
-                            <h6>📵 Sample Quality</h6>
+                            <h6>🩸 Sample Quality</h6>
                             <ul>
                                 <li>Label tubes immediately at bedside</li>
                                 <li>Transport promptly (some tests time-sensitive)</li>
@@ -9147,7 +9115,7 @@ class MLAQuizApp {
                 </div>
 
                 <div class="other-applications">
-                    <h5>📵 Non-Blood Fluid Applications</h5>
+                    <h5>🫁 Non-Blood Fluid Applications</h5>
                     <p>These bottles can also be used for other body fluids:</p>
                     <ul>
                         <li><strong>Purple:</strong> Cell count (pleural, ascitic, CSF)</li>
@@ -9159,7 +9127,7 @@ class MLAQuizApp {
                 </div>
 
                 <div class="abg-section">
-                    <h5>📵 Arterial Blood Gas (ABG) Syringes</h5>
+                    <h5>🫁 Arterial Blood Gas (ABG) Syringes</h5>
                     <div class="abg-info">
                         <p><strong>Contains:</strong> Heparin to prevent clotting</p>
                         <p><strong>Uses:</strong> Oxygenation, acid-base balance, electrolytes (K+), lactate</p>
@@ -9179,13 +9147,13 @@ class MLAQuizApp {
 
     // Clinical Guidelines Functions  
     loadGuidelines() {
-        console.log('📵 Loading guidelines...');
+        console.log('📋 Loading guidelines...');
         const guidelinesContainer = document.getElementById('guidelines-panel');
         if (!guidelinesContainer) {
-            console.error('? Guidelines panel not found!');
+            console.error('❌ Guidelines panel not found!');
             return;
         }
-        console.log('? Guidelines panel found, setting up database...');
+        console.log('✅ Guidelines panel found, setting up database...');
         
         try {
             const guidelinesDatabase = {
@@ -9196,12 +9164,12 @@ class MLAQuizApp {
                 lastUpdated: '2024',
                 organisation: 'NICE',
                 stages: {
-                    'Stage 1': 'Clinic BP =140/90 mmHg AND ABPM/HBPM =135/85 mmHg',
-                    'Stage 2': 'Clinic BP =160/100 mmHg AND ABPM/HBPM =150/95 mmHg',
-                    'Stage 3 (Severe)': 'Clinic systolic BP =180 mmHg OR clinic diastolic BP =120 mmHg'
+                    'Stage 1': 'Clinic BP ≥140/90 mmHg AND ABPM/HBPM ≥135/85 mmHg',
+                    'Stage 2': 'Clinic BP ≥160/100 mmHg AND ABPM/HBPM ≥150/95 mmHg',
+                    'Stage 3 (Severe)': 'Clinic systolic BP ≥180 mmHg OR clinic diastolic BP ≥120 mmHg'
                 },
                 treatment: {
-                    'Stage 1': 'Offer antihypertensive drug treatment if target organ damage, established CVD, renal disease, diabetes, or 10-year CVD risk =10%',
+                    'Stage 1': 'Offer antihypertensive drug treatment if target organ damage, established CVD, renal disease, diabetes, or 10-year CVD risk ≥10%',
                     'Stage 2': 'Offer antihypertensive drug treatment regardless of age',
                     'Stage 3': 'Consider same-day specialist assessment. Immediate antihypertensive treatment'
                 },
@@ -9214,9 +9182,9 @@ class MLAQuizApp {
                     'Step 1': 'ACE inhibitor (or ARB if ACE inhibitor not tolerated). Consider CCB for black African/Caribbean ancestry',
                     'Step 2': 'ACE inhibitor + CCB OR ACE inhibitor + thiazide-like diuretic',
                     'Step 3': 'ACE inhibitor + CCB + thiazide-like diuretic',
-                    'Step 4': 'Add low-dose spironolactone (if K+ =4.5mmol/L) OR alpha-blocker OR beta-blocker'
+                    'Step 4': 'Add low-dose spironolactone (if K+ ≤4.5mmol/L) OR alpha-blocker OR beta-blocker'
                 },
-                lifestyle: 'Reduce salt intake to <6g/day, maintain healthy weight (BMI 20-25), exercise =150min/week moderate intensity, alcohol within recommended limits',
+                lifestyle: 'Reduce salt intake to <6g/day, maintain healthy weight (BMI 20-25), exercise ≥150min/week moderate intensity, alcohol within recommended limits',
                 monitoring: 'Annual review. More frequent if treatment changes or poorly controlled. QRISK3 assessment',
                 specialPopulations: {
                     'Pregnancy': 'Target <135/85 mmHg. First-line: labetalol. Alternatives: nifedipine, methyldopa',
@@ -9263,7 +9231,7 @@ class MLAQuizApp {
                 organisation: 'NICE',
                 diagnosis: 'Post-bronchodilator FEV1/FVC ratio <0.7 confirms airflow obstruction',
                 stages: {
-                    'Stage 1 (Mild)': 'FEV1 =80% predicted',
+                    'Stage 1 (Mild)': 'FEV1 ≥80% predicted',
                     'Stage 2 (Moderate)': 'FEV1 50-79% predicted',
                     'Stage 3 (Severe)': 'FEV1 30-49% predicted',
                     'Stage 4 (Very severe)': 'FEV1 <30% predicted'
@@ -9288,7 +9256,7 @@ class MLAQuizApp {
                 lastUpdated: '2024',
                 organisation: 'NICE',
                 stages: {
-                    'G1': 'eGFR =90 with kidney damage',
+                    'G1': 'eGFR ≥90 with kidney damage',
                     'G2': 'eGFR 60-89 with kidney damage',
                     'G3a': 'eGFR 45-59 (mild-moderate decrease)',
                     'G3b': 'eGFR 30-44 (moderate-severe decrease)',
@@ -9302,7 +9270,7 @@ class MLAQuizApp {
                     'G4-G5': '3-6 monthly eGFR and ACR. Prepare for RRT'
                 },
                 treatment: {
-                    'ACE inhibitor/ARB': 'If diabetes, hypertension, or ACR =3mg/mmol',
+                    'ACE inhibitor/ARB': 'If diabetes, hypertension, or ACR ≥3mg/mmol',
                     'Statin': 'Atorvastatin 20mg for primary prevention of CVD',
                     'Blood pressure': 'Target <140/90 mmHg (<130/80 if ACR >70mg/mmol)',
                     'Mineral bone disease': 'Monitor calcium, phosphate, PTH, vitamin D'
@@ -9321,21 +9289,21 @@ class MLAQuizApp {
                 organisation: 'NICE',
                 diagnosis: 'Clinical features + structural/functional cardiac abnormality. BNP >400pg/mL or NT-proBNP >2000pg/mL',
                 classification: {
-                    'HFrEF': 'Heart failure with reduced ejection fraction (LVEF =40%)',
+                    'HFrEF': 'Heart failure with reduced ejection fraction (LVEF ≤40%)',
                     'HFmrEF': 'Heart failure with mid-range ejection fraction (LVEF 41-49%)',
-                    'HFpEF': 'Heart failure with preserved ejection fraction (LVEF =50%)'
+                    'HFpEF': 'Heart failure with preserved ejection fraction (LVEF ≥50%)'
                 },
                 treatment: {
                     'ACE inhibitor': 'First-line for HFrEF. Start ramipril 1.25mg twice daily, titrate to 5mg twice daily',
                     'Beta-blocker': 'Add bisoprolol or carvedilol once ACE inhibitor established',
                     'MRA': 'Add spironolactone if symptoms persist despite ACE inhibitor + beta-blocker',
                     'ARB': 'If ACE inhibitor not tolerated. Candesartan or valsartan',
-                    'SGLT2 inhibitor': 'Consider dapagliflozin in HFrEF with diabetes or eGFR =25'
+                    'SGLT2 inhibitor': 'Consider dapagliflozin in HFrEF with diabetes or eGFR ≥25'
                 },
                 monitoring: 'U&Es within 1-2 weeks of starting/changing dose. Aim for target doses if tolerated',
                 deviceTherapy: {
-                    'ICD': 'Primary prevention if LVEF =35% despite 3 months optimal medical therapy',
-                    'CRT': 'If LVEF =35%, QRS =130ms, sinus rhythm, on optimal medical therapy'
+                    'ICD': 'Primary prevention if LVEF ≤35% despite 3 months optimal medical therapy',
+                    'CRT': 'If LVEF ≤35%, QRS ≥130ms, sinus rhythm, on optimal medical therapy'
                 },
                 lifestyle: 'Daily weight monitoring. Fluid restriction if severe symptoms. Cardiac rehabilitation'
             },
@@ -9359,11 +9327,11 @@ class MLAQuizApp {
                 },
                 rhythmControl: {
                     'Indications': 'Symptomatic AF despite rate control, younger patients, first presentation',
-                    'Cardioversion': 'If AF <48 hours or anticoagulated for =3 weeks',
+                    'Cardioversion': 'If AF <48 hours or anticoagulated for ≥3 weeks',
                     'Maintenance': 'Amiodarone, sotalol, flecainide (if no structural heart disease)'
                 },
                 anticoagulation: {
-                    'CHA2DS2-VASc': 'Calculate stroke risk. Anticoagulate if score =2 (men) or =3 (women)',
+                    'CHA2DS2-VASc': 'Calculate stroke risk. Anticoagulate if score ≥2 (men) or ≥3 (women)',
                     'HAS-BLED': 'Assess bleeding risk but high score not contraindication',
                     'DOAC': 'First-line: apixaban, dabigatran, edoxaban, rivaroxaban',
                     'Warfarin': 'If DOAC contraindicated. Target INR 2.0-3.0'
@@ -9396,7 +9364,7 @@ class MLAQuizApp {
                     'Young people': 'Weekly for first month if <30 years old',
                     'Ongoing': 'Every 2-4 weeks for first 3 months, then less frequently'
                 },
-                duration: 'Continue antidepressant for =6 months after remission. Consider longer if recurrent episodes',
+                duration: 'Continue antidepressant for ≥6 months after remission. Consider longer if recurrent episodes',
                 riskFactors: 'Discontinuation symptoms, suicide risk (especially early treatment), drug interactions'
             },
             'obesity': {
@@ -9406,10 +9374,10 @@ class MLAQuizApp {
                 lastUpdated: '2024',
                 organisation: 'NICE',
                 classification: {
-                    'Overweight': 'BMI 25-29.9 kg/m�',
-                    'Obesity class I': 'BMI 30-34.9 kg/m�',
-                    'Obesity class II': 'BMI 35-39.9 kg/m�',
-                    'Obesity class III': 'BMI =40 kg/m�'
+                    'Overweight': 'BMI 25-29.9 kg/m²',
+                    'Obesity class I': 'BMI 30-34.9 kg/m²',
+                    'Obesity class II': 'BMI 35-39.9 kg/m²',
+                    'Obesity class III': 'BMI ≥40 kg/m²'
                 },
                 assessment: 'BMI, waist circumference, comorbidities (T2DM, hypertension, sleep apnoea), cardiovascular risk',
                 lifestyle: {
@@ -9418,12 +9386,12 @@ class MLAQuizApp {
                     'Behaviour': 'Goal setting, self-monitoring, cognitive restructuring'
                 },
                 pharmacotherapy: {
-                    'Orlistat': 'BMI =30 or =28 with comorbidities. 120mg three times daily with meals',
+                    'Orlistat': 'BMI ≥30 or ≥28 with comorbidities. 120mg three times daily with meals',
                     'GLP-1 agonists': 'Specialist initiation. Liraglutide if specific criteria met',
-                    'Monitoring': 'Weight loss target =5% at 3 months, =10% at 6 months'
+                    'Monitoring': 'Weight loss target ≥5% at 3 months, ≥10% at 6 months'
                 },
                 surgery: {
-                    'Criteria': 'BMI =40 or =35 with comorbidities. Failed non-surgical methods',
+                    'Criteria': 'BMI ≥40 or ≥35 with comorbidities. Failed non-surgical methods',
                     'Options': 'Gastric bypass, sleeve gastrectomy, adjustable gastric band',
                     'Follow-up': 'Lifelong specialist monitoring, nutritional supplements'
                 },
@@ -9473,7 +9441,7 @@ class MLAQuizApp {
                     'Pregnancy': 'Nitrofurantoin 100mg twice daily for 7 days (avoid at term)'
                 },
                 recurrent: {
-                    'Definition': '=3 UTIs in 12 months or =2 in 6 months',
+                    'Definition': '≥3 UTIs in 12 months or ≥2 in 6 months',
                     'Prevention': 'Post-coital prophylaxis, continuous prophylaxis, self-treatment',
                     'Prophylaxis': 'Trimethoprim 100mg at night OR nitrofurantoin 50mg at night'
                 },
@@ -9490,10 +9458,10 @@ class MLAQuizApp {
                 lastUpdated: '2024',
                 organisation: 'NICE',
                 diagnosis: {
-                    'HbA1c': '=48 mmol/mol (=6.5%) on two occasions OR single value if symptomatic',
-                    'Fasting glucose': '=7.0 mmol/L (=126 mg/dL)',
-                    'Random glucose': '=11.1 mmol/L (=200 mg/dL) with symptoms',
-                    'OGTT': '2-hour glucose =11.1 mmol/L (=200 mg/dL)'
+                    'HbA1c': '≥48 mmol/mol (≥6.5%) on two occasions OR single value if symptomatic',
+                    'Fasting glucose': '≥7.0 mmol/L (≥126 mg/dL)',
+                    'Random glucose': '≥11.1 mmol/L (≥200 mg/dL) with symptoms',
+                    'OGTT': '2-hour glucose ≥11.1 mmol/L (≥200 mg/dL)'
                 },
                 targets: {
                     'HbA1c': '<48 mmol/mol (<6.5%) for newly diagnosed, <53 mmol/mol (<7.0%) for most adults',
@@ -9530,10 +9498,10 @@ class MLAQuizApp {
                     'Blood tests': 'FBC, CRP, U&E, LFT. Consider pneumococcal/legionella antigens'
                 },
                 severity: {
-                    'CURB-65': 'Confusion, Urea >7, RR =30, BP <90/60, age =65',
+                    'CURB-65': 'Confusion, Urea >7, RR ≥30, BP <90/60, age ≥65',
                     'Score 0-1': 'Low severity - consider home treatment',
                     'Score 2': 'Moderate severity - consider hospital admission',
-                    'Score =3': 'High severity - urgent hospital admission'
+                    'Score ≥3': 'High severity - urgent hospital admission'
                 },
                 treatment: {
                     'Mild CAP': 'Amoxicillin 500mg three times daily for 5 days',
@@ -9542,11 +9510,11 @@ class MLAQuizApp {
                     'Atypical': 'Clarithromycin 500mg twice daily OR doxycycline 200mg on day 1, then 100mg daily'
                 },
                 admission: {
-                    'Criteria': 'CURB-65 =2, hypoxia <90%, inability to maintain oral intake, significant comorbidities',
+                    'Criteria': 'CURB-65 ≥2, hypoxia <90%, inability to maintain oral intake, significant comorbidities',
                     'Monitoring': 'Oxygen saturation, fluid balance, response to treatment',
                     'Discharge': 'Clinically stable for 24 hours, able to maintain oral intake, oxygen saturation >90%'
                 },
-                prevention: 'Pneumococcal vaccination (=65 years, immunocompromised), annual influenza vaccination'
+                prevention: 'Pneumococcal vaccination (≥65 years, immunocompromised), annual influenza vaccination'
             },
             'sepsis': {
                 title: 'Sepsis Recognition & Management (NICE NG51 2024)',
@@ -9555,14 +9523,14 @@ class MLAQuizApp {
                 lastUpdated: '2024',
                 organisation: 'NICE',
                 recognition: {
-                    'Red flags': 'Systolic BP <90, HR >130, RR =25, needs O2 to maintain sats =92%, non-blanching rash',
-                    'Amber flags': 'Relatives concerned about mental state, acute change in mental state, HR 91-130, T <36�C',
+                    'Red flags': 'Systolic BP <90, HR >130, RR ≥25, needs O2 to maintain sats ≥92%, non-blanching rash',
+                    'Amber flags': 'Relatives concerned about mental state, acute change in mental state, HR 91-130, T <36°C',
                     'High-risk groups': 'Age >75, immunocompromised, recent surgery/invasive procedure, indwelling devices'
                 },
                 definitions: {
                     'Sepsis': 'Life-threatening organ dysfunction due to dysregulated host response to infection',
                     'Septic shock': 'Sepsis with circulatory/cellular dysfunction (lactate >2, vasopressors needed)',
-                    'qSOFA': 'Altered mental state, SBP =100, RR =22 (score =2 = high risk)'
+                    'qSOFA': 'Altered mental state, SBP ≤100, RR ≥22 (score ≥2 = high risk)'
                 },
                 management: {
                     'Sepsis Six': '1. Give oxygen, 2. Take blood cultures, 3. Give antibiotics, 4. Give fluids, 5. Measure lactate, 6. Measure urine output',
@@ -9579,13 +9547,13 @@ class MLAQuizApp {
                 monitoring: 'Hourly observations, fluid balance, lactate, organ function, consider HDU/ICU if deteriorating'
             }
         };
-        console.log('? Guidelines database created with', Object.keys(guidelinesDatabase).length, 'guidelines');
+        console.log('✅ Guidelines database created with', Object.keys(guidelinesDatabase).length, 'guidelines');
 
         const container = document.getElementById('guidelines-panel');
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="guidelines-search" placeholder="Search guidelines..." class="tool-search">
-                <button id="guidelines-search-btn">📵</button>
+                <button id="guidelines-search-btn">🔍</button>
             </div>
             <div id="guidelines-search-results" class="lab-grid"></div>
             <div class="guidelines-categories">
@@ -9607,14 +9575,14 @@ class MLAQuizApp {
         searchBtn.addEventListener('click', () => this.searchGuidelines(guidelinesDatabase));
         this.guidelinesDatabase = guidelinesDatabase;
         this.showGuidelinesCategory('all');
-        console.log('? Guidelines loaded successfully!');
+        console.log('✅ Guidelines loaded successfully!');
         
         } catch (error) {
-            console.error('? Error loading guidelines:', error);
+            console.error('❌ Error loading guidelines:', error);
             const container = document.getElementById('guidelines-panel');
             container.innerHTML = `
                 <div class="error-message">
-                    <h3>📵 Guidelines Loading Error</h3>
+                    <h3>⚠️ Guidelines Loading Error</h3>
                     <p>Unable to load clinical guidelines. Please refresh the page.</p>
                     <button onclick="window.quizApp.loadGuidelines()">Retry</button>
                 </div>
@@ -9643,7 +9611,7 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(guideline => `
-            <button class="lab-value-btn" onclick="console.log('📵 Guideline search result clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
+            <button class="lab-value-btn" onclick="console.log('📋 Guideline search result clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
                 <div class="lab-name">${guidelinesDatabase[guideline].title}</div>
                 <div class="lab-count">${guidelinesDatabase[guideline].category}</div>
             </button>
@@ -9673,7 +9641,7 @@ class MLAQuizApp {
         }
         
         guidelinesList.innerHTML = guidelines.map(guideline => `
-            <button class="lab-value-btn" onclick="console.log('📵 Guideline card clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
+            <button class="lab-value-btn" onclick="console.log('📋 Guideline card clicked:', '${guideline}'); window.quizApp.showGuidelineDetail('${guideline}'); event.stopPropagation();">
                 <div class="lab-name">${guidelinesDatabase[guideline].title}</div>
                 <div class="lab-count">${guidelinesDatabase[guideline].category}</div>
             </button>
@@ -9696,24 +9664,24 @@ class MLAQuizApp {
     }
     
     showGuidelineDetail(guidelineKey) {
-        console.log('📵 Opening guideline detail:', guidelineKey);
+        console.log('📋 Opening guideline detail:', guidelineKey);
         const guideline = this.guidelinesDatabase[guidelineKey];
         const container = document.getElementById('guidelines-list');
         
         let contentHtml = `
-            <button class="back-btn" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">? Back to Guidelines</button>
+            <button class="back-btn" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">← Back to Guidelines</button>
             <div class="guideline-detail">
                 <h3>${guideline.title}</h3>
                 <div class="guideline-meta">
-                    <span class="evidence-level">📵 ${guideline.evidenceLevel || 'Evidence-based'}</span>
-                    <span class="last-updated">📵? Last updated: ${guideline.lastUpdated || 'Recent'}</span>
+                    <span class="evidence-level">📋 ${guideline.evidenceLevel || 'Evidence-based'}</span>
+                    <span class="last-updated">🗓️ Last updated: ${guideline.lastUpdated || 'Recent'}</span>
                 </div>
         `;
         
         if (guideline.stages) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Stages/Classification</h4>
+                    <h4>📊 Stages/Classification</h4>
                     ${Object.entries(guideline.stages).map(([stage, description]) => `
                         <div class="stage-item">
                             <strong>${stage}:</strong> ${description}
@@ -9726,7 +9694,7 @@ class MLAQuizApp {
         if (guideline.groups) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Patient Groups</h4>
+                    <h4>👥 Patient Groups</h4>
                     ${Object.entries(guideline.groups).map(([group, description]) => `
                         <div class="group-item">
                             <strong>${group}:</strong> ${description}
@@ -9739,7 +9707,7 @@ class MLAQuizApp {
         if (guideline.targets) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Treatment Targets</h4>
+                    <h4>🎯 Treatment Targets</h4>
                     ${Object.entries(guideline.targets).map(([target, value]) => `
                         <div class="target-item">
                             <strong>${target}:</strong> ${value}
@@ -9752,7 +9720,7 @@ class MLAQuizApp {
         if (guideline.treatment) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Treatment Recommendations</h4>
+                    <h4>💊 Treatment Recommendations</h4>
                     ${Object.entries(guideline.treatment).map(([stage, treatment]) => `
                         <div class="treatment-item">
                             <strong>${stage}:</strong> ${treatment}
@@ -9765,7 +9733,7 @@ class MLAQuizApp {
         if (guideline.algorithm) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Treatment Algorithm</h4>
+                    <h4>🔄 Treatment Algorithm</h4>
                     ${Object.entries(guideline.algorithm).map(([step, description]) => `
                         <div class="algorithm-item">
                             <strong>${step}:</strong> ${description}
@@ -9778,7 +9746,7 @@ class MLAQuizApp {
         if (guideline.medications) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Medication Classes</h4>
+                    <h4>💊 Medication Classes</h4>
                     ${Object.entries(guideline.medications).map(([type, meds]) => `
                         <div class="medication-item">
                             <strong>${type}:</strong> ${meds}
@@ -9791,7 +9759,7 @@ class MLAQuizApp {
         if (guideline.firstLine) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 First-line Therapy</h4>
+                    <h4>🥇 First-line Therapy</h4>
                     <p>${guideline.firstLine}</p>
                 </div>
             `;
@@ -9800,7 +9768,7 @@ class MLAQuizApp {
         if (guideline.secondLine) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Second-line Options</h4>
+                    <h4>🥈 Second-line Options</h4>
                     ${typeof guideline.secondLine === 'string' ? 
                         `<p>${guideline.secondLine}</p>` :
                         Object.entries(guideline.secondLine).map(([indication, treatment]) => `
@@ -9816,7 +9784,7 @@ class MLAQuizApp {
         if (guideline.lifestyle) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵📵? Lifestyle Modifications</h4>
+                    <h4>🏃‍♂️ Lifestyle Modifications</h4>
                     ${typeof guideline.lifestyle === 'string' ? 
                         `<p>${guideline.lifestyle}</p>` :
                         Object.entries(guideline.lifestyle).map(([aspect, description]) => `
@@ -9832,7 +9800,7 @@ class MLAQuizApp {
         if (guideline.monitoring) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Monitoring</h4>
+                    <h4>📊 Monitoring</h4>
                     ${typeof guideline.monitoring === 'string' ? 
                         `<p>${guideline.monitoring}</p>` :
                         Object.entries(guideline.monitoring).map(([parameter, frequency]) => `
@@ -9848,7 +9816,7 @@ class MLAQuizApp {
         if (guideline.contraindications) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Contraindications</h4>
+                    <h4>⚠️ Contraindications</h4>
                     ${Object.entries(guideline.contraindications).map(([drug, contraindication]) => `
                         <div class="contraindication-item">
                             <strong>${drug}:</strong> ${contraindication}
@@ -9861,7 +9829,7 @@ class MLAQuizApp {
         if (guideline.specialPopulations) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵📵? Special Populations</h4>
+                    <h4>👨‍⚕️ Special Populations</h4>
                     ${Object.entries(guideline.specialPopulations).map(([population, guidance]) => `
                         <div class="special-population-item">
                             <strong>${population}:</strong> ${guidance}
@@ -9874,7 +9842,7 @@ class MLAQuizApp {
         if (guideline.exacerbations) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Exacerbation Management</h4>
+                    <h4>🚨 Exacerbation Management</h4>
                     ${Object.entries(guideline.exacerbations).map(([severity, treatment]) => `
                         <div class="exacerbation-item">
                             <strong>${severity}:</strong> ${treatment}
@@ -9887,7 +9855,7 @@ class MLAQuizApp {
         if (guideline.nonPharmacologic) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Non-pharmacologic Interventions</h4>
+                    <h4>🏥 Non-pharmacologic Interventions</h4>
                     ${Object.entries(guideline.nonPharmacologic).map(([intervention, description]) => `
                         <div class="nonpharm-item">
                             <strong>${intervention}:</strong> ${description}
@@ -9900,7 +9868,7 @@ class MLAQuizApp {
         if (guideline.redFlags) {
             contentHtml += `
                 <div class="info-section alert">
-                    <h4>📵 Red Flags</h4>
+                    <h4>🚩 Red Flags</h4>
                     <p>${guideline.redFlags}</p>
                 </div>
             `;
@@ -9910,7 +9878,7 @@ class MLAQuizApp {
         if (guideline.types) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 AF Types/Classification</h4>
+                    <h4>📊 AF Types/Classification</h4>
                     ${Object.entries(guideline.types).map(([type, description]) => `
                         <div class="stage-item">
                             <strong>${type}:</strong> ${description}
@@ -9923,7 +9891,7 @@ class MLAQuizApp {
         if (guideline.rateControl) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Rate Control Strategy</h4>
+                    <h4>🎯 Rate Control Strategy</h4>
                     ${Object.entries(guideline.rateControl).map(([strategy, description]) => `
                         <div class="treatment-item">
                             <strong>${strategy}:</strong> ${description}
@@ -9936,7 +9904,7 @@ class MLAQuizApp {
         if (guideline.rhythmControl) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Rhythm Control Strategy</h4>
+                    <h4>🔄 Rhythm Control Strategy</h4>
                     ${Object.entries(guideline.rhythmControl).map(([strategy, description]) => `
                         <div class="treatment-item">
                             <strong>${strategy}:</strong> ${description}
@@ -9949,7 +9917,7 @@ class MLAQuizApp {
         if (guideline.anticoagulation) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Anticoagulation Management</h4>
+                    <h4>🩸 Anticoagulation Management</h4>
                     ${Object.entries(guideline.anticoagulation).map(([aspect, description]) => `
                         <div class="treatment-item">
                             <strong>${aspect}:</strong> ${description}
@@ -9963,7 +9931,7 @@ class MLAQuizApp {
         if (guideline.diagnosis) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Diagnosis</h4>
+                    <h4>🔬 Diagnosis</h4>
                     ${typeof guideline.diagnosis === 'string' ? 
                         `<p>${guideline.diagnosis}</p>` :
                         Object.entries(guideline.diagnosis).map(([aspect, description]) => `
@@ -9979,7 +9947,7 @@ class MLAQuizApp {
         if (guideline.classification) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Classification</h4>
+                    <h4>📊 Classification</h4>
                     ${Object.entries(guideline.classification).map(([level, description]) => `
                         <div class="stage-item">
                             <strong>${level}:</strong> ${description}
@@ -9992,7 +9960,7 @@ class MLAQuizApp {
         if (guideline.assessment) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Assessment</h4>
+                    <h4>📋 Assessment</h4>
                     ${typeof guideline.assessment === 'string' ? 
                         `<p>${guideline.assessment}</p>` :
                         Object.entries(guideline.assessment).map(([aspect, description]) => `
@@ -10008,7 +9976,7 @@ class MLAQuizApp {
         if (guideline.psychological) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Psychological Interventions</h4>
+                    <h4>🧠 Psychological Interventions</h4>
                     ${Object.entries(guideline.psychological).map(([intervention, description]) => `
                         <div class="treatment-item">
                             <strong>${intervention}:</strong> ${description}
@@ -10021,7 +9989,7 @@ class MLAQuizApp {
         if (guideline.pharmacological) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Pharmacological Treatment</h4>
+                    <h4>💊 Pharmacological Treatment</h4>
                     ${Object.entries(guideline.pharmacological).map(([line, description]) => `
                         <div class="medication-item">
                             <strong>${line}:</strong> ${description}
@@ -10034,7 +10002,7 @@ class MLAQuizApp {
         if (guideline.duration) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Treatment Duration</h4>
+                    <h4>⏱️ Treatment Duration</h4>
                     <p>${guideline.duration}</p>
                 </div>
             `;
@@ -10043,7 +10011,7 @@ class MLAQuizApp {
         if (guideline.riskFactors) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Risk Factors</h4>
+                    <h4>⚠️ Risk Factors</h4>
                     <p>${guideline.riskFactors}</p>
                 </div>
             `;
@@ -10052,7 +10020,7 @@ class MLAQuizApp {
         if (guideline.prevention) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵? Prevention</h4>
+                    <h4>🛡️ Prevention</h4>
                     ${typeof guideline.prevention === 'string' ? 
                         `<p>${guideline.prevention}</p>` :
                         Object.entries(guideline.prevention).map(([aspect, description]) => `
@@ -10068,7 +10036,7 @@ class MLAQuizApp {
         if (guideline.acute) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Acute Management</h4>
+                    <h4>🚨 Acute Management</h4>
                     ${typeof guideline.acute === 'string' ? 
                         `<p>${guideline.acute}</p>` :
                         Object.entries(guideline.acute).map(([severity, description]) => `
@@ -10084,7 +10052,7 @@ class MLAQuizApp {
         if (guideline.rehabilitation) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Rehabilitation</h4>
+                    <h4>♻️ Rehabilitation</h4>
                     ${typeof guideline.rehabilitation === 'string' ? 
                         `<p>${guideline.rehabilitation}</p>` :
                         Object.entries(guideline.rehabilitation).map(([aspect, description]) => `
@@ -10100,7 +10068,7 @@ class MLAQuizApp {
         if (guideline.referral) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Referral Criteria</h4>
+                    <h4>📞 Referral Criteria</h4>
                     ${typeof guideline.referral === 'string' ? 
                         `<p>${guideline.referral}</p>` :
                         Object.entries(guideline.referral).map(([urgency, criteria]) => `
@@ -10116,7 +10084,7 @@ class MLAQuizApp {
         if (guideline.complications) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Complications</h4>
+                    <h4>⚠️ Complications</h4>
                     <p>${guideline.complications}</p>
                 </div>
             `;
@@ -10125,7 +10093,7 @@ class MLAQuizApp {
         if (guideline.deviceTherapy) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Device Therapy</h4>
+                    <h4>🔌 Device Therapy</h4>
                     ${Object.entries(guideline.deviceTherapy).map(([device, criteria]) => `
                         <div class="device-item">
                             <strong>${device}:</strong> ${criteria}
@@ -10138,7 +10106,7 @@ class MLAQuizApp {
         if (guideline.pharmacotherapy) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Pharmacotherapy</h4>
+                    <h4>💊 Pharmacotherapy</h4>
                     ${Object.entries(guideline.pharmacotherapy).map(([medication, details]) => `
                         <div class="medication-item">
                             <strong>${medication}:</strong> ${details}
@@ -10151,7 +10119,7 @@ class MLAQuizApp {
         if (guideline.surgery) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Surgical Options</h4>
+                    <h4>🏥 Surgical Options</h4>
                     ${Object.entries(guideline.surgery).map(([type, details]) => `
                         <div class="surgery-item">
                             <strong>${type}:</strong> ${details}
@@ -10164,7 +10132,7 @@ class MLAQuizApp {
         if (guideline.comorbidities) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Comorbidities</h4>
+                    <h4>🔗 Comorbidities</h4>
                     <p>${guideline.comorbidities}</p>
                 </div>
             `;
@@ -10173,7 +10141,7 @@ class MLAQuizApp {
         if (guideline.recurrent) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Recurrent Cases</h4>
+                    <h4>🔄 Recurrent Cases</h4>
                     ${Object.entries(guideline.recurrent).map(([aspect, details]) => `
                         <div class="recurrent-item">
                             <strong>${aspect}:</strong> ${details}
@@ -10186,7 +10154,7 @@ class MLAQuizApp {
         if (guideline.catheter) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Catheter-Related</h4>
+                    <h4>🩺 Catheter-Related</h4>
                     ${Object.entries(guideline.catheter).map(([aspect, details]) => `
                         <div class="catheter-item">
                             <strong>${aspect}:</strong> ${details}
@@ -10199,7 +10167,7 @@ class MLAQuizApp {
         if (guideline.advice) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Patient Advice</h4>
+                    <h4>💡 Patient Advice</h4>
                     <p>${guideline.advice}</p>
                 </div>
             `;
@@ -10208,7 +10176,7 @@ class MLAQuizApp {
         if (guideline.inhalers) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Inhaler Devices</h4>
+                    <h4>💨 Inhaler Devices</h4>
                     ${Object.entries(guideline.inhalers).map(([type, description]) => `
                         <div class="inhaler-item">
                             <strong>${type}:</strong> ${description}
@@ -10221,7 +10189,7 @@ class MLAQuizApp {
         if (guideline.triggers) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>? Common Triggers</h4>
+                    <h4>⚡ Common Triggers</h4>
                     <p>${guideline.triggers}</p>
                 </div>
             `;
@@ -10230,7 +10198,7 @@ class MLAQuizApp {
         if (guideline.admission) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Admission Criteria</h4>
+                    <h4>🏥 Admission Criteria</h4>
                     ${Object.entries(guideline.admission).map(([criteria, details]) => `
                         <div class="admission-item">
                             <strong>${criteria}:</strong> ${details}
@@ -10243,7 +10211,7 @@ class MLAQuizApp {
         if (guideline.severity) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Severity Assessment</h4>
+                    <h4>📊 Severity Assessment</h4>
                     ${Object.entries(guideline.severity).map(([level, description]) => `
                         <div class="severity-item">
                             <strong>${level}:</strong> ${description}
@@ -10256,7 +10224,7 @@ class MLAQuizApp {
         if (guideline.antibiotics) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Antibiotic Management</h4>
+                    <h4>💉 Antibiotic Management</h4>
                     ${Object.entries(guideline.antibiotics).map(([type, details]) => `
                         <div class="antibiotic-item">
                             <strong>${type}:</strong> ${details}
@@ -10269,7 +10237,7 @@ class MLAQuizApp {
         if (guideline.recognition) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Recognition</h4>
+                    <h4>🔍 Recognition</h4>
                     ${Object.entries(guideline.recognition).map(([aspect, details]) => `
                         <div class="recognition-item">
                             <strong>${aspect}:</strong> ${details}
@@ -10282,7 +10250,7 @@ class MLAQuizApp {
         if (guideline.definitions) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Definitions</h4>
+                    <h4>📖 Definitions</h4>
                     ${Object.entries(guideline.definitions).map(([term, definition]) => `
                         <div class="definition-item">
                             <strong>${term}:</strong> ${definition}
@@ -10295,7 +10263,7 @@ class MLAQuizApp {
         if (guideline.management) {
             contentHtml += `
                 <div class="info-section">
-                    <h4>📵 Management</h4>
+                    <h4>⚕️ Management</h4>
                     ${Object.entries(guideline.management).map(([aspect, details]) => `
                         <div class="management-item">
                             <strong>${aspect}:</strong> ${details}
@@ -10324,7 +10292,7 @@ class MLAQuizApp {
             'chest-pain': {
                 title: 'Chest Pain',
                 category: 'Cardiovascular/Pulmonary',
-                redFlags: '📵 Sudden onset, severe pain, radiation to back/jaw, diaphoresis, hypotension, syncope',
+                redFlags: '🚩 Sudden onset, severe pain, radiation to back/jaw, diaphoresis, hypotension, syncope',
                 presentations: {
                     'Acute coronary syndrome': {
                         features: 'Crushing, substernal, radiates to left arm/jaw, diaphoresis, dyspnea, nausea. Risk factors: age, DM, HTN, smoking, family history',
@@ -10387,7 +10355,7 @@ class MLAQuizApp {
             'shortness-of-breath': {
                 title: 'Shortness of Breath (Dyspnea)',
                 category: 'Pulmonary/Cardiovascular',
-                redFlags: '📵 Stridor, tripod positioning, inability to speak, cyanosis, altered mental status',
+                redFlags: '🚩 Stridor, tripod positioning, inability to speak, cyanosis, altered mental status',
                 presentations: {
                     'Heart failure': {
                         features: 'Exertional dyspnea, orthopnea, PND, bilateral ankle edema, JVD, S3 gallop. History of CAD, HTN, DM',
@@ -10442,10 +10410,10 @@ class MLAQuizApp {
             'abdominal-pain': {
                 title: 'Abdominal Pain',
                 category: 'Gastroenterology/Surgery',
-                redFlags: '📵 Hemodynamic instability, peritoneal signs, severe persistent pain, vomiting blood',
+                redFlags: '🚩 Hemodynamic instability, peritoneal signs, severe persistent pain, vomiting blood',
                 presentations: {
                     'Appendicitis': {
-                        features: 'Periumbilical pain ? RLQ, fever, nausea, vomiting, McBurney point tenderness, psoas/obturator signs',
+                        features: 'Periumbilical pain → RLQ, fever, nausea, vomiting, McBurney point tenderness, psoas/obturator signs',
                         tests: 'CT abdomen/pelvis (preferred), ultrasound (children/pregnancy), CBC (leukocytosis), urinalysis',
                         urgency: 'Emergency',
                         timeToTreat: 'Surgery within 12-24 hours, antibiotics if perforated',
@@ -10462,7 +10430,7 @@ class MLAQuizApp {
                     },
                     'Pancreatitis': {
                         features: 'Epigastric pain radiating to back, nausea, vomiting. Triggers: alcohol, gallstones, hypertriglyceridemia',
-                        tests: 'Lipase (>3� normal), amylase, CT abdomen if severe, LFTs, triglycerides',
+                        tests: 'Lipase (>3× normal), amylase, CT abdomen if severe, LFTs, triglycerides',
                         urgency: 'Urgent',
                         timeToTreat: 'Supportive care, pain control, IV fluids, NPO',
                         clinicalPearls: 'Ranson criteria for severity. ERCP if gallstone pancreatitis. Watch for complications (pseudocyst, necrosis)',
@@ -10505,7 +10473,7 @@ class MLAQuizApp {
             'headache': {
                 title: 'Headache',
                 category: 'Neurology',
-                redFlags: '📵 Sudden severe (thunderclap), fever + neck stiffness, focal neurologic deficits, papilledema',
+                redFlags: '🚩 Sudden severe (thunderclap), fever + neck stiffness, focal neurologic deficits, papilledema',
                 presentations: {
                     'Migraine': {
                         features: 'Unilateral, throbbing, 4-72 hours, photophobia, phonophobia, nausea. Aura in 20%. Family history common',
@@ -10552,7 +10520,7 @@ class MLAQuizApp {
             'altered-mental-status': {
                 title: 'Altered Mental Status',
                 category: 'Neurology/Emergency',
-                redFlags: '📵 Focal neurological signs, hypoglycemia, hypoxia, severe hypotension, hyperthermia',
+                redFlags: '🚩 Focal neurological signs, hypoglycemia, hypoxia, severe hypotension, hyperthermia',
                 presentations: {
                     'Hypoglycemia': {
                         features: 'Confusion, diaphoresis, tachycardia, tremor, hunger. History of diabetes, missed meals, medication errors',
@@ -10607,7 +10575,7 @@ class MLAQuizApp {
             'dizziness': {
                 title: 'Dizziness/Vertigo',
                 category: 'Neurology/ENT',
-                redFlags: '📵 Focal neurological signs, severe headache, hearing loss, diplopia, dysarthria',
+                redFlags: '🚩 Focal neurological signs, severe headache, hearing loss, diplopia, dysarthria',
                 presentations: {
                     'BPPV': {
                         features: 'Episodic rotational vertigo with position changes, Dix-Hallpike positive, nausea',
@@ -10662,7 +10630,7 @@ class MLAQuizApp {
             'seizures': {
                 title: 'Seizures',
                 category: 'Neurology/Emergency',
-                redFlags: '📵 Status epilepticus (>5 minutes), focal neurological deficits, head trauma, fever in adults',
+                redFlags: '🚩 Status epilepticus (>5 minutes), focal neurological deficits, head trauma, fever in adults',
                 presentations: {
                     'Tonic-clonic seizure': {
                         features: 'Generalised stiffening then rhythmic jerking, tongue biting, incontinence, post-ictal confusion',
@@ -10717,7 +10685,7 @@ class MLAQuizApp {
             'weakness': {
                 title: 'Weakness/Paralysis',
                 category: 'Neurology',
-                redFlags: '📵 Sudden onset, bilateral weakness, respiratory difficulty, bulbar symptoms',
+                redFlags: '🚩 Sudden onset, bilateral weakness, respiratory difficulty, bulbar symptoms',
                 presentations: {
                     'Stroke': {
                         features: 'Sudden onset unilateral weakness, facial droop, speech difficulties, FAST positive',
@@ -10727,7 +10695,7 @@ class MLAQuizApp {
                         clinicalPearls: 'Time critical. ROSIER score for recognition. Exclude hypoglycemia and seizure',
                         differentiatingFeatures: 'Sudden onset, unilateral, upper motor neuron signs'
                     },
-                    'Guillain-Barr� syndrome': {
+                    'Guillain-Barré syndrome': {
                         features: 'Ascending symmetrical weakness, areflexia, minimal sensory loss, preceding infection',
                         tests: 'LP (raised protein, normal cells), nerve conduction studies, anti-GM1 antibodies',
                         urgency: 'Emergency',
@@ -10772,7 +10740,7 @@ class MLAQuizApp {
             'nausea-vomiting': {
                 title: 'Nausea and Vomiting',
                 category: 'Gastroenterology/General',
-                redFlags: '📵 Hematemesis, severe dehydration, projectile vomiting, abdominal distension',
+                redFlags: '🚩 Hematemesis, severe dehydration, projectile vomiting, abdominal distension',
                 presentations: {
                     'Gastroenteritis': {
                         features: 'Acute onset nausea, vomiting, diarrhea, crampy pain, fever, food/water exposure',
@@ -10792,7 +10760,7 @@ class MLAQuizApp {
                     },
                     'Pregnancy': {
                         features: 'Missed period, morning sickness, breast tenderness, fatigue, food aversions',
-                        tests: 'Pregnancy test (urine/serum �hCG), FBC if hyperemesis gravidarum',
+                        tests: 'Pregnancy test (urine/serum βhCG), FBC if hyperemesis gravidarum',
                         urgency: 'Non-urgent',
                         timeToTreat: 'Small frequent meals, ginger, antiemetics if severe',
                         clinicalPearls: 'Hyperemesis gravidarum if severe (weight loss, ketosis). Usually improves by 16 weeks',
@@ -10815,7 +10783,7 @@ class MLAQuizApp {
                         differentiatingFeatures: 'Associated headache, photophobia, family history'
                     },
                     'Appendicitis': {
-                        features: 'Initially periumbilical pain ? RLQ, nausea, vomiting, fever, McBurney point tenderness',
+                        features: 'Initially periumbilical pain → RLQ, nausea, vomiting, fever, McBurney point tenderness',
                         tests: 'CT abdomen/pelvis, FBC, CRP, urinalysis',
                         urgency: 'Emergency',
                         timeToTreat: 'Appendicectomy, antibiotics if perforated',
@@ -10827,7 +10795,7 @@ class MLAQuizApp {
             'back-pain': {
                 title: 'Back Pain',
                 category: 'Musculoskeletal/Emergency',
-                redFlags: '📵 Bowel/bladder dysfunction, saddle anaesthesia, bilateral leg symptoms, fever',
+                redFlags: '🚩 Bowel/bladder dysfunction, saddle anaesthesia, bilateral leg symptoms, fever',
                 presentations: {
                     'Mechanical low back pain': {
                         features: 'Gradual onset, worse with movement, better with rest, no neurological signs',
@@ -10882,7 +10850,7 @@ class MLAQuizApp {
             'diarrhea': {
                 title: 'Diarrhea',
                 category: 'Gastroenterology',
-                redFlags: '📵 Bloody stools, severe dehydration, high fever, immunocompromised, recent antibiotics',
+                redFlags: '🚩 Bloody stools, severe dehydration, high fever, immunocompromised, recent antibiotics',
                 presentations: {
                     'Viral gastroenteritis': {
                         features: 'Acute watery diarrhea, nausea, vomiting, low-grade fever, household contacts affected',
@@ -10937,7 +10905,7 @@ class MLAQuizApp {
             'constipation': {
                 title: 'Constipation',
                 category: 'Gastroenterology',
-                redFlags: '📵 Acute onset in elderly, weight loss, rectal bleeding, complete obstruction',
+                redFlags: '🚩 Acute onset in elderly, weight loss, rectal bleeding, complete obstruction',
                 presentations: {
                     'Functional constipation': {
                         features: 'Chronic constipation, no alarm features, may have IBS symptoms',
@@ -10992,7 +10960,7 @@ class MLAQuizApp {
             'jaundice': {
                 title: 'Jaundice',
                 category: 'Hepatology/Gastroenterology',
-                redFlags: '📵 Acute onset with confusion, coagulopathy, severe abdominal pain, hypotension',
+                redFlags: '🚩 Acute onset with confusion, coagulopathy, severe abdominal pain, hypotension',
                 presentations: {
                     'Viral hepatitis': {
                         features: 'Prodromal illness, fatigue, nausea, RUQ pain, dark urine, pale stools',
@@ -11047,7 +11015,7 @@ class MLAQuizApp {
             'fever': {
                 title: 'Fever',
                 category: 'Infectious Disease/General',
-                redFlags: '📵 Hypotension, altered mental status, petechial rash, neck stiffness, immunocompromised',
+                redFlags: '🚩 Hypotension, altered mental status, petechial rash, neck stiffness, immunocompromised',
                 presentations: {
                     'Viral upper respiratory tract infection': {
                         features: 'Gradual onset, rhinorrhoea, sore throat, myalgia, low-grade fever',
@@ -11102,7 +11070,7 @@ class MLAQuizApp {
             'syncope': {
                 title: 'Syncope',
                 category: 'Cardiology/Neurology',
-                redFlags: '📵 Exertional syncope, family history sudden death, structural heart disease, prolonged recovery',
+                redFlags: '🚩 Exertional syncope, family history sudden death, structural heart disease, prolonged recovery',
                 presentations: {
                     'Vasovagal syncope': {
                         features: 'Triggers (standing, pain, emotion), prodrome (nausea, sweating), rapid recovery',
@@ -11157,7 +11125,7 @@ class MLAQuizApp {
             'urinary-symptoms': {
                 title: 'Urinary Symptoms',
                 category: 'Urology/Nephrology',
-                redFlags: '📵 Acute kidney injury, anuria, haematuria with clots, severe loin pain',
+                redFlags: '🚩 Acute kidney injury, anuria, haematuria with clots, severe loin pain',
                 presentations: {
                     'Urinary tract infection': {
                         features: 'Dysuria, frequency, urgency, suprapubic pain, cloudy/smelly urine',
@@ -11212,7 +11180,7 @@ class MLAQuizApp {
             'weight-loss': {
                 title: 'Unintentional Weight Loss',
                 category: 'General Medicine/Oncology',
-                redFlags: '📵 >10% weight loss in 6 months, night sweats, lymphadenopathy, rectal bleeding',
+                redFlags: '🚩 >10% weight loss in 6 months, night sweats, lymphadenopathy, rectal bleeding',
                 presentations: {
                     'Malignancy': {
                         features: 'Progressive weight loss, night sweats, fatigue, site-specific symptoms',
@@ -11267,7 +11235,7 @@ class MLAQuizApp {
             'palpitations': {
                 title: 'Palpitations',
                 category: 'Cardiology',
-                redFlags: '📵 Syncope, chest pain, severe dyspnea, hemodynamic instability',
+                redFlags: '🚩 Syncope, chest pain, severe dyspnea, hemodynamic instability',
                 presentations: {
                     'Anxiety/Panic attack': {
                         features: 'Rapid onset, associated anxiety, sweating, tremor, sense of doom',
@@ -11325,7 +11293,7 @@ class MLAQuizApp {
         container.innerHTML = `
             <div class="search-container">
                 <input type="text" id="ddx-search" placeholder="Search symptoms or diagnoses..." class="tool-search">
-                <button id="ddx-search-btn">📵</button>
+                <button id="ddx-search-btn">🔍</button>
             </div>
             <div id="ddx-search-results" class="lab-grid"></div>
             <div class="ddx-categories">
@@ -11375,7 +11343,7 @@ class MLAQuizApp {
         }
         
         resultsContainer.innerHTML = matches.map(match => `
-            <button class="lab-value-btn" onclick="${match.type === 'symptom' ? `console.log('📵 DDX search result clicked:', '${match.key}'); window.quizApp.showDdxDetail('${match.key}'); event.stopPropagation();` : `console.log('📵 Diagnosis search result clicked:', '${match.key}'); window.quizApp.showDiagnosisDetail('${match.symptom}', '${match.key}'); event.stopPropagation();`}">
+            <button class="lab-value-btn" onclick="${match.type === 'symptom' ? `console.log('🔍 DDX search result clicked:', '${match.key}'); window.quizApp.showDdxDetail('${match.key}'); event.stopPropagation();` : `console.log('🔍 Diagnosis search result clicked:', '${match.key}'); window.quizApp.showDiagnosisDetail('${match.symptom}', '${match.key}'); event.stopPropagation();`}">
                 <div class="lab-name">${match.name}</div>
                 <div class="lab-count">${match.type === 'symptom' ? 'Symptom Complex' : 'Diagnosis'}</div>
             </button>
@@ -11403,7 +11371,7 @@ class MLAQuizApp {
         }
         
         ddxList.innerHTML = symptoms.map(symptom => `
-            <button class="lab-value-btn" onclick="console.log('📵 DDX card clicked:', '${symptom}'); window.quizApp.showDdxDetail('${symptom}'); event.stopPropagation();">
+            <button class="lab-value-btn" onclick="console.log('🔍 DDX card clicked:', '${symptom}'); window.quizApp.showDdxDetail('${symptom}'); event.stopPropagation();">
                 <div class="lab-name">${ddxDatabase[symptom].title}</div>
                 <div class="lab-count">${Object.keys(ddxDatabase[symptom].presentations).length} differentials</div>
             </button>
@@ -11415,23 +11383,23 @@ class MLAQuizApp {
         const container = document.getElementById('differential-dx-container');
         
         const presentationsHtml = Object.entries(symptom.presentations).map(([dx, data]) => `
-            <button class="lab-value-btn" onclick="console.log('📵 Diagnosis clicked:', '${dx}'); window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}'); event.stopPropagation();">
+            <button class="lab-value-btn" onclick="console.log('🔍 Diagnosis clicked:', '${dx}'); window.quizApp.showDiagnosisDetail('${symptomKey}', '${dx}'); event.stopPropagation();">
                 <div class="lab-name">${dx}</div>
                 <div class="lab-count">${data.urgency}</div>
             </button>
         `).join('');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.loadDifferentialDx(); event.stopPropagation();">? Back to Symptoms</button>
+            <button class="back-btn" onclick="window.quizApp.loadDifferentialDx(); event.stopPropagation();">← Back to Symptoms</button>
             <div class="ddx-detail">
-                <h3>📵 ${symptom.title}</h3>
-                <p class="ddx-category">📵 ${symptom.category}</p>
+                <h3>🔍 ${symptom.title}</h3>
+                <p class="ddx-category">📋 ${symptom.category}</p>
                 ${symptom.redFlags ? `
                 <div class="red-flags-banner">
-                    <h4>📵 RED FLAGS</h4>
+                    <h4>🚨 RED FLAGS</h4>
                     <p>${symptom.redFlags}</p>
                 </div>` : ''}
-                <h4>📵 Differential Diagnoses:</h4>
+                <h4>📋 Differential Diagnoses:</h4>
                 <div class="lab-grid">
                     ${presentationsHtml}
                 </div>
@@ -11453,30 +11421,30 @@ class MLAQuizApp {
         const container = document.getElementById('differential-dx-container');
         
         container.innerHTML = `
-            <button class="back-btn" onclick="window.quizApp.showDdxDetail('${symptomKey}'); event.stopPropagation();">? Back to ${this.ddxDatabase[symptomKey].title}</button>
+            <button class="back-btn" onclick="window.quizApp.showDdxDetail('${symptomKey}'); event.stopPropagation();">← Back to ${this.ddxDatabase[symptomKey].title}</button>
             <div class="diagnosis-detail">
-                <h3>📵 ${dxKey}</h3>
+                <h3>🔍 ${dxKey}</h3>
                 <div class="urgency-banner ${diagnosis.urgency.toLowerCase()}">
-                    <span class="urgency-level">? ${diagnosis.urgency.toUpperCase()}</span>
-                    ${diagnosis.timeToTreat ? `<span class="time-to-treat">📵 ${diagnosis.timeToTreat}</span>` : ''}
+                    <span class="urgency-level">⚡ ${diagnosis.urgency.toUpperCase()}</span>
+                    ${diagnosis.timeToTreat ? `<span class="time-to-treat">⏱️ ${diagnosis.timeToTreat}</span>` : ''}
                 </div>
                 <div class="diagnosis-info">
                     <div class="info-section">
-                        <h4>📵 Clinical Features</h4>
+                        <h4>🎯 Clinical Features</h4>
                         <p>${diagnosis.features}</p>
                     </div>
                     <div class="info-section">
-                        <h4>📵 Diagnostic Tests</h4>
+                        <h4>🔬 Diagnostic Tests</h4>
                         <p>${diagnosis.tests}</p>
                     </div>
                     ${diagnosis.differentiatingFeatures ? `
                     <div class="info-section">
-                        <h4>📵 Key Differentiating Features</h4>
+                        <h4>🔍 Key Differentiating Features</h4>
                         <p>${diagnosis.differentiatingFeatures}</p>
                     </div>` : ''}
                     ${diagnosis.clinicalPearls ? `
                     <div class="info-section">
-                        <h4>📵 Clinical Pearls</h4>
+                        <h4>💎 Clinical Pearls</h4>
                         <p>${diagnosis.clinicalPearls}</p>
                     </div>` : ''}
                 </div>
@@ -11547,11 +11515,11 @@ class MLAQuizApp {
             case 'calculators':
                 // Re-initialize calculator event handlers when switching to calculators
                 this.initializeCalculators();
-                console.log('📵 Calculators panel activated');
+                console.log('🧮 Calculators panel activated');
                 break;
             case 'calculator-detail':
                 // Individual calculator panel - content loaded by loadCalculator
-                console.log('📵 Calculator detail panel activated');
+                console.log('🧮 Calculator detail panel activated');
                 break;
             case 'lab-values':
                 this.loadLabValues();
@@ -11576,7 +11544,7 @@ class MLAQuizApp {
                 break;
         }
         
-        console.log('📵 Switched to tool:', toolType, 'Panel ID:', panelId);
+        console.log('🩺 Switched to tool:', toolType, 'Panel ID:', panelId);
     }
 
     setFontSize(size) {
@@ -11898,7 +11866,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.quizApp = new MLAQuizApp();
     // Setup mobile back button override
     window.quizApp.setupMobileBackButton();
-    console.log('📵 QuizApp initialized and assigned to window.quizApp');
+    console.log('🩺 QuizApp initialized and assigned to window.quizApp');
 });
 
 // Clinical Triads Database and Functions
@@ -11981,7 +11949,7 @@ const clinicalTriads = {
         condition: 'Miller Fisher Syndrome (GBS variant)',
         mechanism: 'Autoimmune peripheral neuropathy variant',
         urgency: 'high',
-        clinicalSignificance: 'Variant of Guillain-Barr� syndrome',
+        clinicalSignificance: 'Variant of Guillain-Barré syndrome',
         ukGuidelines: 'Neurology referral, consider IVIG if severe (NICE CG188)'
     },
     'meningism-triad': {
@@ -12105,7 +12073,7 @@ MLAQuizApp.prototype.displayTriads = function(triadIds) {
     if (triadIds.length === 0) {
         triadsResults.innerHTML = `
             <div class="no-results">
-                <h3>📵 No triads found</h3>
+                <h3>🔍 No triads found</h3>
                 <p>Try adjusting your search terms or category filter.</p>
             </div>
         `;
@@ -12137,7 +12105,7 @@ MLAQuizApp.prototype.displayTriads = function(triadIds) {
         </div>
     `;
     
-    console.log('📵 Displayed triads:', triadIds.length);
+    console.log('🔺 Displayed triads:', triadIds.length);
 };
 
 MLAQuizApp.prototype.createTriadCard = function(triad) {
@@ -12149,28 +12117,28 @@ MLAQuizApp.prototype.createTriadCard = function(triad) {
     };
     
     const urgencyIcons = {
-        'emergency': '📵',
-        'high': '📵',
-        'moderate': '📵',
-        'low': '?'
+        'emergency': '🚨',
+        'high': '⚠️',
+        'moderate': 'ℹ️',
+        'low': '✅'
     };
     
     const categoryIcons = {
-        'cardiovascular': '📵',
-        'respiratory': '📵',
-        'neurologic': '📵',
-        'emergency': '📵',
-        'infectious': '📵',
-        'endocrine': '📵',
-        'rheumatologic': '📵',
-        'psychiatric': '📵'
+        'cardiovascular': '❤️',
+        'respiratory': '🫁',
+        'neurologic': '🧠',
+        'emergency': '🚨',
+        'infectious': '🦠',
+        'endocrine': '⚗️',
+        'rheumatologic': '🦴',
+        'psychiatric': '🧭'
     };
     
     return `
         <div class="triad-card" style="border-left: 4px solid ${urgencyColors[triad.urgency]}">
             <div class="triad-header">
                 <h3>
-                    ${categoryIcons[triad.category] || '📵'} ${triad.name}
+                    ${categoryIcons[triad.category] || '🔺'} ${triad.name}
                     <span class="urgency-badge" style="background: ${urgencyColors[triad.urgency]}">
                         ${urgencyIcons[triad.urgency]} ${triad.urgency.toUpperCase()}
                     </span>
@@ -12179,7 +12147,7 @@ MLAQuizApp.prototype.createTriadCard = function(triad) {
             </div>
             
             <div class="triad-components">
-                <h4>📵 Classic Triad:</h4>
+                <h4>🔺 Classic Triad:</h4>
                 <div class="components-list">
                     ${triad.components.map(comp => `<span class="component-item">${comp}</span>`).join('')}
                 </div>
@@ -12187,17 +12155,17 @@ MLAQuizApp.prototype.createTriadCard = function(triad) {
             
             <div class="triad-details">
                 <div class="detail-section">
-                    <h4>📵 Mechanism:</h4>
+                    <h4>🔬 Mechanism:</h4>
                     <p>${triad.mechanism}</p>
                 </div>
                 
                 <div class="detail-section">
-                    <h4>📵 Clinical Significance:</h4>
+                    <h4>🎯 Clinical Significance:</h4>
                     <p>${triad.clinicalSignificance}</p>
                 </div>
                 
                 <div class="detail-section uk-guidelines">
-                    <h4>📵📵 UK Guidelines:</h4>
+                    <h4>🇬🇧 UK Guidelines:</h4>
                     <p>${triad.ukGuidelines}</p>
                 </div>
             </div>
@@ -12207,19 +12175,19 @@ MLAQuizApp.prototype.createTriadCard = function(triad) {
 
 // Clinical Examination Guide Functions
 MLAQuizApp.prototype.loadExaminationGuide = function() {
-    console.log('📵 Loading examination guide...');
+    console.log('🩺 Loading examination guide...');
     const examinationContainer = document.getElementById('examination-container');
     if (!examinationContainer) {
-        console.error('? Examination container not found!');
+        console.error('❌ Examination container not found!');
         return;
     }
-    console.log('? Examination container found, setting up database...');
+    console.log('✅ Examination container found, setting up database...');
     
     const examinationDatabase = {
         'cardiovascular': {
             title: 'Cardiovascular Examination',
             category: 'systemic',
-            approach: 'General inspection ? Hands ? Pulse ? Blood pressure ? Face ? Neck ? Precordium ? Back',
+            approach: 'General inspection → Hands → Pulse → Blood pressure → Face → Neck → Precordium → Back',
             sections: {
                 'general-inspection': {
                     name: 'General Inspection',
@@ -12267,7 +12235,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
                     technique: 'Appropriate cuff size, patient relaxed, arm at heart level',
                     normal: '<140/90 mmHg (or <130/80 mmHg in diabetes/CKD)',
                     abnormal: {
-                        'Hypertension': 'Stage 1: 140-159/90-99, Stage 2: 160-179/100-109, Stage 3: =180/110',
+                        'Hypertension': 'Stage 1: 140-159/90-99, Stage 2: 160-179/100-109, Stage 3: ≥180/110',
                         'Hypotension': '<90 mmHg systolic - shock, medications, postural hypotension',
                         'Wide pulse pressure': '>60 mmHg - aortic regurgitation, hyperthyroidism',
                         'Narrow pulse pressure': '<30 mmHg - aortic stenosis, cardiac tamponade',
@@ -12277,7 +12245,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
                 },
                 'jvp': {
                     name: 'Jugular Venous Pressure',
-                    technique: 'Patient at 45�, look for internal jugular pulsation, measure height above sternal angle',
+                    technique: 'Patient at 45°, look for internal jugular pulsation, measure height above sternal angle',
                     normal: '<3 cm above sternal angle, normal waveform',
                     abnormal: {
                         'Elevated JVP': '>3 cm - right heart failure, fluid overload, tricuspid disease',
@@ -12307,7 +12275,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'respiratory': {
             title: 'Respiratory Examination',
             category: 'systemic',
-            approach: 'General inspection ? Hands ? Face ? Neck ? Chest inspection ? Palpation ? Percussion ? Auscultation',
+            approach: 'General inspection → Hands → Face → Neck → Chest inspection → Palpation → Percussion → Auscultation',
             sections: {
                 'general-inspection': {
                     name: 'General Inspection',
@@ -12406,7 +12374,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'abdominal': {
             title: 'Abdominal Examination',
             category: 'systemic',
-            approach: 'Look ? Feel ? Percuss ? Listen (different order from other systems)',
+            approach: 'Look → Feel → Percuss → Listen (different order from other systems)',
             sections: {
                 'inspection': {
                     name: 'Inspection',
@@ -12482,7 +12450,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'neurological': {
             title: 'Neurological Examination',
             category: 'systemic',
-            approach: 'Mental state ? Cranial nerves ? Motor ? Sensory ? Reflexes ? Coordination ? Gait',
+            approach: 'Mental state → Cranial nerves → Motor → Sensory → Reflexes → Coordination → Gait',
             sections: {
                 'mental-state': {
                     name: 'Mental State',
@@ -12573,7 +12541,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'mental-state': {
             title: 'Mental State Examination',
             category: 'psychiatric',
-            approach: 'Appearance ? Behaviour ? Speech ? Mood ? Thought ? Perception ? Cognition ? Insight',
+            approach: 'Appearance → Behaviour → Speech → Mood → Thought → Perception → Cognition → Insight',
             sections: {
                 'appearance': {
                     name: 'Appearance and Behaviour',
@@ -12658,7 +12626,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'thyroid': {
             title: 'Thyroid Examination',
             category: 'endocrine',
-            approach: 'General inspection ? Neck inspection ? Palpation ? Auscultation ? Functional assessment',
+            approach: 'General inspection → Neck inspection → Palpation → Auscultation → Functional assessment',
             sections: {
                 'inspection': {
                     name: 'Inspection',
@@ -12717,7 +12685,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'lymph-nodes': {
             title: 'Lymph Node Examination',
             category: 'general',
-            approach: 'Systematic examination of all lymph node groups ? Assess characteristics ? Look for primary source',
+            approach: 'Systematic examination of all lymph node groups → Assess characteristics → Look for primary source',
             sections: {
                 'head-neck': {
                     name: 'Head and Neck Nodes',
@@ -12776,7 +12744,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'skin': {
             title: 'Skin Examination',
             category: 'dermatology',
-            approach: 'General inspection ? Systematic examination ? Dermoscopy ? Documentation',
+            approach: 'General inspection → Systematic examination → Dermoscopy → Documentation',
             sections: {
                 'inspection': {
                     name: 'General Inspection',
@@ -12796,7 +12764,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
                     technique: 'Describe size, shape, colour, surface, borders, distribution',
                     normal: 'Normal skin without pathological lesions',
                     abnormal: {
-                        'Macule': 'Flat, <1cm - freckles, caf�-au-lait spots',
+                        'Macule': 'Flat, <1cm - freckles, café-au-lait spots',
                         'Papule': 'Raised, <1cm - seborrhoeic keratosis, naevi',
                         'Nodule': 'Raised, >1cm - basal cell carcinoma, melanoma',
                         'Vesicle': 'Fluid-filled, <1cm - herpes simplex, eczema',
@@ -12835,7 +12803,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'musculoskeletal': {
             title: 'Musculoskeletal Examination',
             category: 'orthopaedic',
-            approach: 'Look ? Feel ? Move ? Special tests ? Function',
+            approach: 'Look → Feel → Move → Special tests → Function',
             sections: {
                 'inspection': {
                     name: 'Inspection',
@@ -12894,7 +12862,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'ent-basic': {
             title: 'Basic ENT Examination',
             category: 'specialist',
-            approach: 'External inspection ? Otoscopy ? Hearing ? Nose ? Throat ? Neck',
+            approach: 'External inspection → Otoscopy → Hearing → Nose → Throat → Neck',
             sections: {
                 'ears': {
                     name: 'Ear Examination',
@@ -12953,7 +12921,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'breast': {
             title: 'Breast Examination',
             category: 'primary-care',
-            approach: 'Inspection ? Palpation ? Lymph nodes ? Teaching self-examination',
+            approach: 'Inspection → Palpation → Lymph nodes → Teaching self-examination',
             sections: {
                 'inspection': {
                     name: 'Inspection',
@@ -13012,7 +12980,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'prostate': {
             title: 'Prostate Examination',
             category: 'primary-care',
-            approach: 'History ? General examination ? Digital rectal examination ? Assessment',
+            approach: 'History → General examination → Digital rectal examination → Assessment',
             sections: {
                 'preparation': {
                     name: 'Preparation and Consent',
@@ -13071,7 +13039,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'eye': {
             title: 'Eye Examination',
             category: 'primary-care',
-            approach: 'Visual acuity ? External inspection ? Pupil examination ? Fundoscopy',
+            approach: 'Visual acuity → External inspection → Pupil examination → Fundoscopy',
             sections: {
                 'visual-acuity': {
                     name: 'Visual Acuity Testing',
@@ -13130,7 +13098,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'diabetic-foot': {
             title: 'Diabetic Foot Examination',
             category: 'primary-care',
-            approach: 'Inspection ? Vascular assessment ? Neurological assessment ? Risk stratification',
+            approach: 'Inspection → Vascular assessment → Neurological assessment → Risk stratification',
             sections: {
                 'inspection': {
                     name: 'Foot Inspection',
@@ -13189,7 +13157,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'blood-pressure': {
             title: 'Blood Pressure Measurement',
             category: 'primary-care',
-            approach: 'Preparation ? Correct technique ? Interpretation ? Follow-up planning',
+            approach: 'Preparation → Correct technique → Interpretation → Follow-up planning',
             sections: {
                 'preparation': {
                     name: 'Patient Preparation',
@@ -13225,7 +13193,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
                         'High normal': '130-139/85-89 mmHg',
                         'Stage 1 hypertension': '140-159/90-99 mmHg (home >135/85)',
                         'Stage 2 hypertension': '160-179/100-109 mmHg (home >150/95)',
-                        'Stage 3 hypertension': '=180/110 mmHg - severe, consider admission',
+                        'Stage 3 hypertension': '≥180/110 mmHg - severe, consider admission',
                         'Isolated systolic hypertension': 'Systolic >140, diastolic <90'
                     },
                     clinicalPearls: 'ABPM/HBPM preferred for diagnosis. Clinic readings often higher'
@@ -13248,7 +13216,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         'gynaecological': {
             title: 'Gynaecological Examination',
             category: 'primary-care',
-            approach: 'Consent ? Positioning ? Inspection ? Speculum ? Bimanual ? Documentation',
+            approach: 'Consent → Positioning → Inspection → Speculum → Bimanual → Documentation',
             sections: {
                 'consent-preparation': {
                     name: 'Consent and Preparation',
@@ -13287,7 +13255,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
                         'Cervical motion tenderness': 'Pain on moving cervix - PID',
                         'Uterine prolapse': 'Cervix visible at introitus'
                     },
-                    clinicalPearls: 'Warm speculum. Insert at 45� angle. Cervical screening if due'
+                    clinicalPearls: 'Warm speculum. Insert at 45° angle. Cervical screening if due'
                 },
                 'bimanual-examination': {
                     name: 'Bimanual Examination',
@@ -13310,7 +13278,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
     container.innerHTML = `
         <div class="search-container">
             <input type="text" id="examination-search" placeholder="Search examination techniques..." class="tool-search">
-            <button id="examination-search-btn">📵</button>
+            <button id="examination-search-btn">🔍</button>
         </div>
         <div id="examination-search-results" class="lab-grid"></div>
         <div class="examination-categories">
@@ -13332,7 +13300,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
     searchBtn.addEventListener('click', () => self.searchExamination(examinationDatabase));
     this.examinationDatabase = examinationDatabase;
     this.showExaminationCategory('all');
-    console.log('? Examination guide loaded successfully!');
+    console.log('✅ Examination guide loaded successfully!');
 };
 
 MLAQuizApp.prototype.searchExamination = function(examinationDatabase) {
@@ -13364,7 +13332,7 @@ MLAQuizApp.prototype.searchExamination = function(examinationDatabase) {
     }
     
     resultsContainer.innerHTML = matches.map(match => `
-        <button class="lab-value-btn" onclick="${match.type === 'system' ? `console.log('📵 Examination system clicked:', '${match.key}'); window.quizApp.showExaminationDetail('${match.key}'); event.stopPropagation();` : `console.log('📵 Examination section clicked:', '${match.key}'); window.quizApp.showSectionDetail('${match.system}', '${match.key}'); event.stopPropagation();`}">
+        <button class="lab-value-btn" onclick="${match.type === 'system' ? `console.log('🩺 Examination system clicked:', '${match.key}'); window.quizApp.showExaminationDetail('${match.key}'); event.stopPropagation();` : `console.log('🩺 Examination section clicked:', '${match.key}'); window.quizApp.showSectionDetail('${match.system}', '${match.key}'); event.stopPropagation();`}">
             <div class="lab-name">${match.name}</div>
             <div class="lab-count">${match.type === 'system' ? 'System' : 'Technique'}</div>
         </button>
@@ -13377,7 +13345,7 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
     
     // Safety check - if examination-list doesn't exist, reload the interface first
     if (!examinationList) {
-        console.log('📵 Examination list not found, reloading interface...');
+        console.log('⚠️ Examination list not found, reloading interface...');
         this.loadExaminationGuide();
         // Try again after a short delay to allow DOM to update
         setTimeout(() => this.showExaminationCategory(category), 100);
@@ -13386,7 +13354,7 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
     
     // Safety check for examination database
     if (!examinationDatabase) {
-        console.log('📵 Examination database not loaded, reloading...');
+        console.log('⚠️ Examination database not loaded, reloading...');
         this.loadExaminationGuide();
         return;
     }
@@ -13410,7 +13378,7 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
             }
         });
     } else {
-        console.log('📵 Examination category buttons not found');
+        console.log('⚠️ Examination category buttons not found');
     }
     
     if (category !== 'all') {
@@ -13430,34 +13398,34 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
     // Safely update the examination list
     if (examinationList) {
         examinationList.innerHTML = systems.map(system => `
-            <button class="lab-value-btn" onclick="console.log('📵 Examination system clicked:', '${system}'); window.quizApp.showExaminationDetail('${system}'); event.stopPropagation();">
+            <button class="lab-value-btn" onclick="console.log('🩺 Examination system clicked:', '${system}'); window.quizApp.showExaminationDetail('${system}'); event.stopPropagation();">
                 <div class="lab-name">${examinationDatabase[system].title}</div>
                 <div class="lab-count">${Object.keys(examinationDatabase[system].sections).length} sections</div>
             </button>
         `).join('');
     } else {
-        console.log('📵 Failed to update examination list - element not found');
+        console.log('⚠️ Failed to update examination list - element not found');
     }
 };
 
 MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
     // Safety checks
     if (!this.examinationDatabase) {
-        console.log('📵 Examination database not loaded, reloading...');
+        console.log('⚠️ Examination database not loaded, reloading...');
         this.loadExaminationGuide();
         return;
     }
     
     const system = this.examinationDatabase[systemKey];
     if (!system) {
-        console.log('📵 System not found:', systemKey);
+        console.log('⚠️ System not found:', systemKey);
         this.loadExaminationGuide();
         return;
     }
     
     const container = document.getElementById('examination-container');
     if (!container) {
-        console.log('📵 Examination container not found');
+        console.log('⚠️ Examination container not found');
         return;
     }
     
@@ -13469,15 +13437,15 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
     `).join('');
     
     container.innerHTML = `
-        <button class="back-btn" onclick="window.quizApp.loadExaminationGuide(); event.stopPropagation();">? Back to Examinations</button>
+        <button class="back-btn" onclick="window.quizApp.loadExaminationGuide(); event.stopPropagation();">← Back to Examinations</button>
         <div class="examination-detail">
-            <h3>📵 ${system.title}</h3>
-            <p class="exam-category">📵 ${system.category}</p>
+            <h3>🩺 ${system.title}</h3>
+            <p class="exam-category">📋 ${system.category}</p>
             <div class="approach-banner">
-                <h4>📵 Systematic Approach</h4>
+                <h4>🔄 Systematic Approach</h4>
                 <p>${system.approach}</p>
             </div>
-            <h4>📵 Examination Sections:</h4>
+            <h4>📋 Examination Sections:</h4>
             <div class="lab-grid">
                 ${sectionsHtml}
             </div>
@@ -13497,55 +13465,55 @@ MLAQuizApp.prototype.showExaminationDetail = function(systemKey) {
 MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
     // Safety checks
     if (!this.examinationDatabase) {
-        console.log('📵 Examination database not loaded, reloading...');
+        console.log('⚠️ Examination database not loaded, reloading...');
         this.loadExaminationGuide();
         return;
     }
     
     const system = this.examinationDatabase[systemKey];
     if (!system) {
-        console.log('📵 System not found:', systemKey);
+        console.log('⚠️ System not found:', systemKey);
         this.loadExaminationGuide();
         return;
     }
     
     const section = system.sections[sectionKey];
     if (!section) {
-        console.log('📵 Section not found:', sectionKey);
+        console.log('⚠️ Section not found:', sectionKey);
         this.showExaminationDetail(systemKey);
         return;
     }
     
     const container = document.getElementById('examination-container');
     if (!container) {
-        console.log('📵 Examination container not found');
+        console.log('⚠️ Examination container not found');
         return;
     }
     
     const abnormalHtml = Object.entries(section.abnormal).map(([finding, description]) => `
         <div class="finding-item abnormal">
-            <div class="finding-name">📵 ${finding}</div>
+            <div class="finding-name">⚠️ ${finding}</div>
             <div class="finding-description">${description}</div>
         </div>
     `).join('');
     
     container.innerHTML = `
-        <button class="back-btn" onclick="window.quizApp.showExaminationDetail('${systemKey}'); event.stopPropagation();">? Back to ${system.title}</button>
+        <button class="back-btn" onclick="window.quizApp.showExaminationDetail('${systemKey}'); event.stopPropagation();">← Back to ${system.title}</button>
         <div class="section-detail">
-            <h3>📵 ${section.name}</h3>
+            <h3>🔍 ${section.name}</h3>
             <div class="technique-banner">
-                <h4>📵? Technique</h4>
+                <h4>🛠️ Technique</h4>
                 <p>${section.technique}</p>
             </div>
             <div class="findings-section">
                 <div class="normal-findings">
-                    <h4>? Normal Findings</h4>
+                    <h4>✅ Normal Findings</h4>
                     <div class="normal-box">
                         ${section.normal}
                     </div>
                 </div>
                 <div class="abnormal-findings">
-                    <h4>📵 Abnormal Findings</h4>
+                    <h4>⚠️ Abnormal Findings</h4>
                     <div class="abnormal-list">
                         ${abnormalHtml}
                     </div>
@@ -13553,7 +13521,7 @@ MLAQuizApp.prototype.showSectionDetail = function(systemKey, sectionKey) {
             </div>
             ${section.clinicalPearls ? `
             <div class="clinical-pearls">
-                <h4>📵 Clinical Pearls</h4>
+                <h4>💎 Clinical Pearls</h4>
                 <p>${section.clinicalPearls}</p>
             </div>` : ''}
         </div>
@@ -13593,7 +13561,7 @@ MLAQuizApp.prototype.setupMobileBackButton = function() {
             } else {
                 // Go back to main quiz interface - but we need to handle this properly
                 // For now, stay in current panel to avoid breaking the app
-                console.log('📵 Back button pressed in:', activePanelId);
+                console.log('🔙 Back button pressed in:', activePanelId);
             }
             
             // Maintain history state
@@ -13622,7 +13590,7 @@ MLAQuizApp.prototype.getGRACECalculator = function() {
                 <input type="number" id="grace-sbp" placeholder="120" min="50" max="300">
             </div>
             <div class="calc-input-group">
-                <label>Creatinine (�mol/L):</label>
+                <label>Creatinine (μmol/L):</label>
                 <input type="number" id="grace-creatinine" placeholder="100" min="50" max="1000">
             </div>
             <div class="calc-checkbox-group">
@@ -13634,7 +13602,7 @@ MLAQuizApp.prototype.getGRACECalculator = function() {
             <button onclick="window.quizApp.calculateGRACE()">Calculate GRACE Score</button>
             <div id="grace-result" class="calc-result"></div>
             <div class="calc-reference">
-                <small><strong>GRACE Risk:</strong> Low =108 | Intermediate 109-140 | High >140</small>
+                <small><strong>GRACE Risk:</strong> Low ≤108 | Intermediate 109-140 | High >140</small>
             </div>
         </div>
     `;
@@ -13674,7 +13642,7 @@ MLAQuizApp.prototype.getCRUSADECalculator = function() {
             <button onclick="window.quizApp.calculateCRUSADE()">Calculate CRUSADE Score</button>
             <div id="crusade-result" class="calc-result"></div>
             <div class="calc-reference">
-                <small><strong>Bleeding Risk:</strong> Very Low =20 | Low 21-30 | Moderate 31-40 | High 41-50 | Very High >50</small>
+                <small><strong>Bleeding Risk:</strong> Very Low ≤20 | Low 21-30 | Moderate 31-40 | High 41-50 | Very High >50</small>
             </div>
         </div>
     `;
@@ -14425,7 +14393,7 @@ MLAQuizApp.prototype.calculatePHQ9 = function() {
         <h4 style="color: ${color}">PHQ-9 Score: ${totalScore}</h4>
         <p><strong>Severity:</strong> ${severity}</p>
         <p><strong>Recommendation:</strong> ${recommendation}</p>
-        ${totalScore >= 15 ? '<p style="color: #dc2626;"><strong>📵 High risk: Assess for suicidal ideation</strong></p>' : ''}
+        ${totalScore >= 15 ? '<p style="color: #dc2626;"><strong>⚠️ High risk: Assess for suicidal ideation</strong></p>' : ''}
     `;
 };
 
@@ -14466,7 +14434,7 @@ MLAQuizApp.prototype.calculateGAD7 = function() {
         <p><strong>Severity:</strong> ${severity}</p>
         <p><strong>Recommendation:</strong> ${recommendation}</p>
         <div class="clinical-note">
-            <p><strong>Note:</strong> Score =10 has good sensitivity and specificity for GAD</p>
+            <p><strong>Note:</strong> Score ≥10 has good sensitivity and specificity for GAD</p>
         </div>
     `;
 };
@@ -14500,8 +14468,8 @@ MLAQuizApp.prototype.calculateMSE = function() {
     // Build thought content section
     let thoughtContentDetails = [];
     if (delusions) thoughtContentDetails.push('delusions present');
-    if (suicidal) thoughtContentDetails.push('📵 SUICIDAL IDEATION');
-    if (homicidal) thoughtContentDetails.push('📵 HOMICIDAL IDEATION');
+    if (suicidal) thoughtContentDetails.push('⚠️ SUICIDAL IDEATION');
+    if (homicidal) thoughtContentDetails.push('⚠️ HOMICIDAL IDEATION');
     if (paranoia) thoughtContentDetails.push('paranoid ideation');
     if (obsessions) thoughtContentDetails.push('obsessive thoughts');
     if (thoughtContent) thoughtContentDetails.push(thoughtContent);
@@ -14527,7 +14495,7 @@ MLAQuizApp.prototype.calculateMSE = function() {
     if (suicidal || homicidal) {
         riskWarning = `
             <div class="clinical-note" style="background: #fee2e2; border-color: #dc2626; margin-top: 15px;">
-                <h4 style="color: #dc2626; margin-top: 0;">📵 RISK ALERT</h4>
+                <h4 style="color: #dc2626; margin-top: 0;">⚠️ RISK ALERT</h4>
                 <p><strong>IMMEDIATE ACTION REQUIRED:</strong></p>
                 <ul style="margin: 10px 0; padding-left: 20px;">
                     ${suicidal ? '<li>Suicidal ideation present - assess risk, ensure safety, consider crisis team</li>' : ''}
@@ -14687,12 +14655,12 @@ MLAQuizApp.prototype.calculateMMSE = function() {
         <div class="mmse-breakdown" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: left;">
             <h5 style="margin-top: 0;">Score Breakdown:</h5>
             <ul style="list-style: none; padding: 0; margin: 0;">
-                <li>📵 Orientation to Time: ${orientationTime}/5</li>
-                <li>📵? Orientation to Place: ${orientationPlace}/5</li>
-                <li>📵 Registration: ${registration}/3</li>
-                <li>📵 Attention & Calculation: ${attention}/5</li>
-                <li>📵 Recall: ${recall}/3</li>
-                <li>📵 Language: ${languageScore}/9</li>
+                <li>📍 Orientation to Time: ${orientationTime}/5</li>
+                <li>🗺️ Orientation to Place: ${orientationPlace}/5</li>
+                <li>📝 Registration: ${registration}/3</li>
+                <li>🧮 Attention & Calculation: ${attention}/5</li>
+                <li>🧠 Recall: ${recall}/3</li>
+                <li>💬 Language: ${languageScore}/9</li>
             </ul>
         </div>
         
@@ -14703,10 +14671,10 @@ MLAQuizApp.prototype.calculateMMSE = function() {
         
         <div class="calc-reference" style="margin-top: 15px;">
             <small><strong>Important Notes:</strong><br>
-            � MMSE should be adjusted for age, education, and cultural factors<br>
-            � Not diagnostic alone - use alongside clinical assessment and history<br>
-            � Consider MoCA for subtle cognitive impairment (more sensitive)<br>
-            � Repeat testing useful to track progression</small>
+            • MMSE should be adjusted for age, education, and cultural factors<br>
+            • Not diagnostic alone - use alongside clinical assessment and history<br>
+            • Consider MoCA for subtle cognitive impairment (more sensitive)<br>
+            • Repeat testing useful to track progression</small>
         </div>
     `;
 };
@@ -14788,7 +14756,7 @@ MLAQuizApp.prototype.calculateVasopressor = function() {
     }
     
     // Calculate infusion rate
-    // Dose (mcg/kg/min) � Weight (kg) � 60 (min/hr) � [Concentration (mg/ml) � 1000 (mcg/mg)] = ml/hr
+    // Dose (mcg/kg/min) × Weight (kg) × 60 (min/hr) ÷ [Concentration (mg/ml) × 1000 (mcg/mg)] = ml/hr
     const infusionRate = (dose * weight * 60) / (concentration * 1000);
     
     // Drug-specific information
@@ -15043,7 +15011,7 @@ MLAQuizApp.prototype.displayEmergencyProtocols = function(protocolIds) {
     if (protocolIds.length === 0) {
         container.innerHTML = `
             <div class="no-results">
-                <h3>📵 No protocols found</h3>
+                <h3>🚨 No protocols found</h3>
                 <p>Try adjusting your category filter.</p>
             </div>
         `;
@@ -15098,34 +15066,34 @@ MLAQuizApp.prototype.showProtocolDetail = function(protocolId) {
     const detailHtml = `
         <div class="protocol-detail" onclick="event.stopPropagation();">
             <div class="protocol-detail-header">
-                <button class="back-btn" onclick="window.quizApp.loadEmergencyProtocols(); event.stopPropagation();">? Back to Protocols</button>
+                <button class="back-btn" onclick="window.quizApp.loadEmergencyProtocols(); event.stopPropagation();">← Back to Protocols</button>
                 <h3>${protocol.name}</h3>
                 <span class="protocol-urgency ${protocol.urgency}">${protocol.urgency.toUpperCase()}</span>
             </div>
             
             <div class="protocol-steps">
-                <h4>📵 Protocol Steps</h4>
+                <h4>📋 Protocol Steps</h4>
                 <ol class="step-list">
                     ${protocol.steps.map(step => `<li>${step}</li>`).join('')}
                 </ol>
             </div>
             
             <div class="protocol-drugs">
-                <h4>📵 Key Medications</h4>
+                <h4>💊 Key Medications</h4>
                 <ul class="drug-list">
                     ${protocol.drugs.map(drug => `<li>${drug}</li>`).join('')}
                 </ul>
             </div>
             
             <div class="protocol-actions">
-                <h4>📵 Critical Actions</h4>
+                <h4>⚠️ Critical Actions</h4>
                 <ul class="action-list">
                     ${protocol.criticalActions.map(action => `<li>${action}</li>`).join('')}
                 </ul>
             </div>
             
             <div class="protocol-guideline">
-                <h4>📵 UK Guideline</h4>
+                <h4>📚 UK Guideline</h4>
                 <p>${protocol.ukGuideline}</p>
             </div>
         </div>
@@ -15143,7 +15111,7 @@ const interpretationTools = {
         steps: [
             'Rate: Count QRS complexes (300/large squares or 1500/small squares)',
             'Rhythm: Regular or irregular? P waves present?',
-            'Axis: Normal (-30� to +90�), left or right deviation?',
+            'Axis: Normal (-30° to +90°), left or right deviation?',
             'P waves: Present before each QRS? Normal morphology?',
             'PR interval: 120-200ms (3-5 small squares)',
             'QRS width: <120ms (3 small squares) = narrow',
@@ -15156,10 +15124,10 @@ const interpretationTools = {
             'Heart Rate': '60-100 bpm',
             'PR Interval': '120-200ms',
             'QRS Width': '<120ms',
-            'QT Interval': '<440ms (?), <460ms (?)'
+            'QT Interval': '<440ms (♂), <460ms (♀)'
         },
         commonAbnormalities: [
-            'STEMI: ST elevation =1mm in =2 contiguous leads',
+            'STEMI: ST elevation ≥1mm in ≥2 contiguous leads',
             'NSTEMI: ST depression, T wave inversion',
             'AF: Irregularly irregular, absent P waves',
             'Heart Block: Prolonged PR, dropped beats, AV dissociation'
@@ -15185,10 +15153,10 @@ const interpretationTools = {
             'Base Excess': '-2 to +2 mmol/L'
         },
         compensation: {
-            'Metabolic Acidosis': 'Expected pCO2 = 1.5 � [HCO3] + 8 (�2)',
-            'Metabolic Alkalosis': 'Expected pCO2 = 0.7 � [HCO3] + 21 (�2)',
-            'Respiratory Acidosis': 'Acute: HCO3 ? by 1 per 10 pCO2 ?',
-            'Respiratory Alkalosis': 'Acute: HCO3 ? by 2 per 10 pCO2 ?'
+            'Metabolic Acidosis': 'Expected pCO2 = 1.5 × [HCO3] + 8 (±2)',
+            'Metabolic Alkalosis': 'Expected pCO2 = 0.7 × [HCO3] + 21 (±2)',
+            'Respiratory Acidosis': 'Acute: HCO3 ↑ by 1 per 10 pCO2 ↑',
+            'Respiratory Alkalosis': 'Acute: HCO3 ↓ by 2 per 10 pCO2 ↓'
         }
     },
     'chest-xray': {
@@ -15291,7 +15259,7 @@ MLAQuizApp.prototype.displayInterpretationTools = function(toolIds) {
     if (toolIds.length === 0) {
         container.innerHTML = `
             <div class="no-results">
-                <h3>📵 No interpretation tools found</h3>
+                <h3>📋 No interpretation tools found</h3>
                 <p>Try adjusting your category filter.</p>
             </div>
         `;
@@ -15313,7 +15281,7 @@ MLAQuizApp.prototype.displayInterpretationTools = function(toolIds) {
                 </div>
                 <div class="interpretation-preview">
                     ${tool.steps.slice(0, 2).map(step => 
-                        `<div class="step-preview">� ${step}</div>`
+                        `<div class="step-preview">• ${step}</div>`
                     ).join('')}
                 </div>
             </div>
@@ -15335,7 +15303,7 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     if (tool.normalValues) {
         additionalSections += `
             <div class="normal-values">
-                <h4>📵 Normal Values</h4>
+                <h4>📊 Normal Values</h4>
                 <ul class="values-list">
                     ${Object.entries(tool.normalValues).map(([key, value]) => 
                         `<li><strong>${key}:</strong> ${value}</li>`
@@ -15348,7 +15316,7 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     if (tool.commonAbnormalities) {
         additionalSections += `
             <div class="common-abnormalities">
-                <h4>📵 Common Abnormalities</h4>
+                <h4>⚠️ Common Abnormalities</h4>
                 <ul class="abnormalities-list">
                     ${tool.commonAbnormalities.map(abnormality => `<li>${abnormality}</li>`).join('')}
                 </ul>
@@ -15359,7 +15327,7 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     if (tool.compensation) {
         additionalSections += `
             <div class="compensation-rules">
-                <h4>📵 Compensation Rules</h4>
+                <h4>⚖️ Compensation Rules</h4>
                 <ul class="compensation-list">
                     ${Object.entries(tool.compensation).map(([key, value]) => 
                         `<li><strong>${key}:</strong> ${value}</li>`
@@ -15372,7 +15340,7 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     if (tool.emergencyFindings) {
         additionalSections += `
             <div class="emergency-findings">
-                <h4>📵 Emergency Findings</h4>
+                <h4>🚨 Emergency Findings</h4>
                 <ul class="emergency-list">
                     ${tool.emergencyFindings.map(finding => `<li>${finding}</li>`).join('')}
                 </ul>
@@ -15383,7 +15351,7 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     if (tool.redFlags) {
         additionalSections += `
             <div class="red-flags">
-                <h4>📵 Red Flags</h4>
+                <h4>🚩 Red Flags</h4>
                 <ul class="red-flags-list">
                     ${tool.redFlags.map(flag => `<li>${flag}</li>`).join('')}
                 </ul>
@@ -15394,7 +15362,7 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     if (tool.commonFindings) {
         additionalSections += `
             <div class="common-findings">
-                <h4>📵 Common Findings</h4>
+                <h4>🔍 Common Findings</h4>
                 <ul class="findings-list">
                     ${tool.commonFindings.map(finding => `<li>${finding}</li>`).join('')}
                 </ul>
@@ -15405,7 +15373,7 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     if (tool.densities) {
         additionalSections += `
             <div class="densities">
-                <h4>📵 CT Densities</h4>
+                <h4>📷 CT Densities</h4>
                 <ul class="densities-list">
                     ${Object.entries(tool.densities).map(([key, value]) => 
                         `<li><strong>${key}:</strong> ${value}</li>`
@@ -15418,13 +15386,13 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
     const detailHtml = `
         <div class="interpretation-detail" onclick="event.stopPropagation();">
             <div class="interpretation-detail-header">
-                <button class="back-btn" onclick="window.quizApp.loadInterpretationTools(); event.stopPropagation();">? Back to Interpretation Tools</button>
+                <button class="back-btn" onclick="window.quizApp.loadInterpretationTools(); event.stopPropagation();">← Back to Interpretation Tools</button>
                 <h3>${tool.name}</h3>
                 <span class="interpretation-type">${tool.type}</span>
             </div>
             
             <div class="interpretation-steps">
-                <h4>📵 Systematic Approach</h4>
+                <h4>📋 Systematic Approach</h4>
                 <ol class="step-list">
                     ${tool.steps.map(step => `<li>${step}</li>`).join('')}
                 </ol>
@@ -15506,7 +15474,7 @@ MLAQuizApp.prototype.getInfusionRateCalculator = function() {
             <div id="infusion-result" class="calc-result"></div>
             
             <div class="calc-reference">
-                <small><strong>Formula:</strong> Rate (ml/hr) = Volume / Time; Drops/min = (Volume � Drop Factor) / (Time � 60)</small>
+                <small><strong>Formula:</strong> Rate (ml/hr) = Volume / Time; Drops/min = (Volume × Drop Factor) / (Time × 60)</small>
             </div>
         </div>
     `;
@@ -15528,7 +15496,7 @@ MLAQuizApp.prototype.getCockcroftGaultCalculator = function() {
                 <input type="number" id="cg-weight" placeholder="70" min="30" max="200" step="0.1">
             </div>
             <div class="calc-input-group">
-                <label>Serum Creatinine (�mol/L):</label>
+                <label>Serum Creatinine (μmol/L):</label>
                 <input type="number" id="cg-creatinine" placeholder="100" min="50" max="1000">
             </div>
             <div class="calc-checkbox-group">
@@ -15540,7 +15508,7 @@ MLAQuizApp.prototype.getCockcroftGaultCalculator = function() {
             <div id="cg-result" class="calc-result"></div>
             
             <div class="calc-reference">
-                <small><strong>Formula:</strong> CrCl = ((140-age) � weight � K) / creatinine<br>
+                <small><strong>Formula:</strong> CrCl = ((140-age) × weight × K) / creatinine<br>
                 K = 1.23 (male), 1.04 (female)</small>
             </div>
         </div>
@@ -15568,9 +15536,9 @@ MLAQuizApp.prototype.getBSACalculator = function() {
             
             <div class="calc-reference">
                 <small><strong>Formulas:</strong><br>
-                � Dubois: 0.007184 � W^0.425 � H^0.725<br>
-                � Mosteller: v(W � H / 3600)<br>
-                � Haycock: 0.024265 � W^0.5378 � H^0.3964</small>
+                • Dubois: 0.007184 × W^0.425 × H^0.725<br>
+                • Mosteller: √(W × H / 3600)<br>
+                • Haycock: 0.024265 × W^0.5378 × H^0.3964</small>
             </div>
         </div>
     `;
@@ -15592,7 +15560,7 @@ MLAQuizApp.prototype.getFluidBalanceCalculator = function() {
                 <input type="number" id="fluid-age" placeholder="65" min="1" max="120">
             </div>
             <div class="calc-checkbox-group">
-                <label><input type="checkbox" id="fluid-fever"> Fever (add 500ml per �C above 37�C)</label>
+                <label><input type="checkbox" id="fluid-fever"> Fever (add 500ml per °C above 37°C)</label>
                 <label><input type="checkbox" id="fluid-losses"> Abnormal losses (diarrhea, drains, etc.)</label>
                 <label><input type="checkbox" id="fluid-heart-failure"> Heart failure (restrict fluids)</label>
                 <label><input type="checkbox" id="fluid-renal"> Renal impairment</label>
@@ -15620,12 +15588,12 @@ MLAQuizApp.prototype.getTIMICalculator = function() {
             <p><small>Risk assessment for patients with acute coronary syndromes</small></p>
             
             <div class="calc-checkbox-group">
-                <label><input type="checkbox" id="timi-age"> Age =65 years (+1)</label>
-                <label><input type="checkbox" id="timi-risk-factors"> =3 CAD risk factors (+1)</label>
-                <label><input type="checkbox" id="timi-known-cad"> Known CAD (stenosis =50%) (+1)</label>
+                <label><input type="checkbox" id="timi-age"> Age ≥65 years (+1)</label>
+                <label><input type="checkbox" id="timi-risk-factors"> ≥3 CAD risk factors (+1)</label>
+                <label><input type="checkbox" id="timi-known-cad"> Known CAD (stenosis ≥50%) (+1)</label>
                 <label><input type="checkbox" id="timi-aspirin"> Aspirin use in prior 7 days (+1)</label>
-                <label><input type="checkbox" id="timi-severe-angina"> Severe angina (=2 episodes in 24h) (+1)</label>
-                <label><input type="checkbox" id="timi-st-deviation"> ST deviation =0.5mm (+1)</label>
+                <label><input type="checkbox" id="timi-severe-angina"> Severe angina (≥2 episodes in 24h) (+1)</label>
+                <label><input type="checkbox" id="timi-st-deviation"> ST deviation ≥0.5mm (+1)</label>
                 <label><input type="checkbox" id="timi-cardiac-markers"> Elevated cardiac markers (+1)</label>
             </div>
             
@@ -15854,10 +15822,10 @@ MLAQuizApp.prototype.getRASSCalculator = function() {
             <div class="calc-reference">
                 <small>
                     <strong>Assessment:</strong><br>
-                    � +4 to +1: Agitation states<br>
-                    � 0: Alert and calm (target for most patients)<br>
-                    � -1 to -3: Varying levels of sedation<br>
-                    � -4 to -5: Deep sedation/unconscious<br>
+                    • +4 to +1: Agitation states<br>
+                    • 0: Alert and calm (target for most patients)<br>
+                    • -1 to -3: Varying levels of sedation<br>
+                    • -4 to -5: Deep sedation/unconscious<br>
                     <strong>Target:</strong> Usually 0 to -2 for mechanically ventilated patients
                 </small>
             </div>
@@ -15894,7 +15862,7 @@ MLAQuizApp.prototype.getFractureRiskCalculator = function() {
                 <label><input type="checkbox" id="frax-previous-fracture"> Previous fracture after age 50</label>
                 <label><input type="checkbox" id="frax-parent-fracture"> Parent fractured hip</label>
                 <label><input type="checkbox" id="frax-smoking"> Current smoking</label>
-                <label><input type="checkbox" id="frax-steroids"> Glucocorticoids (=3 months)</label>
+                <label><input type="checkbox" id="frax-steroids"> Glucocorticoids (≥3 months)</label>
                 <label><input type="checkbox" id="frax-ra"> Rheumatoid arthritis</label>
                 <label><input type="checkbox" id="frax-secondary"> Secondary osteoporosis</label>
                 <label><input type="checkbox" id="frax-alcohol"> Alcohol 3+ units daily</label>
@@ -15912,8 +15880,8 @@ MLAQuizApp.prototype.getFractureRiskCalculator = function() {
             <div class="calc-reference">
                 <small>
                     <strong>Intervention thresholds (NICE):</strong><br>
-                    � Major osteoporotic fracture: =10% (consider treatment)<br>
-                    � Hip fracture: =3% (consider treatment)<br>
+                    • Major osteoporotic fracture: ≥10% (consider treatment)<br>
+                    • Hip fracture: ≥3% (consider treatment)<br>
                     <strong>Note:</strong> This is a simplified assessment. Use official FRAX tool for clinical decisions.
                 </small>
             </div>
@@ -15986,9 +15954,9 @@ MLAQuizApp.prototype.calculatePaediatricDosing = function() {
     
     let ageWarning = '';
     if (age < 0.25) {
-        ageWarning = '<div class="alert alert-danger">📵 Neonatal dosing requires specialist consultation</div>';
+        ageWarning = '<div class="alert alert-danger">⚠️ Neonatal dosing requires specialist consultation</div>';
     } else if (age < 2) {
-        ageWarning = '<div class="alert alert-warning">📵 Infant dosing - verify with pediatric guidelines</div>';
+        ageWarning = '<div class="alert alert-warning">⚠️ Infant dosing - verify with pediatric guidelines</div>';
     }
     
     document.getElementById('paed-dosing-result').innerHTML = `
@@ -16033,7 +16001,7 @@ MLAQuizApp.prototype.calculateInfusionRate = function() {
                 <div><strong>Total time:</strong> ${time} hours</div>
             </div>
             <div class="alert alert-info">
-                📵 Set pump to <strong>${ratePerHour.toFixed(1)} ml/hr</strong> or count <strong>${dropsPerMinute.toFixed(0)} drops/min</strong>
+                💡 Set pump to <strong>${ratePerHour.toFixed(1)} ml/hr</strong> or count <strong>${dropsPerMinute.toFixed(0)} drops/min</strong>
             </div>
         </div>
     `;
@@ -16052,7 +16020,7 @@ MLAQuizApp.prototype.calculateCockcroftGault = function() {
         return;
     }
     
-    const K = sex === 'male' ? 1.23 : 1.04;  // UK constants for �mol/L
+    const K = sex === 'male' ? 1.23 : 1.04;  // UK constants for μmol/L
     const crCl = ((140 - age) * weight * K) / creatinine;
     
     let doseAdjustment = '';
@@ -16080,7 +16048,7 @@ MLAQuizApp.prototype.calculateCockcroftGault = function() {
                 <div style="color: ${color};"><strong>Dose Adjustment Guidance:</strong> ${doseAdjustment}</div>
             </div>
             <div class="alert alert-warning">
-                📵 CrCl is used for drug dosing, NOT CKD staging<br>
+                ⚠️ CrCl is used for drug dosing, NOT CKD staging<br>
                 <small>UK CKD staging uses eGFR (G1-G5) + albuminuria (A1-A3)<br>
                 Use eGFR calculator for CKD staging and monitoring</small>
             </div>
@@ -16099,13 +16067,13 @@ MLAQuizApp.prototype.calculateBSA = function() {
         return;
     }
     
-    // Dubois formula: 0.007184 � W^0.425 � H^0.725
+    // Dubois formula: 0.007184 × W^0.425 × H^0.725
     const dubois = 0.007184 * Math.pow(weight, 0.425) * Math.pow(height, 0.725);
     
-    // Mosteller formula: v(W � H / 3600)
+    // Mosteller formula: √(W × H / 3600)
     const mosteller = Math.sqrt((weight * height) / 3600);
     
-    // Haycock formula: 0.024265 � W^0.5378 � H^0.3964
+    // Haycock formula: 0.024265 × W^0.5378 × H^0.3964
     const haycock = 0.024265 * Math.pow(weight, 0.5378) * Math.pow(height, 0.3964);
     
     const average = (dubois + mosteller + haycock) / 3;
@@ -16114,13 +16082,13 @@ MLAQuizApp.prototype.calculateBSA = function() {
         <div class="result-section">
             <h5>Body Surface Area Results</h5>
             <div class="result-grid">
-                <div><strong>Dubois Formula:</strong> ${dubois.toFixed(2)} m�</div>
-                <div><strong>Mosteller Formula:</strong> ${mosteller.toFixed(2)} m�</div>
-                <div><strong>Haycock Formula:</strong> ${haycock.toFixed(2)} m�</div>
-                <div><strong>Average BSA:</strong> ${average.toFixed(2)} m�</div>
+                <div><strong>Dubois Formula:</strong> ${dubois.toFixed(2)} m²</div>
+                <div><strong>Mosteller Formula:</strong> ${mosteller.toFixed(2)} m²</div>
+                <div><strong>Haycock Formula:</strong> ${haycock.toFixed(2)} m²</div>
+                <div><strong>Average BSA:</strong> ${average.toFixed(2)} m²</div>
             </div>
             <div class="alert alert-info">
-                📵 Mosteller formula is most commonly used for drug dosing
+                💡 Mosteller formula is most commonly used for drug dosing
             </div>
         </div>
     `;
@@ -16207,7 +16175,7 @@ MLAQuizApp.prototype.calculateFluidBalance = function() {
                 </div>
             ` : ''}
             <div class="alert alert-info">
-                📵 Monitor urine output (>0.5ml/kg/hr for adults, >1ml/kg/hr for children)
+                💡 Monitor urine output (>0.5ml/kg/hr for adults, >1ml/kg/hr for children)
             </div>
         </div>
     `;
@@ -16329,7 +16297,7 @@ MLAQuizApp.prototype.calculateNIHSS = function() {
                 <strong>Thrombectomy Consideration:</strong> ${thrombectomyEligible}
             </div>
             <div class="alert alert-warning">
-                📵 <strong>Time is brain:</strong> Assess for thrombolysis (=4.5h) and thrombectomy (=24h for select cases)
+                💡 <strong>Time is brain:</strong> Assess for thrombolysis (≤4.5h) and thrombectomy (≤24h for select cases)
             </div>
         </div>
     `;
@@ -16404,7 +16372,7 @@ MLAQuizApp.prototype.calculateModifiedRankin = function() {
                 <p>${careNeeds}</p>
             </div>
             <div class="alert alert-info">
-                📵 <strong>Clinical Use:</strong> Primary outcome measure in stroke trials. mRS 0-2 considered good functional outcome.
+                💡 <strong>Clinical Use:</strong> Primary outcome measure in stroke trials. mRS 0-2 considered good functional outcome.
             </div>
         </div>
     `;
@@ -16423,32 +16391,32 @@ MLAQuizApp.prototype.calculateRASS = function() {
     if (score >= 3) {
         category = 'Severe Agitation';
         description = 'Patient is combative or very agitated';
-        management = '� Consider sedation (propofol, midazolam)<br>� Assess for pain, delirium, hypoxia<br>� Ensure patient safety<br>� Consider physical restraints if necessary';
+        management = '• Consider sedation (propofol, midazolam)<br>• Assess for pain, delirium, hypoxia<br>• Ensure patient safety<br>• Consider physical restraints if necessary';
         targetRange = 'Aim to reduce to 0 to -2 range';
     } else if (score >= 1) {
         category = 'Mild-Moderate Agitation';
         description = 'Patient is restless or mildly agitated';
-        management = '� Investigate underlying causes<br>� Consider non-pharmacological interventions<br>� Light sedation if needed<br>� Frequent reassessment';
+        management = '• Investigate underlying causes<br>• Consider non-pharmacological interventions<br>• Light sedation if needed<br>• Frequent reassessment';
         targetRange = 'Aim for 0 to -1 range';
     } else if (score === 0) {
         category = 'Alert and Calm';
         description = 'Ideal conscious level for most patients';
-        management = '� No intervention needed<br>� Continue current management<br>� Monitor for changes';
+        management = '• No intervention needed<br>• Continue current management<br>• Monitor for changes';
         targetRange = 'Optimal level for most patients';
     } else if (score >= -2) {
         category = 'Light Sedation';
         description = 'Appropriate sedation level for many ICU patients';
-        management = '� Appropriate for mechanically ventilated patients<br>� Consider daily sedation holds<br>� Monitor for oversedation';
+        management = '• Appropriate for mechanically ventilated patients<br>• Consider daily sedation holds<br>• Monitor for oversedation';
         targetRange = 'Often target range for ventilated patients';
     } else if (score >= -3) {
         category = 'Moderate Sedation';
         description = 'Deeper sedation - assess necessity';
-        management = '� Review sedation requirements<br>� Consider reducing sedation if appropriate<br>� Daily sedation interruption';
+        management = '• Review sedation requirements<br>• Consider reducing sedation if appropriate<br>• Daily sedation interruption';
         targetRange = 'May be appropriate for specific indications';
     } else {
         category = 'Deep Sedation/Unconscious';
         description = 'Very deep sedation or unconscious';
-        management = '� Review indication for deep sedation<br>� Consider reducing if possible<br>� Assess neurological status<br>� May indicate paralysis or coma';
+        management = '• Review indication for deep sedation<br>• Consider reducing if possible<br>• Assess neurological status<br>• May indicate paralysis or coma';
         targetRange = 'Usually avoid unless specific indication';
     }
     
@@ -16468,7 +16436,7 @@ MLAQuizApp.prototype.calculateRASS = function() {
                 <strong>Target Range:</strong> ${targetRange}
             </div>
             <div class="alert alert-warning">
-                📵 <strong>Remember:</strong> Assess RASS regularly. Target is usually 0 to -2 for mechanically ventilated patients.
+                💡 <strong>Remember:</strong> Assess RASS regularly. Target is usually 0 to -2 for mechanically ventilated patients.
             </div>
         </div>
     `;
@@ -16560,7 +16528,7 @@ MLAQuizApp.prototype.calculateFractureRisk = function() {
         <div class="result-section">
             <h5>FRAX Fracture Risk Results</h5>
             <div class="result-grid">
-                <div><strong>BMI:</strong> ${bmi.toFixed(1)} kg/m�</div>
+                <div><strong>BMI:</strong> ${bmi.toFixed(1)} kg/m²</div>
                 <div><strong>Risk Factors:</strong> ${riskFactors}/7</div>
                 <div><strong>Major Fracture Risk:</strong> ${majorFractureRisk}% (10-year)</div>
                 <div><strong>Hip Fracture Risk:</strong> ${hipFractureRisk}% (10-year)</div>
@@ -16571,10 +16539,10 @@ MLAQuizApp.prototype.calculateFractureRisk = function() {
                 <p>${recommendation}</p>
             </div>
             <div class="alert alert-warning">
-                📵 <strong>Important:</strong> This is a simplified calculation. Use official FRAX tool (www.sheffield.ac.uk/FRAX) for clinical decision-making.
+                ⚠️ <strong>Important:</strong> This is a simplified calculation. Use official FRAX tool (www.sheffield.ac.uk/FRAX) for clinical decision-making.
             </div>
             <div class="alert alert-info">
-                📵 <strong>NICE Thresholds:</strong> Consider treatment if major fracture risk =10% or hip fracture risk =3%
+                💡 <strong>NICE Thresholds:</strong> Consider treatment if major fracture risk ≥10% or hip fracture risk ≥3%
             </div>
         </div>
     `;
@@ -16582,14 +16550,14 @@ MLAQuizApp.prototype.calculateFractureRisk = function() {
 
 // Interactive Features Implementation
 MLAQuizApp.prototype.initializeInteractiveFeatures = function() {
-    console.log('📵 Initializing interactive features...');
+    console.log('🔗 Initializing interactive features...');
     
     // Bookmark functionality removed - not used
     
     // Setup export functionality
     this.setupExportFeatures();
     
-    console.log('📵 Interactive features initialized');
+    console.log('🔗 Interactive features initialized');
 };
 
 // Bookmark functionality removed - not used in calculators
@@ -16657,7 +16625,7 @@ MLAQuizApp.prototype.exportCalculationResults = function(calculatorType, results
     
     URL.revokeObjectURL(url);
     
-    console.log(`📵 Exported results for ${calculatorType}`);
+    console.log(`📤 Exported results for ${calculatorType}`);
 };
 
 MLAQuizApp.prototype.generateTextReport = function(calculatorType, results) {
@@ -16688,14 +16656,14 @@ Do not use for actual patient care without proper validation.
     
     URL.revokeObjectURL(url);
     
-    console.log(`📵 Generated text report for ${calculatorType}`);
+    console.log(`📋 Generated text report for ${calculatorType}`);
 };
 
 // Bookmark functionality removed - not used in calculators
 
 MLAQuizApp.prototype.setupExportFeatures = function() {
     // Add export buttons to calculator results when they're displayed
-    console.log('📵 Export features ready');
+    console.log('📤 Export features ready');
 };
 
 // Enhanced tool tracking
@@ -16802,11 +16770,11 @@ MLAQuizApp.prototype.calculateAnionGap = function() {
         color = '#2196F3';
         recommendations = `
             <strong>Possible Causes:</strong><br>
-            � Laboratory error (most common)<br>
-            � Hypoalbuminemia<br>
-            � Multiple myeloma<br>
-            � Hypercalcemia, hypermagnesemia<br>
-            � Lithium intoxication<br>
+            • Laboratory error (most common)<br>
+            • Hypoalbuminemia<br>
+            • Multiple myeloma<br>
+            • Hypercalcemia, hypermagnesemia<br>
+            • Lithium intoxication<br>
             <strong>Action:</strong> Recheck labs, consider protein electrophoresis
         `;
     } else if (anionGap >= 8 && anionGap <= 12) {
@@ -16815,20 +16783,20 @@ MLAQuizApp.prototype.calculateAnionGap = function() {
         recommendations = `
             <strong>Normal Range:</strong> No metabolic acidosis indicated<br>
             If acidosis present, consider:<br>
-            � Normal anion gap metabolic acidosis<br>
-            � Diarrhea, ureterosigmoidostomy<br>
-            � Renal tubular acidosis<br>
-            � Carbonic anhydrase inhibitors
+            • Normal anion gap metabolic acidosis<br>
+            • Diarrhea, ureterosigmoidostomy<br>
+            • Renal tubular acidosis<br>
+            • Carbonic anhydrase inhibitors
         `;
     } else if (anionGap > 12 && anionGap <= 16) {
         interpretation = 'Mildly Elevated Anion Gap';
         color = '#FF9800';
         recommendations = `
             <strong>Mild Elevation:</strong> Monitor closely<br>
-            � Early/mild metabolic acidosis<br>
-            � Chronic kidney disease<br>
-            � Dehydration<br>
-            � Consider arterial blood gas<br>
+            • Early/mild metabolic acidosis<br>
+            • Chronic kidney disease<br>
+            • Dehydration<br>
+            • Consider arterial blood gas<br>
             <strong>Action:</strong> Check serum lactate, ketones, creatinine
         `;
     } else {
@@ -16837,14 +16805,14 @@ MLAQuizApp.prototype.calculateAnionGap = function() {
         recommendations = `
             <strong>High Anion Gap Metabolic Acidosis!</strong><br>
             <strong>MUDPILES causes:</strong><br>
-            � <strong>Methanol</strong> poisoning<br>
-            � <strong>Uremia</strong> (BUN >60)<br>
-            � <strong>Diabetic</strong> ketoacidosis<br>
-            � <strong>Paracetamol</strong>/Paraldehyde<br>
-            � <strong>Isoniazid</strong>/Iron<br>
-            � <strong>Lactic</strong> acidosis<br>
-            � <strong>Ethylene glycol</strong><br>
-            � <strong>Salicylates</strong><br>
+            • <strong>Methanol</strong> poisoning<br>
+            • <strong>Uremia</strong> (BUN >60)<br>
+            • <strong>Diabetic</strong> ketoacidosis<br>
+            • <strong>Paracetamol</strong>/Paraldehyde<br>
+            • <strong>Isoniazid</strong>/Iron<br>
+            • <strong>Lactic</strong> acidosis<br>
+            • <strong>Ethylene glycol</strong><br>
+            • <strong>Salicylates</strong><br>
             <strong>Urgent:</strong> ABG, lactate, ketones, osmolar gap
         `;
     }
@@ -16875,9 +16843,9 @@ MLAQuizApp.prototype.calculateAnionGap = function() {
         <div class="additional-info">
             <h5>Additional Considerations:</h5>
             <ul>
-                <li><strong>Delta ratio:</strong> If high AG acidosis, check ?(AG)/?(HCO3-) for mixed disorders</li>
+                <li><strong>Delta ratio:</strong> If high AG acidosis, check Δ(AG)/Δ(HCO3-) for mixed disorders</li>
                 <li><strong>Osmolar gap:</strong> Consider if methanol/ethylene glycol suspected</li>
-                <li><strong>Albumin correction:</strong> For every 1 g/dL ? albumin, AG ? by ~2.5</li>
+                <li><strong>Albumin correction:</strong> For every 1 g/dL ↓ albumin, AG ↓ by ~2.5</li>
             </ul>
         </div>
     `;
