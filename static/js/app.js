@@ -1179,30 +1179,60 @@ class MLAQuizApp {
             rotationBtn.id = 'rotation-control-btn';
             rotationBtn.className = 'navbar-btn';
             rotationBtn.style.cssText = 'position: fixed; left: 80px; top: 12px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001; user-select: none; height: 20px; display: flex; align-items: center; justify-content: center;';
+            
+            // Simple test function that doesn't rely on Screen Orientation API
             rotationBtn.onclick = (event) => {
-                console.log('🔄 Rotation button clicked - event fired');
-                console.log('🔄 Event target:', event.target);
-                console.log('🔄 Event type:', event.type);
-                console.log('🔄 Button element:', rotationBtn);
-                console.log('🔄 Button style:', rotationBtn.style.cssText);
-                console.log('🔄 Screen Orientation API check:');
-                console.log('🔄 - screen.orientation exists:', 'orientation' in screen);
-                console.log('🔄 - screen.orientation.lock exists:', screen.orientation && 'lock' in screen.orientation);
-                console.log('🔄 - screen.orientation.unlock exists:', screen.orientation && 'unlock' in screen.orientation);
-                console.log('🔄 - Current orientation:', screen.orientation ? screen.orientation.type : 'N/A');
+                console.log('🎯 BUTTON CLICKED SUCCESSFULLY!');
+                
+                // Show current screen info
+                const screenInfo = {
+                    width: screen.width,
+                    height: screen.height,
+                    availWidth: screen.availWidth,
+                    availHeight: screen.availHeight,
+                    orientation: screen.orientation ? screen.orientation.type : 'Not supported',
+                    angle: screen.orientation ? screen.orientation.angle : 'Not supported'
+                };
+                
+                console.log('� Screen Info:', screenInfo);
+                
+                // Try basic orientation detection
+                const isLandscape = window.innerWidth > window.innerHeight;
+                console.log('� Window dimensions:', window.innerWidth + 'x' + window.innerHeight);
+                console.log('� Detected orientation:', isLandscape ? 'landscape' : 'portrait');
+                
+                // Show user feedback
+                alert(`Button works! Current orientation: ${isLandscape ? 'Landscape' : 'Portrait'}\nScreen: ${screen.width}x${screen.height}\nWindow: ${window.innerWidth}x${window.innerHeight}\n\nCheck console for full details.`);
+                
+                // Visual feedback
+                const originalText = rotationBtn.textContent;
+                rotationBtn.textContent = '✅';
+                setTimeout(() => {
+                    rotationBtn.textContent = originalText;
+                }, 1000);
+                
                 event.preventDefault();
-                event.stopPropagation();
-                console.log('🔄 Calling toggleRotationLock');
-                this.toggleRotationLock();
-                console.log('🔄 toggleRotationLock completed');
+                return false;
             };
-            rotationBtn.title = 'Control screen rotation';
+            
+            rotationBtn.title = 'Test rotation control';
+            rotationBtn.textContent = '🔄 Test';
             
             document.body.appendChild(rotationBtn);
-            this.updateRotationButtonState();
-            console.log('🔄 Rotation control button added to document body');
+            console.log('✅ Test rotation button added successfully');
+            
+            // Verify button is working
+            setTimeout(() => {
+                const btn = document.getElementById('rotation-control-btn');
+                console.log('� Button verification:', {
+                    exists: !!btn,
+                    inDOM: document.body.contains(btn),
+                    onclick: typeof btn.onclick === 'function',
+                    text: btn.textContent
+                });
+            }, 500);
         } else {
-            console.log('🔄 Navbar not found, retrying in 100ms');
+            console.log('❌ Navbar not found, retrying...');
             setTimeout(() => this.addRotationControlButton(), 100);
         }
     }
