@@ -1178,11 +1178,28 @@ class MLAQuizApp {
             const rotationBtn = document.createElement('button');
             rotationBtn.id = 'rotation-control-btn';
             rotationBtn.className = 'navbar-btn';
-            rotationBtn.style.cssText = 'position: absolute; right: 110px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
-            rotationBtn.onclick = () => this.toggleRotationLock();
-            rotationBtn.title = 'Control screen rotation';
+            // Place the button inline to the left of the centered title so it appears
+            // immediately to the left of "MLA Quiz". Avoid absolute positioning so
+            // the navbar's centered layout keeps the title centered while this
+            // button sits to its left as requested.
+            rotationBtn.style.cssText = 'background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; margin-right: 8px;';
+            // Use addEventListener for more reliable event wiring (avoids accidental replacement)
+            rotationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                console.log('🔄 Rotation control button clicked');
+                this.toggleRotationLock();
+            });
+            rotationBtn.setAttribute('title', 'Control screen rotation');
+            rotationBtn.setAttribute('role', 'button');
+            rotationBtn.setAttribute('aria-label', 'Rotation control');
             
-            navbar.appendChild(rotationBtn);
+            // Insert before the nav title so the button appears to the left of it.
+            const titleEl = document.getElementById('navTitle');
+            if (titleEl) {
+                navbar.insertBefore(rotationBtn, titleEl);
+            } else {
+                navbar.appendChild(rotationBtn);
+            }
             this.updateRotationButtonState();
             console.log('🔄 Rotation control button added to navbar');
         } else {
@@ -1219,6 +1236,7 @@ class MLAQuizApp {
     }
     
     async toggleRotationLock() {
+        console.log('🔄 toggleRotationLock invoked');
         if (!this.screenOrientationSupported) {
             this.showError('Screen rotation control is not supported on this device.');
             return;
