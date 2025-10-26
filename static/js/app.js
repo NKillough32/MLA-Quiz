@@ -1178,13 +1178,24 @@ class MLAQuizApp {
             const rotationBtn = document.createElement('button');
             rotationBtn.id = 'rotation-control-btn';
             rotationBtn.className = 'navbar-btn';
-            rotationBtn.style.cssText = 'position: absolute; right: 110px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
-            rotationBtn.onclick = () => this.toggleRotationLock();
+            rotationBtn.style.cssText = 'position: fixed; right: 160px; top: 12px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001; user-select: none; height: 20px; display: flex; align-items: center; justify-content: center;';
+            rotationBtn.onclick = (event) => {
+                console.log('🔄 Rotation button clicked - event fired');
+                console.log('🔄 Event target:', event.target);
+                console.log('🔄 Event type:', event.type);
+                console.log('🔄 Button element:', rotationBtn);
+                console.log('🔄 Button style:', rotationBtn.style.cssText);
+                event.preventDefault();
+                event.stopPropagation();
+                console.log('🔄 Calling toggleRotationLock');
+                this.toggleRotationLock();
+                console.log('🔄 toggleRotationLock completed');
+            };
             rotationBtn.title = 'Control screen rotation';
             
-            navbar.appendChild(rotationBtn);
+            document.body.appendChild(rotationBtn);
             this.updateRotationButtonState();
-            console.log('🔄 Rotation control button added to navbar');
+            console.log('🔄 Rotation control button added to document body');
         } else {
             console.log('🔄 Navbar not found, retrying in 100ms');
             setTimeout(() => this.addRotationControlButton(), 100);
@@ -1219,13 +1230,17 @@ class MLAQuizApp {
     }
     
     async toggleRotationLock() {
+        console.log('🔄 toggleRotationLock called');
         if (!this.screenOrientationSupported) {
+            console.log('🔄 Screen Orientation API not supported');
             this.showError('Screen rotation control is not supported on this device.');
             return;
         }
         
         try {
+            console.log('🔄 Current orientation type:', screen.orientation.type);
             const currentOrientation = this.getCurrentOrientation();
+            console.log('🔄 Current orientation (detected):', currentOrientation);
             
             if (screen.orientation.type.includes('primary') || screen.orientation.type.includes('secondary')) {
                 // Currently locked, unlock it
