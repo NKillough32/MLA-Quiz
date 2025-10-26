@@ -1193,9 +1193,13 @@ class MLAQuizApp {
             rotationBtn.setAttribute('role', 'button');
             rotationBtn.setAttribute('aria-label', 'Rotation control');
             
-            // Insert before the nav title so the button appears to the left of it.
+            // Insert into the left zone if present, otherwise fall back to inserting
+            // before the title. This keeps navbar items equally spaced.
+            const navLeft = navbar.querySelector('.nav-left');
             const titleEl = document.getElementById('navTitle');
-            if (titleEl) {
+            if (navLeft) {
+                navLeft.appendChild(rotationBtn);
+            } else if (titleEl) {
                 navbar.insertBefore(rotationBtn, titleEl);
             } else {
                 navbar.appendChild(rotationBtn);
@@ -1221,12 +1225,15 @@ class MLAQuizApp {
             if (isPortraitLocked) {
                 rotationBtn.textContent = '📱 Portrait';
                 rotationBtn.title = 'Currently locked to portrait - click to unlock';
+                rotationBtn.classList.add('locked');
             } else if (isLandscapeLocked) {
                 rotationBtn.textContent = '📱 Landscape';
                 rotationBtn.title = 'Currently locked to landscape - click to unlock';
+                rotationBtn.classList.add('locked');
             } else {
                 rotationBtn.textContent = '🔄 Auto';
                 rotationBtn.title = 'Auto rotation enabled - click to lock current orientation';
+                rotationBtn.classList.remove('locked');
             }
         } catch (error) {
             console.debug('Error checking orientation state:', error);
@@ -1261,8 +1268,33 @@ class MLAQuizApp {
             } else {
                 // Currently unlocked, lock to current orientation
                 const lockOrientation = currentOrientation === 'landscape' ? 'landscape' : 'portrait';
-                await screen.orientation.lock(lockOrientation + '-primary');
-                console.log(`🔄 Orientation locked to ${lockOrientation}`);
+                try {
+                    await screen.orientation.lock(lockOrientation + '-primary');
+                    console.log(`🔄 Orientation locked to ${lockOrientation}`);
+                } catch (lockErr) {
+                    console.warn('🔄 Initial orientation.lock failed:', lockErr);
+                    // Some browsers require fullscreen or user gesture/secure context to lock.
+                    // Attempt to request fullscreen and retry once.
+                    try {
+                        this.showToast('Requesting fullscreen to enable orientation lock...');
+                        const docEl = document.documentElement;
+                        const requestFull = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+                        if (requestFull) {
+                            await requestFull.call(docEl);
+                            // Wait a short moment for fullscreen to settle
+                            await new Promise(r => setTimeout(r, 250));
+                            await screen.orientation.lock(lockOrientation + '-primary');
+                            console.log(`🔄 Orientation locked to ${lockOrientation} after fullscreen`);
+                            this.showToast(`Rotation locked to ${lockOrientation}`);
+                        } else {
+                            throw lockErr;
+                        }
+                    } catch (fsErr) {
+                        console.error('🔄 Failed to lock orientation even after fullscreen attempt:', fsErr);
+                        // Provide user-friendly guidance
+                        this.showToast('Unable to lock orientation on this browser. Try installing as PWA or enabling fullscreen/auto-rotate in your device settings.');
+                    }
+                }
                 
                 // Analytics: rotation locked
                 try {
@@ -1892,6 +1924,40 @@ class MLAQuizApp {
             const alert = document.getElementById('errorAlert');
             if (alert) alert.remove();
         }, 5000);
+    }
+
+    // Small non-blocking toast for user feedback (used for rotation feedback)
+    showToast(message, duration = 2500) {
+        try {
+            const existing = document.getElementById('appToast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'appToast';
+            toast.style.cssText = `
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 80px;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 10px 16px;
+                border-radius: 12px;
+                z-index: 2002;
+                font-size: 14px;
+                max-width: 90%;
+                text-align: center;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                const t = document.getElementById('appToast');
+                if (t) t.remove();
+            }, duration);
+        } catch (e) {
+            console.debug('Toast failed:', e);
+        }
     }
     
     async handleFileUpload(files) {

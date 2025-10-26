@@ -58,9 +58,30 @@
             min-height: 44px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between; /* left / center / right layout */
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
+        /* Navbar zones for equal spacing around central title */
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1; /* take equal space on both sides */
+        }
+
+        .nav-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto; /* keep center width to content */
+            padding: 0 8px;
+        }
+
+        /* Ensure buttons in left/right align to edges */
+        .nav-left { justify-content: flex-start; }
+        .nav-right { justify-content: flex-end; }
         
         .navbar h1 {
             font-size: 17px;
@@ -70,25 +91,23 @@
         }
         
         .navbar .back-btn {
-            position: absolute;
-            left: 16px;
             background: none;
             border: none;
             color: #007AFF;
             font-size: 17px;
             cursor: pointer;
             padding: 0;
+            margin-right: 8px;
         }
         
         .navbar .next-btn {
-            position: absolute;
-            right: 16px;
             background: none;
             border: none;
             color: #007AFF;
             font-size: 17px;
             cursor: pointer;
             padding: 0;
+            margin-left: 8px;
         }
         
         /* Content Container - legacy styles, minimal impact */
@@ -4739,9 +4758,15 @@
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <button class="back-btn" id="backBtn" style="display: none;">← Back</button>
-        <h1 id="navTitle">MLA Quiz</h1>
-        <button class="next-btn" id="nextNavBtn" style="display: none;">Next →</button>
+        <div class="nav-left">
+            <button class="back-btn" id="backBtn" style="display: none;">← Back</button>
+        </div>
+        <div class="nav-center">
+            <h1 id="navTitle">MLA Quiz</h1>
+        </div>
+        <div class="nav-right">
+            <button class="next-btn" id="nextNavBtn" style="display: none;">Next →</button>
+        </div>
     </nav>
     
     <!-- Main Container -->
