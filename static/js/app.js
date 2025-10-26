@@ -176,6 +176,7 @@ class MLAQuizApp {
         this.initializeQuizLength();
         this.initializeVibration();
         this.initializeOrientationDetection();
+        this.initializeRotationControl();
         // Try to load upstream QRISK3 library for accurate calculations
         this.loadExternalQRISK();
         console.log('🩺 About to initialize medical tools...');
@@ -1139,6 +1140,128 @@ class MLAQuizApp {
             }
         } catch (e) {
             console.debug('Analytics orientation_change error:', e);
+        }
+    }
+    
+    // Screen Orientation API control methods
+    initializeRotationControl() {
+        console.log('🔄 Initializing rotation control...');
+        
+        // Check if Screen Orientation API is supported
+        if ('orientation' in screen && 'lock' in screen.orientation && 'unlock' in screen.orientation) {
+            this.screenOrientationSupported = true;
+            console.log('🔄 Screen Orientation API supported');
+            
+            // Add rotation control button to navbar
+            this.addRotationControlButton();
+            
+            // Listen for orientation lock changes
+            screen.orientation.addEventListener('change', (event) => {
+                console.log('🔄 Orientation lock changed:', event.target.type);
+                this.updateRotationButtonState();
+            });
+        } else {
+            console.log('🔄 Screen Orientation API not supported');
+            this.screenOrientationSupported = false;
+        }
+    }
+    
+    addRotationControlButton() {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            // Remove existing rotation button if present
+            const existingBtn = document.getElementById('rotation-control-btn');
+            if (existingBtn) {
+                existingBtn.remove();
+            }
+            
+            const rotationBtn = document.createElement('button');
+            rotationBtn.id = 'rotation-control-btn';
+            rotationBtn.className = 'navbar-btn';
+            rotationBtn.style.cssText = 'position: absolute; right: 110px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
+            rotationBtn.onclick = () => this.toggleRotationLock();
+            rotationBtn.title = 'Control screen rotation';
+            
+            navbar.appendChild(rotationBtn);
+            this.updateRotationButtonState();
+            console.log('🔄 Rotation control button added to navbar');
+        } else {
+            console.log('🔄 Navbar not found, retrying in 100ms');
+            setTimeout(() => this.addRotationControlButton(), 100);
+        }
+    }
+    
+    updateRotationButtonState() {
+        const rotationBtn = document.getElementById('rotation-control-btn');
+        if (!rotationBtn || !this.screenOrientationSupported) return;
+        
+        try {
+            // Check if orientation is locked
+            const isLocked = screen.orientation.type.includes('primary') || screen.orientation.type.includes('secondary');
+            const isPortraitLocked = screen.orientation.type === 'portrait-primary' || screen.orientation.type === 'portrait-secondary';
+            const isLandscapeLocked = screen.orientation.type === 'landscape-primary' || screen.orientation.type === 'landscape-secondary';
+            
+            if (isPortraitLocked) {
+                rotationBtn.textContent = '📱 Portrait';
+                rotationBtn.title = 'Currently locked to portrait - click to unlock';
+            } else if (isLandscapeLocked) {
+                rotationBtn.textContent = '📱 Landscape';
+                rotationBtn.title = 'Currently locked to landscape - click to unlock';
+            } else {
+                rotationBtn.textContent = '🔄 Auto';
+                rotationBtn.title = 'Auto rotation enabled - click to lock current orientation';
+            }
+        } catch (error) {
+            console.debug('Error checking orientation state:', error);
+            rotationBtn.textContent = '🔄 Auto';
+            rotationBtn.title = 'Auto rotation enabled';
+        }
+    }
+    
+    async toggleRotationLock() {
+        if (!this.screenOrientationSupported) {
+            this.showError('Screen rotation control is not supported on this device.');
+            return;
+        }
+        
+        try {
+            const currentOrientation = this.getCurrentOrientation();
+            
+            if (screen.orientation.type.includes('primary') || screen.orientation.type.includes('secondary')) {
+                // Currently locked, unlock it
+                await screen.orientation.unlock();
+                console.log('🔄 Orientation unlocked - auto rotation enabled');
+                
+                // Analytics: rotation unlocked
+                try {
+                    if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                        window.MLAAnalytics.event('rotation_unlocked');
+                    }
+                } catch (e) {
+                    console.debug('Analytics rotation_unlocked error:', e);
+                }
+            } else {
+                // Currently unlocked, lock to current orientation
+                const lockOrientation = currentOrientation === 'landscape' ? 'landscape' : 'portrait';
+                await screen.orientation.lock(lockOrientation + '-primary');
+                console.log(`🔄 Orientation locked to ${lockOrientation}`);
+                
+                // Analytics: rotation locked
+                try {
+                    if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
+                        window.MLAAnalytics.event('rotation_locked', { orientation: lockOrientation });
+                    }
+                } catch (e) {
+                    console.debug('Analytics rotation_locked error:', e);
+                }
+            }
+            
+            // Update button state after a short delay to allow the change to take effect
+            setTimeout(() => this.updateRotationButtonState(), 100);
+            
+        } catch (error) {
+            console.error('Error toggling rotation lock:', error);
+            this.showError('Unable to change rotation settings. This may not be supported on your device.');
         }
     }
     
