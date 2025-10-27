@@ -87,8 +87,11 @@
 
         /* Prevent navbar children from overflowing and overlapping the center title */
         .nav-left > *, .nav-right > * {
-            flex-shrink: 0; /* keep items their intrinsic size but allow container to manage overflow */
+            flex-shrink: 1; /* allow items to shrink on small screens to avoid overlap */
+            min-width: 0; /* enable shrinking below intrinsic width when necessary */
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         @media (max-width: 420px) {
@@ -99,6 +102,25 @@
             .navbar button, .font-controls button { padding: 6px; font-size: 13px; }
             /* Make font controls more compact */
             .font-controls { gap: 4px; }
+        }
+
+        /* Compact layout helpers for navbar controls */
+        .font-controls, .haptics-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .font-controls button, .haptics-controls button {
+            min-width: 0;
+            padding: 6px 8px;
+            font-size: 13px;
+            line-height: 1;
+        }
+
+        /* If space is extremely tight, hide the font label buttons and keep a compact icon only for haptics */
+        @media (max-width: 360px) {
+            .font-controls { display: none; }
         }
         
         .navbar h1 {
