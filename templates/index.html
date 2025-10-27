@@ -49,13 +49,14 @@
         .navbar {
             background: #f8f8f8;
             border-bottom: 0.5px solid #c6c6c8;
-            padding: 12px 16px;
+            /* reduced padding to make the navbar less tall */
+            padding: 8px 12px;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            min-height: 44px;
+            min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: space-between; /* left / center / right layout */
@@ -155,7 +156,8 @@
         /* Content Container - legacy styles, minimal impact */
         .container {
             min-height: 100vh;
-            margin-top: 56px;
+            /* keep enough top margin for the reduced navbar height + safe area */
+            margin-top: 52px;
             padding-top: 8px;
         }
         
