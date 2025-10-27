@@ -49,14 +49,14 @@
         .navbar {
             background: #f8f8f8;
             border-bottom: 0.5px solid #c6c6c8;
-            /* reduced padding to make the navbar less tall */
-            padding: 8px 12px;
+            /* slightly smaller navbar */
+            padding: 6px 10px;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            min-height: 40px;
+            min-height: 36px;
             display: flex;
             align-items: center;
             justify-content: space-between; /* left / center / right layout */
@@ -157,8 +157,22 @@
         .container {
             min-height: 100vh;
             /* keep enough top margin for the reduced navbar height + safe area */
-            margin-top: 52px;
+            margin-top: 48px;
             padding-top: 8px;
+        }
+
+        /* Slightly reduce navbar height on very large screens to create a sleeker header */
+        @media (min-width: 1200px) {
+            .navbar {
+                padding: 4px 8px;
+                min-height: 32px;
+            }
+            .navbar h1 {
+                font-size: 16px;
+            }
+            .container {
+                margin-top: 44px;
+            }
         }
         
         /* Page grid layout */
