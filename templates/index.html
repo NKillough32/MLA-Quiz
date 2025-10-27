@@ -69,6 +69,8 @@
             align-items: center;
             gap: 8px;
             flex: 1; /* take equal space on both sides */
+            min-width: 0; /* allow flex children to shrink instead of overflowing */
+            overflow: hidden;
         }
 
         .nav-center {
@@ -82,6 +84,22 @@
         /* Ensure buttons in left/right align to edges */
         .nav-left { justify-content: flex-start; }
         .nav-right { justify-content: flex-end; }
+
+        /* Prevent navbar children from overflowing and overlapping the center title */
+        .nav-left > *, .nav-right > * {
+            flex-shrink: 0; /* keep items their intrinsic size but allow container to manage overflow */
+            white-space: nowrap;
+        }
+
+        @media (max-width: 420px) {
+            .navbar { padding: 10px 12px; }
+            .navbar h1 { font-size: 15px; }
+            .nav-left, .nav-right { gap: 6px; }
+            /* Reduce button padding to avoid overflow */
+            .navbar button, .font-controls button { padding: 6px; font-size: 13px; }
+            /* Make font controls more compact */
+            .font-controls { gap: 4px; }
+        }
         
         .navbar h1 {
             font-size: 17px;

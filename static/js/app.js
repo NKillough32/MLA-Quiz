@@ -3188,13 +3188,18 @@ class MLAQuizApp {
             const toggleBtn = document.createElement('button');
             toggleBtn.id = 'dark-mode-toggle';
             toggleBtn.className = 'navbar-btn';
-            toggleBtn.style.cssText = 'position: absolute; right: 60px; background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px; z-index: 1001;';
+            toggleBtn.style.cssText = 'background: none; border: none; color: #007AFF; font-size: 14px; cursor: pointer; padding: 8px;';
             toggleBtn.onclick = () => this.toggleDarkMode();
-            
+
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             toggleBtn.textContent = currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
-            
-            navbar.appendChild(toggleBtn);
+
+            const navRight = navbar.querySelector('.nav-right');
+            if (navRight) {
+                navRight.appendChild(toggleBtn);
+            } else {
+                navbar.appendChild(toggleBtn);
+            }
             console.log('Dark mode toggle added to navbar');
         } else {
             console.log('Navbar not found, retrying in 100ms');
@@ -3246,7 +3251,12 @@ class MLAQuizApp {
             toggleBtn.title = this.hapticsOptIn ? 'Haptics: On (click to disable)' : 'Haptics: Off (click to enable)';
             
             hapticsControls.appendChild(toggleBtn);
-            navbar.appendChild(hapticsControls);
+            const navRight = navbar.querySelector('.nav-right');
+            if (navRight) {
+                navRight.appendChild(hapticsControls);
+            } else {
+                navbar.appendChild(hapticsControls);
+            }
             console.log('Haptics toggle added to navbar');
         } else {
             console.log('Navbar not found, retrying in 100ms');
@@ -11748,7 +11758,12 @@ class MLAQuizApp {
                 }
             });
             
-            navbar.appendChild(fontControls);
+            const navRight = navbar.querySelector('.nav-right');
+            if (navRight) {
+                navRight.appendChild(fontControls);
+            } else {
+                navbar.appendChild(fontControls);
+            }
             
             // Set initial state
             this.setFontSize(this.fontSize);
