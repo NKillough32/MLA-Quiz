@@ -1895,11 +1895,23 @@ class MLAQuizApp {
         const backBtn = document.getElementById('backBtn');
         
         navTitle.textContent = title;
-        
-        if (title === 'MLA Quiz') {
-            backBtn.style.display = 'none';
-        } else {
-            backBtn.style.display = 'block';
+        // Show the back button only when a quiz or results screen is visible.
+        // This prevents the back button appearing on transient overlays (like loading)
+        // or other non-interactive screens where a back action would be confusing.
+        try {
+            const currentScreen = document.querySelector('.screen[style*="block"]');
+            if (currentScreen && (currentScreen.id === 'quizScreen' || currentScreen.id === 'resultsScreen')) {
+                backBtn.style.display = 'block';
+            } else {
+                backBtn.style.display = 'none';
+            }
+        } catch (e) {
+            // Fallback to previous behavior if anything goes wrong
+            if (title === 'MLA Quiz') {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+            }
         }
         // Track page view for analytics (if analytics wrapper is loaded)
         try {
