@@ -4812,7 +4812,7 @@
             }
         }
 
-        /* Compact haptics (bell) button - keeps the control functional but less visually dominant */
+        /* Haptics (bell) button -- compact but with a rounded box and smaller glyph */
         .haptics-controls {
             display: inline-flex;
             align-items: center;
@@ -4821,23 +4821,39 @@
         }
 
         .haptics-controls .haptics-btn {
-            padding: 4px; /* reduced padding */
-            font-size: 13px; /* slightly smaller glyph */
-            width: 34px;
-            height: 34px;
+            padding: 6px; /* balanced padding for the box */
+            font-size: 14px; /* base font-size for button content */
+            width: 36px;
+            height: 36px;
             line-height: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            background: transparent;
-            border: none;
+            border-radius: 10px; /* slightly rounder box */
+            background: #f1f3f4; /* light card background to form a visible box */
+            border: 1px solid var(--border-color); /* subtle border matching site style */
             color: #007AFF;
             cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            transition: transform 0.06s ease, box-shadow 0.06s ease, background 0.06s;
+        }
+
+        /* Slightly smaller glyph/icon inside the button for better balance */
+        .haptics-controls .haptics-btn > * {
+            font-size: 16px; /* reduces emoji/svg/icon size slightly */
+            line-height: 1;
         }
 
         .haptics-controls .haptics-btn:active {
             transform: translateY(1px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+
+        /* Dark theme variant */
+        [data-theme="dark"] .haptics-controls .haptics-btn {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #63b3ed;
         }
     </style>
 </head>
