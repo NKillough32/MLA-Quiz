@@ -1269,8 +1269,15 @@ class MLAQuizApp {
                 // Currently unlocked, lock to current orientation
                 const lockOrientation = currentOrientation === 'landscape' ? 'landscape' : 'portrait';
                 try {
-                    await screen.orientation.lock(lockOrientation + '-primary');
+                    await screen.orientation.lock(lockOrientation);
                     console.log(`🔄 Orientation locked to ${lockOrientation}`);
+                    // Immediately reflect locked state in the button text for clearer feedback
+                    try {
+                        const rotationBtn = document.getElementById('rotation-control-btn');
+                        if (rotationBtn) rotationBtn.textContent = lockOrientation === 'portrait' ? '📱 Portrait 🔒' : '📺 Landscape 🔒';
+                    } catch (btnErr) {
+                        console.debug('Failed to update rotation button text after lock:', btnErr);
+                    }
                 } catch (lockErr) {
                     console.warn('🔄 Initial orientation.lock failed:', lockErr);
                     // Surface the actual error to the user (helps debugging on mobile)
@@ -1292,8 +1299,15 @@ class MLAQuizApp {
                             await requestFull.call(docEl);
                             // Wait a short moment for fullscreen to settle
                             await new Promise(r => setTimeout(r, 250));
-                            await screen.orientation.lock(lockOrientation + '-primary');
+                            await screen.orientation.lock(lockOrientation);
                             console.log(`🔄 Orientation locked to ${lockOrientation} after fullscreen`);
+                            // Update button text immediately for visual feedback
+                            try {
+                                const rotationBtn = document.getElementById('rotation-control-btn');
+                                if (rotationBtn) rotationBtn.textContent = lockOrientation === 'portrait' ? '📱 Portrait 🔒' : '📺 Landscape 🔒';
+                            } catch (btnErr2) {
+                                console.debug('Failed to update rotation button text after fullscreen lock:', btnErr2);
+                            }
                             this.showToast(`Rotation locked to ${lockOrientation}`);
                         } else {
                             throw lockErr;
