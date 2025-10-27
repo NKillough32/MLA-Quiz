@@ -1154,6 +1154,28 @@ class MLAQuizApp {
             
             // Add rotation control button to navbar
             this.addRotationControlButton();
+
+            // Proactively request fullscreen on first user gesture so orientation.lock
+            // has a higher chance to succeed later on browsers that require fullscreen
+            // or an installed PWA. This is a gentle, one-time request tied to the
+            // user's first click; it will not spam requests.
+            document.addEventListener('click', async () => {
+                try {
+                    if (document.fullscreenElement) return;
+                    const docEl = document.documentElement;
+                    const requestFull = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+                    if (requestFull) {
+                        try {
+                            await requestFull.call(docEl);
+                            console.log('📺 Fullscreen activated to allow orientation control');
+                        } catch (err) {
+                            console.warn('Fullscreen request failed:', err);
+                        }
+                    }
+                } catch (err) {
+                    console.debug('Fullscreen pre-request failed:', err);
+                }
+            }, { once: true });
             
             // Listen for orientation lock changes
             screen.orientation.addEventListener('change', (event) => {
@@ -1294,6 +1316,15 @@ class MLAQuizApp {
                     }
                 } catch (lockErr) {
                     console.error('❌ Orientation lock failed:', lockErr);
+
+                    // If the error is a permission/security error, guide the user concisely
+                    // instead of showing multiple toasts and attempts.
+                    if (lockErr && lockErr.name === 'SecurityError') {
+                        console.warn('Orientation.lock SecurityError (likely requires fullscreen or installed PWA):', lockErr);
+                        try { this.showToast('Rotation lock requires fullscreen or installed PWA'); } catch (t) { console.debug('Failed to show security toast:', t); }
+                        return;
+                    }
+
                     // Surface the actual error to the user (helps debugging on mobile)
                     try {
                         const errName = lockErr && lockErr.name ? lockErr.name : 'Error';
