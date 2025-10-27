@@ -102,6 +102,8 @@
             .navbar button, .font-controls button { padding: 6px; font-size: 13px; }
             /* Make font controls more compact */
             .font-controls { gap: 4px; }
+            /* Nudge nav controls down slightly so they don't visually collide with the centered title */
+            .nav-left > *, .nav-right > * { transform: translateY(3px); }
         }
 
         /* Compact layout helpers for navbar controls */
