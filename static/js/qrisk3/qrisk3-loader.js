@@ -60,12 +60,12 @@
         });
     }
 
-    // Try UMD candidates in order
-    (async function tryLoad() {
+    // Expose a promise that resolves when qrisk3 is available, or rejects on timeout/failure.
+    const loadPromise = (async function tryLoad() {
         for (const src of umdCandidates) {
             try {
                 const attached = await loadUmdScript(src).catch(() => null);
-                if (attached) return; // success
+                if (attached) return window.qrisk3; // success
             } catch (e) {
                 // continue to next candidate
             }
@@ -74,16 +74,22 @@
         // If UMD attempts didn't attach window.qrisk3, try dynamic ESM import as last resort
         try {
             const esmPath = '/static/js/qrisk3/qrisk3.js';
-            // Attempt dynamic import (may fail in non-module contexts)
-            import(esmPath).then(mod => {
-                if (!attachExportsFromModule(mod)) {
-                    console.warn('qrisk3-loader: ESM module loaded but exports not found');
-                }
+            await import(esmPath).then(mod => {
+                if (attachExportsFromModule(mod)) return window.qrisk3;
             }).catch(err => {
                 console.warn('qrisk3-loader: failed to import ESM module', err);
             });
+            if (window.qrisk3) return window.qrisk3;
         } catch (err) {
             console.warn('qrisk3-loader: dynamic import not supported or failed', err);
         }
+
+        throw new Error('qrisk3-loader: all attempts to load qrisk3 failed');
     })();
+
+    // Timeout/final rejection after 7 seconds to allow graceful degradation in the app
+    window.qrisk3Ready = Promise.race([
+        loadPromise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('qrisk3-loader: timeout')), 7000))
+    ]);
 })();
