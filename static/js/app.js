@@ -1293,11 +1293,14 @@ class MLAQuizApp {
                         console.debug('Failed to show lock toast:', toastErr);
                     }
                 } catch (lockErr) {
-                    console.warn('🔄 Initial orientation.lock failed:', lockErr);
+                    console.error('❌ Orientation lock failed:', lockErr);
                     // Surface the actual error to the user (helps debugging on mobile)
                     try {
                         const errName = lockErr && lockErr.name ? lockErr.name : 'Error';
                         const errMsg = lockErr && lockErr.message ? lockErr.message : String(lockErr);
+                        // Friendly concise toast for quick debugging
+                        try { this.showToast(`Lock failed: ${errMsg}`); } catch (t) { console.debug('Failed to show concise lock toast:', t); }
+                        // Detailed toast for deeper debugging
                         this.showToast(`Orientation lock failed: ${errName}: ${errMsg}`);
                     } catch (toastErr) {
                         console.debug('Failed to show lockErr toast:', toastErr);
@@ -1327,11 +1330,12 @@ class MLAQuizApp {
                             throw lockErr;
                         }
                     } catch (fsErr) {
-                        console.error('🔄 Failed to lock orientation even after fullscreen attempt:', fsErr);
+                        console.error('❌ Failed to lock orientation even after fullscreen attempt:', fsErr);
                         // Surface fullscreen attempt error as well
                         try {
                             const fsName = fsErr && fsErr.name ? fsErr.name : 'Error';
                             const fsMsg = fsErr && fsErr.message ? fsErr.message : String(fsErr);
+                            try { this.showToast(`Lock failed: ${fsMsg}`); } catch (t) { console.debug('Failed to show concise fs toast:', t); }
                             this.showToast(`Fullscreen+lock failed: ${fsName}: ${fsMsg}`);
                         } catch (toastErr2) {
                             console.debug('Failed to show fsErr toast:', toastErr2);
