@@ -1256,6 +1256,14 @@ class MLAQuizApp {
                 // Currently locked, unlock it
                 await screen.orientation.unlock();
                 console.log('🔄 Orientation unlocked - auto rotation enabled');
+                // Immediate visual feedback for user
+                try {
+                    const rotationBtn = document.getElementById('rotation-control-btn');
+                    if (rotationBtn) rotationBtn.textContent = '🔄 Auto';
+                    this.showToast('Auto rotation enabled');
+                } catch (uiErr) {
+                    console.debug('Failed to update UI after unlock:', uiErr);
+                }
                 
                 // Analytics: rotation unlocked
                 try {
@@ -1277,6 +1285,12 @@ class MLAQuizApp {
                         if (rotationBtn) rotationBtn.textContent = lockOrientation === 'portrait' ? '📱 Portrait 🔒' : '📺 Landscape 🔒';
                     } catch (btnErr) {
                         console.debug('Failed to update rotation button text after lock:', btnErr);
+                    }
+                    // Toast confirmation for clarity
+                    try {
+                        this.showToast(`Rotation locked to ${lockOrientation}`);
+                    } catch (toastErr) {
+                        console.debug('Failed to show lock toast:', toastErr);
                     }
                 } catch (lockErr) {
                     console.warn('🔄 Initial orientation.lock failed:', lockErr);
