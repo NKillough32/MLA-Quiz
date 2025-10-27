@@ -4811,6 +4811,34 @@
                 padding-bottom: env(safe-area-inset-bottom);
             }
         }
+
+        /* Compact haptics (bell) button - keeps the control functional but less visually dominant */
+        .haptics-controls {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 6px; /* small separation from other nav items */
+        }
+
+        .haptics-controls .haptics-btn {
+            padding: 4px; /* reduced padding */
+            font-size: 13px; /* slightly smaller glyph */
+            width: 34px;
+            height: 34px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: #007AFF;
+            cursor: pointer;
+        }
+
+        .haptics-controls .haptics-btn:active {
+            transform: translateY(1px);
+        }
     </style>
 </head>
 <body>
