@@ -139,8 +139,15 @@
             color: #007AFF;
             font-size: 17px;
             cursor: pointer;
-            padding: 0;
+            /* ensure a comfortable hit area and vertical centering */
+            padding: 6px 8px;
             margin-right: 8px;
+            display: inline-flex;
+            align-items: center;
+            align-self: center; /* vertically center inside navbar flex container */
+            line-height: 1;
+            /* override small-screen nudge rules that translate nav children */
+            transform: none !important;
         }
         
         .navbar .next-btn {
