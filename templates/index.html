@@ -4625,6 +4625,76 @@
             line-height: 1.4;
             color: #1c1c1e;
         }
+
+        /* Frailty - Rockwood Clinical Frailty Scale (simple selector) */
+        .frailty-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+        .frailty-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .frailty-option {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            text-align: center;
+        }
+        .frailty-option.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+        }
+        .frailty-result {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Barthel Index (ADL) calculator styles */
+        .barthel-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+        .barthel-grid {
+            display: grid;
+            gap: 8px;
+        }
+        .barthel-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #f1f3f4;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .barthel-options {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .barthel-total {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            font-weight: 700;
+            text-align: center;
+        }
         
         /* iOS-Style Buttons */
         .btn {
@@ -4895,6 +4965,127 @@
                     <p class="card-subtitle">Select a quiz to begin</p>
                 </div>
                 
+                <!-- Frailty (Rockwood) Calculator -->
+                <div id="frailty-rockwood" class="card frailty-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Clinical Frailty Scale (Rockwood)</h3>
+                        <p class="card-subtitle">Select the description that best fits the patient to get the frailty score (1-9)</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="frailty-grid" id="frailtyOptions">
+                            <!-- Options 1-9 will be populated by JS, but include basic fallback labels -->
+                            <div class="frailty-option" data-value="1">1<br><small>Very fit</small></div>
+                            <div class="frailty-option" data-value="2">2<br><small>Well</small></div>
+                            <div class="frailty-option" data-value="3">3<br><small>Managing well</small></div>
+                            <div class="frailty-option" data-value="4">4<br><small>Vulnerable</small></div>
+                            <div class="frailty-option" data-value="5">5<br><small>Mildly frail</small></div>
+                            <div class="frailty-option" data-value="6">6<br><small>Moderately frail</small></div>
+                            <div class="frailty-option" data-value="7">7<br><small>Severely frail</small></div>
+                            <div class="frailty-option" data-value="8">8<br><small>Very severely frail</small></div>
+                            <div class="frailty-option" data-value="9">9<br><small>Terminally ill</small></div>
+                        </div>
+
+                        <div class="frailty-result" id="frailtyResult" aria-live="polite">
+                            Select a score to see the description and guidance.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Barthel Index (ADL) Calculator -->
+                <div id="barthel-index" class="card barthel-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Barthel Index (ADL)</h3>
+                        <p class="card-subtitle">Quick assessment of basic activities of daily living. Select the option that best describes the patient.</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="barthel-grid" id="barthelItems">
+                            <!-- Each item is rendered with radio options; values are the standard 0-100 barthel scoring in increments -->
+                            <div class="barthel-item">
+                                <div>Feeding</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="feeding" value="10"> Independent (10)</label>
+                                    <label><input type="radio" name="feeding" value="5"> Needs assistance (5)</label>
+                                    <label><input type="radio" name="feeding" value="0"> Dependent (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Bathing</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="bathing" value="5"> Independent (5)</label>
+                                    <label><input type="radio" name="bathing" value="0"> Dependent (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Grooming</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="grooming" value="5"> Independent (5)</label>
+                                    <label><input type="radio" name="grooming" value="0"> Needs help (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Dressing</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="dressing" value="10"> Independent (10)</label>
+                                    <label><input type="radio" name="dressing" value="5"> Needs help (5)</label>
+                                    <label><input type="radio" name="dressing" value="0"> Dependent (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Bowels</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="bowels" value="10"> Continent (10)</label>
+                                    <label><input type="radio" name="bowels" value="5"> Occasional accident (5)</label>
+                                    <label><input type="radio" name="bowels" value="0"> Incontinent (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Bladder</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="bladder" value="10"> Continent (10)</label>
+                                    <label><input type="radio" name="bladder" value="5"> Occasional accident (5)</label>
+                                    <label><input type="radio" name="bladder" value="0"> Incontinent (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Toilet use</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="toilet" value="10"> Independent (10)</label>
+                                    <label><input type="radio" name="toilet" value="5"> Needs some help (5)</label>
+                                    <label><input type="radio" name="toilet" value="0"> Dependent (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Transfers (bed ↔ chair)</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="transfers" value="15"> Independent (15)</label>
+                                    <label><input type="radio" name="transfers" value="10"> Minor help (10)</label>
+                                    <label><input type="radio" name="transfers" value="5"> Major help (5)</label>
+                                    <label><input type="radio" name="transfers" value="0"> Dependent (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Mobility (on level surfaces)</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="mobility" value="15"> Independent (15)</label>
+                                    <label><input type="radio" name="mobility" value="10"> Walks with help of one person (10)</label>
+                                    <label><input type="radio" name="mobility" value="5"> Immobile (5)</label>
+                                    <label><input type="radio" name="mobility" value="0"> Dependent (0)</label>
+                                </div>
+                            </div>
+                            <div class="barthel-item">
+                                <div>Stairs</div>
+                                <div class="barthel-options">
+                                    <label><input type="radio" name="stairs" value="10"> Independent (10)</label>
+                                    <label><input type="radio" name="stairs" value="5"> Needs help (5)</label>
+                                    <label><input type="radio" name="stairs" value="0"> Unable (0)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="barthel-total" id="barthelTotal">Total: 0 / 100 — Interpretation: Dependent</div>
+                    </div>
+                </div>
+
                 <!-- File Upload Section -->
                 <div class="card-content" style="border-bottom: 1px solid #e5e5ea; margin-bottom: 16px;">
                     <h3 style="font-size: 17px; font-weight: 600; margin: 0 0 8px 0; color: #1c1c1e;">Upload Quiz Files</h3>

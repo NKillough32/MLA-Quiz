@@ -3399,10 +3399,122 @@ class MLAQuizApp {
         // Initialize calculators only when needed (moved to switchMedicalTool)
         // this.initializeCalculators();
         
-        // Setup mobile back button behavior
-        this.setupMobileBackButton();
+    // Setup mobile back button behavior
+    this.setupMobileBackButton();
+        
+    // Initialize calculators available in the main UI (frailty, Barthel, etc.)
+    this.initializeFrailtyCalculator();
+    this.initializeBarthelCalculator();
         
         console.log('🩺 Medical tools initialized');
+    }
+
+    initializeFrailtyCalculator() {
+        try {
+            const container = document.getElementById('frailty-rockwood');
+            const optionsEl = document.getElementById('frailtyOptions');
+            const resultEl = document.getElementById('frailtyResult');
+            if (!container || !optionsEl || !resultEl) {
+                console.debug('Frailty calculator elements not found; skipping initialization');
+                return;
+            }
+
+            const descriptions = {
+                1: 'Very fit — robust, active, energetic and motivated. Typically exercises regularly.',
+                2: 'Well — no active disease symptoms but less fit than category 1.',
+                3: 'Managing well — medical problems are well controlled, not regularly active beyond routine activities.',
+                4: 'Vulnerable — not dependent on others for daily help, but symptoms limit activities.',
+                5: 'Mildly frail — evident slowing and need help in high order instrumental activities of daily living.',
+                6: 'Moderately frail — need help with all outside activities and with keeping house.',
+                7: 'Severely frail — completely dependent for personal care, but stable and not at high risk of dying within 6 months.',
+                8: 'Very severely frail — completely dependent, approaching the end of life. Typically approaching high risk of dying.',
+                9: 'Terminally ill — life expectancy <6 months, not otherwise evidently frail.'
+            };
+
+            // Delegate click handling
+            optionsEl.addEventListener('click', (e) => {
+                const opt = e.target.closest('.frailty-option');
+                if (!opt) return;
+
+                // Clear previous selection
+                optionsEl.querySelectorAll('.frailty-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+
+                const val = opt.getAttribute('data-value');
+                const desc = descriptions[val] || '';
+
+                // Simple guidance based on cutpoints
+                let guidance = '';
+                const num = parseInt(val, 10);
+                if (num >= 1 && num <= 3) {
+                    guidance = 'Not frail — routine care. Encourage activity and prevention.';
+                } else if (num === 4) {
+                    guidance = 'Pre-frail/vulnerable — consider targeted interventions (exercise, medication review).';
+                } else if (num >= 5 && num <= 6) {
+                    guidance = 'Frailty present — consider CGA (comprehensive geriatric assessment), falls review and medication optimisation.';
+                } else if (num >= 7) {
+                    guidance = 'High dependency — prioritise care needs, consider palliative needs assessment where appropriate.';
+                }
+
+                resultEl.innerHTML = `<strong>Score: ${val}</strong><div style="margin-top:6px;">${desc}</div><div style="margin-top:8px;color:#374151;font-size:0.95rem;">${guidance}</div>`;
+            });
+
+            console.log('🧮 Frailty (Rockwood) calculator initialized');
+        } catch (err) {
+            console.error('❌ Failed to initialize frailty calculator:', err);
+        }
+    }
+
+    initializeBarthelCalculator() {
+        try {
+            const container = document.getElementById('barthel-index');
+            const itemsContainer = document.getElementById('barthelItems');
+            const totalEl = document.getElementById('barthelTotal');
+            if (!container || !itemsContainer || !totalEl) {
+                console.debug('Barthel elements not present; skipping initialization');
+                return;
+            }
+
+            const computeTotal = () => {
+                // Sum all selected radio values within barthelItems
+                let total = 0;
+                const radios = itemsContainer.querySelectorAll('input[type="radio"]');
+                const namesSeen = new Set();
+                radios.forEach(r => {
+                    if (!namesSeen.has(r.name)) namesSeen.add(r.name);
+                });
+
+                namesSeen.forEach(name => {
+                    const sel = itemsContainer.querySelector(`input[name="${name}"]:checked`);
+                    if (sel) total += parseInt(sel.value, 10) || 0;
+                });
+
+                // Interpretation categories (simple guidance)
+                let interpretation = 'Dependent';
+                if (total === 100) interpretation = 'Independent';
+                else if (total >= 91) interpretation = 'Slight dependency';
+                else if (total >= 61) interpretation = 'Moderate dependency';
+                else if (total >= 21) interpretation = 'Severe dependency';
+                else interpretation = 'Total dependency';
+
+                totalEl.textContent = `Total: ${total} / 100 — Interpretation: ${interpretation}`;
+            };
+
+            // Use event delegation to handle changes
+            itemsContainer.addEventListener('change', (e) => {
+                const input = e.target;
+                if (input && input.matches('input[type="radio"]')) {
+                    computeTotal();
+                }
+            });
+
+            // Initialize total in case default selections exist
+            computeTotal();
+
+            console.log('🧮 Barthel Index calculator initialized');
+        } catch (err) {
+            console.error('❌ Failed to initialize Barthel calculator:', err);
+        }
     }
 
     setupMobileBackButton() {
