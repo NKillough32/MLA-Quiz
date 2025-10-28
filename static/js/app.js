@@ -3866,6 +3866,14 @@ class MLAQuizApp {
                 calculatorTitle = 'Modified Rankin Scale';
                 calculatorContent += this.getModifiedRankinCalculator();
                 break;
+            case 'frailty':
+                calculatorTitle = 'Clinical Frailty Scale (Rockwood)';
+                calculatorContent += this.getFrailtyCalculator();
+                break;
+            case 'barthel':
+                calculatorTitle = 'Barthel Index (ADL)';
+                calculatorContent += this.getBarthelCalculator();
+                break;
             case 'anion-gap':
                 calculatorTitle = 'Anion Gap Calculator';
                 calculatorContent += this.getAnionGapCalculator();
@@ -3920,6 +3928,114 @@ class MLAQuizApp {
                         <strong>Asian populations:</strong> Overweight ≥23, Obese ≥27.5
                     </small>
                 </div>
+            </div>
+        `;
+    }
+
+    getFrailtyCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Clinical Frailty Scale (Rockwood)</h4>
+                <p><small>Select the category that best matches the patient</small></p>
+                <div class="calc-input-group" id="frailty-options-detail">
+                    <select id="frailty-select">
+                        <option value="">-- Select frailty score --</option>
+                        <option value="1">1 — Very fit</option>
+                        <option value="2">2 — Well</option>
+                        <option value="3">3 — Managing well</option>
+                        <option value="4">4 — Vulnerable</option>
+                        <option value="5">5 — Mildly frail</option>
+                        <option value="6">6 — Moderately frail</option>
+                        <option value="7">7 — Severely frail</option>
+                        <option value="8">8 — Very severely frail</option>
+                        <option value="9">9 — Terminally ill</option>
+                    </select>
+                </div>
+                <button onclick="window.quizApp.calculateFrailty()">Calculate</button>
+                <div id="frailty-detail-result" class="calc-result"></div>
+                <div class="calc-reference"><small>Rockwood Clinical Frailty Scale (1–9): use as an aid to clinical judgement.</small></div>
+            </div>
+        `;
+    }
+
+    calculateFrailty() {
+        const sel = document.getElementById('frailty-select');
+        const out = document.getElementById('frailty-detail-result');
+        if (!sel || !out) return;
+        const val = sel.value;
+        if (!val) {
+            out.innerHTML = '<p class="error">Please select a frailty score</p>';
+            return;
+        }
+        const descriptions = {
+            1: 'Very fit — robust, active, energetic and motivated. Typically exercises regularly.',
+            2: 'Well — no active disease symptoms but less fit than category 1.',
+            3: 'Managing well — medical problems are well controlled, not regularly active beyond routine activities.',
+            4: 'Vulnerable — not dependent on others for daily help, but symptoms limit activities.',
+            5: 'Mildly frail — evident slowing and need help in high order instrumental activities of daily living.',
+            6: 'Moderately frail — need help with all outside activities and with keeping house.',
+            7: 'Severely frail — completely dependent for personal care, but stable and not at high risk of dying within 6 months.',
+            8: 'Very severely frail — completely dependent, approaching the end of life. Typically approaching high risk of dying.',
+            9: 'Terminally ill — life expectancy <6 months, not otherwise evidently frail.'
+        };
+        const guidance = (n) => {
+            const num = parseInt(n, 10);
+            if (num <= 3) return 'Not frail — encourage activity and prevention.';
+            if (num === 4) return 'Pre-frail/vulnerable — consider targeted interventions (exercise, medication review).';
+            if (num >=5 && num <=6) return 'Frailty present — consider CGA, falls review and medication optimisation.';
+            return 'High dependency — prioritise care needs, consider palliative needs assessment where appropriate.';
+        };
+
+        out.innerHTML = `
+            <div>
+                <strong>Score: ${val}</strong>
+                <div style="margin-top:8px">${descriptions[val]}</div>
+                <div style="margin-top:8px;color:#374151;font-weight:600">${guidance(val)}</div>
+            </div>
+        `;
+    }
+
+    getBarthelCalculator() {
+        return `
+            <div class="calculator-form">
+                <h4>Barthel Index (ADL)</h4>
+                <p><small>Complete the items and press Calculate</small></p>
+                <div class="calc-input-group" id="barthel-detail-items">
+                    <!-- Simplified form: items named to match common Barthel scoring -->
+                    <label>Feeding: <select id="b-feeding"><option value="0">Dependent (0)</option><option value="5">Needs assistance (5)</option><option value="10">Independent (10)</option></select></label>
+                    <label>Bathing: <select id="b-bathing"><option value="0">Dependent (0)</option><option value="5">Independent (5)</option></select></label>
+                    <label>Grooming: <select id="b-grooming"><option value="0">Needs help (0)</option><option value="5">Independent (5)</option></select></label>
+                    <label>Dressing: <select id="b-dressing"><option value="0">Dependent (0)</option><option value="5">Needs help (5)</option><option value="10">Independent (10)</option></select></label>
+                    <label>Bowels: <select id="b-bowels"><option value="0">Incontinent (0)</option><option value="5">Occasional accident (5)</option><option value="10">Continent (10)</option></select></label>
+                    <label>Bladder: <select id="b-bladder"><option value="0">Incontinent (0)</option><option value="5">Occasional accident (5)</option><option value="10">Continent (10)</option></select></label>
+                    <label>Toilet use: <select id="b-toilet"><option value="0">Dependent (0)</option><option value="5">Needs some help (5)</option><option value="10">Independent (10)</option></select></label>
+                    <label>Transfers (bed-chair): <select id="b-transfers"><option value="0">Dependent (0)</option><option value="5">Major help (5)</option><option value="10">Minor help (10)</option><option value="15">Independent (15)</option></select></label>
+                    <label>Mobility (level): <select id="b-mobility"><option value="0">Dependent (0)</option><option value="5">Immobile (5)</option><option value="10">Walks with help (10)</option><option value="15">Independent (15)</option></select></label>
+                    <label>Stairs: <select id="b-stairs"><option value="0">Unable (0)</option><option value="5">Needs help (5)</option><option value="10">Independent (10)</option></select></label>
+                </div>
+                <button onclick="window.quizApp.calculateBarthel()">Calculate</button>
+                <div id="barthel-detail-result" class="calc-result"></div>
+                <div class="calc-reference"><small>Score 0-100. Higher scores indicate greater independence.</small></div>
+            </div>
+        `;
+    }
+
+    calculateBarthel() {
+        const ids = ['b-feeding','b-bathing','b-grooming','b-dressing','b-bowels','b-bladder','b-toilet','b-transfers','b-mobility','b-stairs'];
+        let total = 0;
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) total += parseInt(el.value, 10) || 0;
+        });
+        let interpretation = 'Total dependency';
+        if (total === 100) interpretation = 'Independent';
+        else if (total >= 91) interpretation = 'Slight dependency';
+        else if (total >= 61) interpretation = 'Moderate dependency';
+        else if (total >= 21) interpretation = 'Severe dependency';
+        document.getElementById('barthel-detail-result').innerHTML = `
+            <div>
+                <strong>Barthel Total: ${total} / 100</strong>
+                <div style="margin-top:8px">Interpretation: ${interpretation}</div>
             </div>
         `;
     }
