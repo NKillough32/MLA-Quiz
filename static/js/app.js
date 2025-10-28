@@ -3550,17 +3550,51 @@ class MLAQuizApp {
         
         // Handle back button
         window.addEventListener('popstate', (event) => {
-            if (medicalToolsOpen) {
-                event.preventDefault();
-                
-                if (event.state && event.state.tool && currentTool !== 'calculators') {
-                    // Go back to main tools view
-                    this.switchMedicalTool('calculators');
-                    currentTool = 'calculators';
-                } else {
-                    // Close medical tools
+            try {
+                // If the medical tools panel was opened via our toggle, prefer in-panel navigation first
+                if (medicalToolsOpen) {
+                    event.preventDefault();
+
+                    if (event.state && event.state.tool && currentTool && currentTool !== 'calculators') {
+                        // If a specific tool was open, step back to calculators list
+                        this.switchMedicalTool('calculators');
+                        currentTool = 'calculators';
+                        return;
+                    }
+
+                    // Otherwise close the medical tools panel
                     closeMedicalTools();
+                    return;
                 }
+
+                // If not in the medical tools overlay but a tool panel is active, close it or step back
+                const activeToolPanel = document.querySelector('.tool-panel.active');
+                if (activeToolPanel) {
+                    // If a calculator detail is open, show calculators first
+                    if (activeToolPanel.id === 'calculator-detail' || document.getElementById('calculator-detail')?.classList.contains('active')) {
+                        this.switchMedicalTool('calculators');
+                        return;
+                    }
+
+                    // Otherwise return to the calculators hub or close the panel
+                    this.switchMedicalTool('calculators');
+                    return;
+                }
+
+                // Final fallback: show quiz selection if available, otherwise no-op
+                if (typeof this.showQuizSelection === 'function') {
+                    this.showQuizSelection();
+                } else {
+                    const quizScreen = document.getElementById('quizScreen');
+                    if (quizScreen) {
+                        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                        quizScreen.classList.add('active');
+                    } else {
+                        console.log('Back navigation: no quiz selection screen to show');
+                    }
+                }
+            } catch (err) {
+                console.warn('Error handling back navigation in setupMobileBackButton:', err);
             }
         });
         
@@ -3886,7 +3920,22 @@ class MLAQuizApp {
         calculatorContent += '</div>';
         calculatorContent = calculatorContent.replace('<h3 id="calculator-title"></h3>', `<h3 id="calculator-title">${calculatorTitle}</h3>`);
         container.innerHTML = calculatorContent;
-        
+
+        // Attach export buttons to results and per-calculator notes area
+        try {
+            // Ensure export features are available across calc-result blocks
+            if (typeof this.setupExportFeatures === 'function') {
+                this.setupExportFeatures();
+            }
+
+            // Add notes area for this calculator (persisted via localStorage)
+            if (typeof this.setupCalculatorNotes === 'function') {
+                this.setupCalculatorNotes(calcType);
+            }
+        } catch (err) {
+            console.warn('⚠️ Failed to setup export/features or notes for calculator:', err);
+        }
+
         console.log('🧮 Loaded calculator:', calcType);
     }
 
@@ -11885,7 +11934,7 @@ class MLAQuizApp {
     }
 
     // Override switchMedicalTool to load content
-    switchMedicalTool(toolType) {
+    switchMedicalTool(toolType, toolName = null) {
         const toolPanels = document.querySelectorAll('.tool-panel');
         const navButtons = document.querySelectorAll('.tool-nav-btn');
         
@@ -11968,6 +12017,17 @@ class MLAQuizApp {
         }
         
         console.log('🩺 Switched to tool:', toolType, 'Panel ID:', panelId);
+
+        // Track usage of tools (activate add-to-recent/localStorage logic)
+        try {
+            const nameToTrack = toolName || toolType;
+            if (typeof this.trackToolUsage === 'function') {
+                this.trackToolUsage(toolType, nameToTrack);
+                console.log(`📈 Tracked usage for ${toolType} → ${nameToTrack}`);
+            }
+        } catch (err) {
+            console.warn('⚠️ Failed to track tool usage:', err);
+        }
     }
 
     setFontSize(size) {
@@ -12288,6 +12348,163 @@ function handleEscapeKey(e) {
         closeImageModal();
     }
 }
+
+// Initialize the app when DOM is loaded
+/**
+ * Setup export buttons for calculator result blocks.
+ * Adds a small "Export Result" button to each `.calc-result` element
+ * which will download the result text as a .txt file.
+ */
+MLAQuizApp.prototype.setupExportFeatures = function() {
+    try {
+        const attachExportTo = (container) => {
+            if (!container) return;
+            // Avoid adding multiple buttons
+            if (container.dataset.exportAttached === '1') return;
+            container.dataset.exportAttached = '1';
+
+            const btn = document.createElement('button');
+            btn.className = 'export-result-btn';
+            btn.textContent = 'Export Result';
+            btn.style.cssText = 'margin-top:8px;padding:6px 8px;font-size:12px;border-radius:6px;background:#f3f4f6;border:1px solid #d1d5db;cursor:pointer;';
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const text = container.innerText || container.textContent || '';
+                const filename = (document.getElementById('calculator-title')?.innerText || 'result').replace(/[^a-z0-9\-\_ ]+/ig, '') + '.txt';
+                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            });
+
+            // Append after the container
+            container.parentNode && container.parentNode.insertBefore(btn, container.nextSibling);
+        };
+
+        // Attach to all existing calc-result blocks
+        document.querySelectorAll('.calc-result').forEach(el => attachExportTo(el));
+
+        // Observe future additions to the DOM within calculator-detail-container
+        const detail = document.getElementById('calculator-detail-container');
+        if (detail && typeof MutationObserver !== 'undefined') {
+            const mo = new MutationObserver((mutations) => {
+                mutations.forEach(m => {
+                    m.addedNodes && m.addedNodes.forEach(node => {
+                        if (node.nodeType === 1) {
+                            node.querySelectorAll && node.querySelectorAll('.calc-result').forEach(r => attachExportTo(r));
+                            if (node.classList && node.classList.contains('calc-result')) attachExportTo(node);
+                        }
+                    });
+                });
+            });
+            mo.observe(detail, { childList: true, subtree: true });
+        }
+    } catch (err) {
+        console.warn('⚠️ setupExportFeatures failed:', err);
+    }
+};
+
+/**
+ * Add a per-calculator notes textarea and Save button.
+ * Notes are persisted using saveToolNote/getToolNote (localStorage-backed).
+ */
+MLAQuizApp.prototype.setupCalculatorNotes = function(calcType) {
+    try {
+        const container = document.getElementById('calculator-detail-container');
+        if (!container) return;
+
+        // Avoid duplicating notes area
+        const existing = container.querySelector('.calculator-notes');
+        if (existing) return;
+
+        const notesWrapper = document.createElement('div');
+        notesWrapper.className = 'calculator-notes';
+        notesWrapper.style.cssText = 'margin-top:12px;padding:10px;border-top:1px solid #e5e7eb;';
+        notesWrapper.innerHTML = `
+            <h4>Notes</h4>
+            <textarea id="note-${calcType}" rows="4" style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px;resize:vertical;"></textarea>
+            <div style="margin-top:8px;display:flex;gap:8px;">
+                <button id="save-note-${calcType}" class="save-note-btn" style="padding:6px 10px;border-radius:6px;background:#007AFF;color:#fff;border:none;">Save Note</button>
+                <button id="clear-note-${calcType}" class="clear-note-btn" style="padding:6px 10px;border-radius:6px;background:#f3f4f6;border:1px solid #d1d5db;">Clear</button>
+            </div>
+        `;
+
+        container.appendChild(notesWrapper);
+
+        const textarea = document.getElementById(`note-${calcType}`);
+        const saveBtn = document.getElementById(`save-note-${calcType}`);
+        const clearBtn = document.getElementById(`clear-note-${calcType}`);
+
+        // Prefill saved note if present
+        if (textarea && typeof this.getToolNote === 'function') {
+            try {
+                const saved = this.getToolNote(calcType);
+                if (saved) textarea.value = saved;
+            } catch (err) {
+                console.warn('⚠️ getToolNote failed:', err);
+            }
+        }
+
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                const val = textarea.value || '';
+                try {
+                    if (typeof this.saveToolNote === 'function') {
+                        this.saveToolNote(calcType, val);
+                        this.showToast && this.showToast('Note saved');
+                    } else {
+                        localStorage.setItem(`toolNote:${calcType}`, val);
+                        this.showToast && this.showToast('Note saved');
+                    }
+                } catch (err) {
+                    console.warn('⚠️ saveToolNote failed:', err);
+                    this.showToast && this.showToast('Failed to save note');
+                }
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                if (!textarea) return;
+                textarea.value = '';
+                try {
+                    if (typeof this.saveToolNote === 'function') this.saveToolNote(calcType, '');
+                    else localStorage.removeItem(`toolNote:${calcType}`);
+                    this.showToast && this.showToast('Note cleared');
+                } catch (err) {
+                    console.warn('⚠️ clear note failed:', err);
+                }
+            });
+        }
+    } catch (err) {
+        console.warn('⚠️ setupCalculatorNotes failed:', err);
+    }
+};
+
+// Simple localStorage-backed note helpers if not already provided elsewhere
+MLAQuizApp.prototype.getToolNote = MLAQuizApp.prototype.getToolNote || function(toolName) {
+    try {
+        return localStorage.getItem(`toolNote:${toolName}`) || '';
+    } catch (err) {
+        console.warn('⚠️ getToolNote localStorage read failed:', err);
+        return '';
+    }
+};
+
+MLAQuizApp.prototype.saveToolNote = MLAQuizApp.prototype.saveToolNote || function(toolName, noteText) {
+    try {
+        localStorage.setItem(`toolNote:${toolName}`, noteText || '');
+        return true;
+    } catch (err) {
+        console.warn('⚠️ saveToolNote localStorage write failed:', err);
+        return false;
+    }
+};
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
