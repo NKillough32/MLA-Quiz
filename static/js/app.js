@@ -12358,44 +12358,47 @@ function handleEscapeKey(e) {
 MLAQuizApp.prototype.setupExportFeatures = function() {
     try {
         const attachExportTo = (container) => {
-            if (!container) return;
-            // Avoid adding multiple buttons
-            if (container.dataset.exportAttached === '1') return;
-            container.dataset.exportAttached = '1';
+            if (!container || container.querySelector('.export-btn')) return;
 
             const btn = document.createElement('button');
-            btn.className = 'export-result-btn';
+            btn.className = 'export-btn';
             btn.textContent = 'Export Result';
-            btn.style.cssText = 'margin-top:8px;padding:6px 8px;font-size:12px;border-radius:6px;background:#f3f4f6;border:1px solid #d1d5db;cursor:pointer;';
+            btn.style.cssText = 'margin-top:8px;padding:6px 10px;border-radius:6px;border:1px solid #d1d5db;background:#f3f4f6;cursor:pointer;';
+            
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const text = container.innerText || container.textContent || '';
-                const filename = (document.getElementById('calculator-title')?.innerText || 'result').replace(/[^a-z0-9\-\_ ]+/ig, '') + '.txt';
-                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                URL.revokeObjectURL(url);
+                const text = (container.innerText || container.textContent || '').trim();
+                try {
+                    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    // Use calculator title if available and safe filename
+                    const safeTitle = (document.getElementById('calculator-title')?.innerText || 'calculator_result').replace(/[^a-z0-9\-\_ ]+/ig, '').trim() || 'calculator_result';
+                    link.download = `${safeTitle}.txt`;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    URL.revokeObjectURL(link.href);
+                    console.log('📤 Exported calculator result');
+                } catch (err) {
+                    console.warn('⚠️ Export failed:', err);
+                }
             });
 
-            // Append after the container
-            container.parentNode && container.parentNode.insertBefore(btn, container.nextSibling);
+            container.appendChild(btn);
         };
 
-        // Attach to all existing calc-result blocks
+        // Attach to existing calc-result blocks
         document.querySelectorAll('.calc-result').forEach(el => attachExportTo(el));
 
-        // Observe future additions to the DOM within calculator-detail-container
+        // Observe future additions within calculator-detail-container
         const detail = document.getElementById('calculator-detail-container');
         if (detail && typeof MutationObserver !== 'undefined') {
             const mo = new MutationObserver((mutations) => {
                 mutations.forEach(m => {
                     m.addedNodes && m.addedNodes.forEach(node => {
                         if (node.nodeType === 1) {
+                            // Attach to any newly added calc-result elements
                             node.querySelectorAll && node.querySelectorAll('.calc-result').forEach(r => attachExportTo(r));
                             if (node.classList && node.classList.contains('calc-result')) attachExportTo(node);
                         }
