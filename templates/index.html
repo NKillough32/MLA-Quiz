@@ -5134,9 +5134,11 @@
                     <button class="btn btn-secondary" id="homeBtn">Back to Quizzes</button>
                 </div>
             </div>
-        </div>
+                </div>
         
-        <!-- Floating PDF Export Button -->
+                <!-- Anatomy Explorer (moved into Medical Tools panel). Full-screen anatomy screen removed to avoid duplication. -->
+
+                <!-- Floating PDF Export Button -->
     <button id="floating-pdf-btn" class="floating-pdf-btn" title="Generate Study Report">
         📊 Report
     </button>
@@ -5421,9 +5423,30 @@
             <!-- Anatomy Explorer Panel -->
             <div id="anatomy-panel" class="tool-panel">
                 <div class="anatomy-container">
-                    <h2>Muscles & Bones Explorer</h2>
-                    <div id="bodyMap"></div>
-                    <div id="structureInfo"></div>
+                    <div style="display:flex;align-items:center;gap:10px;justify-content:space-between;">
+                        <h2 style="margin:0">Muscles & Bones Explorer</h2>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <div style="display:flex;gap:6px;align-items:center;">
+                                <button id="toggleBones" class="btn" title="Show bones">🦴 Bones</button>
+                                <button id="toggleMuscles" class="btn" title="Show muscles">💪 Muscles</button>
+                            </div>
+                            <div style="display:flex;gap:6px;align-items:center;">
+                                <button id="viewAnterior" class="btn" title="Anterior view">Front</button>
+                                <button id="viewPosterior" class="btn" title="Posterior view">Back</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-container" style="margin-top:12px;">
+                        <input type="text" id="searchAnatomy" placeholder="Search structure..." class="tool-search">
+                        <button id="searchAnatomyBtn" class="btn">🔍</button>
+                    </div>
+
+                    <div id="anatomyCanvas" style="margin-top:12px; display:flex; justify-content:center;">
+                        <div id="bodyMap" style="width:100%;"></div>
+                    </div>
+
+                    <div id="structureInfo" style="margin-top:12px;"></div>
                 </div>
             </div>
 

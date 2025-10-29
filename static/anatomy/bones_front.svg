@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="400" height="800">
+  <title>Placeholder Bones (Front)</title>
+  <desc>Simple placeholder bones with data-structure attributes for the Anatomy Explorer demo.</desc>
+
+  <!-- Skull -->
+  <g id="skull" data-structure="skull">
+    <ellipse cx="100" cy="40" rx="28" ry="24" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2" />
+    <title>Skull</title>
+  </g>
+
+  <!-- Spine -->
+  <g id="spine" data-structure="spine">
+    <rect x="96" y="70" width="8" height="160" fill="#fff3e0" stroke="#ef6c00" stroke-width="2" rx="3" />
+    <title>Spine</title>
+  </g>
+
+  <!-- Ribs (simple arch) -->
+  <g id="ribs" data-structure="ribs">
+    <path d="M60 100 C80 80, 120 80, 140 100" fill="none" stroke="#8d6e63" stroke-width="3" />
+    <path d="M50 120 C80 100, 120 100, 150 120" fill="none" stroke="#8d6e63" stroke-width="3" />
+    <title>Ribs</title>
+  </g>
+
+  <!-- Sternum -->
+  <g id="sternum" data-structure="sternum">
+    <rect x="94" y="100" width="12" height="46" fill="#fff3e0" stroke="#ef6c00" stroke-width="1.5" rx="2" />
+    <title>Sternum</title>
+  </g>
+
+  <!-- Left humerus -->
+  <g id="humerus" data-structure="humerus">
+    <rect x="40" y="140" width="16" height="72" fill="#fff8e1" stroke="#795548" stroke-width="2" rx="4" />
+    <title>Humerus</title>
+  </g>
+
+  <!-- Forearm bones -->
+  <g id="radius" data-structure="radius">
+    <rect x="26" y="212" width="8" height="60" fill="#fff8e1" stroke="#795548" stroke-width="1.5" rx="3" />
+    <title>Radius</title>
+  </g>
+  <g id="ulna" data-structure="ulna">
+    <rect x="46" y="212" width="8" height="60" fill="#fff8e1" stroke="#795548" stroke-width="1.5" rx="3" />
+    <title>Ulna</title>
+  </g>
+
+  <!-- Right femur -->
+  <g id="femur" data-structure="femur">
+    <rect x="84" y="220" width="16" height="100" fill="#fff3e0" stroke="#ef6c00" stroke-width="2" rx="4" />
+    <title>Femur</title>
+  </g>
+
+  <!-- Lower leg -->
+  <g id="tibia" data-structure="tibia">
+    <rect x="84" y="320" width="10" height="70" fill="#fff8e1" stroke="#795548" stroke-width="1.5" rx="3" />
+    <title>Tibia</title>
+  </g>
+  <g id="fibula" data-structure="fibula">
+    <rect x="96" y="320" width="8" height="70" fill="#fff8e1" stroke="#795548" stroke-width="1.2" rx="3" />
+    <title>Fibula</title>
+  </g>
+
+  <!-- Patella -->
+  <g id="patella" data-structure="patella">
+    <ellipse cx="92" cy="280" rx="6" ry="6" fill="#fff3e0" stroke="#ef6c00" stroke-width="1" />
+    <title>Patella</title>
+  </g>
+
+</svg>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="400" height="800">
+  <title>Placeholder Muscles (Back)</title>
+  <desc>Simple placeholder posterior muscles with data-structure attributes for the Anatomy Explorer demo.</desc>
+
+  <!-- Trapezius -->
+  <g id="trapezius" data-structure="trapezius">
+    <path d="M40 90 C60 70, 140 70, 160 90 L160 120 C140 100, 60 100, 40 120 Z" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.2" />
+    <title>Trapezius</title>
+  </g>
+
+  <!-- Deltoid posterior -->
+  <g id="deltoid" data-structure="deltoid">
+    <ellipse cx="160" cy="140" rx="14" ry="20" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.2" />
+    <title>Deltoid (posterior)</title>
+  </g>
+
+  <!-- Gluteus maximus -->
+  <g id="gluteus" data-structure="gluteus">
+    <path d="M70 240 C90 220, 110 220, 130 240 L130 280 C110 260, 90 260, 70 280 Z" fill="#ffebee" stroke="#c62828" stroke-width="1.2" />
+    <title>Gluteus Maximus</title>
+  </g>
+
+  <!-- Hamstrings -->
+  <g id="hamstrings" data-structure="hamstrings">
+    <path d="M86 260 C94 300, 98 340, 86 360 L104 360 C114 340, 118 300, 106 260 Z" fill="#ffe0b2" stroke="#ef6c00" stroke-width="1.2" />
+    <title>Hamstrings</title>
+  </g>
+
+</svg>

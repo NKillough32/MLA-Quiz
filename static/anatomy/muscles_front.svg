@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="400" height="800">
+  <title>Placeholder Muscles (Front)</title>
+  <desc>Simple placeholder muscles with data-structure attributes for the Anatomy Explorer demo.</desc>
+
+  <!-- Pectoralis -->
+  <g id="pectoralis" data-structure="pectoralis">
+    <path d="M60 110 C80 90, 120 90, 140 110 L140 140 C120 120, 80 120, 60 140 Z" fill="#ffebee" stroke="#c62828" stroke-width="1.5" />
+    <title>Pectoralis Major</title>
+  </g>
+
+  <!-- Deltoid (left) -->
+  <g id="deltoid" data-structure="deltoid">
+    <ellipse cx="40" cy="140" rx="14" ry="20" fill="#fce4ec" stroke="#ad1457" stroke-width="1.2" />
+    <title>Deltoid</title>
+  </g>
+
+  <!-- Biceps -->
+  <g id="biceps" data-structure="biceps">
+    <path d="M46 160 C52 190, 52 230, 46 260 L60 260 C66 230, 66 190, 60 160 Z" fill="#ffe0b2" stroke="#ef6c00" stroke-width="1.2" />
+    <title>Biceps</title>
+  </g>
+
+  <!-- Quadriceps -->
+  <g id="quadriceps" data-structure="quadriceps">
+    <path d="M86 230 C94 250, 98 280, 86 320 L106 320 C104 280, 100 250, 106 230 Z" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.2" />
+    <title>Quadriceps</title>
+  </g>
+
+  <!-- Gastrocnemius -->
+  <g id="gastrocnemius" data-structure="gastrocnemius">
+    <path d="M84 320 C88 340, 96 360, 86 380 L102 380 C110 360, 114 340, 106 320 Z" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1" />
+    <title>Gastrocnemius</title>
+  </g>
+
+</svg>

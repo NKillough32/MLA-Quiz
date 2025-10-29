@@ -1,0 +1,165 @@
+{
+  "skull": {
+    "commonName": "Skull",
+    "brief": "Protects the brain and houses sensory organs.",
+    "origin": "Cranial bones fused at sutures",
+    "insertion": "N/A (composite of several bones)",
+    "innervation": "Trigeminal nerve (sensory branches) and various motor branches for mastication muscles",
+    "action": "Protective bony vault for the brain; provides attachment for facial muscles",
+    "image": "/static/anatomy/bones_front.svg",
+    "clinicalPearl": "Basilar skull fractures may present with raccoon eyes or Battle's sign — inspect carefully.",
+    "reference": "https://en.wikipedia.org/wiki/Human_skull"
+  },
+  "spine": {
+    "commonName": "Spinal Column",
+    "brief": "Supports the body and protects the spinal cord.",
+    "origin": "33 vertebrae (cervical, thoracic, lumbar, sacral, coccygeal)",
+    "insertion": "Intervertebral discs and pelvic girdle",
+    "innervation": "Spinal nerves (31 pairs) exiting between vertebrae",
+    "action": "Axial support, load bearing, movement and neural protection",
+    "image": "/static/anatomy/bones_back.svg",
+    "clinicalPearl": "Loss of vertebral height or step deformity on exam suggests compression fractures — check imaging.",
+    "reference": "https://en.wikipedia.org/wiki/Vertebral_column"
+  },
+  "ribs": {
+    "commonName": "Ribs",
+    "brief": "Form the rib cage to protect thoracic organs.",
+    "origin": "Posteriorly from the thoracic vertebrae",
+    "insertion": "Anteriorly to the sternum (true ribs) or via costal cartilage (false ribs)",
+    "innervation": "Intercostal nerves (ventral rami of thoracic spinal nerves)",
+    "action": "Protection of thoracic organs and assistance with respiration",
+    "clinicalPearl": "Flail chest (multiple adjacent rib fractures) can cause paradoxical chest wall motion; consider analgesia and respiratory support.",
+    "reference": "https://en.wikipedia.org/wiki/Rib"
+  },
+  "sternum": {
+    "commonName": "Sternum",
+    "brief": "Midline breastbone connecting the rib cage.",
+    "origin": "Manubrium, body, xiphoid process (components of the sternum)",
+    "insertion": "Costal cartilages of ribs 1–7",
+    "innervation": "Branches of intercostal nerves",
+    "action": "Central anchor for ribs and thoracic muscles",
+    "clinicalPearl": "Sternal fractures commonly result from high-energy anterior chest trauma; evaluate for cardiac contusion if suspected.",
+    "reference": "https://en.wikipedia.org/wiki/Sternum"
+  },
+  "humerus": {
+    "commonName": "Humerus",
+    "brief": "Upper arm long bone.",
+    "origin": "Proximal articulations with the scapula (glenohumeral joint)",
+    "insertion": "Distally with radius and ulna at the elbow",
+    "innervation": "Radial nerve (posterior compartment muscles), musculocutaneous (anterior)",
+    "action": "Upper limb movement and force transmission",
+    "clinicalPearl": "Proximal humeral fractures are common in older adults after a fall; check axillary nerve function (shoulder abduction) and vascular status.",
+    "reference": "https://en.wikipedia.org/wiki/Humerus"
+  },
+  "radius": {
+    "commonName": "Radius",
+    "brief": "Lateral forearm bone enabling pronation/supination.",
+    "origin": "Proximally articulates with humerus and ulna",
+    "insertion": "Distally forms part of the wrist (carpal bones)",
+    "innervation": "Radial and median nerve contributions to surrounding muscles",
+    "action": "Forearm rotation and load transmission to wrist",
+    "clinicalPearl": "Distal radius (Colles') fractures often occur from FOOSH; check for dinner-fork deformity.",
+    "reference": "https://en.wikipedia.org/wiki/Radius_(bone)"
+  },
+  "ulna": {
+    "commonName": "Ulna",
+    "brief": "Medial forearm bone important for elbow stability.",
+    "origin": "Olecranon process proximally",
+    "insertion": "Distally forms part of wrist articulation with radius",
+    "innervation": "Ulnar nerve supplies intrinsic hand muscles and sensation medially",
+    "action": "Forms hinge of elbow and stabilises forearm",
+    "clinicalPearl": "Ulnar nerve injury at the elbow causes numbness/tingling in the little finger and weakness in finger abduction/adduction.",
+    "reference": "https://en.wikipedia.org/wiki/Ulna"
+  },
+  "femur": {
+    "commonName": "Femur",
+    "brief": "Thigh bone — longest and strongest bone.",
+    "origin": "Proximal articulation with pelvis at the hip",
+    "insertion": "Distally with tibia/fibula at knee",
+    "innervation": "Femoral nerve (anterior compartment) and sciatic nerve contributions",
+    "action": "Weight bearing and locomotion",
+    "clinicalPearl": "A fractured femoral neck in older adults is an orthopedic emergency — stabilise and arrange urgent orthopedics.",
+    "reference": "https://en.wikipedia.org/wiki/Femur"
+  },
+  "tibia": {
+    "commonName": "Tibia",
+    "brief": "Shin bone — main weight-bearing bone of the lower leg.",
+    "origin": "Proximal tibial plateau (knee joint)",
+    "insertion": "Distal tibia forms ankle joint with talus",
+    "innervation": "Tibial nerve for posterior compartment muscles",
+    "action": "Weight bearing and forming knee/ankle joints",
+    "clinicalPearl": "Tibial plateau fractures may impair knee stability — assess joint line tenderness and consider imaging with CT for surgical planning.",
+    "reference": "https://en.wikipedia.org/wiki/Tibia"
+  },
+  "fibula": {
+    "commonName": "Fibula",
+    "brief": "Lateral lower-leg bone providing muscular attachment.",
+    "origin": "Head of fibula proximally",
+    "insertion": "Lateral malleolus distally",
+    "innervation": "Common peroneal (fibular) nerve supplies associated muscles",
+    "action": "Provides lateral support and muscle attachment; minor weight bearing",
+    "clinicalPearl": "An isolated fibular head fracture may be associated with common peroneal nerve injury; examine dorsiflexion and sensation over the dorsum of the foot.",
+    "reference": "https://en.wikipedia.org/wiki/Fibula"
+  },
+  "patella": {
+    "commonName": "Patella",
+    "brief": "Kneecap — sesamoid bone in the quadriceps tendon.",
+    "origin": "Embedded in quadriceps tendon",
+    "insertion": "Articulates with femoral trochlea",
+    "innervation": "Femoral nerve (via muscular attachments)",
+    "action": "Protects knee joint and increases lever arm of quadriceps",
+    "clinicalPearl": "Patellar dislocation typically presents with lateral displacement and may require reduction; check extensor mechanism integrity.",
+    "reference": "https://en.wikipedia.org/wiki/Patella"
+  },
+
+  "pectoralis": {
+    "commonName": "Pectoralis Major",
+    "brief": "Large chest muscle involved in shoulder adduction and internal rotation.",
+    "origin": "Clavicle, sternum and costal cartilages",
+    "insertion": "Lateral lip of intertubercular sulcus of humerus",
+    "innervation": "Medial and lateral pectoral nerves",
+    "action": "Adduction, internal rotation and flexion of humerus",
+    "clinicalPearl": "Pectoralis major tendon ruptures are seen with heavy lifting; sudden pain and weakness on adduction should raise suspicion.",
+    "reference": "https://en.wikipedia.org/wiki/Pectoralis_major"
+  },
+  "deltoid": {
+    "commonName": "Deltoid",
+    "brief": "Shoulder muscle responsible for abduction.",
+    "origin": "Lateral third of clavicle, acromion and spine of scapula",
+    "insertion": "Deltoid tuberosity of humerus",
+    "innervation": "Axillary nerve",
+    "action": "Abduction, flexion, extension and rotation of the arm depending on fibres",
+    "clinicalPearl": "Axillary nerve injury from shoulder dislocation causes deltoid weakness and sensory loss over the lateral shoulder (regimental badge area).",
+    "reference": "https://en.wikipedia.org/wiki/Deltoid_muscle"
+  },
+  "biceps": {
+    "commonName": "Biceps Brachii",
+    "brief": "Anterior arm muscle for elbow flexion and supination.",
+    "origin": "Long head from supraglenoid tubercle; short head from coracoid process",
+    "insertion": "Radial tuberosity and bicipital aponeurosis",
+    "innervation": "Musculocutaneous nerve",
+    "action": "Elbow flexion and forearm supination",
+    "clinicalPearl": "Biceps tendon rupture may present with a 'Popeye' deformity and weakness of supination.",
+    "reference": "https://en.wikipedia.org/wiki/Biceps_brachii"
+  },
+  "quadriceps": {
+    "commonName": "Quadriceps",
+    "brief": "Anterior thigh muscle group for knee extension.",
+    "origin": "Various heads from femur and iliac spine",
+    "insertion": "Patella via quadriceps tendon to tibial tuberosity",
+    "innervation": "Femoral nerve",
+    "action": "Knee extension and hip flexion (rectus femoris)",
+    "clinicalPearl": "Quadriceps tendon rupture results in inability to actively extend the knee; examine for suprapatellar gap.",
+    "reference": "https://en.wikipedia.org/wiki/Quadriceps_muscle_group"
+  },
+  "gastrocnemius": {
+    "commonName": "Gastrocnemius",
+    "brief": "Calf muscle for plantarflexion.",
+    "origin": "Medial and lateral femoral condyles",
+    "insertion": "Calcaneus via Achilles tendon",
+    "innervation": "Tibial nerve",
+    "action": "Plantarflexion of the foot and knee flexion",
+    "clinicalPearl": "Achilles tendon rupture commonly presents with a snapping sensation and difficulty with push-off; Thompson test can help diagnosis.",
+    "reference": "https://en.wikipedia.org/wiki/Gastrocnemius_muscle"
+  }
+}

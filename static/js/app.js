@@ -39,6 +39,138 @@ class MLAQuizApp {
         
         this.init();
     }
+
+    // Attempt to load an external SVG layer (bones/muscles). Falls back to renderAnatomyMap()
+    async loadAnatomyMap(layer = 'bones', view = 'front') {
+        try {
+            const canvas = document.getElementById('anatomyCanvas') || document.getElementById('bodyMap');
+            if (!canvas) return this.renderAnatomyMap();
+
+            // Try common filenames: /static/anatomy/<layer>_<view>.svg, <layer>_<view>_front.svg, <layer>_front.svg, <layer>.svg
+            const candidates = [
+                `/static/anatomy/${layer}_${view}.svg`,
+                `/static/anatomy/${layer}_${view}_front.svg`,
+                `/static/anatomy/${layer}_front.svg`,
+                `/static/anatomy/${layer}.svg`
+            ];
+
+            let svgText = null;
+            for (const url of candidates) {
+                try {
+                    const res = await fetch(url, { cache: 'no-cache' });
+                    if (!res.ok) continue;
+                    svgText = await res.text();
+                    break;
+                } catch (err) {
+                    // try next
+                }
+            }
+
+            if (!svgText) {
+                // No external SVG found — if view is front and layer is bones, fall back to programmatic map
+                return this.renderAnatomyMap();
+            }
+
+            // Inject SVG and add click handlers
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = svgText;
+            // Remove any previous content
+            const bodyMap = document.getElementById('bodyMap');
+            if (bodyMap) bodyMap.innerHTML = '';
+            // Append nodes
+            if (bodyMap) bodyMap.appendChild(wrapper);
+
+            // Attach click handlers for any element with data-structure or id
+            const clickable = bodyMap.querySelectorAll('[data-structure], [id]');
+            clickable.forEach(el => {
+                const key = el.getAttribute('data-structure') || el.id;
+                if (!key) return;
+                el.style.cursor = 'pointer';
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Use the key as name if no structured info available
+                    this.showStructureInfo(key, `Information about ${key} (SVG layer)`);
+                });
+            });
+
+            // Success
+            console.log(`🔍 Loaded anatomy layer: ${layer}`);
+        } catch (err) {
+            console.warn('⚠️ Error loading anatomy SVG, falling back to programmatic map', err);
+            this.renderAnatomyMap();
+        }
+    }
+
+    // Search for a structure by name (highlights matching elements)
+    searchAnatomy(query) {
+        const q = (query || '').toLowerCase();
+        const bodyMap = document.getElementById('bodyMap');
+        if (!bodyMap) return;
+
+        // Clear previous highlights
+        const all = bodyMap.querySelectorAll('[data-structure], rect, path, text');
+        all.forEach(el => {
+            el.classList.remove('anatomy-highlight');
+            if (el.tagName === 'rect' || el.tagName === 'path' || el.tagName === 'polygon') {
+                // reset inline styles where we can
+                if (el.getAttribute('data-original-fill')) el.setAttribute('fill', el.getAttribute('data-original-fill'));
+                el.style.strokeWidth = el.getAttribute('data-original-stroke-width') || el.style.strokeWidth || '';
+            }
+        });
+
+        if (!q) return;
+
+        // Match by data-structure or text content
+        const matches = [];
+        bodyMap.querySelectorAll('[data-structure], text').forEach(el => {
+            const ds = (el.getAttribute('data-structure') || '').toLowerCase();
+            const txt = (el.textContent || '').toLowerCase();
+            if (ds.includes(q) || txt.includes(q)) {
+                matches.push(el);
+            }
+        });
+
+        if (matches.length === 0) {
+            // No match: show simple message
+            const structInfo = document.getElementById('structureInfo');
+            if (structInfo) structInfo.innerHTML = `<div style="color:#666">No structures found for "${query}"</div>`;
+            return;
+        }
+
+        // Highlight matched elements and show first match info
+        matches.forEach(el => {
+            // For shapes, style them; for text, try to find the corresponding shape
+            let target = el;
+            if (el.tagName.toLowerCase() === 'text') {
+                // try to find a rect with same data-structure
+                const ds = el.getAttribute('data-structure');
+                if (ds) {
+                    const rect = bodyMap.querySelector(`[data-structure="${ds}"]`);
+                    if (rect) target = rect;
+                }
+            }
+
+            if (target) {
+                // store originals
+                if (!target.getAttribute('data-original-fill') && target.getAttribute('fill')) {
+                    target.setAttribute('data-original-fill', target.getAttribute('fill'));
+                }
+                if (!target.getAttribute('data-original-stroke-width') && target.getAttribute('stroke-width')) {
+                    target.setAttribute('data-original-stroke-width', target.getAttribute('stroke-width'));
+                }
+                try {
+                    target.setAttribute('fill', '#fff59d');
+                    target.style.strokeWidth = '3px';
+                    target.classList.add('anatomy-highlight');
+                } catch (err) {}
+            }
+        });
+
+        // Show info for the first match
+        const first = matches[0];
+        const name = first.getAttribute('data-structure') || first.textContent || query;
+        this.showStructureInfo(name, `Search result for "${query}"`);
+    }
     
     async initIndexedDB() {
         try {
@@ -3412,11 +3544,88 @@ class MLAQuizApp {
 
     initializeAnatomyExplorer() {
         try {
+            if (this.anatomyInitialized) return;
+            this.anatomyInitialized = true;
+
             console.log('🦴 Initializing anatomy explorer...');
-            
-            // Create the anatomy map
-            this.renderAnatomyMap();
-            
+
+            // Wire toolbar/search within the anatomy panel
+            const toggleBones = document.getElementById('toggleBones');
+            const toggleMuscles = document.getElementById('toggleMuscles');
+            const searchInput = document.getElementById('searchAnatomy');
+            const searchBtn = document.getElementById('searchAnatomyBtn');
+
+            // Default load: bones layer (falls back to programmatic map)
+            this.anatomyLayer = 'bones';
+            this.anatomyView = 'front';
+            this.loadAnatomyMap(this.anatomyLayer, this.anatomyView);
+
+            if (toggleBones) {
+                toggleBones.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.anatomyLayer = 'bones';
+                    this.loadAnatomyMap(this.anatomyLayer, this.anatomyView);
+                });
+            }
+
+            if (toggleMuscles) {
+                toggleMuscles.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.anatomyLayer = 'muscles';
+                    this.loadAnatomyMap(this.anatomyLayer, this.anatomyView);
+                });
+            }
+
+            // View toggles (anterior/posterior)
+            const viewAnterior = document.getElementById('viewAnterior');
+            const viewPosterior = document.getElementById('viewPosterior');
+            const setView = (v) => {
+                this.anatomyView = v;
+                // Simple visual active state
+                if (viewAnterior && viewPosterior) {
+                    viewAnterior.classList.toggle('active', v === 'front');
+                    viewPosterior.classList.toggle('active', v === 'back');
+                }
+                // reload current layer
+                this.loadAnatomyMap(this.anatomyLayer || 'bones', this.anatomyView);
+            };
+
+            if (viewAnterior) viewAnterior.addEventListener('click', () => setView('front'));
+            if (viewPosterior) viewPosterior.addEventListener('click', () => setView('back'));
+
+            // Debounced search
+            let searchTimer = null;
+            const doSearch = (q) => { this.searchAnatomy(q); };
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimer);
+                    const q = e.target.value || '';
+                    searchTimer = setTimeout(() => doSearch(q.trim()), 250);
+                });
+            }
+
+            if (searchBtn) {
+                searchBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const q = (searchInput && searchInput.value) ? searchInput.value.trim() : '';
+                    doSearch(q);
+                });
+            }
+
+            // Load structured anatomy data (JSON) if present and cache it
+            (async () => {
+                try {
+                    const res = await fetch('/static/anatomy/anatomy_data.json', { cache: 'no-cache' });
+                    if (res.ok) {
+                        this.anatomyData = await res.json();
+                        console.log('📚 Loaded anatomy structured data');
+                    }
+                } catch (err) {
+                    console.warn('⚠️ Unable to load anatomy structured data:', err);
+                }
+            })();
+
             console.log('✅ Anatomy explorer initialized');
         } catch (err) {
             console.error('❌ Failed to initialize anatomy explorer:', err);
@@ -3462,6 +3671,7 @@ class MLAQuizApp {
             rect.setAttribute('y', structure.y - structure.height/2);
             rect.setAttribute('width', structure.width);
             rect.setAttribute('height', structure.height);
+            rect.setAttribute('data-structure', structure.id);
             rect.setAttribute('fill', '#e3f2fd');
             rect.setAttribute('stroke', '#1976d2');
             rect.setAttribute('stroke-width', '2');
@@ -3480,9 +3690,9 @@ class MLAQuizApp {
                 rect.setAttribute('fill', '#e3f2fd');
             });
             
-            // Add click handler
+            // Add click handler (use id as key for structured lookup)
             rect.addEventListener('click', () => {
-                this.showStructureInfo(structure.name, structure.info);
+                this.showStructureInfo(structure.id, structure.info);
             });
             
             svg.appendChild(rect);
@@ -3492,6 +3702,7 @@ class MLAQuizApp {
             text.setAttribute('x', structure.x);
             text.setAttribute('y', structure.y + structure.height/2 + 15);
             text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('data-structure', structure.id);
             text.setAttribute('font-size', '10');
             text.setAttribute('fill', '#333');
             text.textContent = structure.name;
@@ -3512,20 +3723,43 @@ class MLAQuizApp {
         bodyMap.appendChild(instruction);
     }
 
-    showStructureInfo(name, info) {
-        const infoDiv = document.getElementById('structureInfo');
+    showStructureInfo(key, fallbackInfo) {
+        const infoDiv = document.getElementById('structureInfo') || document.getElementById('anatomyInfo');
         if (!infoDiv) {
             console.error('❌ Structure info container not found');
             return;
         }
 
-        infoDiv.innerHTML = `
-            <h3 style="color: #1976d2; margin-bottom: 10px;">${name}</h3>
-            <p style="line-height: 1.5; color: #333;">${info}</p>
-        `;
-        
+        const k = (key || '').toLowerCase();
+        const data = (this.anatomyData && this.anatomyData[k]) ? this.anatomyData[k] : null;
+
+        if (data) {
+            infoDiv.innerHTML = `
+                <div class="anatomy-info-card" style="padding:12px;border-radius:8px;background:#fff;border:1px solid #e5e7eb;">
+                    <h3 style="margin:0 0 8px;color:#1976d2;">${data.commonName || k}</h3>
+                    ${data.brief ? `<p style="margin:0 0 8px;color:#374151;">${data.brief}</p>` : ''}
+                    <div style="display:grid;grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px; font-size:0.95rem; color:#333;">
+                        <div><strong>Origin</strong><div>${data.origin || '—'}</div></div>
+                        <div><strong>Insertion</strong><div>${data.insertion || '—'}</div></div>
+                        <div><strong>Innervation</strong><div>${data.innervation || '—'}</div></div>
+                        <div><strong>Action</strong><div>${data.action || '—'}</div></div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Fallback to a simple display
+            const label = key || 'Structure';
+            const infoText = fallbackInfo || '';
+            infoDiv.innerHTML = `
+                <div style="padding:12px;border-radius:8px;background:#fff;border:1px solid #e5e7eb;">
+                    <h3 style="margin:0 0 8px;color:#1976d2;">${label}</h3>
+                    <p style="margin:0;color:#374151;">${infoText}</p>
+                </div>
+            `;
+        }
+
         // Smooth scroll to info section
-        infoDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        try { infoDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
     }
 
     initializeFrailtyCalculator() {
