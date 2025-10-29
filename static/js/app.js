@@ -181,6 +181,7 @@ class MLAQuizApp {
         this.loadExternalQRISK();
         console.log('🩺 About to initialize medical tools...');
         this.initializeMedicalTools();
+        this.initializeAnatomyExplorer();
         this.initializeInteractiveFeatures();
         console.log('✅ App initialization complete');
     }
@@ -3407,6 +3408,124 @@ class MLAQuizApp {
     this.initializeBarthelCalculator();
         
         console.log('🩺 Medical tools initialized');
+    }
+
+    initializeAnatomyExplorer() {
+        try {
+            console.log('🦴 Initializing anatomy explorer...');
+            
+            // Create the anatomy map
+            this.renderAnatomyMap();
+            
+            console.log('✅ Anatomy explorer initialized');
+        } catch (err) {
+            console.error('❌ Failed to initialize anatomy explorer:', err);
+        }
+    }
+
+    renderAnatomyMap() {
+        const bodyMap = document.getElementById('bodyMap');
+        if (!bodyMap) {
+            console.error('❌ Body map container not found');
+            return;
+        }
+
+        // Create SVG body map with basic skeleton structure
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', '0 0 200 400');
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.style.maxWidth = '300px';
+        svg.style.margin = '0 auto';
+        svg.style.display = 'block';
+
+        // Define anatomical structures with their positions and info
+        const structures = [
+            { id: 'skull', name: 'Skull', x: 100, y: 30, width: 40, height: 35, info: 'Protects the brain and houses sensory organs. Composed of cranial bones including frontal, parietal, temporal, occipital, sphenoid, and ethmoid bones.' },
+            { id: 'spine', name: 'Spinal Column', x: 95, y: 70, width: 10, height: 200, info: 'Supports the body and protects the spinal cord. Consists of 33 vertebrae divided into cervical (7), thoracic (12), lumbar (5), sacral (5), and coccygeal (4) regions.' },
+            { id: 'ribs', name: 'Ribs', x: 70, y: 90, width: 60, height: 80, info: '12 pairs of curved bones that form the rib cage, protecting vital organs like heart and lungs. True ribs (1-7) attach directly to sternum, false ribs (8-12) attach indirectly.' },
+            { id: 'sternum', name: 'Sternum', x: 95, y: 100, width: 10, height: 40, info: 'Breastbone - flat bone in center of chest that connects ribs and provides attachment for muscles. Consists of manubrium, body, and xiphoid process.' },
+            { id: 'humerus', name: 'Humerus', x: 50, y: 140, width: 15, height: 80, info: 'Upper arm bone. Longest bone in upper limb, articulates with scapula at shoulder and radius/ulna at elbow.' },
+            { id: 'radius', name: 'Radius', x: 35, y: 200, width: 8, height: 60, info: 'Lateral forearm bone. Allows forearm rotation (supination/pronation) and forms part of elbow and wrist joints.' },
+            { id: 'ulna', name: 'Ulna', x: 45, y: 200, width: 8, height: 60, info: 'Medial forearm bone. Forms the bony prominence of the elbow (olecranon process) and stabilizes forearm.' },
+            { id: 'femur', name: 'Femur', x: 85, y: 220, width: 15, height: 100, info: 'Thigh bone. Longest and strongest bone in body. Articulates with hip (acetabulum) and tibia/fibula at knee.' },
+            { id: 'tibia', name: 'Tibia', x: 85, y: 300, width: 10, height: 70, info: 'Shin bone. Larger of two lower leg bones, bears most of body weight, forms knee and ankle joints.' },
+            { id: 'fibula', name: 'Fibula', x: 95, y: 300, width: 8, height: 70, info: 'Lateral lower leg bone. Provides attachment for muscles but bears less weight than tibia.' },
+            { id: 'patella', name: 'Patella', x: 90, y: 270, width: 8, height: 12, info: 'Kneecap. Sesamoid bone embedded in quadriceps tendon, protects knee joint and improves mechanical advantage of thigh muscles.' }
+        ];
+
+        // Create clickable areas for each structure
+        structures.forEach(structure => {
+            const rect = document.createElementNS(svgNS, 'rect');
+            rect.setAttribute('x', structure.x - structure.width/2);
+            rect.setAttribute('y', structure.y - structure.height/2);
+            rect.setAttribute('width', structure.width);
+            rect.setAttribute('height', structure.height);
+            rect.setAttribute('fill', '#e3f2fd');
+            rect.setAttribute('stroke', '#1976d2');
+            rect.setAttribute('stroke-width', '2');
+            rect.setAttribute('rx', '3');
+            rect.style.cursor = 'pointer';
+            rect.style.opacity = '0.7';
+            
+            // Add hover effects
+            rect.addEventListener('mouseover', () => {
+                rect.style.opacity = '1';
+                rect.setAttribute('fill', '#bbdefb');
+            });
+            
+            rect.addEventListener('mouseout', () => {
+                rect.style.opacity = '0.7';
+                rect.setAttribute('fill', '#e3f2fd');
+            });
+            
+            // Add click handler
+            rect.addEventListener('click', () => {
+                this.showStructureInfo(structure.name, structure.info);
+            });
+            
+            svg.appendChild(rect);
+            
+            // Add label
+            const text = document.createElementNS(svgNS, 'text');
+            text.setAttribute('x', structure.x);
+            text.setAttribute('y', structure.y + structure.height/2 + 15);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '10');
+            text.setAttribute('fill', '#333');
+            text.textContent = structure.name;
+            svg.appendChild(text);
+        });
+
+        // Clear existing content and add SVG
+        bodyMap.innerHTML = '';
+        bodyMap.appendChild(svg);
+        
+        // Add instruction text
+        const instruction = document.createElement('p');
+        instruction.textContent = 'Click on any bone to learn more about it';
+        instruction.style.textAlign = 'center';
+        instruction.style.marginTop = '10px';
+        instruction.style.fontSize = '14px';
+        instruction.style.color = '#666';
+        bodyMap.appendChild(instruction);
+    }
+
+    showStructureInfo(name, info) {
+        const infoDiv = document.getElementById('structureInfo');
+        if (!infoDiv) {
+            console.error('❌ Structure info container not found');
+            return;
+        }
+
+        infoDiv.innerHTML = `
+            <h3 style="color: #1976d2; margin-bottom: 10px;">${name}</h3>
+            <p style="line-height: 1.5; color: #333;">${info}</p>
+        `;
+        
+        // Smooth scroll to info section
+        infoDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     initializeFrailtyCalculator() {
