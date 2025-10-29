@@ -3588,7 +3588,23 @@ class MLAQuizApp {
             // Default load: bones layer (falls back to programmatic map)
             this.anatomyLayer = 'bones';
             this.anatomyView = 'front';
-            this.loadAnatomyMap(this.anatomyLayer, this.anatomyView);
+
+            // Load structured anatomy data first so the normalizer can map
+            // SVG element ids/titles to anatomy keys when the SVG is injected.
+            (async () => {
+                try {
+                    const res = await fetch('/static/anatomy/anatomy_data.json', { cache: 'no-cache' });
+                    if (res && res.ok) {
+                        this.anatomyData = await res.json();
+                        console.log('📚 Loaded anatomy structured data');
+                    }
+                } catch (err) {
+                    console.warn('⚠️ Unable to load anatomy structured data before SVG injection:', err);
+                }
+
+                // Now load the SVG (will call normalizeAnatomySvg after injection)
+                this.loadAnatomyMap(this.anatomyLayer, this.anatomyView);
+            })();
             // Helper to update active states for layer buttons
             const updateLayerButtons = () => {
                 if (toggleBones) toggleBones.classList.toggle('active', this.anatomyLayer === 'bones');
@@ -3653,18 +3669,7 @@ class MLAQuizApp {
                 });
             }
 
-            // Load structured anatomy data (JSON) if present and cache it
-            (async () => {
-                try {
-                    const res = await fetch('/static/anatomy/anatomy_data.json', { cache: 'no-cache' });
-                    if (res.ok) {
-                        this.anatomyData = await res.json();
-                        console.log('📚 Loaded anatomy structured data');
-                    }
-                } catch (err) {
-                    console.warn('⚠️ Unable to load anatomy structured data:', err);
-                }
-            })();
+            // (JSON load moved earlier to ensure normalizer has structured data)
 
             console.log('✅ Anatomy explorer initialized');
         } catch (err) {
@@ -3881,15 +3886,24 @@ class MLAQuizApp {
             return;
         }
 
-        const k = (key || '').toLowerCase();
-        const data = (this.anatomyData && this.anatomyData[k]) ? this.anatomyData[k] : null;
+        // Try to look up the structure in anatomyData using a few fallbacks so
+        // keys inserted into SVG (which may be original keys or normalized ids)
+        // resolve correctly.
+        const rawKey = (key || '').toString();
+        const kLower = rawKey.toLowerCase();
+        let data = null;
+        if (this.anatomyData) {
+            data = this.anatomyData[rawKey] || this.anatomyData[kLower] || null;
+        }
 
         if (data) {
+            // Render using the shared anatomy-info-card class so dark mode styles
+            // apply consistently (avoid inline light-theme colors)
             infoDiv.innerHTML = `
-                <div class="anatomy-info-card" style="padding:12px;border-radius:8px;background:#fff;border:1px solid #e5e7eb;">
-                    <h3 style="margin:0 0 8px;color:#1976d2;">${data.commonName || k}</h3>
-                    ${data.brief ? `<p style="margin:0 0 8px;color:#374151;">${data.brief}</p>` : ''}
-                    <div style="display:grid;grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px; font-size:0.95rem; color:#333;">
+                <div class="anatomy-info-card">
+                    <h3 style="margin:0 0 8px;">${data.commonName || rawKey}</h3>
+                    ${data.brief ? `<p style="margin:0 0 8px;">${data.brief}</p>` : ''}
+                    <div style="display:grid;grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px; font-size:0.95rem;">
                         <div><strong>Origin</strong><div>${data.origin || '—'}</div></div>
                         <div><strong>Insertion</strong><div>${data.insertion || '—'}</div></div>
                         <div><strong>Innervation</strong><div>${data.innervation || '—'}</div></div>
@@ -3898,13 +3912,13 @@ class MLAQuizApp {
                 </div>
             `;
         } else {
-            // Fallback to a simple display
-            const label = key || 'Structure';
+            // Fallback to a simple display using the same card class
+            const label = rawKey || 'Structure';
             const infoText = fallbackInfo || '';
             infoDiv.innerHTML = `
-                <div style="padding:12px;border-radius:8px;background:#fff;border:1px solid #e5e7eb;">
-                    <h3 style="margin:0 0 8px;color:#1976d2;">${label}</h3>
-                    <p style="margin:0;color:#374151;">${infoText}</p>
+                <div class="anatomy-info-card">
+                    <h3 style="margin:0 0 8px;">${label}</h3>
+                    <p style="margin:0;">${infoText}</p>
                 </div>
             `;
         }

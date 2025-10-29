@@ -4972,13 +4972,18 @@
 
             /* Controls row compact styling */
             .anatomy-container .btn {
-                padding: 8px 10px;
-                border-radius: 8px;
+                padding: 8px 12px;
+                border-radius: 10px;
                 font-weight: 600;
-                border: 1px solid rgba(0,0,0,0.06);
+                border: 1px solid rgba(0,0,0,0.08);
                 background: var(--bg-secondary, #fff);
                 color: var(--text-primary, #111827);
                 cursor: pointer;
+                min-height: 40px;
+                min-width: 84px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .anatomy-container .btn.active {
@@ -4987,6 +4992,34 @@
                 border-color: rgba(0,0,0,0.06);
                 box-shadow: 0 6px 14px rgba(0,0,0,0.08);
                 transform: translateY(-1px);
+            }
+
+            /* Dark theme for anatomy buttons */
+            [data-theme="dark"] .anatomy-container .btn {
+                background: var(--bg-tertiary);
+                border-color: var(--border-color);
+                color: var(--text-primary);
+                box-shadow: none;
+            }
+
+            /* Ensure the search button in anatomy looks balanced */
+            #anatomy-panel .search-container button {
+                min-width: 56px;
+                padding: 10px 12px;
+                border-radius: 8px;
+                background: var(--button-bg, #007AFF);
+                color: #fff;
+                border: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Slightly smaller heading inside anatomy panel to avoid vertical imbalance */
+            #anatomy-panel .anatomy-container > div h2 {
+                font-size: 20px;
+                line-height: 1.1;
+                margin: 0;
             }
 
             /* Search area compact override inside anatomy */
