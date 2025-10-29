@@ -1397,6 +1397,8 @@ class MLAQuizApp {
             rotationBtn.setAttribute('title', 'Control screen rotation');
             rotationBtn.setAttribute('role', 'button');
             rotationBtn.setAttribute('aria-label', 'Rotation control');
+            // Expose pressed state for assistive tech; updated by updateRotationButtonState()
+            rotationBtn.setAttribute('aria-pressed', 'false');
             
             // Insert into the left zone if present, otherwise fall back to inserting
             // before the title. This keeps navbar items equally spaced.
@@ -1422,28 +1424,66 @@ class MLAQuizApp {
         if (!rotationBtn || !this.screenOrientationSupported) return;
         
         try {
-            // Check if orientation is locked
-            const isLocked = screen.orientation.type.includes('primary') || screen.orientation.type.includes('secondary');
-            const isPortraitLocked = screen.orientation.type === 'portrait-primary' || screen.orientation.type === 'portrait-secondary';
-            const isLandscapeLocked = screen.orientation.type === 'landscape-primary' || screen.orientation.type === 'landscape-secondary';
-            
-            if (isPortraitLocked) {
-                rotationBtn.textContent = '📱 Portrait';
-                rotationBtn.title = 'Currently locked to portrait - click to unlock';
+            // Prefer using the standardized locked property when available
+            const orientationObj = (screen && screen.orientation) ? screen.orientation : null;
+            const lockedAvailable = orientationObj && (typeof orientationObj.locked !== 'undefined');
+            const locked = lockedAvailable ? orientationObj.locked : null;
+
+            // Read type (may be 'portrait-primary', 'landscape-secondary', etc.)
+            const type = orientationObj && orientationObj.type ? String(orientationObj.type).toLowerCase() : '';
+
+            // Helper to set pressed state for assistive tech
+            const setAriaPressed = (value) => rotationBtn.setAttribute('aria-pressed', value ? 'true' : 'false');
+
+            // If the browser tells us explicitly whether orientation is locked, use that.
+            if (locked === true) {
+                // Show locked state; try to pick a friendly label from the reported type
+                if (type.startsWith('portrait')) {
+                    rotationBtn.textContent = '📱 Portrait';
+                    rotationBtn.title = 'Currently locked to portrait - click to unlock';
+                } else if (type.startsWith('landscape')) {
+                    rotationBtn.textContent = '📱 Landscape';
+                    rotationBtn.title = 'Currently locked to landscape - click to unlock';
+                } else {
+                    rotationBtn.textContent = '🔒 Locked';
+                    rotationBtn.title = 'Rotation locked - click to unlock';
+                }
                 rotationBtn.classList.add('locked');
-            } else if (isLandscapeLocked) {
-                rotationBtn.textContent = '📱 Landscape';
-                rotationBtn.title = 'Currently locked to landscape - click to unlock';
-                rotationBtn.classList.add('locked');
-            } else {
+                setAriaPressed(true);
+            } else if (locked === false) {
+                // Explicitly unlocked
                 rotationBtn.textContent = '🔄 Auto';
                 rotationBtn.title = 'Auto rotation enabled - click to lock current orientation';
                 rotationBtn.classList.remove('locked');
+                setAriaPressed(false);
+            } else {
+                // locked is unknown -> fall back to type heuristic
+                const isPortrait = type.startsWith('portrait') || type === 'portrait';
+                const isLandscape = type.startsWith('landscape') || type === 'landscape';
+
+                if (isPortrait) {
+                    rotationBtn.textContent = '📱 Portrait';
+                    rotationBtn.title = 'Portrait orientation active - click to lock';
+                    rotationBtn.classList.add('locked');
+                    setAriaPressed(true);
+                } else if (isLandscape) {
+                    rotationBtn.textContent = '📱 Landscape';
+                    rotationBtn.title = 'Landscape orientation active - click to lock';
+                    rotationBtn.classList.add('locked');
+                    setAriaPressed(true);
+                } else {
+                    rotationBtn.textContent = '🔄 Auto';
+                    rotationBtn.title = 'Auto rotation enabled - click to lock current orientation';
+                    rotationBtn.classList.remove('locked');
+                    setAriaPressed(false);
+                }
             }
         } catch (error) {
             console.debug('Error checking orientation state:', error);
             rotationBtn.textContent = '🔄 Auto';
             rotationBtn.title = 'Auto rotation enabled';
+            rotationBtn.classList.remove('locked');
+            try { rotationBtn.setAttribute('aria-pressed', 'false'); } catch (e) {}
         }
     }
     
