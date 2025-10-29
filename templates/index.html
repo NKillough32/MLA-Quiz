@@ -4970,6 +4970,51 @@
                 gap: 8px;
             }
 
+            /* Header layout for anatomy controls */
+            .anatomy-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                width: 100%;
+            }
+
+            .anatomy-title {
+                font-size: 20px;
+                font-weight: 700;
+                margin: 0;
+                color: var(--text-primary, #ffffff);
+            }
+
+            .anatomy-controls {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .anatomy-controls .layer-group,
+            .anatomy-controls .view-group {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+
+            /* Make controls stack on narrow screens for better touch targets */
+            @media (max-width: 640px) {
+                .anatomy-header {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+                .anatomy-controls {
+                    justify-content: space-between;
+                }
+                .anatomy-controls .layer-group,
+                .anatomy-controls .view-group {
+                    justify-content: center;
+                }
+                .anatomy-title { text-align: left; }
+            }
+
             /* Controls row compact styling */
             .anatomy-container .btn {
                 padding: 8px 12px;
@@ -5571,14 +5616,16 @@
             <!-- Anatomy Explorer Panel -->
             <div id="anatomy-panel" class="tool-panel">
                 <div class="anatomy-container">
-                    <div style="display:flex;align-items:center;gap:10px;justify-content:space-between;">
-                        <h2 style="margin:0">Muscles & Bones Explorer</h2>
-                        <div style="display:flex;gap:8px;align-items:center;">
-                            <div style="display:flex;gap:6px;align-items:center;">
+                    <div class="anatomy-header">
+                        <h2 class="anatomy-title">Muscles &amp; Bones Explorer</h2>
+
+                        <div class="anatomy-controls" role="toolbar" aria-label="Anatomy controls">
+                            <div class="layer-group" role="group" aria-label="Layer selection">
                                 <button id="toggleBones" class="btn" title="Show bones">🦴 Bones</button>
                                 <button id="toggleMuscles" class="btn" title="Show muscles">💪 Muscles</button>
                             </div>
-                            <div style="display:flex;gap:6px;align-items:center;">
+
+                            <div class="view-group" role="group" aria-label="View selection">
                                 <button id="viewAnterior" class="btn" title="Anterior view">Front</button>
                                 <button id="viewPosterior" class="btn" title="Posterior view">Back</button>
                             </div>

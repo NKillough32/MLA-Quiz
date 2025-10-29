@@ -70,19 +70,39 @@ class MLAQuizApp {
             // These are used only when local assets are missing. Browsers will fetch directly from Wikimedia.
             if (!svgText) {
                 try {
+                    // Try several possible Wikimedia fallbacks for better language coverage.
                     const remoteMap = {
-                        'bones_front': 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Human_skeleton_front_en.svg',
-                        'bones_back': 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back_uk.svg',
+                        'bones_front': [
+                            'https://upload.wikimedia.org/wikipedia/commons/c/ca/Human_skeleton_front_en.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/c/c7/Human_skeleton_front.svg'
+                        ],
+                        // Prefer an English-labelled back skeleton if available, then fall back to other variants
+                        'bones_back': [
+                            'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back_en.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back_uk.svg'
+                        ],
                         // Use a combined front/back muscles file; JS will display as-is (file contains both views)
-                        'muscles_front': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg',
-                        'muscles_back': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg'
+                        'muscles_front': [
+                            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg'
+                        ],
+                        'muscles_back': [
+                            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg'
+                        ]
                     };
 
                     const remoteKey = `${layer}_${view}`;
-                    const remoteUrl = remoteMap[remoteKey] || remoteMap[`${layer}_front`] || remoteMap[layer];
-                    if (remoteUrl) {
-                        const r = await fetch(remoteUrl, { cache: 'no-cache' });
-                        if (r.ok) svgText = await r.text();
+                    const candidates = remoteMap[remoteKey] || remoteMap[`${layer}_front`] || remoteMap[layer] || [];
+                    for (const remoteUrl of candidates) {
+                        try {
+                            const r = await fetch(remoteUrl, { cache: 'no-cache' });
+                            if (r.ok) {
+                                svgText = await r.text();
+                                break;
+                            }
+                        } catch (innerErr) {
+                            // try next candidate
+                        }
                     }
                 } catch (e) {
                     console.debug('⚠️ Remote Wikimedia fetch failed:', e);
