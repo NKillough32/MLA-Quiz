@@ -46,7 +46,7 @@ class MLAQuizApp {
             const canvas = document.getElementById('anatomyCanvas') || document.getElementById('bodyMap');
             if (!canvas) return this.renderAnatomyMap();
 
-            // Try common filenames: /static/anatomy/<layer>_<view>.svg, <layer>_<view>_front.svg, <layer>_front.svg, <layer>.svg
+            // Try common local filenames first: /static/anatomy/<layer>_<view>.svg etc.
             const candidates = [
                 `/static/anatomy/${layer}_${view}.svg`,
                 `/static/anatomy/${layer}_${view}_front.svg`,
@@ -66,8 +66,31 @@ class MLAQuizApp {
                 }
             }
 
+            // If no local SVG was found, attempt known Wikimedia Commons fallbacks (load remote SVGs at runtime).
+            // These are used only when local assets are missing. Browsers will fetch directly from Wikimedia.
             if (!svgText) {
-                // No external SVG found — if view is front and layer is bones, fall back to programmatic map
+                try {
+                    const remoteMap = {
+                        'bones_front': 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Human_skeleton_front_en.svg',
+                        'bones_back': 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back_uk.svg',
+                        // Use a combined front/back muscles file; JS will display as-is (file contains both views)
+                        'muscles_front': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg',
+                        'muscles_back': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg'
+                    };
+
+                    const remoteKey = `${layer}_${view}`;
+                    const remoteUrl = remoteMap[remoteKey] || remoteMap[`${layer}_front`] || remoteMap[layer];
+                    if (remoteUrl) {
+                        const r = await fetch(remoteUrl, { cache: 'no-cache' });
+                        if (r.ok) svgText = await r.text();
+                    }
+                } catch (e) {
+                    console.debug('⚠️ Remote Wikimedia fetch failed:', e);
+                }
+            }
+
+            if (!svgText) {
+                // No external SVG found — fall back to programmatic map
                 return this.renderAnatomyMap();
             }
 
@@ -80,6 +103,13 @@ class MLAQuizApp {
             // Append nodes
             if (bodyMap) bodyMap.appendChild(wrapper);
 
+            // Try to normalize SVG element ids/titles to keys in anatomyData so
+            // clicks and searches map correctly even when external SVG ids differ.
+            try {
+                this.normalizeAnatomySvg(bodyMap);
+            } catch (normErr) {
+                console.debug('Anatomy SVG normalization failed:', normErr);
+            }
             // Attach click handlers for any element with data-structure or id
             const clickable = bodyMap.querySelectorAll('[data-structure], [id]');
             clickable.forEach(el => {
@@ -3721,6 +3751,117 @@ class MLAQuizApp {
         instruction.style.fontSize = '14px';
         instruction.style.color = '#666';
         bodyMap.appendChild(instruction);
+    }
+
+    normalizeAnatomySvg(container) {
+        try {
+            if (!container) return;
+            const svg = container.querySelector && container.querySelector('svg');
+            if (!svg) return;
+
+            if (!this.anatomyData || typeof this.anatomyData !== 'object') {
+                console.debug('normalizeAnatomySvg: anatomyData not available yet');
+                return;
+            }
+
+            // Build a map of normalized keys -> original key
+            const keyMap = {};
+            Object.keys(this.anatomyData).forEach(k => {
+                const nk = (k || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (nk) keyMap[nk] = k;
+            });
+
+            const allEls = svg.querySelectorAll('*');
+            const mappings = {};
+
+            allEls.forEach(el => {
+                try {
+                    // Skip if already annotated
+                    if (el.getAttribute && el.getAttribute('data-structure')) return;
+
+                    const candidateAttrs = [];
+
+                    if (el.id) candidateAttrs.push(el.id);
+                    const aria = el.getAttribute && el.getAttribute('aria-label');
+                    if (aria) candidateAttrs.push(aria);
+                    const dname = el.getAttribute && (el.getAttribute('data-name') || el.getAttribute('data-label'));
+                    if (dname) candidateAttrs.push(dname);
+                    const inks = el.getAttribute && el.getAttribute('inkscape:label');
+                    if (inks) candidateAttrs.push(inks);
+                    // title element if present
+                    const titleEl = el.querySelector && el.querySelector('title');
+                    if (titleEl && titleEl.textContent) candidateAttrs.push(titleEl.textContent.trim());
+
+                    // No candidate strings, skip
+                    if (candidateAttrs.length === 0) return;
+
+                    const normalizedCandidates = candidateAttrs.map(s => (s || '').toString().toLowerCase().replace(/[^a-z0-9]/g, ''))
+                        .filter(Boolean);
+                    if (normalizedCandidates.length === 0) return;
+
+                    // Find best matching key (exact normalized match preferred, then substring longest)
+                    let bestKey = null;
+                    let bestMatchLen = 0;
+
+                    for (const cand of normalizedCandidates) {
+                        if (keyMap[cand]) {
+                            bestKey = keyMap[cand];
+                            bestMatchLen = cand.length;
+                            break; // exact match highest priority
+                        }
+
+                        // substring matches
+                        Object.keys(keyMap).forEach(k2 => {
+                            if (!k2) return;
+                            if (cand.includes(k2) || k2.includes(cand)) {
+                                if (k2.length > bestMatchLen) {
+                                    bestMatchLen = k2.length;
+                                    bestKey = keyMap[k2];
+                                }
+                            }
+                        });
+                    }
+
+                    if (bestKey) {
+                        // Annotate element and propagate to children when useful
+                        el.setAttribute('data-structure', bestKey);
+                        el.style.cursor = 'pointer';
+
+                        if (!mappings[bestKey]) mappings[bestKey] = [];
+                        mappings[bestKey].push(el);
+
+                        // If this is a group, propagate to descendants that don't have an annotation
+                        if (el.tagName && el.tagName.toLowerCase() === 'g') {
+                            el.querySelectorAll('*').forEach(child => {
+                                if (child.getAttribute && !child.getAttribute('data-structure')) {
+                                    child.setAttribute('data-structure', bestKey);
+                                }
+                            });
+                        }
+
+                        // Ensure an accessible title exists for the element
+                        const existingTitle = el.querySelector && el.querySelector('title');
+                        if (!existingTitle) {
+                            try {
+                                const t = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                                t.textContent = (this.anatomyData[bestKey] && this.anatomyData[bestKey].commonName) ? this.anatomyData[bestKey].commonName : bestKey;
+                                // insert as first child (some SVG libs don't support prepend)
+                                el.insertBefore(t, el.firstChild);
+                            } catch (e) {
+                                // ignore title insertion failures
+                            }
+                        }
+                    }
+                } catch (innerErr) {
+                    // per-element failures shouldn't abort normalization
+                }
+            });
+
+            console.log('🔗 Anatomy normalizer mappings:', mappings);
+            return mappings;
+        } catch (err) {
+            console.warn('⚠️ normalizeAnatomySvg error:', err);
+        }
     }
 
     showStructureInfo(key, fallbackInfo) {

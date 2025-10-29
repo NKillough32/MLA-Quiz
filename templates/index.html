@@ -4940,6 +4940,29 @@
             color: #63b3ed;
         }
     </style>
+        <style>
+            /* Anatomy highlight and canvas helpers */
+            .anatomy-highlight {
+                outline: 3px solid #ffeb3b;
+                fill: #fff59d !important;
+                stroke: #f59e0b !important;
+                transition: all 0.15s ease;
+            }
+
+            /* Ensure injected SVG scales nicely inside the anatomy canvas */
+            #bodyMap svg {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            #anatomyCanvas {
+                min-height: 280px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        </style>
 </head>
 <body>
     <!-- Navigation Bar -->
