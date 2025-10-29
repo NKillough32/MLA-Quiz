@@ -12088,7 +12088,8 @@ class MLAQuizApp {
             'triads': 'triads-panel',
             'examination': 'examination-panel',
             'emergency-protocols': 'emergency-protocols-panel',
-            'interpretation': 'interpretation-panel'
+            'interpretation': 'interpretation-panel',
+            'anatomy': 'anatomy-panel'
         };
         
         // Show selected panel
@@ -12132,6 +12133,9 @@ class MLAQuizApp {
                 break;
             case 'interpretation':
                 this.loadInterpretationTools();
+                break;
+            case 'anatomy':
+                this.initializeAnatomyExplorer();
                 break;
         }
         

@@ -4952,7 +4952,6 @@
         </div>
         <div class="nav-right">
             <button class="next-btn" id="nextNavBtn" style="display: none;">Next →</button>
-            <button id="anatomyBtn" class="navbar-btn">🦴 Muscles & Bones</button>
         </div>
     </nav>
     
@@ -5137,17 +5136,7 @@
             </div>
         </div>
         
-        <!-- Anatomy Explorer Screen -->
-        <div id="anatomyScreen" class="screen" style="display:none;">
-          <div class="anatomy-container">
-            <h2>Muscles & Bones Explorer</h2>
-            <div id="bodyMap"></div>
-            <div id="structureInfo"></div>
-          </div>
-        </div>
-    </div>
-    
-    <!-- Floating PDF Export Button -->
+        <!-- Floating PDF Export Button -->
     <button id="floating-pdf-btn" class="floating-pdf-btn" title="Generate Study Report">
         📊 Report
     </button>
@@ -5174,6 +5163,7 @@
             <button class="tool-nav-btn" data-tool="differential-dx">🔍 Differential Dx</button>
             <button class="tool-nav-btn" data-tool="triads">🔺 Clinical Triads</button>
             <button class="tool-nav-btn" data-tool="examination">🩺 Examination</button>
+            <button class="tool-nav-btn" data-tool="anatomy">🦴 Muscles & Bones</button>
         </div>
         
         <div class="tools-content">
@@ -5425,6 +5415,15 @@
                 <div id="examination-container">
                     <!-- Content loaded dynamically by JavaScript -->
                     <div class="loading-message">🩺 Loading examination guide...</div>
+                </div>
+            </div>
+
+            <!-- Anatomy Explorer Panel -->
+            <div id="anatomy-panel" class="tool-panel">
+                <div class="anatomy-container">
+                    <h2>Muscles & Bones Explorer</h2>
+                    <div id="bodyMap"></div>
+                    <div id="structureInfo"></div>
                 </div>
             </div>
 
