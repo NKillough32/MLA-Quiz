@@ -3589,11 +3589,20 @@ class MLAQuizApp {
             this.anatomyLayer = 'bones';
             this.anatomyView = 'front';
             this.loadAnatomyMap(this.anatomyLayer, this.anatomyView);
+            // Helper to update active states for layer buttons
+            const updateLayerButtons = () => {
+                if (toggleBones) toggleBones.classList.toggle('active', this.anatomyLayer === 'bones');
+                if (toggleMuscles) toggleMuscles.classList.toggle('active', this.anatomyLayer === 'muscles');
+            };
+
+            // Initialize button active state
+            updateLayerButtons();
 
             if (toggleBones) {
                 toggleBones.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.anatomyLayer = 'bones';
+                    updateLayerButtons();
                     this.loadAnatomyMap(this.anatomyLayer, this.anatomyView);
                 });
             }
@@ -3602,6 +3611,7 @@ class MLAQuizApp {
                 toggleMuscles.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.anatomyLayer = 'muscles';
+                    updateLayerButtons();
                     this.loadAnatomyMap(this.anatomyLayer, this.anatomyView);
                 });
             }

@@ -4941,26 +4941,118 @@
         }
     </style>
         <style>
-            /* Anatomy highlight and canvas helpers */
-            .anatomy-highlight {
-                outline: 3px solid #ffeb3b;
-                fill: #fff59d !important;
-                stroke: #f59e0b !important;
-                transition: all 0.15s ease;
+            /* Anatomy layout and dark-mode-aware styling */
+            :root {
+                --anatomy-fill: #e6f2ff;
+                --anatomy-stroke: #1976d2;
+                --anatomy-label: #333333;
+                --anatomy-info-bg: #ffffff;
+                --anatomy-info-border: #e5e7eb;
+                --anatomy-highlight-fill: #fff59d;
+                --anatomy-highlight-stroke: #f59e0b;
             }
+
+            [data-theme="dark"] {
+                --anatomy-fill: #1f2937; /* dark fill for non-highlight areas */
+                --anatomy-stroke: #60a5fa; /* lighter stroke for visibility */
+                --anatomy-label: #e5e7eb;
+                --anatomy-info-bg: #161618;
+                --anatomy-info-border: #2c2c2e;
+                --anatomy-highlight-fill: #f59e0b; /* warm highlight on dark */
+                --anatomy-highlight-stroke: #ffd86b;
+            }
+
+            /* Anatomy container layout */
+            .anatomy-container {
+                padding: 12px 6px 18px 6px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            /* Controls row compact styling */
+            .anatomy-container .btn {
+                padding: 8px 10px;
+                border-radius: 8px;
+                font-weight: 600;
+                border: 1px solid rgba(0,0,0,0.06);
+                background: var(--bg-secondary, #fff);
+                color: var(--text-primary, #111827);
+                cursor: pointer;
+            }
+
+            .anatomy-container .btn.active {
+                background: var(--button-bg, #007AFF);
+                color: white;
+                border-color: rgba(0,0,0,0.06);
+                box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+                transform: translateY(-1px);
+            }
+
+            /* Search area compact override inside anatomy */
+            #anatomy-panel .search-container { gap: 6px; }
 
             /* Ensure injected SVG scales nicely inside the anatomy canvas */
             #bodyMap svg {
                 width: 100%;
                 height: auto;
                 display: block;
+                max-width: 420px; /* keep a sane maximum width */
             }
 
             #anatomyCanvas {
-                min-height: 280px;
+                min-height: 320px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                padding: 8px 6px;
+            }
+
+            /* Default styling for anatomy elements (when SVG elements do not inline styles) */
+            #anatomy-panel svg [data-structure] {
+                fill: var(--anatomy-fill) !important;
+                stroke: var(--anatomy-stroke) !important;
+                stroke-width: 1.25px !important;
+                transition: all 0.12s ease;
+                cursor: pointer;
+            }
+
+            /* Highlighted/selected anatomy element */
+            .anatomy-highlight {
+                outline: none !important;
+                fill: var(--anatomy-highlight-fill) !important;
+                stroke: var(--anatomy-highlight-stroke) !important;
+                stroke-width: 2.5px !important;
+                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
+            }
+
+            /* Labels inside programmatic SVG (fallback) */
+            #anatomy-panel svg text { fill: var(--anatomy-label); font-weight: 600; font-size: 11px; }
+
+            /* Info card for structure details */
+            .anatomy-info-card {
+                padding: 12px;
+                border-radius: 10px;
+                background: var(--anatomy-info-bg);
+                border: 1px solid var(--anatomy-info-border);
+                color: var(--text-primary, #111827);
+            }
+
+            /* Dark mode adjustments (in case body theme isn't set on html element) */
+            [data-theme="dark"] #anatomy-panel svg [data-structure] {
+                opacity: 0.9;
+            }
+
+            [data-theme="dark"] .anatomy-info-card {
+                color: var(--text-primary);
+                background: var(--anatomy-info-bg);
+                border-color: var(--anatomy-info-border);
+            }
+
+            /* Small responsive tweaks */
+            @media (max-width: 520px) {
+                #bodyMap svg { max-width: 320px; }
+                .anatomy-container .btn { padding: 8px; font-size: 13px; }
             }
         </style>
 </head>
