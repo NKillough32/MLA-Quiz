@@ -43,6 +43,8 @@ class MLAQuizApp {
     // Track whether we've programmatically locked orientation
     screenLocked = false;
     lockedTo = null; // 'portrait' or 'landscape'
+    // If true, automatically exit fullscreen shortly after a successful programmatic lock
+    autoExitFullscreenAfterLock = false;
 
     // Attempt to load an external SVG layer (bones/muscles). Falls back to renderAnatomyMap()
     async loadAnatomyMap(layer = 'bones', view = 'front') {
@@ -287,20 +289,34 @@ class MLAQuizApp {
             this.screenLocked = true;
             this.lockedTo = isTablet ? 'landscape' : 'portrait';
             this.showToast(`Rotation locked to ${preferred}`);
+
+            // Optional: if an external fullscreen was active and the developer
+            // prefers to exit it after the lock, do so after a short delay.
+            if (this.autoExitFullscreenAfterLock) {
+                try {
+                    const exitFn = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+                    if ((document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) && exitFn) {
+                        setTimeout(() => {
+                            try { exitFn.call(document); } catch (e) { /* ignore */ }
+                        }, 800);
+                    }
+                } catch (e) {
+                    console.debug('autoExitFullscreenAfterLock failed:', e);
+                }
+            }
+
             return true;
         } catch (err) {
             // Common error: lock failing on iOS or when not in fullscreen
             console.warn('Failed to lock orientation:', err && err.message ? err.message : err);
 
-            // If fullscreen may be required, try to request it as a fallback
-            try {
-                // Only attempt fullscreen fallback when it's likely useful
-                if (!document.fullscreenElement) {
-                    this.requestFullscreenForOrientationLock();
-                }
-            } catch (fsErr) {
-                console.debug('Fullscreen fallback failed or denied:', fsErr);
-            }
+            // NOTE: Removed forced fullscreen fallback to preserve touch/interaction.
+            // Fullscreen fallbacks often make the UI non-interactive on some devices.
+            // If fullscreen is required for a specific browser, consider enabling
+            // requestFullscreenForOrientationLock() from a direct user gesture instead.
+
+            // Inform the user that the lock failed and suggest actions if helpful
+            this.showToast('Unable to lock orientation on this device. Try tapping the lock button or enabling fullscreen.', 5000);
 
             return false;
         }
