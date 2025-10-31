@@ -40,6 +40,10 @@ class MLAQuizApp {
         this.init();
     }
 
+    // Track whether we've programmatically locked orientation
+    screenLocked = false;
+    lockedTo = null; // 'portrait' or 'landscape'
+
     // Attempt to load an external SVG layer (bones/muscles). Falls back to renderAnatomyMap()
     async loadAnatomyMap(layer = 'bones', view = 'front') {
         try {
@@ -264,6 +268,93 @@ class MLAQuizApp {
             // Continue without IndexedDB - will use localStorage
         }
     }
+
+    // Attempt to lock orientation to an optimal state for quizzes
+    async lockToOptimalOrientation() {
+        if (!this.screenOrientationSupported) {
+            console.log('Orientation lock not supported');
+            return false;
+        }
+
+        // Prefer portrait on phones, allow landscape on tablets
+        const isTablet = window.innerWidth >= 768;
+        const preferred = isTablet ? 'landscape' : 'portrait-primary';
+
+        try {
+            await screen.orientation.lock(preferred);
+            console.log(`Screen locked to ${preferred}`);
+            this.performHapticFeedback('selection');
+            this.screenLocked = true;
+            this.lockedTo = isTablet ? 'landscape' : 'portrait';
+            this.showToast(`Rotation locked to ${preferred}`);
+            return true;
+        } catch (err) {
+            // Common error: lock failing on iOS or when not in fullscreen
+            console.warn('Failed to lock orientation:', err && err.message ? err.message : err);
+
+            // If fullscreen may be required, try to request it as a fallback
+            try {
+                // Only attempt fullscreen fallback when it's likely useful
+                if (!document.fullscreenElement) {
+                    this.requestFullscreenForOrientationLock();
+                }
+            } catch (fsErr) {
+                console.debug('Fullscreen fallback failed or denied:', fsErr);
+            }
+
+            return false;
+        }
+    }
+
+    // Request fullscreen on the quiz screen and retry locking (useful for iOS/Chrome behavior)
+    async requestFullscreenForOrientationLock() {
+        const quizScreen = document.getElementById('quizScreen');
+        if (!quizScreen) return;
+
+        try {
+            const req = quizScreen.requestFullscreen || quizScreen.webkitRequestFullscreen || quizScreen.mozRequestFullScreen || quizScreen.msRequestFullscreen;
+            if (req) {
+                await req.call(quizScreen);
+                // Retry lock after fullscreen settles
+                setTimeout(() => this.lockToOptimalOrientation(), 500);
+            }
+        } catch (err) {
+            console.log('Fullscreen request denied or failed:', err);
+            this.showToast('Tap fullscreen to enable rotation lock (some browsers)', 5000);
+        }
+    }
+
+    // Unlock orientation and exit fullscreen if active
+    unlockOrientation() {
+        try {
+            if (this.screenOrientationSupported && screen.orientation && typeof screen.orientation.unlock === 'function') {
+                try {
+                    screen.orientation.unlock();
+                    console.log('Orientation unlocked');
+                } catch (err) {
+                    console.warn('Failed to unlock orientation:', err);
+                }
+            }
+        } catch (e) {
+            console.debug('unlockOrientation check failed:', e);
+        }
+
+        // Exit fullscreen if active (try vendor-prefixed variants)
+        try {
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msFullscreenElement && document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        } catch (e) {
+            console.debug('Failed to exit fullscreen during unlock:', e);
+        }
+
+        this.screenLocked = false;
+        this.lockedTo = null;
+    }
     
     async storeImageInDB(quizName, imageKey, imageData) {
         if (!this.db) {
@@ -456,6 +547,39 @@ class MLAQuizApp {
                 this.selectQuizLength(lengthBtn);
             }
         });
+        
+        // Optional orientation lock toggle in the UI (if present)
+        const lockBtn = document.getElementById('lockOrientationBtn');
+        if (lockBtn) {
+            lockBtn.addEventListener('click', async () => {
+                try {
+                    if (this.screenLocked) {
+                        this.unlockOrientation();
+                    } else {
+                        await this.lockToOptimalOrientation();
+                    }
+                } catch (e) { console.debug('lockOrientationBtn handler error:', e); }
+            });
+        }
+
+        // Navbar rotLock toggle (added to templates). If present, use it to
+        // quickly lock/unlock orientation during the quiz.
+        const rotNavBtn = document.getElementById('rotLock');
+        if (rotNavBtn) {
+            rotNavBtn.addEventListener('click', async () => {
+                try {
+                    if (this.screenLocked) {
+                        this.unlockOrientation();
+                        rotNavBtn.textContent = '🔒';
+                    } else {
+                        await this.lockToOptimalOrientation();
+                        rotNavBtn.textContent = this.screenLocked ? '🔓' : '🔒';
+                    }
+                } catch (e) {
+                    console.debug('rotLock handler error:', e);
+                }
+            });
+        }
     }
 
     // Quiz length selection methods
@@ -677,7 +801,7 @@ class MLAQuizApp {
         }
     }
     
-    startQuiz() {
+    async startQuiz() {
         // Reset quiz state
         this.submittedAnswers = {}; // Reset submitted answers
         this.ruledOutAnswers = {}; // Reset ruled out answers
@@ -703,6 +827,14 @@ class MLAQuizApp {
         this.renderCurrentQuestion();
         this.updateProgress();
         this.buildQuestionList(); // Build the question list in the sidebar
+        // LOCK TO PORTRAIT (or allow landscape on tablets)
+        try {
+            // Attempt a best-effort orientation lock and await it so the UI
+            // can settle in the desired orientation before the user interacts.
+            await this.lockToOptimalOrientation();
+        } catch (e) {
+            console.debug('Orientation lock attempt failed at startQuiz:', e);
+        }
         // Analytics: quiz_start
         try {
             if (window.MLAAnalytics && typeof window.MLAAnalytics.event === 'function') {
@@ -1329,19 +1461,17 @@ class MLAQuizApp {
     // Screen Orientation API control methods
     initializeRotationControl() {
         console.log('🔄 Initializing rotation control...');
-        
-        // Check if Screen Orientation API is supported
-        if ('orientation' in screen && 'lock' in screen.orientation && 'unlock' in screen.orientation) {
-            this.screenOrientationSupported = true;
-            console.log('🔄 Screen Orientation API supported');
-            
-            // Add rotation control button to navbar
+
+        // Basic presence check for the Screen Orientation API
+        this.screenOrientationSupported = ('orientation' in screen) && !!screen.orientation;
+        console.log('🔒 API:', this.screenOrientationSupported ? 'Supported' : 'Fallback');
+
+        // If supported, add a simple rotation control and a re-lock listener
+        if (this.screenOrientationSupported && typeof screen.orientation.lock === 'function') {
+            // Add rotation control button to navbar (keeps existing UI integration)
             this.addRotationControlButton();
 
-            // Proactively request fullscreen on first user gesture so orientation.lock
-            // has a higher chance to succeed later on browsers that require fullscreen
-            // or an installed PWA. This is a gentle, one-time request tied to the
-            // user's first click; it will not spam requests.
+            // Gentle one-time fullscreen pre-request tied to the first user gesture
             document.addEventListener('click', async () => {
                 try {
                     if (document.fullscreenElement) return;
@@ -1359,12 +1489,21 @@ class MLAQuizApp {
                     console.debug('Fullscreen pre-request failed:', err);
                 }
             }, { once: true });
-            
-            // Listen for orientation lock changes
-            screen.orientation.addEventListener('change', (event) => {
-                console.log('🔄 Orientation lock changed:', event.target.type);
-                this.updateRotationButtonState();
-            });
+
+            // Re-lock listener: if we programmatically locked earlier, try to reapply
+            // when the browser emits orientation changes (helps in transient overrides)
+            try {
+                screen.orientation?.addEventListener('change', () => {
+                    this.updateRotationButtonState();
+                    if (this.screenLocked) {
+                        setTimeout(() => {
+                            try { this.lockToOptimalOrientation(); } catch (e) { console.debug('re-lock attempt failed:', e); }
+                        }, 150);
+                    }
+                });
+            } catch (e) {
+                console.debug('Could not attach orientation change listener:', e);
+            }
         } else {
             console.log('🔄 Screen Orientation API not supported');
             this.screenOrientationSupported = false;
@@ -2090,6 +2229,13 @@ class MLAQuizApp {
     }
     
     retryQuiz() {
+        // Unlock orientation when retrying the quiz to avoid being stuck in lock
+        try {
+            this.unlockOrientation();
+        } catch (e) {
+            console.debug('unlockOrientation error in retryQuiz:', e);
+        }
+
         this.currentQuestionIndex = 0;
         this.answers = {};
         this.submittedAnswers = {};
@@ -2098,6 +2244,8 @@ class MLAQuizApp {
     }
     
     showQuizSelection() {
+        // Ensure any programmatic orientation locks are released when leaving the quiz selection
+        try { this.unlockOrientation(); } catch (e) { console.debug('unlockOrientation error in showQuizSelection:', e); }
         this.showScreen('quizSelection');
         this.updateNavigation('MLA Quiz');
         this.loadQuizzes(); // Refresh the quiz list
@@ -2149,7 +2297,14 @@ class MLAQuizApp {
     
     goBack() {
         const currentScreen = document.querySelector('.screen[style*="block"]');
-        
+
+        // Ensure we unlock orientation when leaving a quiz
+        try {
+            this.unlockOrientation();
+        } catch (e) {
+            console.debug('unlockOrientation error in goBack:', e);
+        }
+
         if (currentScreen && currentScreen.id === 'quizScreen') {
             this.showQuizSelection();
         } else if (currentScreen && currentScreen.id === 'resultsScreen') {
