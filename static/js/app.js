@@ -4057,6 +4057,33 @@ class MLAQuizApp {
                         el.setAttribute('data-structure', bestKey);
                         el.style.cursor = 'pointer';
 
+                        // Make interactive for keyboard users and prevent duplicate bindings
+                        try {
+                            if (!el.dataset.anatomyBound) {
+                                el.setAttribute('tabindex', '0');
+                                // Role button helps assistive tech understand this is interactive
+                                el.setAttribute('role', 'button');
+
+                                // Capture key activation (Enter / Space)
+                                const k = bestKey;
+                                el.addEventListener('keydown', (ev) => {
+                                    if (ev.key === 'Enter' || ev.key === ' ') {
+                                        ev.preventDefault();
+                                        try { this.showStructureInfo(k); } catch (e) {}
+                                    }
+                                });
+
+                                // Click should also show info
+                                el.addEventListener('click', (ev) => {
+                                    try { this.showStructureInfo(k); } catch (e) {}
+                                });
+
+                                el.dataset.anatomyBound = '1';
+                            }
+                        } catch (bindErr) {
+                            // Non-fatal if individual element can't be enhanced
+                        }
+
                         if (!mappings[bestKey]) mappings[bestKey] = [];
                         mappings[bestKey].push(el);
 
@@ -4112,18 +4139,29 @@ class MLAQuizApp {
         }
 
         if (data) {
+            // Ensure container is announced to assistive tech and focusable for keyboard flow
+            try {
+                infoDiv.setAttribute('role', 'region');
+                infoDiv.setAttribute('aria-live', 'polite');
+                infoDiv.setAttribute('aria-label', data.commonName || rawKey);
+                infoDiv.setAttribute('tabindex', '-1');
+            } catch (e) {}
+
             // Render using the shared anatomy-info-card class so dark mode styles
             // apply consistently (avoid inline light-theme colors)
             infoDiv.innerHTML = `
                 <div class="anatomy-info-card">
                     <h3 style="margin:0 0 8px;">${data.commonName || rawKey}</h3>
                     ${data.brief ? `<p style="margin:0 0 8px;">${data.brief}</p>` : ''}
+                    ${data.image ? `<div style="margin-top:8px;text-align:center;"><img src="${data.image}" alt="${data.commonName || rawKey}" loading="lazy" style="max-width:100%;height:auto;border-radius:6px;"></div>` : ''}
                     <div style="display:grid;grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px; font-size:0.95rem;">
                         <div><strong>Origin</strong><div>${data.origin || '—'}</div></div>
                         <div><strong>Insertion</strong><div>${data.insertion || '—'}</div></div>
                         <div><strong>Innervation</strong><div>${data.innervation || '—'}</div></div>
                         <div><strong>Action</strong><div>${data.action || '—'}</div></div>
                     </div>
+                    ${data.clinicalPearl ? `<div style="margin-top:10px;background:var(--anatomy-info-bg);padding:8px;border-radius:6px;border:1px solid var(--anatomy-info-border);"><strong>Clinical pearl:</strong><div style="margin-top:6px">${data.clinicalPearl}</div></div>` : ''}
+                    ${data.reference ? `<div style="margin-top:10px;font-size:0.9rem;color:#0b66c3;"><a href="${data.reference}" target="_blank" rel="noopener">Learn more / reference</a></div>` : ''}
                 </div>
             `;
         } else {
@@ -4138,8 +4176,12 @@ class MLAQuizApp {
             `;
         }
 
-        // Smooth scroll to info section
-        try { infoDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
+        // Smooth scroll to info section and move focus so screen readers announce the content
+        try {
+            infoDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            // Focus the region so screen readers jump to it
+            infoDiv.focus({ preventScroll: true });
+        } catch (e) {}
     }
 
     initializeFrailtyCalculator() {
