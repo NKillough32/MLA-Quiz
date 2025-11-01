@@ -17465,6 +17465,310 @@ const interpretationTools = {
             'Herniation: Loss of cisterns, uncal herniation',
             'Hydrocephalus: Enlarged ventricles'
         ]
+    },
+    'urinalysis': {
+        name: 'Urine Dipstick Interpretation',
+        category: 'urine',
+        type: 'systematic',
+        steps: [
+            'Appearance: Clear, cloudy, haematuria?',
+            'pH: Normal 5-7, high in UTI (Proteus)',
+            'Protein: Trace acceptable, +1 or more abnormal',
+            'Blood: Indicates RBCs - needs microscopy',
+            'Leucocytes: White cells suggest infection',
+            'Nitrites: Bacteria converting nitrates (E.coli)',
+            'Glucose: Glycosuria - diabetes or low renal threshold',
+            'Ketones: Starvation, DKA, alcohol',
+            'Specific gravity: 1.010-1.030 (hydration status)'
+        ],
+        normalValues: {
+            'pH': '5.0-7.0',
+            'Protein': 'Negative or trace',
+            'Blood': 'Negative',
+            'Leucocytes': 'Negative',
+            'Nitrites': 'Negative',
+            'Glucose': 'Negative',
+            'Ketones': 'Negative',
+            'Specific Gravity': '1.010-1.030'
+        },
+        commonAbnormalities: [
+            'UTI: Leucocytes +, nitrites + (confirm with culture)',
+            'Proteinuria: Diabetes, glomerulonephritis, pre-eclampsia',
+            'Haematuria: Stones, infection, malignancy, trauma',
+            'Glycosuria: Diabetes mellitus, pregnancy',
+            'DKA: Glucose +, ketones +++, high blood glucose'
+        ]
+    },
+    'pleural-fluid': {
+        name: 'Pleural Fluid Analysis',
+        category: 'fluids',
+        type: 'systematic',
+        steps: [
+            'Appearance: Straw (transudate), cloudy (exudate), bloody?',
+            'Protein: >30g/L suggests exudate',
+            'LDH: >200 IU/L suggests exudate',
+            'Light\'s Criteria: Determines exudate vs transudate',
+            'Glucose: <3.3 suggests infection, TB, rheumatoid',
+            'pH: <7.2 suggests empyema or complicated parapneumonic',
+            'Cell count: WCC >1000 suggests infection',
+            'Microscopy: Gram stain, culture, cytology',
+            'Additional: Amylase, triglycerides if indicated'
+        ],
+        normalValues: {
+            'Protein': '<30 g/L (transudate)',
+            'LDH': '<200 IU/L',
+            'Glucose': '>3.3 mmol/L',
+            'pH': '>7.3',
+            'WCC': '<1000 cells/μL'
+        },
+        lightsCriteria: {
+            'Exudate if ANY of': 'Pleural protein/serum protein >0.5, Pleural LDH/serum LDH >0.6, Pleural LDH >2/3 upper limit of normal serum LDH'
+        },
+        commonAbnormalities: [
+            'Transudate: Heart failure, cirrhosis, nephrotic syndrome',
+            'Exudate: Pneumonia, TB, malignancy, PE',
+            'Empyema: pH <7.2, glucose <2.2, pus, positive culture',
+            'Haemothorax: Haematocrit >50% of serum haematocrit',
+            'Chylothorax: Milky, triglycerides >1.24 mmol/L'
+        ]
+    },
+    'ascitic-fluid': {
+        name: 'Ascitic Fluid Analysis',
+        category: 'fluids',
+        type: 'systematic',
+        steps: [
+            'Appearance: Straw, cloudy, bloody, milky?',
+            'Cell count: PMN >250 = SBP',
+            'Albumin: Calculate SAAG (serum-ascites albumin gradient)',
+            'Total protein: Helps classify cause',
+            'Culture: Send in blood culture bottles',
+            'Amylase: If pancreatitis suspected',
+            'Cytology: If malignancy suspected',
+            'Gram stain: If SBP suspected'
+        ],
+        normalValues: {
+            'Appearance': 'Clear, straw-colored',
+            'WCC': '<500 cells/μL',
+            'PMN': '<250 cells/μL',
+            'Protein': 'Varies by cause',
+            'Glucose': 'Similar to serum'
+        },
+        saagInterpretation: {
+            'High SAAG (≥11 g/L)': 'Portal hypertension - cirrhosis, heart failure, Budd-Chiari',
+            'Low SAAG (<11 g/L)': 'Non-portal causes - TB, peritoneal carcinomatosis, pancreatitis'
+        },
+        commonAbnormalities: [
+            'SBP: PMN >250, cloudy fluid, positive culture',
+            'Malignant: Bloody, high protein, positive cytology',
+            'Cardiac: High SAAG, high protein (>25g/L)',
+            'TB: Lymphocytic, low SAAG, high protein, positive culture',
+            'Pancreatic: High amylase, low SAAG'
+        ]
+    },
+    'csf-interpretation': {
+        name: 'CSF Analysis',
+        category: 'fluids',
+        type: 'systematic',
+        steps: [
+            'Opening pressure: 10-20 cmH2O normal',
+            'Appearance: Clear, cloudy, bloody, xanthochromia?',
+            'Cell count: WCC, RBC counts',
+            'Biochemistry: Protein, glucose (paired with serum)',
+            'Microbiology: Gram stain, culture, PCR',
+            'Opening pressure raised: >25 cm suggests raised ICP',
+            'Glucose: CSF/serum ratio normally >0.6',
+            'Additional: Oligoclonal bands, cytology if indicated'
+        ],
+        normalValues: {
+            'Opening Pressure': '10-20 cmH2O',
+            'Appearance': 'Clear, colourless',
+            'WCC': '<5 cells/μL (all lymphocytes)',
+            'RBC': '0 cells/μL',
+            'Protein': '0.15-0.45 g/L',
+            'Glucose': '>2/3 of serum glucose',
+            'CSF:Serum Glucose': '>0.6'
+        },
+        commonAbnormalities: [
+            'Bacterial meningitis: Cloudy, ↑↑↑neutrophils (>1000), ↓glucose, ↑↑protein',
+            'Viral meningitis: Clear/cloudy, ↑lymphocytes (<500), normal glucose, ↑protein',
+            'TB meningitis: Fibrin web, ↑lymphocytes, ↓↓glucose, ↑↑protein',
+            'Fungal meningitis: ↑lymphocytes, ↓glucose, ↑protein',
+            'SAH: Bloody/xanthochromic, ↑↑↑RBCs, ↑protein'
+        ],
+        emergencyFindings: [
+            'High opening pressure >40 cm: Risk of herniation',
+            'Gram positive diplococci: Pneumococcal meningitis',
+            'Gram negative diplococci: Meningococcal meningitis',
+            'Very low glucose <1.0: Bacterial meningitis likely'
+        ]
+    },
+    'urine-microscopy': {
+        name: 'Urine Microscopy',
+        category: 'urine',
+        type: 'systematic',
+        steps: [
+            'RBCs: Present in haematuria, trauma, stones, malignancy',
+            'WBCs: Pyuria suggests UTI or sterile pyuria',
+            'Casts: Indicate location of pathology',
+            'Crystals: Uric acid, calcium oxalate, struvite',
+            'Bacteria: Rods (E.coli) vs cocci (Staph)',
+            'Epithelial cells: Squamous (contamination) vs renal tubular',
+            'Other: Yeast, parasites (Schistosoma)'
+        ],
+        castTypes: {
+            'Hyaline casts': 'Normal or concentrated urine',
+            'RBC casts': 'Glomerulonephritis, vasculitis',
+            'WBC casts': 'Pyelonephritis, interstitial nephritis',
+            'Granular casts': 'Acute tubular necrosis',
+            'Waxy casts': 'Chronic kidney disease',
+            'Fatty casts': 'Nephrotic syndrome'
+        },
+        commonAbnormalities: [
+            'Sterile pyuria: TB, partially treated UTI, appendicitis',
+            'Dysmorphic RBCs: Glomerular bleeding',
+            'Struvite crystals: Proteus infection (staghorn calculi)',
+            'Eosinophils: Acute interstitial nephritis',
+            'Renal tubular cells: Acute tubular necrosis'
+        ]
+    },
+    'joint-fluid': {
+        name: 'Synovial Fluid Analysis',
+        category: 'fluids',
+        type: 'systematic',
+        steps: [
+            'Appearance: Clear (normal), cloudy (inflammatory), purulent (septic)?',
+            'Colour: Straw, yellow, blood-stained?',
+            'Viscosity: "String test" - normal forms long string',
+            'Cell count: WBC >50,000 suggests septic arthritis',
+            'Microscopy: Crystals, Gram stain, culture',
+            'Polarized microscopy: Urate vs CPPD crystals',
+            'Glucose: Low in septic arthritis',
+            'Culture: Always send if septic arthritis suspected'
+        ],
+        normalValues: {
+            'Appearance': 'Clear, straw-colored',
+            'Viscosity': 'High (long string)',
+            'WCC': '<200 cells/μL',
+            'PMN': '<25%',
+            'Glucose': 'Within 1 mmol/L of serum',
+            'Protein': '<30 g/L'
+        },
+        crystalTypes: {
+            'Monosodium urate': 'Needle-shaped, negatively birefringent (yellow when parallel to polarizer) - GOUT',
+            'CPPD': 'Rhomboid, weakly positively birefringent (blue when parallel) - PSEUDOGOUT',
+            'Hydroxyapatite': 'Clumps, non-birefringent - calcific tendinitis',
+            'Cholesterol': 'Rectangular plates - chronic effusions'
+        },
+        commonAbnormalities: [
+            'Septic arthritis: WBC >50,000 (>75% PMN), low glucose, positive Gram stain',
+            'Gout: WBC 2,000-100,000, urate crystals (needle-shaped, negative birefringence)',
+            'Pseudogout: WCC variable, CPPD crystals (rhomboid, positive birefringence)',
+            'Inflammatory (RA): WCC 2,000-50,000, no crystals',
+            'Haemarthrosis: Blood-stained, trauma, haemophilia, anticoagulation'
+        ]
+    },
+    'liver-function-pattern': {
+        name: 'LFT Pattern Recognition',
+        category: 'labs',
+        type: 'systematic',
+        steps: [
+            'Identify pattern: Hepatocellular, cholestatic, or mixed?',
+            'ALT/AST raised: Hepatocellular injury',
+            'ALP/GGT raised: Cholestasis (biliary obstruction)',
+            'Isolated bilirubin: Haemolysis or Gilbert syndrome',
+            'Synthetic function: Albumin, INR (liver function)',
+            'Acute vs chronic: Duration of abnormality',
+            'Calculate AST:ALT ratio if helpful',
+            'Check for associated features: Jaundice, ascites'
+        ],
+        patterns: {
+            'Hepatocellular': 'ALT/AST >10× normal, ALP <3× - hepatitis, paracetamol OD, ischaemia',
+            'Cholestatic': 'ALP >3× normal, ALT <5× - biliary obstruction, PBC, PSC',
+            'Mixed': 'Both elevated - sepsis, drugs, malignancy',
+            'Isolated ALP rise': 'Bone disease, pregnancy, malignancy (check GGT)'
+        },
+        ratios: {
+            'AST:ALT >2': 'Alcoholic liver disease',
+            'AST:ALT <1': 'Non-alcoholic liver disease, acute hepatitis',
+            'ALP:ALT >3': 'Cholestasis predominant'
+        },
+        commonAbnormalities: [
+            'Paracetamol OD: Very high ALT (>1000), rising rapidly',
+            'Alcoholic hepatitis: AST:ALT >2, GGT raised',
+            'Acute viral hepatitis: Very high ALT/AST, jaundice',
+            'Cholestasis: ALP ++, bilirubin ++, GGT confirms hepatic origin',
+            'Cirrhosis: Low albumin, prolonged INR, mild transaminase rise'
+        ]
+    },
+    'anaemia-interpretation': {
+        name: 'Anaemia Investigation',
+        category: 'labs',
+        type: 'systematic',
+        steps: [
+            'Confirm anaemia: Hb <13 g/dL (men), <12 g/dL (women)',
+            'Check MCV: Microcytic (<80), normocytic (80-100), macrocytic (>100)',
+            'Reticulocyte count: High (haemolysis/bleeding), low (production failure)',
+            'Blood film: Cell morphology, inclusions',
+            'Iron studies: Ferritin, TIBC, transferrin saturation',
+            'B12 and folate: If macrocytic',
+            'Haemolysis screen: LDH, haptoglobin, bilirubin, reticulocytes',
+            'Consider causes based on MCV pattern'
+        ],
+        patterns: {
+            'Microcytic (MCV <80)': 'TAILS - Thalassaemia, Anaemia of chronic disease, Iron deficiency, Lead poisoning, Sideroblastic',
+            'Normocytic (MCV 80-100)': 'Acute blood loss, chronic disease, haemolysis, CKD, marrow failure',
+            'Macrocytic (MCV >100)': 'B12/folate deficiency, alcohol, liver disease, hypothyroidism, myelodysplasia, drugs (azathioprine)'
+        },
+        ironStudies: {
+            'Iron deficiency': 'Low ferritin (<30), low iron, high TIBC, low saturation',
+            'Anaemia of chronic disease': 'Normal/high ferritin, low iron, low TIBC',
+            'Thalassaemia trait': 'Normal ferritin, microcytic, high RBC count',
+            'Haemochromatosis': 'High ferritin, high iron, high saturation (>45%)'
+        },
+        commonAbnormalities: [
+            'Iron deficiency: Microcytic, hypochromic, low ferritin - GI bleeding',
+            'B12 deficiency: Macrocytic, hypersegmented neutrophils, low B12',
+            'Haemolysis: Normocytic, high reticulocytes, high LDH, low haptoglobin',
+            'Thalassaemia: Microcytic, normal ferritin, high RBC count, family history',
+            'ACD: Normocytic/microcytic, chronic inflammation, high ferritin'
+        ]
+    },
+    'thyroid-function': {
+        name: 'Thyroid Function Tests',
+        category: 'labs',
+        type: 'systematic',
+        steps: [
+            'Start with TSH: Screening test, most sensitive',
+            'If TSH high: Check free T4 (confirms hypothyroidism)',
+            'If TSH low: Check free T4 AND T3 (confirms hyperthyroidism)',
+            'If TSH normal: Usually thyroid function is normal',
+            'Subclinical disease: TSH abnormal but T4/T3 normal',
+            'Antibodies: TPO (Hashimoto/Graves), TRAb (Graves)',
+            'Timing: Avoid testing during acute illness (sick euthyroid)',
+            'Medication: Some drugs affect results (amiodarone, lithium)'
+        ],
+        normalValues: {
+            'TSH': '0.5-5.0 mU/L',
+            'Free T4': '10-20 pmol/L',
+            'Free T3': '3-9 pmol/L',
+            'TPO antibodies': '<35 IU/mL',
+            'TRAb': '<1.0 IU/L'
+        },
+        patterns: {
+            'Primary hypothyroidism': 'High TSH, low T4 - Hashimoto, iodine deficiency',
+            'Primary hyperthyroidism': 'Low TSH, high T4/T3 - Graves, toxic nodular goitre',
+            'Subclinical hypothyroidism': 'High TSH, normal T4 - consider treatment if TSH >10',
+            'Subclinical hyperthyroidism': 'Low TSH, normal T4/T3 - risk of AF, osteoporosis',
+            'Secondary hypothyroidism': 'Low/normal TSH, low T4 - pituitary disease',
+            'Sick euthyroid': 'Low TSH, low T3, variable T4 - acute illness, recheck when well'
+        },
+        commonAbnormalities: [
+            'Hashimoto thyroiditis: High TSH, low T4, positive TPO antibodies',
+            'Graves disease: Low TSH, high T3/T4, positive TRAb',
+            'Subclinical hypothyroid: TSH 5-10, normal T4, mild symptoms',
+            'Post-partum thyroiditis: Transient hyper then hypothyroidism',
+            'Drug-induced: Amiodarone (hypo/hyper), lithium (hypothyroid)'
+        ]
     }
 };
 
@@ -17631,6 +17935,97 @@ MLAQuizApp.prototype.showInterpretationDetail = function(toolId) {
                 <h4>📷 CT Densities</h4>
                 <ul class="densities-list">
                     ${Object.entries(tool.densities).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.patterns) {
+        additionalSections += `
+            <div class="patterns">
+                <h4>🔍 Recognition Patterns</h4>
+                <ul class="patterns-list">
+                    ${Object.entries(tool.patterns).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.ratios) {
+        additionalSections += `
+            <div class="ratios">
+                <h4>📐 Diagnostic Ratios</h4>
+                <ul class="ratios-list">
+                    ${Object.entries(tool.ratios).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.ironStudies) {
+        additionalSections += `
+            <div class="iron-studies">
+                <h4>🔬 Iron Studies Patterns</h4>
+                <ul class="iron-list">
+                    ${Object.entries(tool.ironStudies).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.saagInterpretation) {
+        additionalSections += `
+            <div class="saag-interpretation">
+                <h4>📊 SAAG Interpretation</h4>
+                <ul class="saag-list">
+                    ${Object.entries(tool.saagInterpretation).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.castTypes) {
+        additionalSections += `
+            <div class="cast-types">
+                <h4>🔬 Urinary Cast Types</h4>
+                <ul class="cast-list">
+                    ${Object.entries(tool.castTypes).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.crystalTypes) {
+        additionalSections += `
+            <div class="crystal-types">
+                <h4>💎 Synovial Fluid Crystals</h4>
+                <ul class="crystal-list">
+                    ${Object.entries(tool.crystalTypes).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+    }
+    
+    if (tool.lightsCriteria) {
+        additionalSections += `
+            <div class="lights-criteria">
+                <h4>⚖️ Light's Criteria</h4>
+                <ul class="lights-list">
+                    ${Object.entries(tool.lightsCriteria).map(([key, value]) => 
                         `<li><strong>${key}:</strong> ${value}</li>`
                     ).join('')}
                 </ul>
