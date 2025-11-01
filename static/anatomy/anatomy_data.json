@@ -162,6 +162,29 @@
     "relatedStructures": ["clavicle", "sternum", "humerus", "deltoid"],
     "category": "thorax"
   },
+  "pectoralis_major": {
+    "commonName": "Pectoralis Major",
+    "brief": "Large chest muscle involved in shoulder adduction and internal rotation.",
+    "origin": "Clavicle, sternum and costal cartilages",
+    "insertion": "Lateral lip of intertubercular sulcus of humerus",
+    "innervation": "Medial and lateral pectoral nerves (C5-T1)",
+    "action": "Adduction, internal rotation and flexion of humerus",
+    "clinicalPearl": "Pectoralis major tendon ruptures are seen with heavy lifting; sudden pain and weakness on adduction should raise suspicion. The 'dropped nipple sign' may be visible.",
+    "reference": "https://en.wikipedia.org/wiki/Pectoralis_major",
+    "relatedStructures": ["clavicle", "sternum", "humerus", "deltoid"],
+    "category": "thorax"
+  },
+  "pectoralis_minor": {
+    "commonName": "Pectoralis Minor",
+    "brief": "Small chest muscle deep to pectoralis major.",
+    "origin": "Ribs 3-5",
+    "insertion": "Coracoid process of scapula",
+    "innervation": "Medial pectoral nerve",
+    "action": "Stabilizes scapula by drawing it forward and downward",
+    "clinicalPearl": "Can compress brachial plexus and subclavian vessels causing thoracic outlet syndrome symptoms.",
+    "reference": "https://en.wikipedia.org/wiki/Pectoralis_minor",
+    "category": "thorax"
+  },
   "rotator_cuff": {
     "commonName": "Rotator Cuff",
     "brief": "Group of four muscles stabilizing the shoulder joint (SITS).",
@@ -204,7 +227,19 @@
     "innervation": "Musculocutaneous nerve",
     "action": "Elbow flexion and forearm supination",
     "clinicalPearl": "Biceps tendon rupture may present with a 'Popeye' deformity and weakness of supination.",
-    "reference": "https://en.wikipedia.org/wiki/Biceps_brachii"
+    "reference": "https://en.wikipedia.org/wiki/Biceps_brachii",
+    "category": "upper_limb"
+  },
+  "biceps_brachii": {
+    "commonName": "Biceps Brachii",
+    "brief": "Anterior arm muscle for elbow flexion and supination.",
+    "origin": "Long head from supraglenoid tubercle; short head from coracoid process",
+    "insertion": "Radial tuberosity and bicipital aponeurosis",
+    "innervation": "Musculocutaneous nerve",
+    "action": "Elbow flexion and forearm supination",
+    "clinicalPearl": "Biceps tendon rupture may present with a 'Popeye' deformity and weakness of supination.",
+    "reference": "https://en.wikipedia.org/wiki/Biceps_brachii",
+    "category": "upper_limb"
   },
   "quadriceps": {
     "commonName": "Quadriceps",
@@ -224,6 +259,183 @@
     "innervation": "Tibial nerve",
     "action": "Plantarflexion of the foot and knee flexion",
     "clinicalPearl": "Achilles tendon rupture commonly presents with a snapping sensation and difficulty with push-off; Thompson test can help diagnosis.",
-    "reference": "https://en.wikipedia.org/wiki/Gastrocnemius_muscle"
+    "reference": "https://en.wikipedia.org/wiki/Gastrocnemius_muscle",
+    "category": "lower_limb"
+  },
+  "triceps": {
+    "commonName": "Triceps Brachii",
+    "brief": "Posterior arm muscle for elbow extension.",
+    "origin": "Long head from infraglenoid tubercle; lateral and medial heads from humerus",
+    "insertion": "Olecranon process of ulna",
+    "innervation": "Radial nerve",
+    "action": "Elbow extension and shoulder adduction (long head)",
+    "clinicalPearl": "Radial nerve palsy causes wrist drop and inability to extend the elbow or wrist.",
+    "reference": "https://en.wikipedia.org/wiki/Triceps",
+    "category": "upper_limb"
+  },
+  "triceps_brachii": {
+    "commonName": "Triceps Brachii",
+    "brief": "Posterior arm muscle for elbow extension.",
+    "origin": "Long head from infraglenoid tubercle; lateral and medial heads from humerus",
+    "insertion": "Olecranon process of ulna",
+    "innervation": "Radial nerve",
+    "action": "Elbow extension and shoulder adduction (long head)",
+    "clinicalPearl": "Radial nerve palsy causes wrist drop and inability to extend the elbow or wrist.",
+    "reference": "https://en.wikipedia.org/wiki/Triceps",
+    "category": "upper_limb"
+  },
+  "latissimus_dorsi": {
+    "commonName": "Latissimus Dorsi",
+    "brief": "Large back muscle for shoulder adduction and extension.",
+    "origin": "Lower thoracic and lumbar vertebrae, sacrum, iliac crest",
+    "insertion": "Intertubercular groove of humerus",
+    "innervation": "Thoracodorsal nerve",
+    "action": "Adduction, extension, and internal rotation of shoulder",
+    "clinicalPearl": "Used in breast reconstruction surgery as a myocutaneous flap. Test by having patient cough.",
+    "reference": "https://en.wikipedia.org/wiki/Latissimus_dorsi_muscle",
+    "category": "thorax"
+  },
+  "trapezius": {
+    "commonName": "Trapezius",
+    "brief": "Large superficial back muscle for scapular movement.",
+    "origin": "Occipital bone, nuchal ligament, spinous processes C7-T12",
+    "insertion": "Lateral clavicle, acromion, spine of scapula",
+    "innervation": "Spinal accessory nerve (CN XI)",
+    "action": "Elevates, retracts, and rotates scapula",
+    "clinicalPearl": "Spinal accessory nerve injury causes shoulder droop and inability to shrug. Can occur iatrogenically during neck surgery.",
+    "reference": "https://en.wikipedia.org/wiki/Trapezius",
+    "category": "thorax"
+  },
+  "rectus_abdominis": {
+    "commonName": "Rectus Abdominis",
+    "brief": "Anterior abdominal muscle (six-pack muscle).",
+    "origin": "Pubic symphysis and pubic crest",
+    "insertion": "Xiphoid process and costal cartilages 5-7",
+    "innervation": "Thoracoabdominal nerves (T7-T12)",
+    "action": "Trunk flexion and compression of abdominal contents",
+    "clinicalPearl": "Diastasis recti is separation of the rectus abdominis, common in pregnancy. Grey Turner's sign (flank bruising) suggests retroperitoneal hemorrhage.",
+    "reference": "https://en.wikipedia.org/wiki/Rectus_abdominis_muscle",
+    "category": "thorax"
+  },
+  "external_oblique": {
+    "commonName": "External Oblique",
+    "brief": "Lateral abdominal muscle for trunk rotation.",
+    "origin": "External surfaces of ribs 5-12",
+    "insertion": "Iliac crest and linea alba",
+    "innervation": "Thoracoabdominal nerves and subcostal nerve",
+    "action": "Trunk flexion, lateral bending, and contralateral rotation",
+    "clinicalPearl": "Forms the inguinal ligament and superficial inguinal ring. Important in inguinal hernia anatomy.",
+    "reference": "https://en.wikipedia.org/wiki/Abdominal_external_oblique_muscle",
+    "category": "thorax"
+  },
+  "gluteus_maximus": {
+    "commonName": "Gluteus Maximus",
+    "brief": "Largest buttock muscle for hip extension.",
+    "origin": "Ilium, sacrum, and coccyx",
+    "insertion": "Iliotibial tract and gluteal tuberosity of femur",
+    "innervation": "Inferior gluteal nerve",
+    "action": "Hip extension, lateral rotation, and stabilization",
+    "clinicalPearl": "Trendelenburg gait (hip drop on contralateral side) indicates superior gluteal nerve injury affecting gluteus medius/minimus, not maximus.",
+    "reference": "https://en.wikipedia.org/wiki/Gluteus_maximus",
+    "category": "lower_limb"
+  },
+  "hamstrings": {
+    "commonName": "Hamstrings",
+    "brief": "Posterior thigh muscle group for knee flexion.",
+    "origin": "Ischial tuberosity (biceps femoris, semitendinosus, semimembranosus)",
+    "insertion": "Head of fibula and tibia",
+    "innervation": "Tibial portion of sciatic nerve",
+    "action": "Knee flexion and hip extension",
+    "clinicalPearl": "Hamstring strains are common in sprinting. Proximal avulsion injuries can occur with violent hip flexion during knee extension.",
+    "reference": "https://en.wikipedia.org/wiki/Hamstring",
+    "category": "lower_limb"
+  },
+  "soleus": {
+    "commonName": "Soleus",
+    "brief": "Deep calf muscle for plantarflexion.",
+    "origin": "Posterior tibia and fibula",
+    "insertion": "Calcaneus via Achilles tendon",
+    "innervation": "Tibial nerve",
+    "action": "Plantarflexion of foot (especially when knee is flexed)",
+    "clinicalPearl": "Deep to gastrocnemius, forms the triceps surae. Important in venous return ('peripheral heart').",
+    "reference": "https://en.wikipedia.org/wiki/Soleus_muscle",
+    "category": "lower_limb"
+  },
+  "serratus_anterior": {
+    "commonName": "Serratus Anterior",
+    "brief": "Lateral chest muscle that protracts the scapula.",
+    "origin": "Ribs 1-8",
+    "insertion": "Medial border of scapula",
+    "innervation": "Long thoracic nerve",
+    "action": "Scapular protraction and upward rotation",
+    "clinicalPearl": "Long thoracic nerve injury causes winged scapula. Test by having patient push against wall.",
+    "reference": "https://en.wikipedia.org/wiki/Serratus_anterior_muscle",
+    "category": "thorax"
+  },
+  "tibialis_anterior": {
+    "commonName": "Tibialis Anterior",
+    "brief": "Anterior lower leg muscle for dorsiflexion.",
+    "origin": "Lateral tibia and interosseous membrane",
+    "insertion": "Medial cuneiform and first metatarsal base",
+    "innervation": "Deep peroneal nerve",
+    "action": "Dorsiflexion and inversion of foot",
+    "clinicalPearl": "Foot drop indicates deep peroneal nerve or L5 nerve root injury. Test by asking patient to walk on heels.",
+    "reference": "https://en.wikipedia.org/wiki/Tibialis_anterior_muscle",
+    "category": "lower_limb"
+  },
+  "brachioradialis": {
+    "commonName": "Brachioradialis",
+    "brief": "Forearm muscle for elbow flexion.",
+    "origin": "Lateral supracondylar ridge of humerus",
+    "insertion": "Styloid process of radius",
+    "innervation": "Radial nerve",
+    "action": "Elbow flexion (especially mid-pronation)",
+    "clinicalPearl": "Tests radial nerve C5-C6 function. Diminished brachioradialis reflex suggests C6 radiculopathy.",
+    "reference": "https://en.wikipedia.org/wiki/Brachioradialis",
+    "category": "upper_limb"
+  },
+  "sartorius": {
+    "commonName": "Sartorius",
+    "brief": "Longest muscle in body, crosses hip and knee.",
+    "origin": "Anterior superior iliac spine (ASIS)",
+    "insertion": "Medial tibia (pes anserinus)",
+    "innervation": "Femoral nerve",
+    "action": "Hip flexion, abduction, lateral rotation; knee flexion",
+    "clinicalPearl": "Crosses both hip and knee joints. Forms part of pes anserinus with gracilis and semitendinosus.",
+    "reference": "https://en.wikipedia.org/wiki/Sartorius_muscle",
+    "category": "lower_limb"
+  },
+  "iliopsoas": {
+    "commonName": "Iliopsoas",
+    "brief": "Primary hip flexor muscle (iliacus + psoas major).",
+    "origin": "Iliac fossa and lumbar vertebrae",
+    "insertion": "Lesser trochanter of femur",
+    "innervation": "Femoral nerve and lumbar plexus",
+    "action": "Hip flexion and external rotation",
+    "clinicalPearl": "Psoas abscess causes hip flexion contracture and fever. Positive psoas sign suggests appendicitis.",
+    "reference": "https://en.wikipedia.org/wiki/Iliopsoas",
+    "category": "lower_limb"
+  },
+  "adductors": {
+    "commonName": "Hip Adductors",
+    "brief": "Medial thigh muscle group for hip adduction.",
+    "origin": "Pubis and ischium",
+    "insertion": "Linea aspera of femur",
+    "innervation": "Obturator nerve",
+    "action": "Hip adduction and flexion",
+    "clinicalPearl": "Adductor strains common in athletes. Obturator nerve injury causes weakness in hip adduction.",
+    "reference": "https://en.wikipedia.org/wiki/Hip_adductors",
+    "category": "lower_limb"
+  },
+  "erector_spinae": {
+    "commonName": "Erector Spinae",
+    "brief": "Deep back muscle group for spine extension.",
+    "origin": "Sacrum, iliac crest, spinous processes",
+    "insertion": "Ribs, transverse and spinous processes",
+    "innervation": "Posterior rami of spinal nerves",
+    "action": "Spine extension, lateral bending, and postural control",
+    "clinicalPearl": "Paraspinal muscle spasm common in low back pain. Includes iliocostalis, longissimus, and spinalis.",
+    "reference": "https://en.wikipedia.org/wiki/Erector_spinae_muscles",
+    "category": "axial"
   }
 }
