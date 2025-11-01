@@ -8,7 +8,45 @@
     "action": "Protective bony vault for the brain; provides attachment for facial muscles",
     "image": "/static/anatomy/bones_front.svg",
     "clinicalPearl": "Basilar skull fractures may present with raccoon eyes or Battle's sign — inspect carefully.",
-    "reference": "https://en.wikipedia.org/wiki/Human_skull"
+    "reference": "https://en.wikipedia.org/wiki/Human_skull",
+    "relatedStructures": ["spine", "jaw", "facial"],
+    "category": "axial"
+  },
+  "jaw": {
+    "commonName": "Mandible (Jaw)",
+    "brief": "Lower jaw bone - largest and strongest facial bone.",
+    "origin": "Forms from Meckel's cartilage during development",
+    "insertion": "Articulates with temporal bone at temporomandibular joint (TMJ)",
+    "innervation": "Inferior alveolar nerve (branch of mandibular division of trigeminal)",
+    "action": "Mastication, speech, and facial expression",
+    "clinicalPearl": "Mandibular fractures are the second most common facial fracture after nasal bones. Check for malocclusion, step deformity, and numbness in the lower lip.",
+    "reference": "https://en.wikipedia.org/wiki/Mandible",
+    "relatedStructures": ["skull", "masseter"],
+    "category": "head"
+  },
+  "clavicle": {
+    "commonName": "Clavicle (Collarbone)",
+    "brief": "S-shaped bone connecting the shoulder to the axial skeleton.",
+    "origin": "Medial end articulates with manubrium of sternum",
+    "insertion": "Lateral end articulates with acromion of scapula",
+    "innervation": "Supraclavicular nerve (sensory)",
+    "action": "Strut connecting upper limb to trunk, protects neurovascular bundle",
+    "clinicalPearl": "Most commonly fractured bone in children. Falls on outstretched hand (FOOSH) cause fractures typically at the middle third. Check for tenting of skin and neurovascular compromise.",
+    "reference": "https://en.wikipedia.org/wiki/Clavicle",
+    "relatedStructures": ["scapula", "sternum", "deltoid"],
+    "category": "upper_limb"
+  },
+  "scapula": {
+    "commonName": "Scapula (Shoulder Blade)",
+    "brief": "Flat triangular bone on the posterior thorax.",
+    "origin": "Spine, acromion, and coracoid process provide attachment sites",
+    "insertion": "Glenoid fossa articulates with humeral head",
+    "innervation": "Dorsal scapular nerve, suprascapular nerve, axillary nerve",
+    "action": "Provides attachment for shoulder muscles, enables arm movement",
+    "clinicalPearl": "Scapular winging indicates serratus anterior weakness (long thoracic nerve injury). Check by having patient push against a wall.",
+    "reference": "https://en.wikipedia.org/wiki/Scapula",
+    "relatedStructures": ["clavicle", "humerus", "deltoid", "rotator_cuff"],
+    "category": "upper_limb"
   },
   "spine": {
     "commonName": "Spinal Column",
@@ -117,10 +155,36 @@
     "brief": "Large chest muscle involved in shoulder adduction and internal rotation.",
     "origin": "Clavicle, sternum and costal cartilages",
     "insertion": "Lateral lip of intertubercular sulcus of humerus",
-    "innervation": "Medial and lateral pectoral nerves",
+    "innervation": "Medial and lateral pectoral nerves (C5-T1)",
     "action": "Adduction, internal rotation and flexion of humerus",
-    "clinicalPearl": "Pectoralis major tendon ruptures are seen with heavy lifting; sudden pain and weakness on adduction should raise suspicion.",
-    "reference": "https://en.wikipedia.org/wiki/Pectoralis_major"
+    "clinicalPearl": "Pectoralis major tendon ruptures are seen with heavy lifting; sudden pain and weakness on adduction should raise suspicion. The 'dropped nipple sign' may be visible.",
+    "reference": "https://en.wikipedia.org/wiki/Pectoralis_major",
+    "relatedStructures": ["clavicle", "sternum", "humerus", "deltoid"],
+    "category": "thorax"
+  },
+  "rotator_cuff": {
+    "commonName": "Rotator Cuff",
+    "brief": "Group of four muscles stabilizing the shoulder joint (SITS).",
+    "origin": "Supraspinatus, Infraspinatus, Teres minor from scapula; Subscapularis from subscapular fossa",
+    "insertion": "All insert on humerus forming the rotator cuff around glenohumeral joint",
+    "innervation": "Suprascapular nerve (supra/infraspinatus), axillary nerve (teres minor), subscapular nerves",
+    "action": "Stabilize humeral head in glenoid fossa; initiate abduction, external/internal rotation",
+    "clinicalPearl": "Supraspinatus is most commonly torn. Test with 'empty can test' (painful arc 60-120°). MRI is gold standard for diagnosis. Chronic tears may lead to arthropathy.",
+    "reference": "https://en.wikipedia.org/wiki/Rotator_cuff",
+    "relatedStructures": ["scapula", "humerus", "deltoid"],
+    "category": "upper_limb"
+  },
+  "masseter": {
+    "commonName": "Masseter",
+    "brief": "Powerful muscle of mastication elevating the jaw.",
+    "origin": "Zygomatic arch",
+    "insertion": "Lateral surface of mandibular ramus and angle",
+    "innervation": "Mandibular division of trigeminal nerve (CN V3)",
+    "action": "Elevates mandible (closes jaw) during mastication",
+    "clinicalPearl": "Masseter hypertrophy can cause 'square jaw' appearance. Assess for bruxism (teeth grinding). Trismus indicates inflammation or tetanus.",
+    "reference": "https://en.wikipedia.org/wiki/Masseter_muscle",
+    "relatedStructures": ["jaw", "skull", "temporalis"],
+    "category": "head"
   },
   "deltoid": {
     "commonName": "Deltoid",

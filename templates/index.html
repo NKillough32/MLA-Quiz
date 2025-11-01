@@ -5133,6 +5133,70 @@
                 #bodyMap svg { max-width: 320px; }
                 .anatomy-container .btn { padding: 8px; font-size: 13px; }
             }
+            
+            /* Additional anatomy enhancements */
+            .region-btn {
+                transition: all 0.2s ease;
+            }
+            
+            .region-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 122, 255, 0.3);
+            }
+            
+            [data-theme="dark"] .region-btn {
+                background: rgba(0, 122, 255, 0.1) !important;
+                border-color: #007AFF !important;
+                color: #007AFF !important;
+            }
+            
+            [data-theme="dark"] .region-btn:hover {
+                background: #007AFF !important;
+                color: white !important;
+            }
+            
+            #anatomyQuizContainer {
+                animation: slideIn 0.3s ease-out;
+            }
+            
+            [data-theme="dark"] #anatomyQuizContainer {
+                background: var(--bg-secondary) !important;
+                border-color: #34c759 !important;
+            }
+            
+            [data-theme="dark"] .quiz-option-btn {
+                background: var(--bg-tertiary) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-primary) !important;
+            }
+            
+            [data-theme="dark"] .quiz-option-btn:hover {
+                background: rgba(0, 122, 255, 0.2) !important;
+                border-color: #007AFF !important;
+            }
+            
+            [data-theme="dark"] .related-structure-btn {
+                background: var(--button-bg) !important;
+                color: white !important;
+            }
+            
+            [data-theme="dark"] .related-structure-btn:hover {
+                opacity: 0.8;
+            }
+            
+            .anatomy-info-card {
+                animation: fadeIn 0.3s ease-in;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
         </style>
 </head>
 <body>
@@ -5687,6 +5751,7 @@
     <script type="module" src="/static/js/qrisk3/qrisk3-loader.js"></script>
     <script src="/static/js/analytics.js"></script>
     <script src="/static/js/app.js"></script>
+    <script src="/static/js/anatomyEnhancements.js"></script>
     
     <script>
         // Add event listener for report generation

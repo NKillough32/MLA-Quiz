@@ -4163,23 +4163,53 @@ class MLAQuizApp {
                 infoDiv.setAttribute('tabindex', '-1');
             } catch (e) {}
 
+            // Build related structures links
+            let relatedHtml = '';
+            if (data.relatedStructures && data.relatedStructures.length > 0) {
+                relatedHtml = '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--anatomy-info-border);"><strong>Related Structures:</strong><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">';
+                data.relatedStructures.forEach(rel => {
+                    const relData = this.anatomyData && this.anatomyData[rel];
+                    const relName = relData ? relData.commonName : rel;
+                    relatedHtml += `<button class="related-structure-btn" data-structure="${rel}" style="padding:6px 12px;background:var(--button-bg);color:white;border:none;border-radius:16px;font-size:13px;cursor:pointer;">${relName}</button>`;
+                });
+                relatedHtml += '</div></div>';
+            }
+
+            // Category badge
+            const categoryBadge = data.category ? `<span style="display:inline-block;padding:4px 10px;background:var(--button-bg);color:white;border-radius:12px;font-size:11px;font-weight:600;margin-left:8px;">${data.category.replace('_', ' ').toUpperCase()}</span>` : '';
+
             // Render using the shared anatomy-info-card class so dark mode styles
             // apply consistently (avoid inline light-theme colors)
             infoDiv.innerHTML = `
                 <div class="anatomy-info-card">
-                    <h3 style="margin:0 0 8px;">${data.commonName || rawKey}</h3>
-                    ${data.brief ? `<p style="margin:0 0 8px;">${data.brief}</p>` : ''}
+                    <h3 style="margin:0 0 8px;display:flex;align-items:center;flex-wrap:wrap;">${data.commonName || rawKey}${categoryBadge}</h3>
+                    ${data.brief ? `<p style="margin:0 0 8px;font-style:italic;color:var(--text-secondary);">${data.brief}</p>` : ''}
                     ${data.image ? `<div style="margin-top:8px;text-align:center;"><img src="${data.image}" alt="${data.commonName || rawKey}" loading="lazy" style="max-width:100%;height:auto;border-radius:6px;"></div>` : ''}
-                    <div style="display:grid;grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px; font-size:0.95rem;">
-                        <div><strong>Origin</strong><div>${data.origin || '—'}</div></div>
-                        <div><strong>Insertion</strong><div>${data.insertion || '—'}</div></div>
-                        <div><strong>Innervation</strong><div>${data.innervation || '—'}</div></div>
-                        <div><strong>Action</strong><div>${data.action || '—'}</div></div>
+                    <div style="display:grid;grid-template-columns: 1fr 1fr; gap:8px; margin-top:12px; font-size:0.9rem;">
+                        <div style="padding:8px;background:var(--anatomy-info-bg);border-radius:6px;border:1px solid var(--anatomy-info-border);"><strong>Origin</strong><div style="margin-top:4px;font-size:0.85rem;color:var(--text-secondary);">${data.origin || '—'}</div></div>
+                        <div style="padding:8px;background:var(--anatomy-info-bg);border-radius:6px;border:1px solid var(--anatomy-info-border);"><strong>Insertion</strong><div style="margin-top:4px;font-size:0.85rem;color:var(--text-secondary);">${data.insertion || '—'}</div></div>
+                        <div style="padding:8px;background:var(--anatomy-info-bg);border-radius:6px;border:1px solid var(--anatomy-info-border);"><strong>Innervation</strong><div style="margin-top:4px;font-size:0.85rem;color:var(--text-secondary);">${data.innervation || '—'}</div></div>
+                        <div style="padding:8px;background:var(--anatomy-info-bg);border-radius:6px;border:1px solid var(--anatomy-info-border);"><strong>Action</strong><div style="margin-top:4px;font-size:0.85rem;color:var(--text-secondary);">${data.action || '—'}</div></div>
                     </div>
-                    ${data.clinicalPearl ? `<div style="margin-top:10px;background:var(--anatomy-info-bg);padding:8px;border-radius:6px;border:1px solid var(--anatomy-info-border);"><strong>Clinical pearl:</strong><div style="margin-top:6px">${data.clinicalPearl}</div></div>` : ''}
-                    ${data.reference ? `<div style="margin-top:10px;font-size:0.9rem;color:#0b66c3;"><a href="${data.reference}" target="_blank" rel="noopener">Learn more / reference</a></div>` : ''}
+                    ${data.clinicalPearl ? `<div style="margin-top:12px;background:#fff8e1;padding:10px;border-radius:8px;border-left:4px solid #ffa726;"><strong style="color:#f57c00;">💡 Clinical Pearl:</strong><div style="margin-top:6px;color:#5d4037;line-height:1.5;">${data.clinicalPearl}</div></div>` : ''}
+                    ${data.reference ? `<div style="margin-top:12px;text-align:center;"><a href="${data.reference}" target="_blank" rel="noopener" style="display:inline-block;padding:8px 16px;background:var(--button-bg);color:white;text-decoration:none;border-radius:8px;font-size:0.9rem;">📚 Learn More</a></div>` : ''}
+                    ${relatedHtml}
                 </div>
             `;
+
+            // Add click handlers to related structure buttons
+            setTimeout(() => {
+                document.querySelectorAll('.related-structure-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const structKey = btn.dataset.structure;
+                        if (structKey) {
+                            this.searchAnatomy(structKey);
+                            this.showStructureInfo(structKey);
+                        }
+                    });
+                });
+            }, 100);
         } else {
             // Fallback to a simple display using the same card class
             const label = rawKey || 'Structure';
