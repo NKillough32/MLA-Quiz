@@ -10439,6 +10439,214 @@ class MLAQuizApp {
                         </div>
                     </div>
 
+                    <!-- Blood Cultures - Detailed Section -->
+                    <div class="bottle-detail">
+                        <div class="bottle-header">
+                            <div class="bottle-visual blue-bottle">🔵</div>
+                            <h6>Blood Culture Bottles (Aerobic & Anaerobic)</h6>
+                        </div>
+                        <div class="bottle-content">
+                            <div class="bottle-info-grid">
+                                <div class="info-section">
+                                    <strong>Bottle Types:</strong>
+                                    <ul>
+                                        <li><strong>Aerobic (Blue/Green lid):</strong> For organisms requiring oxygen</li>
+                                        <li><strong>Anaerobic (Purple/Orange lid):</strong> For organisms that grow without oxygen</li>
+                                        <li><strong>Paediatric (Yellow lid):</strong> Smaller volume for children</li>
+                                        <li><strong>Fungal/Mycobacterial (Black lid):</strong> Special cultures if suspected</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>When to Take:</strong>
+                                    <ul>
+                                        <li><strong>Sepsis/suspected bacteraemia</strong></li>
+                                        <li><strong>Fever >38°C</strong> without obvious source</li>
+                                        <li><strong>Rigors/chills</strong></li>
+                                        <li><strong>Endocarditis suspected</strong></li>
+                                        <li><strong>Unexplained hypotension</strong></li>
+                                        <li><strong>New cardiac murmur + fever</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Technique:</strong>
+                                    <ul>
+                                        <li><strong>BEFORE antibiotics</strong> if possible</li>
+                                        <li><strong>ANTT (Aseptic Non-Touch Technique)</strong></li>
+                                        <li><strong>2 sets from different sites</strong></li>
+                                        <li><strong>10ml per bottle</strong> (adults)</li>
+                                        <li><strong>Clean bottle tops</strong> with alcohol wipe</li>
+                                        <li><strong>Aerobic bottle FIRST</strong> (contains oxygen)</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>Volume Requirements:</strong>
+                                    <ul>
+                                        <li><strong>Adults:</strong> 8-10ml per bottle (total 20ml per set)</li>
+                                        <li><strong>Children:</strong> 1-3ml depending on age</li>
+                                        <li><strong>Rule:</strong> More blood = better yield (up to 40ml total)</li>
+                                        <li><strong>3 sets</strong> recommended for endocarditis</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="clinical-tips">
+                                <strong>💡 Critical Tips:</strong>
+                                <ul>
+                                    <li><strong>Timing:</strong> During fever spike gives best yield, but don't delay if patient deteriorating</li>
+                                    <li><strong>Common mistake:</strong> Taking cultures from lines - use peripheral veins when possible</li>
+                                    <li><strong>If line suspected:</strong> Take one set from line AND one peripheral</li>
+                                    <li><strong>Label clearly:</strong> Mark site (right/left arm, central line, etc.)</li>
+                                    <li><strong>Transport immediately:</strong> Don't refrigerate - keep at room temperature</li>
+                                    <li><strong>False positives:</strong> Skin contaminants (e.g., coagulase-negative staph) - that's why we do 2 sets</li>
+                                    <li><strong>Results timing:</strong> Prelim results 24-48h, final culture 5 days, sensitivities 48-72h</li>
+                                </ul>
+                            </div>
+                            <div class="clinical-tips" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                                <strong>⚠️ Sepsis Six Bundle:</strong>
+                                <ol style="margin: 8px 0 0 20px; padding: 0;">
+                                    <li><strong>Give high-flow oxygen</strong> (if required)</li>
+                                    <li><strong>Take blood cultures</strong> (before antibiotics)</li>
+                                    <li><strong>Give IV antibiotics</strong> (within 1 hour)</li>
+                                    <li><strong>Give IV fluid challenge</strong></li>
+                                    <li><strong>Measure lactate</strong> and full blood count</li>
+                                    <li><strong>Measure urine output</strong> (catheter if needed)</li>
+                                </ol>
+                                <p style="margin-top: 8px; font-style: italic;">All within 1 hour of sepsis recognition</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Blood Tests Reference -->
+                    <div class="bottle-detail">
+                        <div class="bottle-header">
+                            <h6>📋 Common Blood Test Quick Reference</h6>
+                        </div>
+                        <div class="bottle-content">
+                            <div class="bottle-info-grid">
+                                <div class="info-section">
+                                    <strong>🟣 FBC (Purple EDTA):</strong>
+                                    <ul>
+                                        <li><strong>Hb:</strong> Anaemia (M: 13-17, F: 12-15 g/dL)</li>
+                                        <li><strong>WCC:</strong> Infection, leukaemia (4-11 × 10⁹/L)</li>
+                                        <li><strong>Platelets:</strong> Bleeding, thrombosis (150-400 × 10⁹/L)</li>
+                                        <li><strong>MCV:</strong> Microcytic/macrocytic anaemia (80-100 fL)</li>
+                                        <li><strong>Neutrophils:</strong> Bacterial infection (2-7.5 × 10⁹/L)</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟡 U&Es (Yellow Serum):</strong>
+                                    <ul>
+                                        <li><strong>Sodium:</strong> 135-145 mmol/L (hypo/hypernatraemia)</li>
+                                        <li><strong>Potassium:</strong> 3.5-5.0 mmol/L (arrhythmias risk)</li>
+                                        <li><strong>Urea:</strong> 2.5-7.8 mmol/L (dehydration, renal)</li>
+                                        <li><strong>Creatinine:</strong> 60-120 μmol/L (GFR calculation)</li>
+                                        <li><strong>eGFR:</strong> >60 ml/min/1.73m² (kidney function)</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟡 LFTs (Yellow Serum):</strong>
+                                    <ul>
+                                        <li><strong>Bilirubin:</strong> <21 μmol/L (jaundice, haemolysis)</li>
+                                        <li><strong>ALT:</strong> 10-50 U/L (hepatocyte damage)</li>
+                                        <li><strong>ALP:</strong> 30-130 U/L (biliary, bone disease)</li>
+                                        <li><strong>Albumin:</strong> 35-50 g/L (nutrition, liver synthetic)</li>
+                                        <li><strong>GGT:</strong> Confirms hepatic ALP rise</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟡 Bone Profile (Yellow Serum):</strong>
+                                    <ul>
+                                        <li><strong>Calcium:</strong> 2.2-2.6 mmol/L (corrected for albumin)</li>
+                                        <li><strong>Phosphate:</strong> 0.8-1.4 mmol/L</li>
+                                        <li><strong>ALP:</strong> Bone turnover</li>
+                                        <li><strong>Vitamin D:</strong> Separate request usually needed</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟡 TFTs (Yellow Serum):</strong>
+                                    <ul>
+                                        <li><strong>TSH:</strong> 0.5-5.0 mU/L (primary test)</li>
+                                        <li><strong>Free T4:</strong> 10-20 pmol/L (if TSH abnormal)</li>
+                                        <li><strong>Free T3:</strong> 3-9 pmol/L (hyperthyroid only)</li>
+                                        <li><strong>Thyroid antibodies:</strong> Autoimmune disease</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟡 Lipid Profile (Yellow Serum):</strong>
+                                    <ul>
+                                        <li><strong>Total cholesterol:</strong> <5.0 mmol/L</li>
+                                        <li><strong>LDL:</strong> <3.0 mmol/L (atherogenic)</li>
+                                        <li><strong>HDL:</strong> >1.0 mmol/L (protective)</li>
+                                        <li><strong>Triglycerides:</strong> <2.3 mmol/L</li>
+                                        <li><strong>Non-fasting</strong> acceptable for screening</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🔵 Coagulation (Blue Citrate):</strong>
+                                    <ul>
+                                        <li><strong>PT/INR:</strong> 10-14s / 0.8-1.2 (warfarin monitoring)</li>
+                                        <li><strong>APTT:</strong> 25-35s (heparin, clotting factors)</li>
+                                        <li><strong>Fibrinogen:</strong> 2-4 g/L (DIC, bleeding)</li>
+                                        <li><strong>D-dimer:</strong> <500 ng/ml (VTE exclusion)</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟡 Inflammatory Markers (Yellow Serum):</strong>
+                                    <ul>
+                                        <li><strong>CRP:</strong> <5 mg/L (acute inflammation)</li>
+                                        <li><strong>ESR:</strong> <20 mm/hr (chronic inflammation)</li>
+                                        <li><strong>Procalcitonin:</strong> Bacterial infection</li>
+                                        <li><strong>Ferritin:</strong> Acute phase reactant + iron stores</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟡 Cardiac Markers (Yellow Serum):</strong>
+                                    <ul>
+                                        <li><strong>Troponin:</strong> 0 and 3h (MI diagnosis)</li>
+                                        <li><strong>BNP/NT-proBNP:</strong> Heart failure</li>
+                                        <li><strong>CK/CK-MB:</strong> Muscle damage (less used)</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>⚫ Glucose (Grey Fluoride):</strong>
+                                    <ul>
+                                        <li><strong>Fasting:</strong> <6.0 mmol/L (diabetes >7.0)</li>
+                                        <li><strong>Random:</strong> <11.1 mmol/L (diabetes >11.1)</li>
+                                        <li><strong>HbA1c:</strong> Purple bottle (diabetes >48 mmol/mol)</li>
+                                        <li><strong>OGTT:</strong> Grey bottle at 0 and 2h</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🟡 Iron Studies (Yellow Serum):</strong>
+                                    <ul>
+                                        <li><strong>Serum iron:</strong> 10-30 μmol/L</li>
+                                        <li><strong>TIBC:</strong> 45-70 μmol/L (total binding capacity)</li>
+                                        <li><strong>Transferrin saturation:</strong> 20-45%</li>
+                                        <li><strong>Ferritin:</strong> 30-300 μg/L (iron stores)</li>
+                                    </ul>
+                                </div>
+                                <div class="info-section">
+                                    <strong>🩷 Transfusion (Pink EDTA):</strong>
+                                    <ul>
+                                        <li><strong>Group & Save:</strong> Type blood, antibody screen</li>
+                                        <li><strong>Crossmatch:</strong> Match specific units</li>
+                                        <li><strong>Valid for:</strong> 72h (recent transfusion: 24h)</li>
+                                        <li><strong>Emergency:</strong> O negative (women), O positive (men)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="clinical-tips">
+                                <strong>💡 Requesting Tips:</strong>
+                                <ul>
+                                    <li><strong>Be specific:</strong> Don't just write "bloods" - specify what tests</li>
+                                    <li><strong>Clinical details:</strong> Brief indication helps lab prioritize and interpret</li>
+                                    <li><strong>Timing:</strong> Some tests time-critical (troponin, glucose, lactate)</li>
+                                    <li><strong>Repeat intervals:</strong> Check local policies (e.g., daily U&Es in AKI)</li>
+                                    <li><strong>Unnecessary tests:</strong> Avoid routine daily bloods without indication</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Additional Bottles -->
                     <div class="bottle-detail">
                         <div class="bottle-header">
@@ -10459,8 +10667,8 @@ class MLAQuizApp {
                                     <ul><li>Routine biochemistry (alternative to yellow)</li></ul>
                                 </div>
                                 <div class="info-section">
-                                    <strong>🔵 Blood Cultures:</strong> Culture medium
-                                    <ul><li>Aerobic (blue lid), anaerobic (purple lid), mycobacterial (black lid)</li></ul>
+                                    <strong>⚫ Black Bottle:</strong> Sodium citrate (4:1 dilution)
+                                    <ul><li>ESR only (Westergren method)</li></ul>
                                 </div>
                             </div>
                         </div>
@@ -11009,6 +11217,9 @@ class MLAQuizApp {
         const guidelinesList = document.getElementById('guidelines-list');
         let guidelines = Object.keys(guidelinesDatabase);
         
+        // Reset container to grid layout for list view
+        guidelinesList.style.display = 'grid';
+        
         // Update active state of category buttons
         const categoryButtons = document.querySelectorAll('.guidelines-categories .category-btn');
         categoryButtons.forEach(btn => {
@@ -11053,6 +11264,9 @@ class MLAQuizApp {
         console.log('📋 Opening guideline detail:', guidelineKey);
         const guideline = this.guidelinesDatabase[guidelineKey];
         const container = document.getElementById('guidelines-list');
+        
+        // Change container to block layout for detail view
+        container.style.display = 'block';
         
         let contentHtml = `
             <button class="back-btn" onclick="window.quizApp.showGuidelinesCategory('all'); event.stopPropagation();">← Back to Guidelines</button>
@@ -14191,7 +14405,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         },
         'thyroid': {
             title: 'Thyroid Examination',
-            category: 'endocrine',
+            category: 'specialized',
             approach: 'General inspection → Neck inspection → Palpation → Auscultation → Functional assessment',
             sections: {
                 'inspection': {
@@ -14250,7 +14464,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         },
         'lymph-nodes': {
             title: 'Lymph Node Examination',
-            category: 'general',
+            category: 'specialized',
             approach: 'Systematic examination of all lymph node groups → Assess characteristics → Look for primary source',
             sections: {
                 'head-neck': {
@@ -14309,7 +14523,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         },
         'skin': {
             title: 'Skin Examination',
-            category: 'dermatology',
+            category: 'specialized',
             approach: 'General inspection → Systematic examination → Dermoscopy → Documentation',
             sections: {
                 'inspection': {
@@ -14368,7 +14582,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         },
         'musculoskeletal': {
             title: 'Musculoskeletal Examination',
-            category: 'orthopaedic',
+            category: 'musculoskeletal',
             approach: 'Look → Feel → Move → Special tests → Function',
             sections: {
                 'inspection': {
@@ -14427,7 +14641,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         },
         'ent-basic': {
             title: 'Basic ENT Examination',
-            category: 'specialist',
+            category: 'specialized',
             approach: 'External inspection → Otoscopy → Hearing → Nose → Throat → Neck',
             sections: {
                 'ears': {
@@ -14486,7 +14700,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         },
         'breast': {
             title: 'Breast Examination',
-            category: 'primary-care',
+            category: 'primary_care',
             approach: 'Inspection → Palpation → Lymph nodes → Teaching self-examination',
             sections: {
                 'inspection': {
@@ -14545,7 +14759,7 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         },
         'prostate': {
             title: 'Prostate Examination',
-            category: 'primary-care',
+            category: 'primary_care',
             approach: 'History → General examination → Digital rectal examination → Assessment',
             sections: {
                 'preparation': {
@@ -14779,9 +14993,494 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
                 }
             }
         },
+        'eye': {
+            title: 'Eye Examination',
+            category: 'specialized',
+            approach: 'Visual acuity → Visual fields → Pupils → Eye movements → Fundoscopy',
+            sections: {
+                'visual-acuity': {
+                    name: 'Visual Acuity',
+                    technique: 'Snellen chart at 6m, test each eye separately, with/without correction',
+                    normal: '6/6 vision in both eyes',
+                    abnormal: {
+                        'Reduced acuity': 'Refractive error, cataract, macular degeneration, amblyopia',
+                        'Sudden vision loss': 'Retinal detachment, vascular occlusion, optic neuritis',
+                        'Gradual vision loss': 'Cataract, glaucoma, diabetic retinopathy',
+                        'Pinhole improvement': 'Suggests refractive error correctable with glasses',
+                        'Bilateral loss': 'Cataracts, macular degeneration, optic neuropathy'
+                    },
+                    clinicalPearls: 'If cannot see top letter, use counting fingers, hand movements, light perception'
+                },
+                'visual-fields': {
+                    name: 'Visual Field Assessment',
+                    technique: 'Confrontation testing, each eye separately, compare to your own fields',
+                    normal: 'Full visual fields to confrontation',
+                    abnormal: {
+                        'Bitemporal hemianopia': 'Pituitary tumor compressing optic chiasm',
+                        'Homonymous hemianopia': 'Stroke affecting optic tract or radiation',
+                        'Monocular loss': 'Retinal or optic nerve disease',
+                        'Central scotoma': 'Macular disease, optic neuritis',
+                        'Tunnel vision': 'Advanced glaucoma, retinitis pigmentosa'
+                    },
+                    clinicalPearls: 'Test all four quadrants. Map any defects. Urgent referral for acute changes'
+                },
+                'pupil-examination': {
+                    name: 'Pupil Examination',
+                    technique: 'Size, symmetry, reaction to light (direct and consensual), accommodation',
+                    normal: 'Equal, round, reactive to light and accommodation (PERLA)',
+                    abnormal: {
+                        'RAPD': 'Relative afferent pupillary defect - optic nerve disease',
+                        'Dilated pupil': 'Third nerve palsy, trauma, mydriatic drops, Adie pupil',
+                        'Small pupil': 'Horner syndrome, old age, pilocarpine drops',
+                        'Irregular pupil': 'Trauma, previous surgery, uveitis',
+                        'Argyll Robertson': 'Accommodates but doesn\'t react to light - neurosyphilis'
+                    },
+                    clinicalPearls: 'Swinging flashlight test for RAPD. Check in dim light'
+                },
+                'eye-movements': {
+                    name: 'Eye Movements',
+                    technique: 'H-test pattern, check for nystagmus, cover test for squint',
+                    normal: 'Full range of eye movements, no nystagmus, no diplopia',
+                    abnormal: {
+                        'Third nerve palsy': 'Eye down and out, ptosis, dilated pupil',
+                        'Fourth nerve palsy': 'Vertical diplopia, head tilt',
+                        'Sixth nerve palsy': 'Cannot abduct eye, horizontal diplopia',
+                        'Internuclear ophthalmoplegia': 'MS - impaired adduction',
+                        'Nystagmus': 'Cerebellar disease, vestibular pathology, medications'
+                    },
+                    clinicalPearls: 'Ask about diplopia. Note direction of gaze causing double vision'
+                },
+                'fundoscopy': {
+                    name: 'Fundoscopy',
+                    technique: 'Dilate pupils if possible, red reflex first, then disc, vessels, macula',
+                    normal: 'Pink disc with clear margins, normal vessels, red reflex present',
+                    abnormal: {
+                        'Papilloedema': 'Raised ICP - blurred disc margins, no venous pulsation',
+                        'Optic atrophy': 'Pale disc - previous inflammation, glaucoma, compression',
+                        'Diabetic retinopathy': 'Microaneurysms, haemorrhages, exudates, neovascularization',
+                        'Hypertensive retinopathy': 'AV nipping, flame haemorrhages, cotton wool spots',
+                        'Retinal detachment': 'Grey, elevated retina, visual field defect'
+                    },
+                    clinicalPearls: 'Examine right eye with right eye. Start 15cm away to see red reflex'
+                }
+            }
+        },
+        'shoulder': {
+            title: 'Shoulder Examination',
+            category: 'musculoskeletal',
+            approach: 'Look → Feel → Move → Special Tests',
+            sections: {
+                'inspection': {
+                    name: 'Inspection',
+                    technique: 'Compare both shoulders, look from front and back, observe scapulae',
+                    normal: 'Symmetrical shoulders, normal contours, no swelling',
+                    abnormal: {
+                        'Muscle wasting': 'Deltoid, supraspinatus, infraspinatus wasting',
+                        'Deformity': 'Anterior dislocation, AC joint prominence',
+                        'Scapular winging': 'Serratus anterior weakness - long thoracic nerve injury',
+                        'Swelling': 'Joint effusion, bursal swelling',
+                        'Scars': 'Previous surgery, trauma'
+                    },
+                    clinicalPearls: 'Ask patient to undress to waist. Compare both sides'
+                },
+                'movement': {
+                    name: 'Movement Assessment',
+                    technique: 'Active movement (all directions), passive if limited, scapulohumeral rhythm',
+                    normal: 'Abduction 180°, flexion 180°, internal/external rotation normal',
+                    abnormal: {
+                        'Painful arc 60-120°': 'Subacromial impingement, rotator cuff tendinopathy',
+                        'Frozen shoulder': 'Globally restricted movement, passive = active limitation',
+                        'Rotator cuff tear': 'Unable to initiate abduction or hold arm abducted',
+                        'AC joint pain': 'Pain at end range of abduction/adduction across body',
+                        'Scapulohumeral dysrhythmia': 'Abnormal scapular movement - weakness'
+                    },
+                    clinicalPearls: 'Note pain location and arc. Test active then passive movement'
+                },
+                'special-tests': {
+                    name: 'Special Tests',
+                    technique: 'Impingement tests, rotator cuff tests, stability tests',
+                    normal: 'All special tests negative, stable shoulder',
+                    abnormal: {
+                        'Neer test positive': 'Forced flexion causes pain - impingement',
+                        'Hawkins test positive': 'Internal rotation at 90° flexion - impingement',
+                        'Empty can test positive': 'Weak/painful abduction at 90° - supraspinatus tear',
+                        'Apprehension test positive': 'Fear of dislocation - anterior instability',
+                        'Drop arm sign': 'Cannot slowly lower arm - massive rotator cuff tear'
+                    },
+                    clinicalPearls: 'Know your special tests. Practice technique. Consider imaging if positive'
+                }
+            }
+        },
+        'knee': {
+            title: 'Knee Examination',
+            category: 'musculoskeletal',
+            approach: 'Look → Feel → Move → Ligaments → Special Tests',
+            sections: {
+                'inspection': {
+                    name: 'Inspection',
+                    technique: 'Observe standing, walking, lying. Look for swelling, deformity, muscle wasting',
+                    normal: 'Straight alignment, no swelling, symmetrical quadriceps bulk',
+                    abnormal: {
+                        'Varus deformity': 'Bow-legged - medial compartment OA',
+                        'Valgus deformity': 'Knock-kneed - lateral compartment OA, rickets',
+                        'Swelling': 'Effusion, Baker cyst, bursitis, synovitis',
+                        'Quadriceps wasting': 'Disuse atrophy, chronic knee pathology',
+                        'Scars': 'Previous surgery, arthroscopy portals'
+                    },
+                    clinicalPearls: 'Measure thigh circumference if wasting suspected. Note gait pattern'
+                },
+                'palpation': {
+                    name: 'Palpation',
+                    technique: 'Temperature, effusion (patellar tap, bulge test), joint line, bony landmarks',
+                    normal: 'No warmth, no effusion, non-tender joint lines',
+                    abnormal: {
+                        'Effusion': 'Patellar tap positive - moderate/large effusion',
+                        'Joint line tenderness': 'Meniscal tear, OA, synovitis',
+                        'Warmth': 'Infection, inflammatory arthritis, gout',
+                        'Bursitis': 'Pre-patellar (housemaid), infrapatellar, anserine',
+                        'Baker cyst': 'Popliteal fossa fullness, may rupture'
+                    },
+                    clinicalPearls: 'Bulge test more sensitive for small effusions. Always check temperature'
+                },
+                'ligament-tests': {
+                    name: 'Ligament Assessment',
+                    technique: 'Anterior drawer, Lachman, posterior drawer, valgus/varus stress',
+                    normal: 'Stable knee, no excessive movement, firm endpoint',
+                    abnormal: {
+                        'ACL rupture': 'Positive Lachman, anterior drawer - anterior tibial subluxation',
+                        'PCL rupture': 'Positive posterior drawer, posterior sag sign',
+                        'MCL tear': 'Valgus stress causes pain and laxity',
+                        'LCL tear': 'Varus stress causes pain and laxity',
+                        'Multi-ligament injury': 'Unstable knee - major trauma'
+                    },
+                    clinicalPearls: 'Lachman more sensitive than anterior drawer. Test at 30° flexion'
+                },
+                'meniscal-tests': {
+                    name: 'Meniscal Tests',
+                    technique: 'McMurray test, Thessaly test, joint line tenderness',
+                    normal: 'No clicking, no pain, full range of movement',
+                    abnormal: {
+                        'McMurray positive': 'Click/pain on rotation - meniscal tear',
+                        'Locking': 'Sudden inability to fully extend - displaced meniscal tear',
+                        'Giving way': 'Knee buckles - meniscal tear, ACL insufficiency',
+                        'Joint line tenderness': 'Medial > lateral meniscal pathology',
+                        'Thessaly test positive': 'Pain on rotation while standing - meniscal tear'
+                    },
+                    clinicalPearls: 'MRI gold standard for diagnosis. Arthroscopy may be needed'
+                }
+            }
+        },
+        'diabetic-foot': {
+            title: 'Diabetic Foot Examination',
+            category: 'specialized',
+            approach: 'Inspection → Neurological → Vascular → Ulcer assessment → Risk stratification',
+            sections: {
+                'inspection': {
+                    name: 'Inspection',
+                    technique: 'Remove shoes and socks, inspect all surfaces including between toes',
+                    normal: 'Normal skin, no calluses, no deformity, intact nails',
+                    abnormal: {
+                        'Ulceration': 'Neuropathic (painless) vs ischaemic (painful)',
+                        'Charcot arthropathy': 'Swollen, deformed foot, "rocker-bottom"',
+                        'Calluses': 'Pressure areas - risk for ulceration',
+                        'Clawed toes': 'Neuropathy causing muscle imbalance',
+                        'Infection': 'Cellulitis, abscess, osteomyelitis'
+                    },
+                    clinicalPearls: 'Always examine between toes. Note hygiene and footwear'
+                },
+                'neurological': {
+                    name: 'Neurological Assessment',
+                    technique: '10g monofilament testing, vibration (128Hz tuning fork), ankle reflexes',
+                    normal: 'Intact sensation to monofilament, vibration sense present',
+                    abnormal: {
+                        'Loss of protective sensation': 'Cannot feel 10g monofilament - high risk',
+                        'Absent vibration sense': 'Large fiber neuropathy',
+                        'Absent ankle reflexes': 'Peripheral neuropathy',
+                        'Glove-stocking distribution': 'Typical diabetic neuropathy pattern',
+                        'Neuropathic ulcer': 'Painless, pressure areas, punched out'
+                    },
+                    clinicalPearls: 'Test multiple sites. Document which sites feel monofilament'
+                },
+                'vascular': {
+                    name: 'Vascular Assessment',
+                    technique: 'Palpate pulses (dorsalis pedis, posterior tibial), ABPI if available',
+                    normal: 'Palpable foot pulses, warm feet, normal capillary refill',
+                    abnormal: {
+                        'Absent pulses': 'Peripheral arterial disease - urgent vascular assessment',
+                        'Cold feet': 'Poor perfusion, critical ischaemia',
+                        'Dependent rubor': 'Feet red when dependent, pale when elevated - severe PAD',
+                        'Gangrene': 'Tissue necrosis - requires urgent intervention',
+                        'ABPI <0.9': 'PAD present. <0.5 critical ischaemia'
+                    },
+                    clinicalPearls: 'Doppler if pulses not palpable. Calcified vessels may give falsely high ABPI'
+                },
+                'risk-stratification': {
+                    name: 'Risk Stratification',
+                    technique: 'Assess risk factors, categorize risk level, plan review frequency',
+                    normal: 'Low risk - normal sensation and pulses',
+                    abnormal: {
+                        'High risk': 'Previous ulcer, amputation, neuropathy + PAD, on dialysis',
+                        'Moderate risk': 'Neuropathy OR PAD alone, deformity, callus',
+                        'Active ulceration': 'Urgent MDT assessment required',
+                        'Charcot foot': 'High risk, needs urgent immobilization',
+                        'Osteomyelitis': 'Probe to bone test positive, systemic infection'
+                    },
+                    clinicalPearls: 'Low risk: annual. Moderate: 3-6 monthly. High: 1-3 monthly review'
+                }
+            }
+        },
+        'newborn': {
+            title: 'Newborn Examination',
+            category: 'specialized',
+            approach: 'General observation → Head to toe → Hips → Heart → Red reflex → Genitalia',
+            sections: {
+                'general-assessment': {
+                    name: 'General Assessment',
+                    technique: 'Observe color, tone, activity, breathing, feeding',
+                    normal: 'Pink, active, good tone, regular breathing, feeding well',
+                    abnormal: {
+                        'Cyanosis': 'Central cyanosis - cardiac or respiratory pathology',
+                        'Jaundice': 'Within 24h: pathological. Day 2-3: physiological',
+                        'Poor tone': 'Floppy baby - neurological, genetic, metabolic',
+                        'Respiratory distress': 'Grunting, tachypnea, recession - RDS, TTN, pneumonia',
+                        'Not feeding': 'Infection, cardiac, neurological, metabolic'
+                    },
+                    clinicalPearls: 'Always examine in warm environment. APGAR scores at 1 and 5 minutes'
+                },
+                'cardiovascular': {
+                    name: 'Cardiovascular Examination',
+                    technique: 'Auscultate heart, palpate pulses (especially femoral), check for cyanosis',
+                    normal: 'Normal heart sounds, palpable femoral pulses, pink peripheries',
+                    abnormal: {
+                        'Heart murmur': 'May be innocent or congenital heart disease',
+                        'Absent femoral pulses': 'Coarctation of aorta - urgent echo',
+                        'Cyanosis not responding to O2': 'Congenital cyanotic heart disease',
+                        'Poor perfusion': 'Sepsis, cardiac failure, shock',
+                        'Tachycardia >160': 'Sepsis, cardiac pathology, fever'
+                    },
+                    clinicalPearls: 'Most murmurs benign. If cyanotic or absent femorals, urgent cardiology'
+                },
+                'hip-examination': {
+                    name: 'Hip Examination',
+                    technique: 'Barlow and Ortolani maneuvers, check for leg length discrepancy, skin creases',
+                    normal: 'Stable hips, symmetrical leg length and skin creases',
+                    abnormal: {
+                        'Ortolani positive': 'Clunk on abduction - dislocated hip relocating',
+                        'Barlow positive': 'Hip dislocates on adduction and posterior pressure',
+                        'Asymmetric skin creases': 'May indicate DDH - needs ultrasound',
+                        'Limited abduction': 'DDH, infection, neurological',
+                        'Leg length discrepancy': 'DDH, congenital short femur'
+                    },
+                    clinicalPearls: 'Risk factors: breech, family history, female. USS at 6 weeks if positive'
+                },
+                'red-reflex': {
+                    name: 'Red Reflex Test',
+                    technique: 'Ophthalmoscope at arm\'s length, check both eyes, look for symmetric red reflex',
+                    normal: 'Symmetric red reflex in both eyes',
+                    abnormal: {
+                        'Absent red reflex': 'Cataract, retinoblastoma, retinal detachment',
+                        'White reflex (leukocoria)': 'Retinoblastoma, cataract - urgent referral',
+                        'Asymmetric reflex': 'Unilateral pathology, refractive error',
+                        'Dull reflex': 'Media opacity, vitreous hemorrhage',
+                        'Bilateral absence': 'Congenital cataracts - genetic/TORCH'
+                    },
+                    clinicalPearls: 'Do in darkened room. Refer urgently if absent or white reflex'
+                }
+            }
+        },
+        'atls-primary-survey': {
+            title: 'ATLS Primary Survey',
+            category: 'emergency',
+            approach: 'ABCDE → Identify life-threats → Treat as found → Re-assess constantly',
+            sections: {
+                'airway': {
+                    name: 'Airway with C-spine Control',
+                    technique: 'Check patency, look for obstruction, protect cervical spine',
+                    normal: 'Patent airway, speaking clearly, normal breathing',
+                    abnormal: {
+                        'Obstruction': 'Snoring, gurgling, stridor - chin lift, jaw thrust',
+                        'Foreign body': 'Back blows, Heimlich, direct laryngoscopy',
+                        'Facial trauma': 'Bleeding, broken teeth, maxillofacial fractures',
+                        'Burns': 'Singed nasal hairs, soot in mouth - early intubation',
+                        'Unconscious': 'Cannot protect airway - secure immediately'
+                    },
+                    clinicalPearls: 'C-spine immobilization until cleared. If in doubt, intubate'
+                },
+                'breathing': {
+                    name: 'Breathing and Ventilation',
+                    technique: 'Exposure, inspection, palpation, percussion, auscultation, SpO2',
+                    normal: 'Regular breathing, symmetrical chest movement, clear lung fields',
+                    abnormal: {
+                        'Tension pneumothorax': 'Deviated trachea, absent sounds - needle decompression',
+                        'Flail chest': 'Paradoxical movement - analgesia, consider intubation',
+                        'Open pneumothorax': 'Sucking chest wound - 3-sided dressing',
+                        'Haemothorax': 'Dull percussion, shock - chest drain',
+                        'Respiratory distress': 'RR >30, SpO2 <90% - high flow O2'
+                    },
+                    clinicalPearls: 'Immediately life-threatening: tension PTX, open PTX, flail, massive hemothorax'
+                },
+                'circulation': {
+                    name: 'Circulation with Hemorrhage Control',
+                    technique: 'Pulses, BP, capillary refill, control external bleeding',
+                    normal: 'Strong central pulses, BP >90 systolic, warm peripheries',
+                    abnormal: {
+                        'Shock': 'Weak pulses, low BP, prolonged CRT - fluid resuscitation',
+                        'External bleeding': 'Direct pressure, tourniquet if limb',
+                        'Internal bleeding': 'Chest, abdomen, pelvis, long bones - transfuse',
+                        'Cardiac tamponade': 'Beck triad, JVP raised - pericardiocentesis',
+                        'Massive transfusion': '1:1:1 ratio RBC:FFP:platelets'
+                    },
+                    clinicalPearls: 'Permissive hypotension until bleeding controlled. Tranexamic acid early'
+                },
+                'disability': {
+                    name: 'Disability (Neurological)',
+                    technique: 'GCS, pupils, glucose, posturing, limb movements',
+                    normal: 'GCS 15, equal reactive pupils, normal glucose, moving all limbs',
+                    abnormal: {
+                        'GCS <8': 'Severe head injury - intubate for airway protection',
+                        'Unequal pupils': 'Raised ICP, herniation - urgent CT, neurosurgery',
+                        'Hypoglycemia': 'Glucose <4mmol - IV dextrose immediately',
+                        'Posturing': 'Decorticate, decerebrate - severe brain injury',
+                        'Focal neurology': 'Stroke, spinal cord injury, peripheral nerve'
+                    },
+                    clinicalPearls: 'AVPU or GCS. Check glucose always. CT head if GCS <15'
+                },
+                'exposure': {
+                    name: 'Exposure and Environment',
+                    technique: 'Fully expose patient, log roll, warm environment, temperature',
+                    normal: 'No additional injuries, normothermic',
+                    abnormal: {
+                        'Hypothermia': 'Trauma triad of death - warm actively',
+                        'Hidden injuries': 'Back, perineum, scalp - log roll to examine',
+                        'Burns': 'Extent (rule of 9s), depth, circumferential',
+                        'Pelvic instability': 'Do not spring pelvis - unstable fracture',
+                        'Penetrating trauma': 'Entry and exit wounds, retained objects'
+                    },
+                    clinicalPearls: 'Prevent hypothermia - warm fluids, blankets, room temperature. Log roll with C-spine'
+                }
+            }
+        },
+        'gynae': {
+            title: 'Gynaecological Examination',
+            category: 'primary_care',
+            approach: 'Consent → Positioning → Inspection → Speculum → Bimanual → Documentation',
+            sections: {
+                'consent-preparation': {
+                    name: 'Consent and Preparation',
+                    technique: 'Explain procedure, obtain consent, chaperone present, correct positioning',
+                    normal: 'Patient consented, comfortable, appropriately positioned',
+                    abnormal: {
+                        'Inadequate consent': 'Patient not fully informed of procedure',
+                        'No chaperone': 'Required for intimate examinations',
+                        'Patient anxiety': 'Excessive worry, previous trauma',
+                        'Positioning difficulties': 'Mobility issues, pain',
+                        'Cultural concerns': 'Religious objections, modesty issues'
+                    },
+                    clinicalPearls: 'Always offer chaperone. Explain each step. Stop if patient requests'
+                },
+                'external-inspection': {
+                    name: 'External Inspection',
+                    technique: 'Inspect vulva, perineum, anus for abnormalities',
+                    normal: 'Normal vulval anatomy, no lesions, normal hair distribution',
+                    abnormal: {
+                        'Vulval lesions': 'Ulcers, warts, tumours, inflammatory conditions',
+                        'Discharge': 'Abnormal colour, consistency, odour',
+                        'Prolapse': 'Cystocoele, rectocoele, uterine prolapse',
+                        'Atrophic changes': 'Post-menopausal atrophy, dryness',
+                        'Trauma': 'Tears, bruising, signs of abuse'
+                    },
+                    clinicalPearls: 'Good lighting essential. Note any asymmetry or obvious pathology'
+                },
+                'speculum-examination': {
+                    name: 'Speculum Examination',
+                    technique: 'Insert appropriate speculum, visualize cervix, take samples if needed',
+                    normal: 'Normal cervix, no discharge, appropriate cervical os',
+                    abnormal: {
+                        'Cervical abnormalities': 'Erosion, polyps, suspicious lesions',
+                        'Abnormal discharge': 'Purulent, offensive, blood-stained',
+                        'Bleeding': 'Contact bleeding, intermenstrual bleeding',
+                        'Cervical motion tenderness': 'Pain on moving cervix - PID',
+                        'Uterine prolapse': 'Cervix visible at introitus'
+                    },
+                    clinicalPearls: 'Warm speculum. Insert at 45° angle. Cervical screening if due'
+                },
+                'bimanual-examination': {
+                    name: 'Bimanual Examination',
+                    technique: 'Two fingers in vagina, other hand on abdomen, assess uterus and adnexae',
+                    normal: 'Normal sized, mobile uterus, no adnexal masses',
+                    abnormal: {
+                        'Enlarged uterus': 'Pregnancy, fibroids, malignancy',
+                        'Fixed uterus': 'Endometriosis, malignancy, adhesions',
+                        'Adnexal masses': 'Ovarian cysts, tumours, ectopic pregnancy',
+                        'Tenderness': 'PID, ovarian pathology, endometriosis',
+                        'Irregular contour': 'Fibroids, malignancy'
+                    },
+                    clinicalPearls: 'Gentle technique. Warn patient before examination. Note any masses'
+                }
+            }
+        },
+        'hypertension-review': {
+            title: 'Hypertension Review',
+            category: 'primary_care',
+            approach: 'Blood pressure → Complications → Medication review → Lifestyle → Target organs',
+            sections: {
+                'bp-measurement': {
+                    name: 'Blood Pressure Measurement',
+                    technique: 'Correct cuff size, patient seated 5 minutes, repeat if abnormal',
+                    normal: '<140/90 mmHg, <135/85 home monitoring',
+                    abnormal: {
+                        'Stage 1 HTN': '140-159/90-99 - ABPM/HBPM for diagnosis',
+                        'Stage 2 HTN': '160-179/100-109 - treat if confirmed',
+                        'Stage 3 HTN': '≥180/110 - urgent treatment',
+                        'Postural drop': '>20 mmHg fall - review medications',
+                        'White coat HTN': 'Clinic BP high, home normal - consider ABPM'
+                    },
+                    clinicalPearls: 'NICE recommends ABPM or HBPM for diagnosis. Average multiple readings'
+                },
+                'complications': {
+                    name: 'Complication Screening',
+                    technique: 'CVS exam, fundoscopy, renal function, urine dip, foot pulses',
+                    normal: 'No end organ damage',
+                    abnormal: {
+                        'Hypertensive retinopathy': 'AV nipping, hemorrhages, exudates, papilledema',
+                        'LVH': 'Displaced apex, loud S4 - ECG/echo confirmation',
+                        'Renal impairment': 'Raised creatinine, proteinuria - target organ damage',
+                        'PAD': 'Absent pedal pulses, claudication',
+                        'Stroke/TIA': 'Previous cardiovascular events'
+                    },
+                    clinicalPearls: 'Annual check: BP, bloods (U&E, lipids, HbA1c), urine ACR, CVD risk'
+                },
+                'medication-review': {
+                    name: 'Medication Review',
+                    technique: 'Check adherence, side effects, effectiveness, drug interactions',
+                    normal: 'BP at target on current medications, good adherence',
+                    abnormal: {
+                        'Poor adherence': 'Non-compliance - explore barriers',
+                        'Side effects': 'Cough (ACEi), ankle swelling (CCB), dizziness',
+                        'Inadequate control': 'Not at target - consider adding agent',
+                        'Resistant HTN': '≥3 drugs including diuretic - specialist referral',
+                        'Drug interactions': 'NSAIDs, contraceptive pill, steroids'
+                    },
+                    clinicalPearls: 'NICE algorithm: ACEi/ARB → add CCB → add thiazide → specialist'
+                },
+                'lifestyle': {
+                    name: 'Lifestyle Management',
+                    technique: 'Diet, exercise, alcohol, smoking, weight, stress',
+                    normal: 'Annual check for normal BP',
+                    abnormal: {
+                        'Newly diagnosed hypertension': 'Assess cardiovascular risk, consider treatment',
+                        'Uncontrolled hypertension': 'Review medications, lifestyle advice',
+                        'Resistant hypertension': 'Consider specialist referral',
+                        'Secondary hypertension': 'Young age, severe/resistant - investigate causes',
+                        'Accelerated hypertension': 'Papilloedema, AKI - emergency treatment'
+                    },
+                    clinicalPearls: 'QRisk3 calculator for cardiovascular risk assessment'
+                }
+            }
+        },
         'gynaecological': {
             title: 'Gynaecological Examination',
-            category: 'primary-care',
+            category: 'primary_care',
             approach: 'Consent → Positioning → Inspection → Speculum → Bimanual → Documentation',
             sections: {
                 'consent-preparation': {
@@ -14849,12 +15548,12 @@ MLAQuizApp.prototype.loadExaminationGuide = function() {
         <div id="examination-search-results" class="lab-grid"></div>
         <div class="examination-categories">
             <button class="category-btn active" onclick="window.quizApp.showExaminationCategory('all'); event.stopPropagation();">All Systems</button>
-            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
-            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('respiratory'); event.stopPropagation();">Respiratory</button>
-            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('abdominal'); event.stopPropagation();">Abdominal</button>
-            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('neurological'); event.stopPropagation();">Neurological</button>
-            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('ward-based'); event.stopPropagation();">Ward-Based</button>
-            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('primary-care'); event.stopPropagation();">Primary Care</button>
+            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('systemic'); event.stopPropagation();">Systemic</button>
+            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('musculoskeletal'); event.stopPropagation();">MSK</button>
+            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('specialized'); event.stopPropagation();">Specialized</button>
+            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('psychiatric'); event.stopPropagation();">Psychiatric</button>
+            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('emergency'); event.stopPropagation();">Emergency</button>
+            <button class="category-btn" onclick="window.quizApp.showExaminationCategory('primary_care'); event.stopPropagation();">Primary Care</button>
         </div>
         <div id="examination-list" class="lab-grid"></div>
     `;
@@ -14934,12 +15633,12 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
             btn.classList.remove('active');
             const btnText = btn.textContent.trim();
             if ((category === 'all' && btnText === 'All Systems') ||
-                (category === 'cardiovascular' && btnText === 'Cardiovascular') ||
-                (category === 'respiratory' && btnText === 'Respiratory') ||
-                (category === 'abdominal' && btnText === 'Abdominal') ||
-                (category === 'neurological' && btnText === 'Neurological') ||
-                (category === 'ward-based' && btnText === 'Ward-Based') ||
-                (category === 'primary-care' && btnText === 'Primary Care')) {
+                (category === 'systemic' && btnText === 'Systemic') ||
+                (category === 'musculoskeletal' && btnText === 'MSK') ||
+                (category === 'specialized' && btnText === 'Specialized') ||
+                (category === 'psychiatric' && btnText === 'Psychiatric') ||
+                (category === 'emergency' && btnText === 'Emergency') ||
+                (category === 'primary_care' && btnText === 'Primary Care')) {
                 btn.classList.add('active');
             }
         });
@@ -14948,17 +15647,7 @@ MLAQuizApp.prototype.showExaminationCategory = function(category) {
     }
     
     if (category !== 'all') {
-        if (category === 'ward-based') {
-            systems = systems.filter(system => 
-                ['mental-state', 'thyroid', 'lymph-nodes', 'skin', 'musculoskeletal', 'ent-basic'].includes(system)
-            );
-        } else if (category === 'primary-care') {
-            systems = systems.filter(system => 
-                ['breast', 'prostate', 'eye', 'diabetic-foot', 'blood-pressure', 'gynaecological'].includes(system)
-            );
-        } else {
-            systems = systems.filter(system => examinationDatabase[system].category === category);
-        }
+        systems = systems.filter(system => examinationDatabase[system].category === category);
     }
     
     // Safely update the examination list
