@@ -4951,143 +4951,324 @@
                 --anatomy-info-border: #e5e7eb;
                 --anatomy-highlight-fill: #fff59d;
                 --anatomy-highlight-stroke: #f59e0b;
+                --anatomy-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             }
 
             [data-theme="dark"] {
-                --anatomy-fill: #1f2937; /* dark fill for non-highlight areas */
-                --anatomy-stroke: #60a5fa; /* lighter stroke for visibility */
+                --anatomy-fill: #1f2937;
+                --anatomy-stroke: #60a5fa;
                 --anatomy-label: #e5e7eb;
                 --anatomy-info-bg: #161618;
                 --anatomy-info-border: #2c2c2e;
-                --anatomy-highlight-fill: #f59e0b; /* warm highlight on dark */
+                --anatomy-highlight-fill: #f59e0b;
                 --anatomy-highlight-stroke: #ffd86b;
+                --anatomy-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             }
 
             /* Anatomy container layout */
             .anatomy-container {
-                padding: 12px 6px 18px 6px;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            /* Header Section */
+            .anatomy-header {
+                text-align: center;
+                padding-bottom: 16px;
+                border-bottom: 2px solid var(--anatomy-info-border);
+            }
+
+            .anatomy-title-section {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                align-items: center;
+            }
+
+            .anatomy-title {
+                font-size: 24px;
+                font-weight: 700;
+                margin: 0;
+                color: var(--text-primary);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .anatomy-subtitle {
+                font-size: 14px;
+                color: var(--text-secondary);
+                margin: 0;
+                opacity: 0.8;
+            }
+
+            /* Quick Access Section */
+            .anatomy-quick-access {
+                background: var(--anatomy-info-bg);
+                border: 1px solid var(--anatomy-info-border);
+                border-radius: 12px;
+                padding: 16px;
+                box-shadow: var(--anatomy-card-shadow);
+            }
+
+            .quick-access-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin: 0 0 12px 0;
+                color: var(--text-primary);
+            }
+
+            .region-buttons {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 10px;
+            }
+
+            .region-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+                padding: 12px 8px;
+                background: var(--bg-secondary);
+                border: 2px solid var(--anatomy-info-border);
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--text-primary);
+            }
+
+            .region-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+                border-color: #007AFF;
+            }
+
+            .region-btn .region-icon {
+                font-size: 24px;
+            }
+
+            .region-btn .region-name {
+                font-size: 12px;
+            }
+
+            /* View Controls */
+            .anatomy-view-controls {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                background: var(--anatomy-info-bg);
+                border: 1px solid var(--anatomy-info-border);
+                border-radius: 12px;
+                padding: 16px;
+                box-shadow: var(--anatomy-card-shadow);
+            }
+
+            .control-group {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
             }
 
-            /* Header layout for anatomy controls */
-            .anatomy-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
-                width: 100%;
-            }
-
-            .anatomy-title {
-                font-size: 20px;
-                font-weight: 700;
+            .control-label {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
                 margin: 0;
-                color: var(--text-primary, #ffffff);
             }
 
-            .anatomy-controls {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-            }
-
-            .anatomy-controls .layer-group,
-            .anatomy-controls .view-group {
+            .layer-group,
+            .view-group {
                 display: flex;
                 gap: 8px;
-                align-items: center;
             }
 
-            /* Make controls stack on narrow screens for better touch targets */
-            @media (max-width: 640px) {
-                .anatomy-header {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-                .anatomy-controls {
-                    justify-content: space-between;
-                }
-                .anatomy-controls .layer-group,
-                .anatomy-controls .view-group {
-                    justify-content: center;
-                }
-                .anatomy-title { text-align: left; }
-            }
-
-            /* Controls row compact styling */
             .anatomy-container .btn {
-                padding: 8px 12px;
+                flex: 1;
+                padding: 10px 12px;
                 border-radius: 10px;
                 font-weight: 600;
-                border: 1px solid rgba(0,0,0,0.08);
-                background: var(--bg-secondary, #fff);
-                color: var(--text-primary, #111827);
+                border: 2px solid var(--anatomy-info-border);
+                background: var(--bg-secondary);
+                color: var(--text-primary);
                 cursor: pointer;
-                min-height: 40px;
-                min-width: 84px;
-                display: inline-flex;
+                min-height: 44px;
+                display: flex;
                 align-items: center;
                 justify-content: center;
+                gap: 6px;
+                transition: all 0.2s ease;
+                font-size: 14px;
+            }
+
+            .anatomy-container .btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
 
             .anatomy-container .btn.active {
-                background: var(--button-bg, #007AFF);
+                background: #007AFF;
                 color: white;
-                border-color: rgba(0,0,0,0.06);
-                box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-                transform: translateY(-1px);
+                border-color: #0051D5;
+                box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
             }
 
-            /* Dark theme for anatomy buttons */
-            [data-theme="dark"] .anatomy-container .btn {
-                background: var(--bg-tertiary);
-                border-color: var(--border-color);
+            .btn-icon {
+                font-size: 18px;
+            }
+
+            .btn-text {
+                font-size: 14px;
+            }
+
+            /* Search Section */
+            .anatomy-search-section {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .search-container {
+                display: flex;
+                gap: 8px;
+                align-items: stretch;
+            }
+
+            .tool-search {
+                flex: 1;
+                padding: 12px 16px;
+                border-radius: 10px;
+                border: 2px solid var(--anatomy-info-border);
+                background: var(--bg-secondary);
                 color: var(--text-primary);
-                box-shadow: none;
+                font-size: 14px;
+                transition: all 0.2s ease;
             }
 
-            /* Ensure the search button in anatomy looks balanced */
-            #anatomy-panel .search-container button {
-                min-width: 56px;
-                padding: 10px 12px;
+            .tool-search:focus {
+                outline: none;
+                border-color: #007AFF;
+                box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+            }
+
+            .search-btn {
+                min-width: 50px !important;
+                padding: 12px !important;
+                background: #007AFF !important;
+                color: white !important;
+                border: none !important;
+            }
+
+            .search-btn:hover {
+                background: #0051D5 !important;
+            }
+
+            /* Canvas Section */
+            .anatomy-canvas-wrapper {
+                background: var(--anatomy-info-bg);
+                border: 1px solid var(--anatomy-info-border);
+                border-radius: 12px;
+                padding: 20px;
+                box-shadow: var(--anatomy-card-shadow);
+            }
+
+            .anatomy-canvas {
+                min-height: 400px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, rgba(0, 122, 255, 0.02) 0%, rgba(0, 122, 255, 0.05) 100%);
                 border-radius: 8px;
-                background: var(--button-bg, #007AFF);
-                color: #fff;
-                border: none;
-                display: inline-flex;
+                margin-bottom: 12px;
+                padding: 16px;
+            }
+
+            [data-theme="dark"] .anatomy-canvas {
+                background: linear-gradient(135deg, rgba(96, 165, 250, 0.03) 0%, rgba(96, 165, 250, 0.08) 100%);
+            }
+
+            .body-map {
+                width: 100%;
+                max-width: 500px;
+                display: flex;
                 align-items: center;
                 justify-content: center;
             }
 
-            /* Slightly smaller heading inside anatomy panel to avoid vertical imbalance */
-            #anatomy-panel .anatomy-container > div h2 {
-                font-size: 20px;
-                line-height: 1.1;
-                margin: 0;
-            }
-
-            /* Search area compact override inside anatomy */
-            #anatomy-panel .search-container { gap: 6px; }
-
-            /* Ensure injected SVG scales nicely inside the anatomy canvas */
             #bodyMap svg {
                 width: 100%;
                 height: auto;
                 display: block;
-                max-width: 420px; /* keep a sane maximum width */
+                max-width: 100%;
             }
 
-            #anatomyCanvas {
-                min-height: 320px;
+            .canvas-help-text {
+                text-align: center;
+                font-size: 13px;
+                color: var(--text-secondary);
+                font-style: italic;
+                padding: 8px;
+                background: rgba(0, 122, 255, 0.05);
+                border-radius: 6px;
+            }
+
+            /* Structure Info Section */
+            .structure-info-section {
+                min-height: 50px;
+            }
+
+            .anatomy-info-card {
+                padding: 16px;
+                border-radius: 12px;
+                background: var(--anatomy-info-bg);
+                border: 2px solid var(--anatomy-info-border);
+                color: var(--text-primary);
+                box-shadow: var(--anatomy-card-shadow);
+                animation: slideIn 0.3s ease;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Quiz Toggle */
+            .anatomy-quiz-toggle {
                 display: flex;
-                align-items: center;
                 justify-content: center;
-                padding: 8px 6px;
+                padding-top: 8px;
             }
 
-            /* Default styling for anatomy elements (when SVG elements do not inline styles) */
+            .quiz-toggle-btn {
+                background: linear-gradient(135deg, #34c759 0%, #30d158 100%) !important;
+                color: white !important;
+                border: none !important;
+                padding: 14px 24px !important;
+                font-size: 15px !important;
+                font-weight: 600 !important;
+                box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3) !important;
+            }
+
+            .quiz-toggle-btn:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 16px rgba(52, 199, 89, 0.4) !important;
+            }
+
+            /* SVG styling */
             #anatomy-panel svg [data-structure] {
                 fill: var(--anatomy-fill) !important;
                 stroke: var(--anatomy-stroke) !important;
@@ -5096,7 +5277,12 @@
                 cursor: pointer;
             }
 
-            /* Highlighted/selected anatomy element */
+            #anatomy-panel svg [data-structure]:hover {
+                fill: var(--anatomy-highlight-fill) !important;
+                stroke: var(--anatomy-highlight-stroke) !important;
+                stroke-width: 2px !important;
+            }
+
             .anatomy-highlight {
                 outline: none !important;
                 fill: var(--anatomy-highlight-fill) !important;
@@ -5105,33 +5291,69 @@
                 filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
             }
 
-            /* Labels inside programmatic SVG (fallback) */
-            #anatomy-panel svg text { fill: var(--anatomy-label); font-weight: 600; font-size: 11px; }
-
-            /* Info card for structure details */
-            .anatomy-info-card {
-                padding: 12px;
-                border-radius: 10px;
-                background: var(--anatomy-info-bg);
-                border: 1px solid var(--anatomy-info-border);
-                color: var(--text-primary, #111827);
+            #anatomy-panel svg text {
+                fill: var(--anatomy-label);
+                font-weight: 600;
+                font-size: 11px;
             }
 
-            /* Dark mode adjustments (in case body theme isn't set on html element) */
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .anatomy-container {
+                    padding: 16px;
+                    gap: 16px;
+                }
+
+                .anatomy-view-controls {
+                    grid-template-columns: 1fr;
+                }
+
+                .region-buttons {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+
+                .anatomy-title {
+                    font-size: 20px;
+                }
+
+                .anatomy-canvas {
+                    min-height: 320px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .region-buttons {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .btn-text {
+                    display: none;
+                }
+
+                .anatomy-container .btn {
+                    min-width: 44px;
+                }
+            }
+
+            /* Dark theme adjustments */
+            [data-theme="dark"] .anatomy-container .btn {
+                background: var(--bg-tertiary);
+                border-color: var(--border-color);
+                color: var(--text-primary);
+            }
+
+            [data-theme="dark"] .anatomy-container .btn.active {
+                background: #0A84FF;
+                border-color: #0A84FF;
+            }
+
+            [data-theme="dark"] .region-btn:hover {
+                border-color: #0A84FF;
+                box-shadow: 0 4px 12px rgba(10, 132, 255, 0.25);
+            }
+
             [data-theme="dark"] #anatomy-panel svg [data-structure] {
                 opacity: 0.9;
-            }
-
-            [data-theme="dark"] .anatomy-info-card {
-                color: var(--text-primary);
-                background: var(--anatomy-info-bg);
-                border-color: var(--anatomy-info-border);
-            }
-
-            /* Small responsive tweaks */
-            @media (max-width: 520px) {
-                #bodyMap svg { max-width: 320px; }
-                .anatomy-container .btn { padding: 8px; font-size: 13px; }
             }
             
             /* Additional anatomy enhancements */
@@ -5682,32 +5904,107 @@
             <!-- Anatomy Explorer Panel -->
             <div id="anatomy-panel" class="tool-panel">
                 <div class="anatomy-container">
+                    <!-- Header Section -->
                     <div class="anatomy-header">
-                        <h2 class="anatomy-title">Muscles &amp; Bones Explorer</h2>
+                        <div class="anatomy-title-section">
+                            <h2 class="anatomy-title">🦴 Anatomy Explorer</h2>
+                            <p class="anatomy-subtitle">Interactive Muscles &amp; Bones Reference</p>
+                        </div>
+                    </div>
 
-                        <div class="anatomy-controls" role="toolbar" aria-label="Anatomy controls">
+                    <!-- Quick Access Regions -->
+                    <div class="anatomy-quick-access">
+                        <h3 class="quick-access-title">Quick Access</h3>
+                        <div class="region-buttons">
+                            <button class="region-btn" data-region="head">
+                                <span class="region-icon">👤</span>
+                                <span class="region-name">Head</span>
+                            </button>
+                            <button class="region-btn" data-region="spine">
+                                <span class="region-icon">🔗</span>
+                                <span class="region-name">Spine</span>
+                            </button>
+                            <button class="region-btn" data-region="arm">
+                                <span class="region-icon">💪</span>
+                                <span class="region-name">Arm</span>
+                            </button>
+                            <button class="region-btn" data-region="leg">
+                                <span class="region-icon">🦵</span>
+                                <span class="region-name">Leg</span>
+                            </button>
+                            <button class="region-btn" data-region="thorax">
+                                <span class="region-icon">🫁</span>
+                                <span class="region-name">Thorax</span>
+                            </button>
+                            <button class="region-btn" data-region="chest">
+                                <span class="region-icon">💗</span>
+                                <span class="region-name">Chest</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- View Controls -->
+                    <div class="anatomy-view-controls">
+                        <div class="control-group">
+                            <label class="control-label">Layer Type</label>
                             <div class="layer-group" role="group" aria-label="Layer selection">
-                                <button id="toggleBones" class="btn" title="Show bones">🦴 Bones</button>
-                                <button id="toggleMuscles" class="btn" title="Show muscles">💪 Muscles</button>
+                                <button id="toggleBones" class="btn layer-btn" title="Show bones">
+                                    <span class="btn-icon">🦴</span>
+                                    <span class="btn-text">Bones</span>
+                                </button>
+                                <button id="toggleMuscles" class="btn layer-btn" title="Show muscles">
+                                    <span class="btn-icon">💪</span>
+                                    <span class="btn-text">Muscles</span>
+                                </button>
                             </div>
+                        </div>
 
+                        <div class="control-group">
+                            <label class="control-label">View Direction</label>
                             <div class="view-group" role="group" aria-label="View selection">
-                                <button id="viewAnterior" class="btn" title="Anterior view">Front</button>
-                                <button id="viewPosterior" class="btn" title="Posterior view">Back</button>
+                                <button id="viewAnterior" class="btn view-btn" title="Anterior view">
+                                    <span class="btn-icon">👤</span>
+                                    <span class="btn-text">Front</span>
+                                </button>
+                                <button id="viewPosterior" class="btn view-btn" title="Posterior view">
+                                    <span class="btn-icon">🔄</span>
+                                    <span class="btn-text">Back</span>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="search-container" style="margin-top:12px;">
-                        <input type="text" id="searchAnatomy" placeholder="Search structure..." class="tool-search">
-                        <button id="searchAnatomyBtn" class="btn">🔍</button>
+                    <!-- Search Section -->
+                    <div class="anatomy-search-section">
+                        <label class="control-label" for="searchAnatomy">Search Structures</label>
+                        <div class="search-container">
+                            <input type="text" id="searchAnatomy" placeholder="e.g., biceps, femur, skull..." class="tool-search">
+                            <button id="searchAnatomyBtn" class="btn search-btn" aria-label="Search">
+                                <span class="btn-icon">🔍</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div id="anatomyCanvas" style="margin-top:12px; display:flex; justify-content:center;">
-                        <div id="bodyMap" style="width:100%;"></div>
+                    <!-- SVG Canvas Section -->
+                    <div class="anatomy-canvas-wrapper">
+                        <div id="anatomyCanvas" class="anatomy-canvas">
+                            <div id="bodyMap" class="body-map"></div>
+                        </div>
+                        <div class="canvas-help-text">
+                            💡 Click on any structure to see detailed information
+                        </div>
                     </div>
 
-                    <div id="structureInfo" style="margin-top:12px;"></div>
+                    <!-- Structure Info Display -->
+                    <div id="structureInfo" class="structure-info-section"></div>
+
+                    <!-- Quiz Mode Toggle -->
+                    <div class="anatomy-quiz-toggle">
+                        <button id="toggleAnatomyQuiz" class="btn quiz-toggle-btn">
+                            <span class="btn-icon">🎯</span>
+                            <span class="btn-text">Start Quiz Mode</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 

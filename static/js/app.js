@@ -136,17 +136,34 @@ class MLAQuizApp {
             } catch (normErr) {
                 console.debug('Anatomy SVG normalization failed:', normErr);
             }
-            // Attach click handlers for any element with data-structure or id
-            const clickable = bodyMap.querySelectorAll('[data-structure], [id]');
-            clickable.forEach(el => {
-                const key = el.getAttribute('data-structure') || el.id;
-                if (!key) return;
+            
+            // Note: Click handlers are now added by normalizeAnatomySvg() to avoid duplicates
+            // and ensure proper data lookup. If normalizeAnatomySvg didn't bind handlers,
+            // we add a fallback here for elements without data-structure.
+            const unboundClickable = bodyMap.querySelectorAll('[id]:not([data-anatomy-bound])');
+            unboundClickable.forEach(el => {
+                const key = el.id;
+                if (!key || el.getAttribute('data-structure')) return; // Skip if already has data-structure
+                
                 el.style.cursor = 'pointer';
-                el.addEventListener('click', (e) => {
+                el.setAttribute('tabindex', '0');
+                el.setAttribute('role', 'button');
+                
+                const clickHandler = (e) => {
                     e.stopPropagation();
-                    // Use the key as name if no structured info available
-                    this.showStructureInfo(key, `Information about ${key} (SVG layer)`);
+                    // Try to find this key in anatomyData first
+                    this.showStructureInfo(key);
+                };
+                
+                el.addEventListener('click', clickHandler);
+                el.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Enter' || ev.key === ' ') {
+                        ev.preventDefault();
+                        clickHandler(ev);
+                    }
                 });
+                
+                el.dataset.anatomyBound = '1';
             });
 
             // Success
@@ -4144,14 +4161,57 @@ class MLAQuizApp {
             return;
         }
 
-        // Try to look up the structure in anatomyData using a few fallbacks so
-        // keys inserted into SVG (which may be original keys or normalized ids)
-        // resolve correctly.
+        // Try to look up the structure in anatomyData using multiple fallback strategies
         const rawKey = (key || '').toString();
         const kLower = rawKey.toLowerCase();
+        const kNormalized = kLower.replace(/[^a-z0-9]/g, '');
+        
         let data = null;
+        
         if (this.anatomyData) {
-            data = this.anatomyData[rawKey] || this.anatomyData[kLower] || null;
+            // Strategy 1: Exact match (case-sensitive)
+            data = this.anatomyData[rawKey];
+            
+            // Strategy 2: Exact match (case-insensitive)
+            if (!data) {
+                data = this.anatomyData[kLower];
+            }
+            
+            // Strategy 3: Search through all keys for normalized match
+            if (!data) {
+                for (const [dataKey, dataValue] of Object.entries(this.anatomyData)) {
+                    const normalizedDataKey = dataKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (normalizedDataKey === kNormalized) {
+                        data = dataValue;
+                        console.log(`🔍 Found structure via normalized match: ${rawKey} -> ${dataKey}`);
+                        break;
+                    }
+                }
+            }
+            
+            // Strategy 4: Partial match (contains)
+            if (!data) {
+                for (const [dataKey, dataValue] of Object.entries(this.anatomyData)) {
+                    const normalizedDataKey = dataKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (normalizedDataKey.includes(kNormalized) || kNormalized.includes(normalizedDataKey)) {
+                        data = dataValue;
+                        console.log(`🔍 Found structure via partial match: ${rawKey} -> ${dataKey}`);
+                        break;
+                    }
+                }
+            }
+            
+            // Strategy 5: Search by common name
+            if (!data) {
+                for (const [dataKey, dataValue] of Object.entries(this.anatomyData)) {
+                    const commonName = (dataValue.commonName || '').toLowerCase();
+                    if (commonName && (commonName.includes(kLower) || kLower.includes(commonName))) {
+                        data = dataValue;
+                        console.log(`🔍 Found structure via common name: ${rawKey} -> ${dataKey}`);
+                        break;
+                    }
+                }
+            }
         }
 
         if (data) {
@@ -4211,13 +4271,23 @@ class MLAQuizApp {
                 });
             }, 100);
         } else {
-            // Fallback to a simple display using the same card class
+            // Fallback to a simple display - but let user know we couldn't find detailed info
             const label = rawKey || 'Structure';
-            const infoText = fallbackInfo || '';
+            const infoText = fallbackInfo || 'Detailed information not available for this structure.';
+            
+            console.warn(`⚠️ No anatomy data found for key: "${rawKey}". Searched: exact, lowercase, normalized, partial, and common name matches.`);
+            
             infoDiv.innerHTML = `
                 <div class="anatomy-info-card">
                     <h3 style="margin:0 0 8px;">${label}</h3>
-                    <p style="margin:0;">${infoText}</p>
+                    <p style="margin:0;color:var(--text-secondary);">${infoText}</p>
+                    <div style="margin-top:12px;padding:10px;background:#fff3cd;border-radius:6px;border-left:4px solid #ffc107;">
+                        <strong style="color:#856404;">ℹ️ Note:</strong>
+                        <div style="margin-top:6px;color:#856404;font-size:0.9rem;">
+                            We're working on adding more detailed information for this structure. 
+                            Try searching for related structures using the search bar above.
+                        </div>
+                    </div>
                 </div>
             `;
         }
