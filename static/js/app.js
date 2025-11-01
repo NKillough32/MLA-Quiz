@@ -589,7 +589,7 @@ class MLAQuizApp {
                         rotNavBtn.textContent = '🔒';
                     } else {
                         await this.lockToOptimalOrientation();
-                        rotNavBtn.textContent = this.screenLocked ? '🔓' : '🔒';
+                        rotNavBtn.textContent = this.screenLocked ? '🔒' : '🔓';
                     }
                 } catch (e) {
                     console.debug('rotLock handler error:', e);
