@@ -52,6 +52,9 @@ class MLAQuizApp {
             const canvas = document.getElementById('anatomyCanvas') || document.getElementById('bodyMap');
             if (!canvas) return this.renderAnatomyMap();
 
+            // Show loading indicator
+            canvas.innerHTML = '<div style="text-align:center;padding:40px;color:#666;"><div style="font-size:24px;margin-bottom:10px;">⏳</div><div>Loading anatomy image...</div></div>';
+
             // Try common local filenames first: /static/anatomy/<layer>_<view>.svg etc.
             const candidates = [
                 `/static/anatomy/${layer}_${view}.svg`,
@@ -61,11 +64,15 @@ class MLAQuizApp {
             ];
 
             let svgText = null;
+            let loadedFrom = null;
+            
             for (const url of candidates) {
                 try {
                     const res = await fetch(url, { cache: 'no-cache' });
                     if (!res.ok) continue;
                     svgText = await res.text();
+                    loadedFrom = url;
+                    console.log(`✅ Loaded local anatomy image: ${url}`);
                     break;
                 } catch (err) {
                     // try next
@@ -73,7 +80,7 @@ class MLAQuizApp {
             }
 
             // If no local SVG was found, attempt known Wikimedia Commons fallbacks (load remote SVGs at runtime).
-            // These are used only when local assets are missing. Browsers will fetch directly from Wikimedia.
+            // These are high-quality, detailed anatomical illustrations from Wikimedia Commons
             if (!svgText) {
                 try {
                     // Updated with verified working Wikimedia Commons URLs for high-quality anatomy images
@@ -81,33 +88,58 @@ class MLAQuizApp {
                         'bones_front': [
                             // High-quality English labeled skeleton diagrams (verified working URLs)
                             'https://upload.wikimedia.org/wikipedia/commons/c/ca/Human_skeleton_front_en.svg',
-                            'https://upload.wikimedia.org/wikipedia/commons/c/c7/Human_skeleton_front.svg'
+                            'https://upload.wikimedia.org/wikipedia/commons/c/c7/Human_skeleton_front.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/1/14/Human_skeleton_diagram_en.svg'
                         ],
                         'bones_back': [
                             // High-quality back view with English labels (verified)
                             'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back_en.svg',
                             'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back.svg',
-                            'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back_uk.svg'
+                            'https://upload.wikimedia.org/wikipedia/commons/d/d7/Posterior_view_of_human_body_skeleton.svg'
                         ],
                         // High-quality combined muscle diagram with excellent detail (verified)
                         'muscles_front': [
-                            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg'
+                            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/5/59/Anterior_muscles.png'
                         ],
                         'muscles_back': [
-                            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg'
+                            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/1/17/Posterior_muscles.png'
                         ]
                     };
 
                     const remoteKey = `${layer}_${view}`;
                     const candidates = remoteMap[remoteKey] || remoteMap[`${layer}_front`] || remoteMap[layer] || [];
+                    
                     for (const remoteUrl of candidates) {
                         try {
-                            const r = await fetch(remoteUrl, { cache: 'no-cache' });
+                            console.log(`🔄 Trying remote image: ${remoteUrl}`);
+                            const r = await fetch(remoteUrl, { 
+                                cache: 'default',
+                                mode: 'cors'
+                            });
                             if (r.ok) {
-                                svgText = await r.text();
+                                const contentType = r.headers.get('content-type');
+                                if (contentType && contentType.includes('svg')) {
+                                    svgText = await r.text();
+                                } else {
+                                    // If it's a PNG/JPG, handle differently
+                                    const blob = await r.blob();
+                                    const imageUrl = URL.createObjectURL(blob);
+                                    canvas.innerHTML = `
+                                        <img src="${imageUrl}" 
+                                             style="width:100%;height:auto;max-width:600px;display:block;margin:0 auto;"
+                                             alt="${layer} ${view} anatomy" />
+                                    `;
+                                    console.log(`✅ Loaded remote image (bitmap): ${remoteUrl}`);
+                                    return; // Exit after showing image
+                                }
+                                loadedFrom = remoteUrl;
+                                console.log(`✅ Loaded remote SVG: ${remoteUrl}`);
                                 break;
                             }
                         } catch (innerErr) {
+                            console.warn(`⚠️ Failed to load ${remoteUrl}:`, innerErr.message);
                             // try next candidate
                         }
                     }
@@ -118,82 +150,130 @@ class MLAQuizApp {
 
             if (!svgText) {
                 // No external SVG found — fall back to programmatic map
+                console.log('⚠️ No SVG found, using programmatic fallback');
+                canvas.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Loading anatomical structures...</div>';
                 return this.renderAnatomyMap();
             }
 
             // Inject SVG and add click handlers
             const wrapper = document.createElement('div');
             wrapper.innerHTML = svgText;
-            // Remove any previous content
-            const bodyMap = document.getElementById('bodyMap');
-            if (bodyMap) bodyMap.innerHTML = '';
+            
+            // Clear loading indicator
+            canvas.innerHTML = '';
+            
             // Append nodes
-            if (bodyMap) bodyMap.appendChild(wrapper);
+            canvas.appendChild(wrapper);
 
             // Enhance SVG quality and rendering
-            const svgElement = bodyMap.querySelector('svg');
+            const svgElement = canvas.querySelector('svg');
             if (svgElement) {
-                // Set high-quality rendering attributes
+                // Set high-quality rendering attributes for crystal-clear display
                 svgElement.setAttribute('shape-rendering', 'geometricPrecision');
                 svgElement.setAttribute('text-rendering', 'geometricPrecision');
                 svgElement.setAttribute('color-rendering', 'optimizeQuality');
                 svgElement.setAttribute('image-rendering', 'optimizeQuality');
                 
+                // Anti-aliasing for smoother lines
+                svgElement.style.shapeRendering = 'auto';
+                
                 // Ensure responsive sizing
                 if (!svgElement.hasAttribute('viewBox')) {
                     const width = svgElement.getAttribute('width') || '800';
                     const height = svgElement.getAttribute('height') || '600';
-                    svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+                    const numWidth = parseFloat(width);
+                    const numHeight = parseFloat(height);
+                    svgElement.setAttribute('viewBox', `0 0 ${numWidth} ${numHeight}`);
                 }
                 svgElement.removeAttribute('width');
                 svgElement.removeAttribute('height');
                 svgElement.style.width = '100%';
                 svgElement.style.height = 'auto';
-                svgElement.style.maxWidth = '600px';
+                svgElement.style.maxWidth = '700px';
+                svgElement.style.display = 'block';
+                svgElement.style.margin = '0 auto';
+                
+                // Add subtle shadow for depth
+                svgElement.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))';
             }
 
             // Try to normalize SVG element ids/titles to keys in anatomyData so
             // clicks and searches map correctly even when external SVG ids differ.
             try {
-                this.normalizeAnatomySvg(bodyMap);
+                const mappings = this.normalizeAnatomySvg(canvas);
+                if (mappings && Object.keys(mappings).length > 0) {
+                    console.log(`✅ Mapped ${Object.keys(mappings).length} anatomical structures`);
+                } else {
+                    console.warn('⚠️ No anatomical structures were mapped - tags may not work');
+                }
             } catch (normErr) {
-                console.debug('Anatomy SVG normalization failed:', normErr);
+                console.error('❌ Anatomy SVG normalization failed:', normErr);
             }
             
             // Note: Click handlers are now added by normalizeAnatomySvg() to avoid duplicates
             // and ensure proper data lookup. If normalizeAnatomySvg didn't bind handlers,
             // we add a fallback here for elements without data-structure.
-            const unboundClickable = bodyMap.querySelectorAll('[id]:not([data-anatomy-bound])');
+            const unboundClickable = canvas.querySelectorAll('[id]:not([data-anatomy-bound])');
+            let boundCount = 0;
+            
             unboundClickable.forEach(el => {
                 const key = el.id;
                 if (!key || el.getAttribute('data-structure')) return; // Skip if already has data-structure
                 
-                el.style.cursor = 'pointer';
-                el.setAttribute('tabindex', '0');
-                el.setAttribute('role', 'button');
+                // Check if this ID might match an anatomy structure
+                const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+                let hasMatch = false;
                 
-                const clickHandler = (e) => {
-                    e.stopPropagation();
-                    // Try to find this key in anatomyData first
-                    this.showStructureInfo(key);
-                };
-                
-                el.addEventListener('click', clickHandler);
-                el.addEventListener('keydown', (ev) => {
-                    if (ev.key === 'Enter' || ev.key === ' ') {
-                        ev.preventDefault();
-                        clickHandler(ev);
+                if (this.anatomyData) {
+                    for (const dataKey of Object.keys(this.anatomyData)) {
+                        const normalizedDataKey = dataKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        if (normalizedKey.includes(normalizedDataKey) || normalizedDataKey.includes(normalizedKey)) {
+                            hasMatch = true;
+                            break;
+                        }
                     }
-                });
+                }
                 
-                el.dataset.anatomyBound = '1';
+                if (hasMatch) {
+                    el.style.cursor = 'pointer';
+                    el.setAttribute('tabindex', '0');
+                    el.setAttribute('role', 'button');
+                    el.setAttribute('aria-label', `Show information about ${key}`);
+                    
+                    const clickHandler = (e) => {
+                        e.stopPropagation();
+                        this.showStructureInfo(key);
+                    };
+                    
+                    el.addEventListener('click', clickHandler);
+                    el.addEventListener('keydown', (ev) => {
+                        if (ev.key === 'Enter' || ev.key === ' ') {
+                            ev.preventDefault();
+                            clickHandler(ev);
+                        }
+                    });
+                    
+                    el.dataset.anatomyBound = '1';
+                    boundCount++;
+                }
             });
 
+            if (boundCount > 0) {
+                console.log(`✅ Added fallback handlers to ${boundCount} additional elements`);
+            }
+
             // Success
-            console.log(`🔍 Loaded anatomy layer: ${layer}`);
+            console.log(`🎉 Successfully loaded anatomy layer: ${layer} (${view}) from ${loadedFrom || 'local'}`);
+            
         } catch (err) {
-            console.warn('⚠️ Error loading anatomy SVG, falling back to programmatic map', err);
-            this.renderAnatomyMap();
+            console.error('❌ Error loading anatomy SVG:', err);
+            const canvas = document.getElementById('anatomyCanvas') || document.getElementById('bodyMap');
+            if (canvas) {
+                canvas.innerHTML = '<div style="text-align:center;padding:20px;color:#d32f2f;"><div style="font-size:24px;margin-bottom:10px;">⚠️</div><div>Error loading anatomy image. Using fallback...</div></div>';
+            }
+            setTimeout(() => {
+                this.renderAnatomyMap();
+            }, 1000);
         }
     }
 
@@ -4016,6 +4096,7 @@ class MLAQuizApp {
 
             const allEls = svg.querySelectorAll('*');
             const mappings = {};
+            let successfulMappings = 0;
 
             allEls.forEach(el => {
                 try {
@@ -4024,6 +4105,7 @@ class MLAQuizApp {
 
                     const candidateAttrs = [];
 
+                    // Collect all potential identifying attributes
                     if (el.id) candidateAttrs.push(el.id);
                     const aria = el.getAttribute && el.getAttribute('aria-label');
                     if (aria) candidateAttrs.push(aria);
@@ -4034,6 +4116,10 @@ class MLAQuizApp {
                     // title element if present
                     const titleEl = el.querySelector && el.querySelector('title');
                     if (titleEl && titleEl.textContent) candidateAttrs.push(titleEl.textContent.trim());
+                    // Also check class names as they sometimes contain structure names
+                    if (el.className && el.className.baseVal) {
+                        candidateAttrs.push(el.className.baseVal);
+                    }
 
                     // No candidate strings, skip
                     if (candidateAttrs.length === 0) return;
@@ -4045,30 +4131,35 @@ class MLAQuizApp {
                     // Find best matching key (exact normalized match preferred, then substring longest)
                     let bestKey = null;
                     let bestMatchLen = 0;
+                    let matchType = '';
 
                     for (const cand of normalizedCandidates) {
+                        // Strategy 1: Exact match
                         if (keyMap[cand]) {
                             bestKey = keyMap[cand];
                             bestMatchLen = cand.length;
+                            matchType = 'exact';
                             break; // exact match highest priority
                         }
 
-                        // substring matches
+                        // Strategy 2: Substring matches (both directions)
                         Object.keys(keyMap).forEach(k2 => {
                             if (!k2) return;
                             if (cand.includes(k2) || k2.includes(cand)) {
                                 if (k2.length > bestMatchLen) {
                                     bestMatchLen = k2.length;
                                     bestKey = keyMap[k2];
+                                    matchType = 'substring';
                                 }
                             }
                         });
                     }
 
                     if (bestKey) {
-                        // Annotate element and propagate to children when useful
+                        // Annotate element with data-structure attribute
                         el.setAttribute('data-structure', bestKey);
                         el.style.cursor = 'pointer';
+                        el.style.transition = 'opacity 0.2s, filter 0.2s';
 
                         // Make interactive for keyboard users and prevent duplicate bindings
                         try {
@@ -4076,6 +4167,7 @@ class MLAQuizApp {
                                 el.setAttribute('tabindex', '0');
                                 // Role button helps assistive tech understand this is interactive
                                 el.setAttribute('role', 'button');
+                                el.setAttribute('aria-label', `Click to show information about ${this.anatomyData[bestKey]?.commonName || bestKey}`);
 
                                 // Capture key activation (Enter / Space)
                                 const k = bestKey;
@@ -4088,33 +4180,82 @@ class MLAQuizApp {
 
                                 // Click should also show info
                                 el.addEventListener('click', (ev) => {
+                                    ev.stopPropagation();
                                     try { this.showStructureInfo(k); } catch (e) {}
                                 });
 
+                                // Add hover effects for better interactivity
+                                el.addEventListener('mouseenter', (ev) => {
+                                    const currentFill = el.getAttribute('fill') || el.style.fill;
+                                    el.dataset.originalFill = currentFill;
+                                    el.style.filter = 'brightness(1.2) saturate(1.3)';
+                                    el.style.opacity = '0.85';
+                                    
+                                    // Show tooltip with structure name
+                                    const tooltip = document.createElement('div');
+                                    tooltip.id = 'anatomy-tooltip';
+                                    tooltip.style.cssText = `
+                                        position: fixed;
+                                        background: rgba(0,0,0,0.8);
+                                        color: white;
+                                        padding: 6px 12px;
+                                        border-radius: 4px;
+                                        font-size: 13px;
+                                        pointer-events: none;
+                                        z-index: 10000;
+                                        white-space: nowrap;
+                                    `;
+                                    tooltip.textContent = this.anatomyData[k]?.commonName || k;
+                                    document.body.appendChild(tooltip);
+                                    
+                                    const updateTooltipPosition = (e) => {
+                                        tooltip.style.left = (e.clientX + 10) + 'px';
+                                        tooltip.style.top = (e.clientY + 10) + 'px';
+                                    };
+                                    updateTooltipPosition(ev);
+                                    el.addEventListener('mousemove', updateTooltipPosition);
+                                });
+
+                                el.addEventListener('mouseleave', () => {
+                                    el.style.filter = '';
+                                    el.style.opacity = '';
+                                    
+                                    // Remove tooltip
+                                    const tooltip = document.getElementById('anatomy-tooltip');
+                                    if (tooltip) tooltip.remove();
+                                });
+
                                 el.dataset.anatomyBound = '1';
+                                successfulMappings++;
                             }
                         } catch (bindErr) {
                             // Non-fatal if individual element can't be enhanced
+                            console.debug('Failed to bind handlers to element:', bindErr);
                         }
 
                         if (!mappings[bestKey]) mappings[bestKey] = [];
-                        mappings[bestKey].push(el);
+                        mappings[bestKey].push({
+                            element: el,
+                            id: el.id,
+                            matchType: matchType
+                        });
 
                         // If this is a group, propagate to descendants that don't have an annotation
                         if (el.tagName && el.tagName.toLowerCase() === 'g') {
                             el.querySelectorAll('*').forEach(child => {
                                 if (child.getAttribute && !child.getAttribute('data-structure')) {
                                     child.setAttribute('data-structure', bestKey);
+                                    child.style.cursor = 'pointer';
                                 }
                             });
                         }
 
                         // Ensure an accessible title exists for the element
                         const existingTitle = el.querySelector && el.querySelector('title');
-                        if (!existingTitle) {
+                        if (!existingTitle && this.anatomyData[bestKey]) {
                             try {
                                 const t = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-                                t.textContent = (this.anatomyData[bestKey] && this.anatomyData[bestKey].commonName) ? this.anatomyData[bestKey].commonName : bestKey;
+                                t.textContent = this.anatomyData[bestKey].commonName || bestKey;
                                 // insert as first child (some SVG libs don't support prepend)
                                 el.insertBefore(t, el.firstChild);
                             } catch (e) {
@@ -4124,13 +4265,30 @@ class MLAQuizApp {
                     }
                 } catch (innerErr) {
                     // per-element failures shouldn't abort normalization
+                    console.debug('Error processing element:', innerErr);
                 }
             });
 
-            console.log('🔗 Anatomy normalizer mappings:', mappings);
+            console.log(`✅ Anatomy normalizer successfully mapped ${successfulMappings} structures:`, 
+                Object.keys(mappings).join(', '));
+            
+            // Log detailed mapping info for debugging
+            if (Object.keys(mappings).length === 0) {
+                console.warn('⚠️ No anatomical structures were mapped! Checking SVG structure...');
+                console.log('Available anatomy data keys:', Object.keys(this.anatomyData).slice(0, 10).join(', '), '...');
+                console.log('SVG element IDs found:', Array.from(allEls)
+                    .filter(el => el.id)
+                    .map(el => el.id)
+                    .slice(0, 10)
+                    .join(', ') + '...');
+            } else {
+                console.log('🔗 Detailed mappings:', mappings);
+            }
+            
             return mappings;
         } catch (err) {
-            console.warn('⚠️ normalizeAnatomySvg error:', err);
+            console.error('❌ normalizeAnatomySvg error:', err);
+            return {};
         }
     }
 

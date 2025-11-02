@@ -12,6 +12,65 @@
     "relatedStructures": ["spine", "jaw", "facial"],
     "category": "axial"
   },
+  "Skull": {
+    "commonName": "Skull",
+    "brief": "Protects the brain and houses sensory organs.",
+    "origin": "Cranial bones fused at sutures",
+    "insertion": "N/A (composite of several bones)",
+    "innervation": "Trigeminal nerve (sensory branches) and various motor branches for mastication muscles",
+    "action": "Protective bony vault for the brain; provides attachment for facial muscles",
+    "image": "/static/anatomy/bones_front.svg",
+    "clinicalPearl": "Basilar skull fractures may present with raccoon eyes or Battle's sign — inspect carefully.",
+    "reference": "https://en.wikipedia.org/wiki/Human_skull",
+    "relatedStructures": ["spine", "jaw", "facial"],
+    "category": "axial"
+  },
+  "cranium": {
+    "commonName": "Cranium",
+    "brief": "Bony structure of the skull encasing the brain.",
+    "origin": "Fusion of cranial bones",
+    "insertion": "N/A",
+    "innervation": "Trigeminal nerve (sensory)",
+    "action": "Protection of brain and intracranial structures",
+    "clinicalPearl": "Basilar skull fractures may present with raccoon eyes (periorbital ecchymosis) or Battle's sign (mastoid ecchymosis).",
+    "reference": "https://en.wikipedia.org/wiki/Neurocranium",
+    "category": "axial"
+  },
+  "Cranium": {
+    "commonName": "Cranium",
+    "brief": "Bony structure of the skull encasing the brain.",
+    "origin": "Fusion of cranial bones",
+    "insertion": "N/A",
+    "innervation": "Trigeminal nerve (sensory)",
+    "action": "Protection of brain and intracranial structures",
+    "clinicalPearl": "Basilar skull fractures may present with raccoon eyes (periorbital ecchymosis) or Battle's sign (mastoid ecchymosis).",
+    "reference": "https://en.wikipedia.org/wiki/Neurocranium",
+    "category": "axial"
+  },
+  "mandible": {
+    "commonName": "Mandible (Jaw)",
+    "brief": "Lower jaw bone - largest and strongest facial bone.",
+    "origin": "Forms from Meckel's cartilage during development",
+    "insertion": "Articulates with temporal bone at temporomandibular joint (TMJ)",
+    "innervation": "Inferior alveolar nerve (branch of mandibular division of trigeminal)",
+    "action": "Mastication, speech, and facial expression",
+    "clinicalPearl": "Mandibular fractures are the second most common facial fracture after nasal bones. Check for malocclusion, step deformity, and numbness in the lower lip.",
+    "reference": "https://en.wikipedia.org/wiki/Mandible",
+    "relatedStructures": ["skull", "masseter"],
+    "category": "head"
+  },
+  "Mandible": {
+    "commonName": "Mandible (Jaw)",
+    "brief": "Lower jaw bone - largest and strongest facial bone.",
+    "origin": "Forms from Meckel's cartilage during development",
+    "insertion": "Articulates with temporal bone at temporomandibular joint (TMJ)",
+    "innervation": "Inferior alveolar nerve (branch of mandibular division of trigeminal)",
+    "action": "Mastication, speech, and facial expression",
+    "clinicalPearl": "Mandibular fractures are the second most common facial fracture after nasal bones. Check for malocclusion, step deformity, and numbness in the lower lip.",
+    "reference": "https://en.wikipedia.org/wiki/Mandible",
+    "relatedStructures": ["skull", "masseter"],
+    "category": "head"
+  },
   "jaw": {
     "commonName": "Mandible (Jaw)",
     "brief": "Lower jaw bone - largest and strongest facial bone.",
@@ -437,5 +496,302 @@
     "clinicalPearl": "Paraspinal muscle spasm common in low back pain. Includes iliocostalis, longissimus, and spinalis.",
     "reference": "https://en.wikipedia.org/wiki/Erector_spinae_muscles",
     "category": "axial"
+  },
+  "Scapula": {
+    "commonName": "Scapula (Shoulder Blade)",
+    "brief": "Flat triangular bone on the posterior thorax.",
+    "origin": "Spine, acromion, and coracoid process provide attachment sites",
+    "insertion": "Glenoid fossa articulates with humeral head",
+    "innervation": "Dorsal scapular nerve, suprascapular nerve, axillary nerve",
+    "action": "Provides attachment for shoulder muscles, enables arm movement",
+    "clinicalPearl": "Scapular winging indicates serratus anterior weakness (long thoracic nerve injury). Check by having patient push against a wall.",
+    "reference": "https://en.wikipedia.org/wiki/Scapula",
+    "relatedStructures": ["clavicle", "humerus", "deltoid", "rotator_cuff"],
+    "category": "upper_limb"
+  },
+  "ClavicleLeft": {
+    "commonName": "Clavicle (Collarbone)",
+    "brief": "S-shaped bone connecting the shoulder to the axial skeleton.",
+    "origin": "Medial end articulates with manubrium of sternum",
+    "insertion": "Lateral end articulates with acromion of scapula",
+    "innervation": "Supraclavicular nerve (sensory)",
+    "action": "Strut connecting upper limb to trunk, protects neurovascular bundle",
+    "clinicalPearl": "Most commonly fractured bone in children. Falls on outstretched hand (FOOSH) cause fractures typically at the middle third. Check for tenting of skin and neurovascular compromise.",
+    "reference": "https://en.wikipedia.org/wiki/Clavicle",
+    "relatedStructures": ["scapula", "sternum", "deltoid"],
+    "category": "upper_limb"
+  },
+  "ClavicleRight": {
+    "commonName": "Clavicle (Collarbone)",
+    "brief": "S-shaped bone connecting the shoulder to the axial skeleton.",
+    "origin": "Medial end articulates with manubrium of sternum",
+    "insertion": "Lateral end articulates with acromion of scapula",
+    "innervation": "Supraclavicular nerve (sensory)",
+    "action": "Strut connecting upper limb to trunk, protects neurovascular bundle",
+    "clinicalPearl": "Most commonly fractured bone in children. Falls on outstretched hand (FOOSH) cause fractures typically at the middle third. Check for tenting of skin and neurovascular compromise.",
+    "reference": "https://en.wikipedia.org/wiki/Clavicle",
+    "relatedStructures": ["scapula", "sternum", "deltoid"],
+    "category": "upper_limb"
+  },
+  "Humerus": {
+    "commonName": "Humerus",
+    "brief": "Upper arm long bone.",
+    "origin": "Proximal articulations with the scapula (glenohumeral joint)",
+    "insertion": "Distally with radius and ulna at the elbow",
+    "innervation": "Radial nerve (posterior compartment muscles), musculocutaneous (anterior)",
+    "action": "Upper limb movement and force transmission",
+    "clinicalPearl": "Proximal humeral fractures are common in older adults after a fall; check axillary nerve function (shoulder abduction) and vascular status.",
+    "reference": "https://en.wikipedia.org/wiki/Humerus"
+  },
+  "HumerusLeft": {
+    "commonName": "Humerus",
+    "brief": "Upper arm long bone.",
+    "origin": "Proximal articulations with the scapula (glenohumeral joint)",
+    "insertion": "Distally with radius and ulna at the elbow",
+    "innervation": "Radial nerve (posterior compartment muscles), musculocutaneous (anterior)",
+    "action": "Upper limb movement and force transmission",
+    "clinicalPearl": "Proximal humeral fractures are common in older adults after a fall; check axillary nerve function (shoulder abduction) and vascular status.",
+    "reference": "https://en.wikipedia.org/wiki/Humerus"
+  },
+  "HumerusRight": {
+    "commonName": "Humerus",
+    "brief": "Upper arm long bone.",
+    "origin": "Proximal articulations with the scapula (glenohumeral joint)",
+    "insertion": "Distally with radius and ulna at the elbow",
+    "innervation": "Radial nerve (posterior compartment muscles), musculocutaneous (anterior)",
+    "action": "Upper limb movement and force transmission",
+    "clinicalPearl": "Proximal humeral fractures are common in older adults after a fall; check axillary nerve function (shoulder abduction) and vascular status.",
+    "reference": "https://en.wikipedia.org/wiki/Humerus"
+  },
+  "Radius": {
+    "commonName": "Radius",
+    "brief": "Lateral forearm bone enabling pronation/supination.",
+    "origin": "Radial head articulates with capitulum of humerus",
+    "insertion": "Distal radius articulates with scaphoid and lunate at wrist",
+    "innervation": "Posterior interosseous nerve (radial nerve branch)",
+    "action": "Forearm rotation and wrist stability",
+    "clinicalPearl": "Distal radius (Colles') fractures common in FOOSH injuries. Check for median nerve injury causing carpal tunnel symptoms.",
+    "reference": "https://en.wikipedia.org/wiki/Radius_(bone)"
+  },
+  "RadiusLeft": {
+    "commonName": "Radius",
+    "brief": "Lateral forearm bone enabling pronation/supination.",
+    "origin": "Radial head articulates with capitulum of humerus",
+    "insertion": "Distal radius articulates with scaphoid and lunate at wrist",
+    "innervation": "Posterior interosseous nerve (radial nerve branch)",
+    "action": "Forearm rotation and wrist stability",
+    "clinicalPearl": "Distal radius (Colles') fractures common in FOOSH injuries. Check for median nerve injury causing carpal tunnel symptoms.",
+    "reference": "https://en.wikipedia.org/wiki/Radius_(bone)"
+  },
+  "RadiusRight": {
+    "commonName": "Radius",
+    "brief": "Lateral forearm bone enabling pronation/supination.",
+    "origin": "Radial head articulates with capitulum of humerus",
+    "insertion": "Distal radius articulates with scaphoid and lunate at wrist",
+    "innervation": "Posterior interosseous nerve (radial nerve branch)",
+    "action": "Forearm rotation and wrist stability",
+    "clinicalPearl": "Distal radius (Colles') fractures common in FOOSH injuries. Check for median nerve injury causing carpal tunnel symptoms.",
+    "reference": "https://en.wikipedia.org/wiki/Radius_(bone)"
+  },
+  "Ulna": {
+    "commonName": "Ulna",
+    "brief": "Medial forearm bone providing elbow stability.",
+    "origin": "Olecranon articulates with trochlea of humerus",
+    "insertion": "Distal ulna with triangular fibrocartilage complex (TFCC)",
+    "innervation": "Ulnar nerve",
+    "action": "Elbow flexion/extension and forearm rotation",
+    "clinicalPearl": "Monteggia fracture: proximal ulna fracture with radial head dislocation. Galeazzi fracture: distal radius with distal radioulnar joint injury.",
+    "reference": "https://en.wikipedia.org/wiki/Ulna"
+  },
+  "UlnaLeft": {
+    "commonName": "Ulna",
+    "brief": "Medial forearm bone providing elbow stability.",
+    "origin": "Olecranon articulates with trochlea of humerus",
+    "insertion": "Distal ulna with triangular fibrocartilage complex (TFCC)",
+    "innervation": "Ulnar nerve",
+    "action": "Elbow flexion/extension and forearm rotation",
+    "clinicalPearl": "Monteggia fracture: proximal ulna fracture with radial head dislocation. Galeazzi fracture: distal radius with distal radioulnar joint injury.",
+    "reference": "https://en.wikipedia.org/wiki/Ulna"
+  },
+  "UlnaRight": {
+    "commonName": "Ulna",
+    "brief": "Medial forearm bone providing elbow stability.",
+    "origin": "Olecranon articulates with trochlea of humerus",
+    "insertion": "Distal ulna with triangular fibrocartilage complex (TFCC)",
+    "innervation": "Ulnar nerve",
+    "action": "Elbow flexion/extension and forearm rotation",
+    "clinicalPearl": "Monteggia fracture: proximal ulna fracture with radial head dislocation. Galeazzi fracture: distal radius with distal radioulnar joint injury.",
+    "reference": "https://en.wikipedia.org/wiki/Ulna"
+  },
+  "Femur": {
+    "commonName": "Femur",
+    "brief": "Longest and strongest bone in the body (thigh bone).",
+    "origin": "Femoral head articulates with acetabulum at hip",
+    "insertion": "Distal femoral condyles articulate with tibia at knee",
+    "innervation": "Femoral nerve and sciatic nerve supply surrounding muscles",
+    "action": "Weight bearing, locomotion, and lower limb force transmission",
+    "clinicalPearl": "Femoral neck fractures can disrupt blood supply to femoral head, risking avascular necrosis. Check for shortened, externally rotated leg.",
+    "reference": "https://en.wikipedia.org/wiki/Femur"
+  },
+  "FemurLeft": {
+    "commonName": "Femur",
+    "brief": "Longest and strongest bone in the body (thigh bone).",
+    "origin": "Femoral head articulates with acetabulum at hip",
+    "insertion": "Distal femoral condyles articulate with tibia at knee",
+    "innervation": "Femoral nerve and sciatic nerve supply surrounding muscles",
+    "action": "Weight bearing, locomotion, and lower limb force transmission",
+    "clinicalPearl": "Femoral neck fractures can disrupt blood supply to femoral head, risking avascular necrosis. Check for shortened, externally rotated leg.",
+    "reference": "https://en.wikipedia.org/wiki/Femur"
+  },
+  "FemurRight": {
+    "commonName": "Femur",
+    "brief": "Longest and strongest bone in the body (thigh bone).",
+    "origin": "Femoral head articulates with acetabulum at hip",
+    "insertion": "Distal femoral condyles articulate with tibia at knee",
+    "innervation": "Femoral nerve and sciatic nerve supply surrounding muscles",
+    "action": "Weight bearing, locomotion, and lower limb force transmission",
+    "clinicalPearl": "Femoral neck fractures can disrupt blood supply to femoral head, risking avascular necrosis. Check for shortened, externally rotated leg.",
+    "reference": "https://en.wikipedia.org/wiki/Femur"
+  },
+  "Tibia": {
+    "commonName": "Tibia",
+    "brief": "Larger medial shin bone bearing most of lower leg weight.",
+    "origin": "Tibial plateau articulates with femoral condyles",
+    "insertion": "Medial malleolus at ankle joint",
+    "innervation": "Tibial nerve and common peroneal nerve branches",
+    "action": "Weight bearing, gait stability",
+    "clinicalPearl": "Tibial shaft fractures may cause compartment syndrome. Monitor for 5 P's: Pain, Pallor, Pulselessness, Paresthesias, Paralysis.",
+    "reference": "https://en.wikipedia.org/wiki/Tibia"
+  },
+  "TibiaLeft": {
+    "commonName": "Tibia",
+    "brief": "Larger medial shin bone bearing most of lower leg weight.",
+    "origin": "Tibial plateau articulates with femoral condyles",
+    "insertion": "Medial malleolus at ankle joint",
+    "innervation": "Tibial nerve and common peroneal nerve branches",
+    "action": "Weight bearing, gait stability",
+    "clinicalPearl": "Tibial shaft fractures may cause compartment syndrome. Monitor for 5 P's: Pain, Pallor, Pulselessness, Paresthesias, Paralysis.",
+    "reference": "https://en.wikipedia.org/wiki/Tibia"
+  },
+  "TibiaRight": {
+    "commonName": "Tibia",
+    "brief": "Larger medial shin bone bearing most of lower leg weight.",
+    "origin": "Tibial plateau articulates with femoral condyles",
+    "insertion": "Medial malleolus at ankle joint",
+    "innervation": "Tibial nerve and common peroneal nerve branches",
+    "action": "Weight bearing, gait stability",
+    "clinicalPearl": "Tibial shaft fractures may cause compartment syndrome. Monitor for 5 P's: Pain, Pallor, Pulselessness, Paresthesias, Paralysis.",
+    "reference": "https://en.wikipedia.org/wiki/Tibia"
+  },
+  "Fibula": {
+    "commonName": "Fibula",
+    "brief": "Lateral, smaller bone of the lower leg.",
+    "origin": "Fibular head articulates with tibia proximally",
+    "insertion": "Lateral malleolus forms lateral ankle",
+    "innervation": "Common peroneal (fibular) nerve",
+    "action": "Muscle attachment and ankle stability",
+    "clinicalPearl": "Maisonneuve fracture: proximal fibula fracture with ankle injury. Peroneal nerve injury causes foot drop.",
+    "reference": "https://en.wikipedia.org/wiki/Fibula"
+  },
+  "FibulaLeft": {
+    "commonName": "Fibula",
+    "brief": "Lateral, smaller bone of the lower leg.",
+    "origin": "Fibular head articulates with tibia proximally",
+    "insertion": "Lateral malleolus forms lateral ankle",
+    "innervation": "Common peroneal (fibular) nerve",
+    "action": "Muscle attachment and ankle stability",
+    "clinicalPearl": "Maisonneuve fracture: proximal fibula fracture with ankle injury. Peroneal nerve injury causes foot drop.",
+    "reference": "https://en.wikipedia.org/wiki/Fibula"
+  },
+  "FibulaRight": {
+    "commonName": "Fibula",
+    "brief": "Lateral, smaller bone of the lower leg.",
+    "origin": "Fibular head articulates with tibia proximally",
+    "insertion": "Lateral malleolus forms lateral ankle",
+    "innervation": "Common peroneal (fibular) nerve",
+    "action": "Muscle attachment and ankle stability",
+    "clinicalPearl": "Maisonneuve fracture: proximal fibula fracture with ankle injury. Peroneal nerve injury causes foot drop.",
+    "reference": "https://en.wikipedia.org/wiki/Fibula"
+  },
+  "Sacrum": {
+    "commonName": "Sacrum",
+    "brief": "Triangular bone at base of spine, fused sacral vertebrae.",
+    "origin": "Fusion of 5 sacral vertebrae during development",
+    "insertion": "Articulates with ilium (sacroiliac joint) and coccyx",
+    "innervation": "Sacral spinal nerves (S1-S5)",
+    "action": "Connects spine to pelvis, transmits weight to lower limbs",
+    "clinicalPearl": "Sacral fractures often occur with pelvic ring injuries. Check for neurologic deficits affecting bowel/bladder function.",
+    "reference": "https://en.wikipedia.org/wiki/Sacrum"
+  },
+  "Coccyx": {
+    "commonName": "Coccyx (Tailbone)",
+    "brief": "Terminal portion of vertebral column, 3-5 fused vertebrae.",
+    "origin": "Articulates with sacrum",
+    "insertion": "Pelvic floor muscle attachments",
+    "innervation": "Coccygeal plexus",
+    "action": "Attachment point for pelvic floor muscles",
+    "clinicalPearl": "Coccydynia (tailbone pain) common after falls onto buttocks. Most cases managed conservatively.",
+    "reference": "https://en.wikipedia.org/wiki/Coccyx"
+  },
+  "CervicalVertebrae": {
+    "commonName": "Cervical Vertebrae (C1-C7)",
+    "brief": "Seven neck vertebrae supporting the head and enabling neck motion.",
+    "origin": "Forms from sclerotomes during embryonic development",
+    "insertion": "Stack from skull (atlas) to thoracic spine",
+    "innervation": "Cervical spinal nerves (C1-C8)",
+    "action": "Head support, neck flexion/extension/rotation, spinal cord protection",
+    "clinicalPearl": "C-spine injury risk with trauma. Canadian C-Spine Rules help guide imaging. Remember: C3,4,5 keeps the diaphragm alive.",
+    "reference": "https://en.wikipedia.org/wiki/Cervical_vertebrae"
+  },
+  "ThoracicVertebrae": {
+    "commonName": "Thoracic Vertebrae (T1-T12)",
+    "brief": "Twelve mid-back vertebrae articulating with ribs.",
+    "origin": "Sclerotome development",
+    "insertion": "Connect cervical to lumbar spine, articulate with ribs",
+    "innervation": "Thoracic spinal nerves (T1-T12)",
+    "action": "Rib cage support, spinal stability, protect thoracic organs",
+    "clinicalPearl": "Thoracic spine fractures often stable due to rib cage support. Compression fractures common in osteoporosis.",
+    "reference": "https://en.wikipedia.org/wiki/Thoracic_vertebrae"
+  },
+  "LumbarVertebrae": {
+    "commonName": "Lumbar Vertebrae (L1-L5)",
+    "brief": "Five lower back vertebrae bearing most body weight.",
+    "origin": "Sclerotome development",
+    "insertion": "Connect thoracic spine to sacrum",
+    "innervation": "Lumbar spinal nerves (L1-L5)",
+    "action": "Weight bearing, trunk flexion/extension, spinal cord protection",
+    "clinicalPearl": "L4-L5 and L5-S1 most common sites for disc herniation. Straight leg raise tests nerve root tension.",
+    "reference": "https://en.wikipedia.org/wiki/Lumbar_vertebrae"
+  },
+  "Sternum": {
+    "commonName": "Sternum (Breastbone)",
+    "brief": "Midline breastbone connecting the rib cage.",
+    "origin": "Manubrium, body, xiphoid process (components of the sternum)",
+    "insertion": "Costal cartilages of ribs 1–7",
+    "innervation": "Branches of intercostal nerves",
+    "action": "Central anchor for ribs and thoracic muscles",
+    "clinicalPearl": "Sternal fractures commonly result from high-energy anterior chest trauma; evaluate for cardiac contusion if suspected.",
+    "reference": "https://en.wikipedia.org/wiki/Sternum"
+  },
+  "Ribs": {
+    "commonName": "Ribs",
+    "brief": "Form the rib cage to protect thoracic organs.",
+    "origin": "Posteriorly from the thoracic vertebrae",
+    "insertion": "Anteriorly to the sternum (true ribs) or via costal cartilage (false ribs)",
+    "innervation": "Intercostal nerves (ventral rami of thoracic spinal nerves)",
+    "action": "Protection of thoracic organs and assistance with respiration",
+    "clinicalPearl": "Flail chest (multiple adjacent rib fractures) can cause paradoxical chest wall motion; consider analgesia and respiratory support.",
+    "reference": "https://en.wikipedia.org/wiki/Rib"
+  },
+  "Pelvis": {
+    "commonName": "Pelvis",
+    "brief": "Bony ring formed by sacrum and two hip bones (ilium, ischium, pubis).",
+    "origin": "Fusion of ilium, ischium, and pubis bones",
+    "insertion": "Articulates with sacrum and femoral heads",
+    "innervation": "Lumbosacral plexus branches",
+    "action": "Weight transmission from spine to legs, protects pelvic organs",
+    "clinicalPearl": "Pelvic fractures can be life-threatening due to massive hemorrhage. Use pelvic binder for unstable injuries.",
+    "reference": "https://en.wikipedia.org/wiki/Pelvis"
   }
 }
+
