@@ -12634,6 +12634,371 @@ class MLAQuizApp {
                         '',
                         'Management: Stop transfusion, oxygen, supportive care'
                     ]
+                },
+                'coagulopathy-causes': {
+                    title: 'Coagulopathy Causes - VITAMIN C',
+                    category: 'haematology',
+                    mnemonic: 'VITAMIN C',
+                    meaning: 'Vascular, Inherited, Tissue factor, Anticoagulants, Massive transfusion, Infection, Nutritional, Cirrhosis',
+                    usage: 'Causes of coagulopathy/bleeding disorders',
+                    details: [
+                        'V - Vascular (vasculitis, scurvy)',
+                        'I - Inherited (haemophilia, von Willebrand)',
+                        'T - Tissue factor (trauma, surgery)',
+                        'A - Anticoagulants (warfarin, DOACs, heparin)',
+                        'M - Massive transfusion (dilutional)',
+                        'I - Infection (DIC, sepsis)',
+                        'N - Nutritional (vitamin K deficiency)',
+                        'C - Cirrhosis (liver synthetic dysfunction)'
+                    ]
+                },
+                // Cardiovascular - Additional
+                'bradycardia-causes': {
+                    title: 'Bradycardia Causes - CAVED IN',
+                    category: 'cardiovascular',
+                    mnemonic: 'CAVED IN',
+                    meaning: 'Cardiac, Athletic, Vagal, Endocrine, Drugs, Ischaemia, Neurological',
+                    usage: 'Causes of bradycardia',
+                    details: [
+                        'C - Cardiac (heart block, sick sinus syndrome)',
+                        'A - Athletic (trained athletes)',
+                        'V - Vagal stimulation',
+                        'E - Endocrine (hypothyroidism)',
+                        'D - Drugs (beta-blockers, CCB, digoxin, amiodarone)',
+                        'I - Ischaemia (inferior MI)',
+                        'N - Neurological (raised ICP)'
+                    ]
+                },
+                'peripheral-oedema': {
+                    title: 'Bilateral Leg Oedema - CHAMP',
+                    category: 'cardiovascular',
+                    mnemonic: 'CHAMP',
+                    meaning: 'Cardiac, Hepatic, Albumin low, Medications, Pregnancy/Pelvic mass',
+                    usage: 'Causes of bilateral lower limb oedema',
+                    details: [
+                        'C - Cardiac failure',
+                        'H - Hepatic cirrhosis',
+                        'A - Albumin low (nephrotic syndrome, malnutrition)',
+                        'M - Medications (CCB, NSAIDs, steroids)',
+                        'P - Pregnancy, Pelvic mass (IVC obstruction)'
+                    ]
+                },
+                // Respiratory - Additional
+                'respiratory-failure': {
+                    title: 'Type 2 Respiratory Failure - CAN\'T Breathe',
+                    category: 'respiratory',
+                    mnemonic: 'CAN\'T Breathe',
+                    meaning: 'CNS depression, Airway obstruction, Neuromuscular, Thoracic cage',
+                    usage: 'Causes of hypercapnic respiratory failure (Type 2)',
+                    details: [
+                        'C - CNS depression (opioids, sedatives, stroke)',
+                        'A - Airway obstruction (COPD, asthma)',
+                        'N - Neuromuscular (myasthenia, GBS, spinal cord injury)',
+                        'T - Thoracic cage problems (kyphoscoliosis, flail chest)',
+                        '',
+                        'PaCO2 >6 kPa with or without hypoxia',
+                        'Type 1: Normal/low CO2 (V/Q mismatch, shunt)'
+                    ]
+                },
+                'copd-exacerbation': {
+                    title: 'COPD Exacerbation Causes - VIPER',
+                    category: 'respiratory',
+                    mnemonic: 'VIPER',
+                    meaning: 'Viral infection, Infection bacterial, Pulmonary embolism, Environment, Rx non-compliance',
+                    usage: 'Common precipitants of COPD exacerbation',
+                    details: [
+                        'V - Viral infection (most common)',
+                        'I - Infection bacterial (H. influenzae, S. pneumoniae)',
+                        'P - Pulmonary embolism',
+                        'E - Environment (pollution, cold weather)',
+                        'R - Rx non-compliance (stopped inhalers)'
+                    ]
+                },
+                // Neurology - Additional
+                'seizure-causes': {
+                    title: 'Seizure Causes - VITAMINS',
+                    category: 'neurology',
+                    mnemonic: 'VITAMINS',
+                    meaning: 'Vascular, Infection, Tumour/Trauma, Autoimmune, Metabolic, Idiopathic, Neglect (non-compliance), Sympathomimetics',
+                    usage: 'Differential diagnosis for seizures',
+                    details: [
+                        'V - Vascular (stroke, AVM)',
+                        'I - Infection (meningitis, encephalitis, abscess)',
+                        'T - Tumour, Trauma',
+                        'A - Autoimmune (SLE)',
+                        'M - Metabolic (hypoglycemia, hyponatremia, hypocalcemia, uraemia)',
+                        'I - Idiopathic epilepsy',
+                        'N - Neglect (medication non-compliance)',
+                        'S - Sympathomimetics (drugs, alcohol withdrawal)'
+                    ]
+                },
+                'headache-red-flags': {
+                    title: 'Headache Red Flags - SNOOP',
+                    category: 'neurology',
+                    mnemonic: 'SNOOP',
+                    meaning: 'Systemic, Neurological, Onset sudden, Older age, Pattern change',
+                    usage: 'Red flags requiring urgent investigation',
+                    details: [
+                        'S - Systemic symptoms (fever, weight loss, HIV)',
+                        'N - Neurological signs (confusion, altered consciousness, focal deficits)',
+                        'O - Onset sudden (thunderclap headache - SAH)',
+                        'O - Older age (>50 years - consider GCA)',
+                        'P - Pattern change (different from usual headaches)'
+                    ]
+                },
+                'coma-causes': {
+                    title: 'Coma Causes - AEIOU TIPS',
+                    category: 'neurology',
+                    mnemonic: 'AEIOU TIPS',
+                    meaning: 'Alcohol, Epilepsy, Insulin, Overdose, Uraemia, Trauma, Infection, Psychogenic, Stroke',
+                    usage: 'Causes of reduced consciousness/coma',
+                    details: [
+                        'A - Alcohol, Acidosis',
+                        'E - Epilepsy (post-ictal), Encephalopathy',
+                        'I - Insulin (hypo/hyperglycemia)',
+                        'O - Overdose, Oxygen (hypoxia)',
+                        'U - Uraemia',
+                        'T - Trauma (head injury)',
+                        'I - Infection (meningitis, encephalitis, sepsis)',
+                        'P - Psychogenic',
+                        'S - Stroke, Subarachnoid haemorrhage'
+                    ]
+                },
+                // Gastroenterology - Additional
+                'jaundice-prehepatic': {
+                    title: 'Jaundice - Pre-Hepatic vs Hepatic vs Post-Hepatic',
+                    category: 'gastroenterology',
+                    mnemonic: 'Think 3 Phases',
+                    meaning: 'Pre (haemolysis), Hepatic (liver disease), Post (obstruction)',
+                    usage: 'Classification of jaundice causes',
+                    details: [
+                        'PRE-HEPATIC (unconjugated):',
+                        '- Haemolysis (spherocytosis, G6PD, sickle cell)',
+                        '- Gilbert\'s syndrome',
+                        '',
+                        'HEPATIC (mixed):',
+                        '- Hepatitis (viral, alcohol, drug-induced)',
+                        '- Cirrhosis, Wilson\'s, haemochromatosis',
+                        '',
+                        'POST-HEPATIC (conjugated):',
+                        '- Gallstones, pancreatic cancer',
+                        '- Cholangiocarcinoma, primary biliary cholangitis',
+                        '- Dark urine, pale stools, pruritus'
+                    ]
+                },
+                'acute-abdomen': {
+                    title: 'Acute Abdomen - APPENDICITIS',
+                    category: 'gastroenterology',
+                    mnemonic: 'APPENDICITIS',
+                    meaning: 'Common causes starting with each letter',
+                    usage: 'Surgical causes of acute abdomen',
+                    details: [
+                        'A - Appendicitis',
+                        'P - Pancreatitis, Perforated viscus',
+                        'P - Peptic ulcer perforation',
+                        'E - Ectopic pregnancy',
+                        'N - Neoplasm',
+                        'D - Diverticulitis',
+                        'I - Ischaemic bowel, IBD',
+                        'C - Cholecystitis',
+                        'I - Intussusception',
+                        'T - Torsion (ovarian/testicular)',
+                        'I - Incarcerated hernia',
+                        'S - Small bowel obstruction'
+                    ]
+                },
+                'diarrhoea-causes': {
+                    title: 'Chronic Diarrhoea - GASTRO',
+                    category: 'gastroenterology',
+                    mnemonic: 'GASTRO',
+                    meaning: 'Gut (IBS/IBD), Antibiotics, Sugar (lactose), Thyroid, Radiation, Overflow',
+                    usage: 'Causes of chronic diarrhoea (>4 weeks)',
+                    details: [
+                        'G - Gut disorders (IBS, IBD, coeliac)',
+                        'A - Antibiotics (C. diff, antibiotic-associated)',
+                        'S - Sugar intolerance (lactose, fructose malabsorption)',
+                        'T - Thyroid (hyperthyroidism)',
+                        'R - Radiation enteritis',
+                        'O - Overflow (constipation with overflow)'
+                    ]
+                },
+                // Renal - Additional
+                'nephrotic-syndrome': {
+                    title: 'Nephrotic Syndrome Features - PHEO',
+                    category: 'renal',
+                    mnemonic: 'PHEO',
+                    meaning: 'Proteinuria, Hypoalbuminaemia, Oedema',
+                    usage: 'Classic triad of nephrotic syndrome',
+                    details: [
+                        'P - Proteinuria >3.5g/24 hours',
+                        'H - Hypoalbuminaemia <30g/L',
+                        'E - (O)edema (peripheral, periorbital, ascites)',
+                        '',
+                        'Also: Hyperlipidaemia, hypercoagulable state',
+                        'Causes: Minimal change, FSGS, membranous, diabetes'
+                    ]
+                },
+                'nephritic-syndrome': {
+                    title: 'Nephritic Syndrome Features - PHAROAH',
+                    category: 'renal',
+                    mnemonic: 'PHAROAH',
+                    meaning: 'Proteinuria, Haematuria, Azotaemia, Renal failure, Oliguria, Anti-HTN needed, Hypertension',
+                    usage: 'Features of nephritic syndrome',
+                    details: [
+                        'P - Proteinuria (mild <3.5g/24h)',
+                        'H - Haematuria (red cell casts)',
+                        'A - Azotaemia (raised urea/creatinine)',
+                        'R - Renal failure (acute)',
+                        'O - Oliguria',
+                        'A - Anti-hypertensives needed',
+                        'H - Hypertension',
+                        '',
+                        'Causes: Post-strep GN, IgA nephropathy, vasculitis'
+                    ]
+                },
+                // Endocrine - Additional
+                'cushings-features': {
+                    title: 'Cushing\'s Syndrome - CUSHINGOID',
+                    category: 'endocrine',
+                    mnemonic: 'CUSHINGOID',
+                    meaning: 'Central obesity, Urinary free cortisol, Skin changes, etc.',
+                    usage: 'Clinical features of Cushing\'s syndrome',
+                    details: [
+                        'C - Central obesity, Cervical fat pad',
+                        'U - Urinary free cortisol elevated',
+                        'S - Skin thin, easy bruising, striae',
+                        'H - Hypertension, Hyperglycaemia',
+                        'I - Infections (immunosuppressed)',
+                        'N - Neuropsychiatric (depression, psychosis)',
+                        'G - Growth retardation (children)',
+                        'O - Osteoporosis',
+                        'I - Impotence/Irregular periods',
+                        'D - Dexamethasone suppression test abnormal'
+                    ]
+                },
+                'addisons-features': {
+                    title: 'Addison\'s Disease - ADDISONS',
+                    category: 'endocrine',
+                    mnemonic: 'ADDISONS',
+                    meaning: 'Anorexia, Depression, Dizziness, Increased pigmentation, Orthostatic hypotension, etc.',
+                    usage: 'Clinical features of adrenal insufficiency',
+                    details: [
+                        'A - Anorexia, weight loss',
+                        'D - Depression, fatigue',
+                        'D - Dizziness',
+                        'I - Increased pigmentation (buccal, palmar creases)',
+                        'S - Salt craving',
+                        'O - Orthostatic hypotension',
+                        'N - Nausea, vomiting, diarrhoea',
+                        'S - Sodium low, potassium high'
+                    ]
+                },
+                // Rheumatology - Additional
+                'back-pain-red-flags': {
+                    title: 'Back Pain Red Flags - TUNA FISH',
+                    category: 'rheumatology',
+                    mnemonic: 'TUNA FISH',
+                    meaning: 'Trauma, Unexplained weight loss, Neurological symptoms, Age >50, Fever, IV drug use, Steroid use, History cancer',
+                    usage: 'Red flags requiring urgent investigation',
+                    details: [
+                        'T - Trauma (major)',
+                        'U - Unexplained weight loss',
+                        'N - Neurological deficit (saddle anaesthesia, incontinence)',
+                        'A - Age >50 or <20',
+                        'F - Fever',
+                        'I - IV drug use',
+                        'S - Steroid use, immunosuppression',
+                        'H - History of cancer'
+                    ]
+                },
+                'septic-arthritis-causes': {
+                    title: 'Septic Arthritis Organisms - SING',
+                    category: 'rheumatology',
+                    mnemonic: 'SING',
+                    meaning: 'Staph aureus, IV drug users, Neisseria (sexually active), Gonococcal',
+                    usage: 'Common organisms causing septic arthritis',
+                    details: [
+                        'S - Staph aureus (most common overall)',
+                        'I - IV drug users (Pseudomonas, MRSA)',
+                        'N - Neisseria gonorrhoeae (young sexually active)',
+                        'G - Gram negatives (elderly, immunocompromised)',
+                        '',
+                        'Presentation: Hot, swollen, painful joint, fever',
+                        'Management: Joint aspiration, IV antibiotics, surgical washout'
+                    ]
+                },
+                // Psychiatry
+                'suicide-risk': {
+                    title: 'Suicide Risk Assessment - SAD PERSONS',
+                    category: 'psychiatry',
+                    mnemonic: 'SAD PERSONS',
+                    meaning: 'Sex, Age, Depression, Previous attempt, Ethanol, Rational thinking loss, Social support lacking, Organized plan, No spouse, Sickness',
+                    usage: 'Risk factors for suicide',
+                    details: [
+                        'S - Sex (male)',
+                        'A - Age (<19 or >45)',
+                        'D - Depression',
+                        'P - Previous attempt',
+                        'E - Ethanol abuse',
+                        'R - Rational thinking loss (psychosis)',
+                        'S - Social support lacking',
+                        'O - Organized plan',
+                        'N - No spouse (divorced, widowed, single)',
+                        'S - Sickness (chronic illness, pain)'
+                    ]
+                },
+                'psychosis-differential': {
+                    title: 'Psychosis Causes - MIND MAPS',
+                    category: 'psychiatry',
+                    mnemonic: 'MIND MAPS',
+                    meaning: 'Medical, Intoxication, Neurological, Drugs, Mood disorder, Alcohol, Psychotic disorder, Schizoaffective',
+                    usage: 'Differential diagnosis for psychotic symptoms',
+                    details: [
+                        'M - Medical (thyroid, Cushing\'s, SLE)',
+                        'I - Intoxication (stimulants, cannabis)',
+                        'N - Neurological (dementia, delirium, epilepsy)',
+                        'D - Drugs (steroids, dopamine agonists)',
+                        'M - Mood disorder (bipolar, severe depression)',
+                        'A - Alcohol withdrawal',
+                        'P - Psychotic disorder (schizophrenia)',
+                        'S - Schizoaffective disorder'
+                    ]
+                },
+                // Dermatology
+                'rash-causes': {
+                    title: 'Maculopapular Rash - VEXED SCAM',
+                    category: 'dermatology',
+                    mnemonic: 'VEXED SCAM',
+                    meaning: 'Viral, Exanthem, X-rays, Eczema, Drug, Syphilis, Connective tissue, Abscess, Mycosis',
+                    usage: 'Causes of widespread maculopapular rash',
+                    details: [
+                        'V - Viral (measles, rubella, EBV, roseola)',
+                        'E - Erythema multiforme',
+                        'X - X-rays (radiation)',
+                        'E - Eczema',
+                        'D - Drug reaction',
+                        'S - Syphilis (secondary)',
+                        'C - Connective tissue disease (SLE)',
+                        'A - Acute HIV',
+                        'M - Mycosis fungoides'
+                    ]
+                },
+                'skin-cancer-abcde': {
+                    title: 'Melanoma Warning Signs - ABCDE',
+                    category: 'dermatology',
+                    mnemonic: 'ABCDE',
+                    meaning: 'Asymmetry, Border, Colour, Diameter, Evolution',
+                    usage: 'Features suggestive of melanoma',
+                    details: [
+                        'A - Asymmetry (irregular shape)',
+                        'B - Border irregular (notched, scalloped)',
+                        'C - Colour variation (multiple colours)',
+                        'D - Diameter >6mm',
+                        'E - Evolution (changing size, shape, colour)',
+                        '',
+                        'Also: Ugly duckling sign (different from other moles)',
+                        'Urgent 2-week referral for suspected melanoma'
+                    ]
                 }
             };
 
@@ -12654,8 +13019,11 @@ class MLAQuizApp {
                     <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('endocrine'); event.stopPropagation();">Endocrine</button>
                     <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('infectious'); event.stopPropagation();">Infectious</button>
                     <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('emergency'); event.stopPropagation();">Emergency</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('rheumatology'); event.stopPropagation();">Rheumatology</button>
                     <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('pharmacology'); event.stopPropagation();">Pharmacology</button>
                     <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('haematology'); event.stopPropagation();">Haematology</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('psychiatry'); event.stopPropagation();">Psychiatry</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('dermatology'); event.stopPropagation();">Dermatology</button>
                 </div>
                 <div id="mnemonics-list" class="lab-grid"></div>
             `;
