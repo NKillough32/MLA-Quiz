@@ -4826,6 +4826,70 @@ class MLAQuizApp {
                 calculatorTitle = 'Anion Gap Calculator';
                 calculatorContent += this.getAnionGapCalculator();
                 break;
+            case 'wells-dvt':
+                calculatorTitle = 'Wells DVT Score';
+                calculatorContent += this.getWellsDVTCalculator();
+                break;
+            case 'perc':
+                calculatorTitle = 'PERC Rule';
+                calculatorContent += this.getPERCCalculator();
+                break;
+            case 'rcri':
+                calculatorTitle = 'Revised Cardiac Risk Index';
+                calculatorContent += this.getRCRICalculator();
+                break;
+            case 'qtc':
+                calculatorTitle = 'Corrected QT Calculator';
+                calculatorContent += this.getQTcCalculator();
+                break;
+            case 'corrected-sodium':
+                calculatorTitle = 'Corrected Sodium';
+                calculatorContent += this.getCorrectedSodiumCalculator();
+                break;
+            case 'osmolal-gap':
+                calculatorTitle = 'Osmolal Gap';
+                calculatorContent += this.getOsmolalGapCalculator();
+                break;
+            case 'centor':
+                calculatorTitle = 'Centor Score';
+                calculatorContent += this.getCentorCalculator();
+                break;
+            case 'alvarado':
+                calculatorTitle = 'Alvarado Score';
+                calculatorContent += this.getAlvaradoCalculator();
+                break;
+            case 'glasgow-blatchford':
+                calculatorTitle = 'Glasgow-Blatchford Score';
+                calculatorContent += this.getGlasgowBlatchfordCalculator();
+                break;
+            case 'apgar':
+                calculatorTitle = 'APGAR Score';
+                calculatorContent += this.getAPGARCalculator();
+                break;
+            case 'bishop':
+                calculatorTitle = 'Bishop Score';
+                calculatorContent += this.getBishopCalculator();
+                break;
+            case 'map':
+                calculatorTitle = 'Mean Arterial Pressure';
+                calculatorContent += this.getMAPCalculator();
+                break;
+            case 'aa-gradient':
+                calculatorTitle = 'A-a Gradient';
+                calculatorContent += this.getAAGradientCalculator();
+                break;
+            case 'corrected-calcium':
+                calculatorTitle = 'Corrected Calcium';
+                calculatorContent += this.getCorrectedCalciumCalculator();
+                break;
+            case 'ldl-calc':
+                calculatorTitle = 'LDL Calculator';
+                calculatorContent += this.getLDLCalculator();
+                break;
+            case 'winters':
+                calculatorTitle = 'Winters Formula';
+                calculatorContent += this.getWintersCalculator();
+                break;
             default:
                 calculatorTitle = 'Calculator';
                 calculatorContent += '<p>Calculator not found.</p>';
@@ -8568,6 +8632,1634 @@ class MLAQuizApp {
                         • These calculations are guidelines only
                     </small>
                 </div>
+            </div>
+        `;
+    }
+
+    // Wells DVT Score Calculator
+    getWellsDVTCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Wells Score for DVT</h3>
+                <p>Assesses probability of deep vein thrombosis</p>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-cancer" value="1">
+                        Active cancer (treatment within 6 months or palliative) (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-paralysis" value="1">
+                        Paralysis, paresis, or recent plaster immobilisation of lower extremity (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-bedridden" value="1">
+                        Recently bedridden >3 days or major surgery within 12 weeks (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-tenderness" value="1">
+                        Localized tenderness along deep venous system (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-swelling" value="1">
+                        Entire leg swollen (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-calf" value="1">
+                        Calf swelling >3cm compared to asymptomatic leg (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-pitting" value="1">
+                        Pitting edema confined to symptomatic leg (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-veins" value="1">
+                        Collateral superficial veins (non-varicose) (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-previous" value="1">
+                        Previously documented DVT (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="wells-dvt-alternative" value="-2">
+                        Alternative diagnosis at least as likely as DVT (-2)
+                    </label>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateWellsDVT()">Calculate Wells DVT Score</button>
+                <div id="wells-dvt-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Clinical Use:</strong><br>
+                        • ≤0 points: DVT unlikely - consider D-dimer<br>
+                        • 1-2 points: Moderate probability - D-dimer or imaging<br>
+                        • ≥3 points: DVT likely - proceed to imaging<br>
+                        • Two-level Wells: ≤1 = unlikely, ≥2 = likely
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateWellsDVT() {
+        const items = [
+            'wells-dvt-cancer', 'wells-dvt-paralysis', 'wells-dvt-bedridden',
+            'wells-dvt-tenderness', 'wells-dvt-swelling', 'wells-dvt-calf',
+            'wells-dvt-pitting', 'wells-dvt-veins', 'wells-dvt-previous', 'wells-dvt-alternative'
+        ];
+        
+        let score = 0;
+        items.forEach(id => {
+            const element = document.getElementById(id);
+            if (element && element.checked) {
+                score += parseInt(element.value);
+            }
+        });
+
+        let interpretation = '';
+        let riskClass = '';
+        
+        if (score <= 0) {
+            riskClass = 'Low';
+            interpretation = '<strong>DVT Unlikely</strong><br>DVT prevalence ~5%<br>• Consider D-dimer testing<br>• If D-dimer negative, DVT excluded<br>• If D-dimer positive, proceed to imaging';
+        } else if (score <= 2) {
+            riskClass = 'Moderate';
+            interpretation = '<strong>Moderate Probability</strong><br>DVT prevalence ~17%<br>• D-dimer or proceed directly to imaging<br>• Consider clinical context';
+        } else {
+            riskClass = 'High';
+            interpretation = '<strong>DVT Likely</strong><br>DVT prevalence ~17-53%<br>• Proceed directly to compression ultrasound<br>• Do not rely on D-dimer alone';
+        }
+
+        document.getElementById('wells-dvt-result').innerHTML = `
+            <div class="calc-success">
+                <h4>Wells DVT Score: ${score} points</h4>
+                <p><strong>Risk: ${riskClass}</strong></p>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // PERC Rule Calculator
+    getPERCCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>PERC Rule (Pulmonary Embolism Rule-out Criteria)</h3>
+                <p>Excludes PE without D-dimer if all criteria are negative</p>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="perc-age" value="1">
+                        Age ≥50 years
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="perc-hr" value="1">
+                        Heart rate ≥100 bpm
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="perc-sats" value="1">
+                        O₂ saturation <95% on room air
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="perc-hemoptysis" value="1">
+                        Hemoptysis present
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="perc-estrogen" value="1">
+                        Estrogen use (oral contraceptives, HRT)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="perc-surgery" value="1">
+                        Previous DVT or PE
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="perc-trauma" value="1">
+                        Trauma or surgery requiring hospitalization within 4 weeks
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="perc-swelling" value="1">
+                        Unilateral leg swelling
+                    </label>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculatePERC()">Apply PERC Rule</button>
+                <div id="perc-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Clinical Use:</strong><br>
+                        • Only apply in LOW risk patients (gestalt <15% pre-test probability)<br>
+                        • If ALL 8 criteria are ABSENT: PE can be excluded without D-dimer<br>
+                        • If ANY criterion is present: proceed with standard workup<br>
+                        • PERC negative has <2% risk of PE at 3 months
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculatePERC() {
+        const items = [
+            'perc-age', 'perc-hr', 'perc-sats', 'perc-hemoptysis',
+            'perc-estrogen', 'perc-surgery', 'perc-trauma', 'perc-swelling'
+        ];
+        
+        let positiveCount = 0;
+        items.forEach(id => {
+            const element = document.getElementById(id);
+            if (element && element.checked) {
+                positiveCount++;
+            }
+        });
+
+        let interpretation = '';
+        
+        if (positiveCount === 0) {
+            interpretation = `
+                <div class="calc-success">
+                    <h4>PERC Rule: NEGATIVE (0/8 criteria)</h4>
+                    <p><strong>✓ PE can be excluded</strong></p>
+                    <p>No further testing for PE required (no D-dimer, no CTPA)</p>
+                    <p><small>⚠️ Only valid in LOW risk patients (pre-test probability <15%)</small></p>
+                </div>
+            `;
+        } else {
+            interpretation = `
+                <div class="calc-warning">
+                    <h4>PERC Rule: POSITIVE (${positiveCount}/8 criteria present)</h4>
+                    <p><strong>⚠ Cannot exclude PE with PERC</strong></p>
+                    <p>Proceed with standard workup:</p>
+                    <ul style="text-align: left; margin: 10px 0;">
+                        <li>Calculate Wells PE score</li>
+                        <li>Order D-dimer if PE unlikely</li>
+                        <li>Consider CTPA if PE likely or D-dimer positive</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        document.getElementById('perc-result').innerHTML = interpretation;
+    }
+
+    // RCRI Calculator
+    getRCRICalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Revised Cardiac Risk Index (RCRI)</h3>
+                <p>Estimates risk of perioperative cardiac complications</p>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="rcri-ihd" value="1">
+                        History of ischemic heart disease (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="rcri-hf" value="1">
+                        History of congestive heart failure (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="rcri-stroke" value="1">
+                        History of cerebrovascular disease (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="rcri-diabetes" value="1">
+                        Diabetes mellitus requiring insulin (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="rcri-renal" value="1">
+                        Renal impairment (creatinine >177 μmol/L / 2 mg/dL) (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="rcri-surgery" value="1">
+                        High-risk surgery (intraperitoneal, intrathoracic, or suprainguinal vascular) (+1)
+                    </label>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateRCRI()">Calculate RCRI</button>
+                <div id="rcri-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Risk Estimates (cardiac death, MI, cardiac arrest):</strong><br>
+                        • Class I (0 points): 0.4% risk<br>
+                        • Class II (1 point): 0.9% risk<br>
+                        • Class III (2 points): 6.6% risk<br>
+                        • Class IV (≥3 points): >11% risk
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateRCRI() {
+        const items = ['rcri-ihd', 'rcri-hf', 'rcri-stroke', 'rcri-diabetes', 'rcri-renal', 'rcri-surgery'];
+        
+        let score = 0;
+        items.forEach(id => {
+            const element = document.getElementById(id);
+            if (element && element.checked) {
+                score++;
+            }
+        });
+
+        let riskClass = '';
+        let risk = '';
+        let management = '';
+        
+        if (score === 0) {
+            riskClass = 'I';
+            risk = '0.4%';
+            management = 'Very low risk - routine perioperative care';
+        } else if (score === 1) {
+            riskClass = 'II';
+            risk = '0.9%';
+            management = 'Low risk - routine perioperative care, consider beta-blockers if already on them';
+        } else if (score === 2) {
+            riskClass = 'III';
+            risk = '6.6%';
+            management = 'Moderate risk - consider cardiology consultation, optimize medical therapy';
+        } else {
+            riskClass = 'IV';
+            risk = '>11%';
+            management = 'High risk - strongly consider cardiology consultation, may need further cardiac workup, optimize medical therapy';
+        }
+
+        document.getElementById('rcri-result').innerHTML = `
+            <div class="calc-success">
+                <h4>RCRI Score: ${score} points (Class ${riskClass})</h4>
+                <p><strong>Cardiac Event Risk: ${risk}</strong></p>
+                <p>${management}</p>
+                <p><small>Risk includes: MI, cardiac arrest, or cardiac death within 30 days of surgery</small></p>
+            </div>
+        `;
+    }
+
+    // QTc Calculator
+    getQTcCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>QTc Calculator (Corrected QT Interval)</h3>
+                <p>Corrects QT interval for heart rate</p>
+                
+                <div class="calc-input-group">
+                    <label for="qtc-qt">QT interval (ms):</label>
+                    <input type="number" id="qtc-qt" min="200" max="700" step="1" placeholder="e.g., 400">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="qtc-hr">Heart rate (bpm):</label>
+                    <input type="number" id="qtc-hr" min="30" max="200" step="1" placeholder="e.g., 75">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="qtc-formula">Formula:</label>
+                    <select id="qtc-formula">
+                        <option value="bazett">Bazett (most common)</option>
+                        <option value="fridericia">Fridericia (more accurate at high/low HR)</option>
+                    </select>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateQTc()">Calculate QTc</button>
+                <div id="qtc-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Normal Ranges:</strong><br>
+                        • Men: QTc <450 ms<br>
+                        • Women: QTc <460 ms<br>
+                        • Prolonged if >470 ms (men) or >480 ms (women)<br>
+                        • Severely prolonged if >500 ms (high risk of Torsades de Pointes)
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateQTc() {
+        const qt = parseFloat(document.getElementById('qtc-qt').value) || 0;
+        const hr = parseFloat(document.getElementById('qtc-hr').value) || 0;
+        const formula = document.getElementById('qtc-formula').value;
+
+        if (qt === 0 || hr === 0) {
+            document.getElementById('qtc-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter both QT interval and heart rate</strong></div>';
+            return;
+        }
+
+        // Calculate RR interval in seconds
+        const rr = 60 / hr;
+        
+        // Calculate QTc based on formula
+        let qtc = 0;
+        let formulaName = '';
+        
+        if (formula === 'bazett') {
+            qtc = qt / Math.sqrt(rr);
+            formulaName = 'Bazett';
+        } else {
+            qtc = qt / Math.pow(rr, 1/3);
+            formulaName = 'Fridericia';
+        }
+
+        // Determine if prolonged
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (qtc > 500) {
+            interpretation = '<strong>⚠️ SEVERELY PROLONGED</strong><br>High risk of Torsades de Pointes<br>Review medications, check electrolytes (K⁺, Mg²⁺, Ca²⁺)';
+            cssClass = 'calc-error';
+        } else if (qtc > 470) {
+            interpretation = '<strong>⚠️ PROLONGED</strong><br>Increased arrhythmia risk<br>Review medications and electrolytes';
+            cssClass = 'calc-warning';
+        } else if (qtc > 450) {
+            interpretation = '<strong>Borderline prolonged</strong><br>Monitor if on QT-prolonging drugs';
+            cssClass = 'calc-warning';
+        } else {
+            interpretation = '<strong>Normal QTc</strong>';
+            cssClass = 'calc-success';
+        }
+
+        document.getElementById('qtc-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>QTc: ${qtc.toFixed(0)} ms</h4>
+                <p><small>(${formulaName} formula)</small></p>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // Corrected Sodium Calculator
+    getCorrectedSodiumCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Corrected Sodium for Hyperglycemia</h3>
+                <p>Adjusts sodium level for elevated glucose</p>
+                
+                <div class="calc-input-group">
+                    <label for="corr-na-measured">Measured sodium (mmol/L):</label>
+                    <input type="number" id="corr-na-measured" min="100" max="180" step="0.1" placeholder="e.g., 130">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="corr-na-glucose">Glucose (mmol/L):</label>
+                    <input type="number" id="corr-na-glucose" min="3" max="100" step="0.1" placeholder="e.g., 20">
+                    <small>Normal: 4-6 mmol/L</small>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateCorrectedSodium()">Calculate Corrected Sodium</button>
+                <div id="corr-na-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Formula:</strong><br>
+                        Corrected Na⁺ = Measured Na⁺ + 0.3 × (Glucose - 5)<br>
+                        <br>
+                        <strong>Interpretation:</strong><br>
+                        • For every 1 mmol/L rise in glucose above 5, sodium falls by ~0.3 mmol/L<br>
+                        • Helps identify true hyponatremia vs pseudohyponatremia in hyperglycemia<br>
+                        • Normal Na⁺: 135-145 mmol/L
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateCorrectedSodium() {
+        const measuredNa = parseFloat(document.getElementById('corr-na-measured').value) || 0;
+        const glucose = parseFloat(document.getElementById('corr-na-glucose').value) || 0;
+
+        if (measuredNa === 0 || glucose === 0) {
+            document.getElementById('corr-na-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter both sodium and glucose values</strong></div>';
+            return;
+        }
+
+        // Corrected sodium formula: add 0.3 mmol/L for every 1 mmol/L glucose above 5
+        const correctedNa = measuredNa + (0.3 * (glucose - 5));
+
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (correctedNa < 125) {
+            interpretation = '<strong>⚠️ Severe hyponatremia</strong><br>Risk of seizures/coma - urgent treatment needed';
+            cssClass = 'calc-error';
+        } else if (correctedNa < 135) {
+            interpretation = '<strong>Hyponatremia</strong><br>Investigate cause and treat appropriately';
+            cssClass = 'calc-warning';
+        } else if (correctedNa <= 145) {
+            interpretation = '<strong>Normal corrected sodium</strong><br>Apparent hyponatremia due to hyperglycemia';
+            cssClass = 'calc-success';
+        } else if (correctedNa <= 150) {
+            interpretation = '<strong>Mild hypernatremia</strong><br>Assess hydration status';
+            cssClass = 'calc-warning';
+        } else {
+            interpretation = '<strong>⚠️ Severe hypernatremia</strong><br>Risk of cerebral damage - treat urgently';
+            cssClass = 'calc-error';
+        }
+
+        document.getElementById('corr-na-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>Corrected Sodium: ${correctedNa.toFixed(1)} mmol/L</h4>
+                <p><small>Measured: ${measuredNa} mmol/L | Glucose: ${glucose} mmol/L</small></p>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // Osmolal Gap Calculator
+    getOsmolalGapCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Osmolal Gap Calculator</h3>
+                <p>Detects unmeasured osmoles (toxins, alcohols)</p>
+                
+                <div class="calc-input-group">
+                    <label for="osmolal-measured">Measured osmolality (mOsm/kg):</label>
+                    <input type="number" id="osmolal-measured" min="200" max="500" step="1" placeholder="e.g., 320">
+                    <small>Requires lab measurement</small>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="osmolal-sodium">Sodium (mmol/L):</label>
+                    <input type="number" id="osmolal-sodium" min="100" max="180" step="1" placeholder="e.g., 140">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="osmolal-glucose">Glucose (mmol/L):</label>
+                    <input type="number" id="osmolal-glucose" min="3" max="100" step="0.1" placeholder="e.g., 5">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="osmolal-urea">Urea (mmol/L):</label>
+                    <input type="number" id="osmolal-urea" min="1" max="50" step="0.1" placeholder="e.g., 5">
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateOsmolalGap()">Calculate Osmolal Gap</button>
+                <div id="osmolal-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Formula:</strong><br>
+                        Calculated osmolality = 2(Na⁺) + Glucose + Urea<br>
+                        Osmolal gap = Measured - Calculated<br>
+                        <br>
+                        <strong>Normal: <10 mOsm/kg</strong><br>
+                        Elevated gap suggests: methanol, ethylene glycol, ethanol, isopropanol, propylene glycol
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateOsmolalGap() {
+        const measured = parseFloat(document.getElementById('osmolal-measured').value) || 0;
+        const sodium = parseFloat(document.getElementById('osmolal-sodium').value) || 0;
+        const glucose = parseFloat(document.getElementById('osmolal-glucose').value) || 0;
+        const urea = parseFloat(document.getElementById('osmolal-urea').value) || 0;
+
+        if (measured === 0 || sodium === 0 || glucose === 0 || urea === 0) {
+            document.getElementById('osmolal-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter all values</strong></div>';
+            return;
+        }
+
+        // Calculate osmolality
+        const calculated = (2 * sodium) + glucose + urea;
+        const gap = measured - calculated;
+
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (gap < 10) {
+            interpretation = '<strong>Normal osmolal gap</strong><br>No evidence of unmeasured osmoles';
+            cssClass = 'calc-success';
+        } else if (gap < 20) {
+            interpretation = '<strong>Mildly elevated gap</strong><br>Consider toxic alcohols, but may be normal variant';
+            cssClass = 'calc-warning';
+        } else {
+            interpretation = '<strong>⚠️ Significantly elevated gap</strong><br>Strongly suggests toxic alcohol ingestion:<br>• Methanol<br>• Ethylene glycol<br>• Isopropanol<br>• Ethanol (if intoxicated)<br>• Propylene glycol<br><br>Check blood gases, lactate, and consider toxicology';
+            cssClass = 'calc-error';
+        }
+
+        document.getElementById('osmolal-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>Osmolal Gap: ${gap.toFixed(1)} mOsm/kg</h4>
+                <p><small>Calculated: ${calculated.toFixed(1)} | Measured: ${measured}</small></p>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // Centor Score Calculator
+    getCentorCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Centor Score (Modified/McIsaac)</h3>
+                <p>Estimates probability of streptococcal pharyngitis</p>
+                
+                <div class="calc-input-group">
+                    <label for="centor-age">Age:</label>
+                    <select id="centor-age">
+                        <option value="1">3-14 years (+1)</option>
+                        <option value="0" selected>15-44 years (0)</option>
+                        <option value="-1">≥45 years (-1)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="centor-exudate" value="1">
+                        Tonsillar exudate present (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="centor-lymph" value="1">
+                        Tender anterior cervical lymphadenopathy (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="centor-fever" value="1">
+                        Temperature >38°C (+1)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="centor-cough" value="1">
+                        Absence of cough (+1)
+                    </label>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateCentor()">Calculate Centor Score</button>
+                <div id="centor-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Management:</strong><br>
+                        • ≤0: No testing/antibiotics (1-2.5% strep)<br>
+                        • 1: No testing/antibiotics (5-10% strep)<br>
+                        • 2-3: Throat swab/rapid test (11-28% strep)<br>
+                        • ≥4: Consider empirical antibiotics (51-53% strep)
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateCentor() {
+        const age = parseInt(document.getElementById('centor-age').value);
+        const exudate = document.getElementById('centor-exudate').checked ? 1 : 0;
+        const lymph = document.getElementById('centor-lymph').checked ? 1 : 0;
+        const fever = document.getElementById('centor-fever').checked ? 1 : 0;
+        const cough = document.getElementById('centor-cough').checked ? 1 : 0;
+
+        const score = age + exudate + lymph + fever + cough;
+
+        let probability = '';
+        let management = '';
+        let cssClass = 'calc-success';
+        
+        if (score <= 0) {
+            probability = '1-2.5%';
+            management = '<strong>No further testing or antibiotics</strong><br>Supportive care only';
+        } else if (score === 1) {
+            probability = '5-10%';
+            management = '<strong>No further testing or antibiotics</strong><br>Supportive care, safety-net advice';
+        } else if (score === 2 || score === 3) {
+            probability = '11-28%';
+            management = '<strong>Throat swab or rapid antigen test</strong><br>Antibiotics if positive<br>Consider delayed prescription';
+            cssClass = 'calc-warning';
+        } else {
+            probability = '51-53%';
+            management = '<strong>Consider empirical antibiotics</strong><br>High probability of strep throat<br>Phenoxymethylpenicillin 500mg QDS 10 days';
+            cssClass = 'calc-warning';
+        }
+
+        document.getElementById('centor-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>Centor Score: ${score} points</h4>
+                <p><strong>Strep Probability: ${probability}</strong></p>
+                <p>${management}</p>
+            </div>
+        `;
+    }
+
+    // Alvarado Score Calculator
+    getAlvaradoCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Alvarado Score</h3>
+                <p>Risk stratification for acute appendicitis</p>
+                
+                <h4>Symptoms (1 point each):</h4>
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="alvarado-migration" value="1">
+                        Migration of pain to RLQ
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="alvarado-anorexia" value="1">
+                        Anorexia
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="alvarado-nausea" value="1">
+                        Nausea/vomiting
+                    </label>
+                </div>
+                
+                <h4>Signs:</h4>
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="alvarado-tenderness" value="2">
+                        Tenderness in RLQ (2 points)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="alvarado-rebound" value="1">
+                        Rebound tenderness (1 point)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="alvarado-fever" value="1">
+                        Elevated temperature >37.3°C (1 point)
+                    </label>
+                </div>
+                
+                <h4>Laboratory:</h4>
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="alvarado-wbc" value="2">
+                        Leukocytosis >10,000 (2 points)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="alvarado-shift" value="1">
+                        Neutrophil left shift (1 point)
+                    </label>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateAlvarado()">Calculate Alvarado Score</button>
+                <div id="alvarado-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Interpretation:</strong><br>
+                        • 1-4: Low risk (appendicitis unlikely)<br>
+                        • 5-6: Intermediate risk (observe, consider imaging)<br>
+                        • 7-8: High risk (likely appendicitis - surgical consult)<br>
+                        • 9-10: Very high risk (probable appendicitis)
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateAlvarado() {
+        const items = [
+            { id: 'alvarado-migration', value: 1 },
+            { id: 'alvarado-anorexia', value: 1 },
+            { id: 'alvarado-nausea', value: 1 },
+            { id: 'alvarado-tenderness', value: 2 },
+            { id: 'alvarado-rebound', value: 1 },
+            { id: 'alvarado-fever', value: 1 },
+            { id: 'alvarado-wbc', value: 2 },
+            { id: 'alvarado-shift', value: 1 }
+        ];
+        
+        let score = 0;
+        items.forEach(item => {
+            const element = document.getElementById(item.id);
+            if (element && element.checked) {
+                score += item.value;
+            }
+        });
+
+        let risk = '';
+        let management = '';
+        let cssClass = 'calc-success';
+        
+        if (score <= 4) {
+            risk = 'Low';
+            management = '<strong>Appendicitis unlikely</strong><br>Consider alternative diagnoses<br>Discharge with safety-net advice or observe';
+            cssClass = 'calc-success';
+        } else if (score <= 6) {
+            risk = 'Intermediate';
+            management = '<strong>Possible appendicitis</strong><br>Consider imaging (ultrasound or CT)<br>Observe and reassess';
+            cssClass = 'calc-warning';
+        } else if (score <= 8) {
+            risk = 'High';
+            management = '<strong>Likely appendicitis</strong><br>Surgical consultation<br>Consider imaging to confirm';
+            cssClass = 'calc-error';
+        } else {
+            risk = 'Very High';
+            management = '<strong>⚠️ Probable appendicitis</strong><br>Urgent surgical consultation<br>Imaging may not be necessary';
+            cssClass = 'calc-error';
+        }
+
+        document.getElementById('alvarado-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>Alvarado Score: ${score}/10 points</h4>
+                <p><strong>Risk: ${risk}</strong></p>
+                <p>${management}</p>
+            </div>
+        `;
+    }
+
+    // Glasgow-Blatchford Score Calculator
+    getGlasgowBlatchfordCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Glasgow-Blatchford Score (GBS)</h3>
+                <p>Predicts need for intervention in upper GI bleeding</p>
+                
+                <div class="calc-input-group">
+                    <label for="gbs-urea">Urea (mmol/L):</label>
+                    <select id="gbs-urea">
+                        <option value="0"><6.5 (0 points)</option>
+                        <option value="2">6.5-7.9 (2 points)</option>
+                        <option value="3">8.0-9.9 (3 points)</option>
+                        <option value="4">10.0-24.9 (4 points)</option>
+                        <option value="6">≥25 (6 points)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="gbs-hb-male">Hemoglobin (g/L) - Males:</label>
+                    <select id="gbs-hb-male">
+                        <option value="0">≥130 (0 points)</option>
+                        <option value="1">120-129 (1 point)</option>
+                        <option value="3">100-119 (3 points)</option>
+                        <option value="6"><100 (6 points)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="gbs-hb-female">Hemoglobin (g/L) - Females:</label>
+                    <select id="gbs-hb-female">
+                        <option value="0">≥120 (0 points)</option>
+                        <option value="1">100-119 (1 point)</option>
+                        <option value="6"><100 (6 points)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="gbs-sbp">Systolic BP (mmHg):</label>
+                    <select id="gbs-sbp">
+                        <option value="0">≥110 (0 points)</option>
+                        <option value="1">100-109 (1 point)</option>
+                        <option value="2">90-99 (2 points)</option>
+                        <option value="3"><90 (3 points)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="gbs-pulse" value="1">
+                        Pulse ≥100 bpm (1 point)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="gbs-melena" value="1">
+                        Melena present (1 point)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="gbs-syncope" value="2">
+                        Syncope (2 points)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="gbs-liver" value="2">
+                        Hepatic disease (2 points)
+                    </label>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label>
+                        <input type="checkbox" id="gbs-cardiac" value="2">
+                        Cardiac failure (2 points)
+                    </label>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateGlasgowBlatchford()">Calculate GBS</button>
+                <div id="gbs-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Interpretation:</strong><br>
+                        • Score 0: Very low risk - safe for outpatient management<br>
+                        • Score 1-5: Low-moderate risk - consider admission<br>
+                        • Score ≥6: High risk - admit for intervention
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateGlasgowBlatchford() {
+        const urea = parseInt(document.getElementById('gbs-urea').value);
+        const hbMale = parseInt(document.getElementById('gbs-hb-male').value);
+        const hbFemale = parseInt(document.getElementById('gbs-hb-female').value);
+        const sbp = parseInt(document.getElementById('gbs-sbp').value);
+        const pulse = document.getElementById('gbs-pulse').checked ? 1 : 0;
+        const melena = document.getElementById('gbs-melena').checked ? 1 : 0;
+        const syncope = document.getElementById('gbs-syncope').checked ? 2 : 0;
+        const liver = document.getElementById('gbs-liver').checked ? 2 : 0;
+        const cardiac = document.getElementById('gbs-cardiac').checked ? 2 : 0;
+
+        // Use whichever Hb score is higher (assumes user enters one gender)
+        const hb = Math.max(hbMale, hbFemale);
+        
+        const score = urea + hb + sbp + pulse + melena + syncope + liver + cardiac;
+
+        let risk = '';
+        let management = '';
+        let cssClass = 'calc-success';
+        
+        if (score === 0) {
+            risk = 'Very Low';
+            management = '<strong>✓ Safe for outpatient management</strong><br>No intervention likely needed<br>Outpatient follow-up appropriate';
+            cssClass = 'calc-success';
+        } else if (score <= 5) {
+            risk = 'Low-Moderate';
+            management = '<strong>Consider admission</strong><br>Monitor closely<br>May not require endoscopic intervention';
+            cssClass = 'calc-warning';
+        } else {
+            risk = 'High';
+            management = '<strong>⚠️ Admit for intervention</strong><br>High risk of needing transfusion or endoscopic therapy<br>Urgent gastroenterology referral';
+            cssClass = 'calc-error';
+        }
+
+        document.getElementById('gbs-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>Glasgow-Blatchford Score: ${score} points</h4>
+                <p><strong>Risk: ${risk}</strong></p>
+                <p>${management}</p>
+            </div>
+        `;
+    }
+
+    // APGAR Score Calculator
+    getAPGARCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>APGAR Score</h3>
+                <p>Neonatal assessment at 1 and 5 minutes after birth</p>
+                
+                <div class="calc-input-group">
+                    <label for="apgar-appearance">Appearance (color):</label>
+                    <select id="apgar-appearance">
+                        <option value="0">Blue/pale all over (0)</option>
+                        <option value="1">Blue extremities, pink body (1)</option>
+                        <option value="2">Pink all over (2)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="apgar-pulse">Pulse (heart rate):</label>
+                    <select id="apgar-pulse">
+                        <option value="0">Absent (0)</option>
+                        <option value="1"><100 bpm (1)</option>
+                        <option value="2">≥100 bpm (2)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="apgar-grimace">Grimace (reflex irritability):</label>
+                    <select id="apgar-grimace">
+                        <option value="0">No response (0)</option>
+                        <option value="1">Grimace/weak cry (1)</option>
+                        <option value="2">Cry/active withdrawal (2)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="apgar-activity">Activity (muscle tone):</label>
+                    <select id="apgar-activity">
+                        <option value="0">Limp (0)</option>
+                        <option value="1">Some flexion (1)</option>
+                        <option value="2">Active movement (2)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="apgar-respiration">Respiration:</label>
+                    <select id="apgar-respiration">
+                        <option value="0">Absent (0)</option>
+                        <option value="1">Weak/irregular (1)</option>
+                        <option value="2">Strong cry (2)</option>
+                    </select>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateAPGAR()">Calculate APGAR</button>
+                <div id="apgar-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Interpretation:</strong><br>
+                        • 7-10: Normal (reassuring)<br>
+                        • 4-6: Moderate depression (stimulation, O₂ may be needed)<br>
+                        • 0-3: Severe depression (immediate resuscitation)<br>
+                        <br>
+                        Assess at 1 minute and 5 minutes; continue every 5 minutes if score <7
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateAPGAR() {
+        const appearance = parseInt(document.getElementById('apgar-appearance').value);
+        const pulse = parseInt(document.getElementById('apgar-pulse').value);
+        const grimace = parseInt(document.getElementById('apgar-grimace').value);
+        const activity = parseInt(document.getElementById('apgar-activity').value);
+        const respiration = parseInt(document.getElementById('apgar-respiration').value);
+
+        const score = appearance + pulse + grimace + activity + respiration;
+
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (score >= 7) {
+            interpretation = '<strong>Normal</strong><br>Reassuring - routine postnatal care';
+            cssClass = 'calc-success';
+        } else if (score >= 4) {
+            interpretation = '<strong>⚠️ Moderate depression</strong><br>Stimulation and O₂ may be needed<br>Monitor closely';
+            cssClass = 'calc-warning';
+        } else {
+            interpretation = '<strong>⚠️ SEVERE DEPRESSION</strong><br>Immediate resuscitation required<br>Call for senior support';
+            cssClass = 'calc-error';
+        }
+
+        document.getElementById('apgar-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>APGAR Score: ${score}/10</h4>
+                <p>${interpretation}</p>
+                <p><small>Remember: Assess at 1 and 5 minutes (continue q5min if <7)</small></p>
+            </div>
+        `;
+    }
+
+    // Bishop Score Calculator
+    getBishopCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Bishop Score</h3>
+                <p>Assesses cervical readiness for induction of labor</p>
+                
+                <div class="calc-input-group">
+                    <label for="bishop-dilation">Cervical dilation (cm):</label>
+                    <select id="bishop-dilation">
+                        <option value="0">Closed (0)</option>
+                        <option value="1">1-2 cm (1)</option>
+                        <option value="2">3-4 cm (2)</option>
+                        <option value="3">≥5 cm (3)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="bishop-effacement">Cervical effacement (%):</label>
+                    <select id="bishop-effacement">
+                        <option value="0">0-30% (0)</option>
+                        <option value="1">40-50% (1)</option>
+                        <option value="2">60-70% (2)</option>
+                        <option value="3">≥80% (3)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="bishop-station">Fetal station:</label>
+                    <select id="bishop-station">
+                        <option value="0">-3 (0)</option>
+                        <option value="1">-2 (1)</option>
+                        <option value="2">-1, 0 (2)</option>
+                        <option value="3">+1, +2 (3)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="bishop-consistency">Cervical consistency:</label>
+                    <select id="bishop-consistency">
+                        <option value="0">Firm (0)</option>
+                        <option value="1">Medium (1)</option>
+                        <option value="2">Soft (2)</option>
+                    </select>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="bishop-position">Cervical position:</label>
+                    <select id="bishop-position">
+                        <option value="0">Posterior (0)</option>
+                        <option value="1">Mid (1)</option>
+                        <option value="2">Anterior (2)</option>
+                    </select>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateBishop()">Calculate Bishop Score</button>
+                <div id="bishop-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Interpretation:</strong><br>
+                        • ≤5: Unfavorable cervix - consider cervical ripening (prostaglandins)<br>
+                        • 6-7: Intermediate - may proceed with induction<br>
+                        • ≥8: Favorable cervix - high chance of successful induction
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateBishop() {
+        const dilation = parseInt(document.getElementById('bishop-dilation').value);
+        const effacement = parseInt(document.getElementById('bishop-effacement').value);
+        const station = parseInt(document.getElementById('bishop-station').value);
+        const consistency = parseInt(document.getElementById('bishop-consistency').value);
+        const position = parseInt(document.getElementById('bishop-position').value);
+
+        const score = dilation + effacement + station + consistency + position;
+
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (score <= 5) {
+            interpretation = '<strong>Unfavorable cervix</strong><br>Low likelihood of successful induction<br>Consider cervical ripening (e.g., vaginal prostaglandins)';
+            cssClass = 'calc-warning';
+        } else if (score <= 7) {
+            interpretation = '<strong>Intermediate</strong><br>May proceed with induction<br>Success rate moderate';
+            cssClass = 'calc-warning';
+        } else {
+            interpretation = '<strong>Favorable cervix</strong><br>High chance of successful vaginal delivery<br>Proceed with induction';
+            cssClass = 'calc-success';
+        }
+
+        document.getElementById('bishop-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>Bishop Score: ${score}/13 points</h4>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // MAP Calculator
+    getMAPCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Mean Arterial Pressure (MAP)</h3>
+                <p>Average arterial pressure during one cardiac cycle</p>
+                
+                <div class="calc-input-group">
+                    <label for="map-sbp">Systolic BP (mmHg):</label>
+                    <input type="number" id="map-sbp" min="50" max="250" step="1" placeholder="e.g., 120">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="map-dbp">Diastolic BP (mmHg):</label>
+                    <input type="number" id="map-dbp" min="30" max="150" step="1" placeholder="e.g., 80">
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateMAP()">Calculate MAP</button>
+                <div id="map-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Formula:</strong> MAP = DBP + ⅓(SBP - DBP)<br>
+                        <br>
+                        <strong>Normal range:</strong> 70-100 mmHg<br>
+                        • MAP <60: Risk of end-organ hypoperfusion<br>
+                        • MAP 65-70: Minimum target in sepsis/critical illness<br>
+                        • MAP >100: Considered hypertensive
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateMAP() {
+        const sbp = parseFloat(document.getElementById('map-sbp').value) || 0;
+        const dbp = parseFloat(document.getElementById('map-dbp').value) || 0;
+
+        if (sbp === 0 || dbp === 0) {
+            document.getElementById('map-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter both systolic and diastolic BP</strong></div>';
+            return;
+        }
+
+        const map = dbp + (sbp - dbp) / 3;
+
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (map < 60) {
+            interpretation = '<strong>⚠️ Critical hypotension</strong><br>Risk of end-organ hypoperfusion<br>Urgent intervention required';
+            cssClass = 'calc-error';
+        } else if (map < 65) {
+            interpretation = '<strong>⚠️ Hypotension</strong><br>Below target for sepsis/critical illness<br>Consider fluid resuscitation/vasopressors';
+            cssClass = 'calc-warning';
+        } else if (map <= 100) {
+            interpretation = '<strong>Normal MAP</strong><br>Adequate tissue perfusion';
+            cssClass = 'calc-success';
+        } else {
+            interpretation = '<strong>⚠️ Elevated MAP</strong><br>Hypertensive - assess BP control';
+            cssClass = 'calc-warning';
+        }
+
+        document.getElementById('map-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>MAP: ${map.toFixed(0)} mmHg</h4>
+                <p><small>BP: ${sbp}/${dbp} mmHg</small></p>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // A-a Gradient Calculator
+    getAAGradientCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Alveolar-arterial (A-a) Oxygen Gradient</h3>
+                <p>Evaluates cause of hypoxemia</p>
+                
+                <div class="calc-input-group">
+                    <label for="aa-fio2">FiO₂ (%):</label>
+                    <input type="number" id="aa-fio2" min="21" max="100" step="1" value="21" placeholder="21 for room air">
+                    <small>Room air = 21%</small>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="aa-pao2">PaO₂ (kPa):</label>
+                    <input type="number" id="aa-pao2" min="3" max="50" step="0.1" placeholder="e.g., 10.5">
+                    <small>From arterial blood gas</small>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="aa-paco2">PaCO₂ (kPa):</label>
+                    <input type="number" id="aa-paco2" min="2" max="15" step="0.1" placeholder="e.g., 5.3">
+                    <small>From arterial blood gas</small>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="aa-age">Age (years):</label>
+                    <input type="number" id="aa-age" min="18" max="120" step="1" placeholder="e.g., 65">
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateAAGradient()">Calculate A-a Gradient</button>
+                <div id="aa-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Formula:</strong><br>
+                        PAO₂ = (FiO₂ × [Patm - PH₂O]) - (PaCO₂ / 0.8)<br>
+                        A-a gradient = PAO₂ - PaO₂<br>
+                        <br>
+                        <strong>Expected A-a gradient:</strong> (Age/4) + 4 kPa<br>
+                        Elevated gradient suggests V/Q mismatch, shunt, or diffusion defect
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateAAGradient() {
+        const fio2 = parseFloat(document.getElementById('aa-fio2').value) || 0;
+        const pao2 = parseFloat(document.getElementById('aa-pao2').value) || 0;
+        const paco2 = parseFloat(document.getElementById('aa-paco2').value) || 0;
+        const age = parseFloat(document.getElementById('aa-age').value) || 0;
+
+        if (fio2 === 0 || pao2 === 0 || paco2 === 0 || age === 0) {
+            document.getElementById('aa-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter all values</strong></div>';
+            return;
+        }
+
+        // Convert FiO2 to decimal
+        const fio2Decimal = fio2 / 100;
+        
+        // Atmospheric pressure at sea level in kPa
+        const patm = 101.3;
+        // Water vapor pressure in kPa
+        const ph2o = 6.3;
+        // Respiratory quotient
+        const rq = 0.8;
+        
+        // Calculate alveolar oxygen (PAO2)
+        const pao2Alveolar = (fio2Decimal * (patm - ph2o)) - (paco2 / rq);
+        
+        // Calculate A-a gradient
+        const aaGradient = pao2Alveolar - pao2;
+        
+        // Expected A-a gradient based on age (in kPa)
+        const expectedGradient = (age / 4) + 4;
+
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (aaGradient <= expectedGradient) {
+            interpretation = '<strong>Normal A-a gradient</strong><br>Hypoxemia likely due to:<br>• Hypoventilation<br>• Low inspired O₂<br>• High altitude';
+            cssClass = 'calc-success';
+        } else {
+            interpretation = `<strong>⚠️ Elevated A-a gradient</strong><br>Expected for age: ${expectedGradient.toFixed(1)} kPa<br><br>Causes:<br>• V/Q mismatch (PE, pneumonia, COPD)<br>• Shunt (pneumonia, pulmonary edema)<br>• Diffusion defect (ILD, pulmonary fibrosis)`;
+            cssClass = 'calc-warning';
+        }
+
+        document.getElementById('aa-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>A-a Gradient: ${aaGradient.toFixed(1)} kPa</h4>
+                <p><small>PAO₂: ${pao2Alveolar.toFixed(1)} kPa | PaO₂: ${pao2} kPa</small></p>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // Corrected Calcium Calculator
+    getCorrectedCalciumCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Corrected Calcium</h3>
+                <p>Adjusts calcium for albumin level</p>
+                
+                <div class="calc-input-group">
+                    <label for="ca-measured">Measured calcium (mmol/L):</label>
+                    <input type="number" id="ca-measured" min="1" max="4" step="0.01" placeholder="e.g., 2.20">
+                    <small>Normal: 2.20-2.60 mmol/L</small>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="ca-albumin">Albumin (g/L):</label>
+                    <input type="number" id="ca-albumin" min="10" max="60" step="1" placeholder="e.g., 35">
+                    <small>Normal: 35-50 g/L</small>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateCorrectedCalcium()">Calculate Corrected Calcium</button>
+                <div id="ca-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Formula:</strong><br>
+                        Corrected Ca²⁺ = Measured Ca²⁺ + 0.02 × (40 - Albumin)<br>
+                        <br>
+                        <strong>Interpretation:</strong><br>
+                        • Normal: 2.20-2.60 mmol/L<br>
+                        • <2.20: Hypocalcemia<br>
+                        • >2.60: Hypercalcemia<br>
+                        • >3.00: Severe hypercalcemia (requires urgent treatment)
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateCorrectedCalcium() {
+        const measuredCa = parseFloat(document.getElementById('ca-measured').value) || 0;
+        const albumin = parseFloat(document.getElementById('ca-albumin').value) || 0;
+
+        if (measuredCa === 0 || albumin === 0) {
+            document.getElementById('ca-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter both calcium and albumin values</strong></div>';
+            return;
+        }
+
+        // Corrected calcium formula
+        const correctedCa = measuredCa + (0.02 * (40 - albumin));
+
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (correctedCa < 1.90) {
+            interpretation = '<strong>⚠️ Severe hypocalcemia</strong><br>Risk of tetany, seizures, arrhythmias<br>Check PTH, vitamin D, Mg²⁺<br>Consider IV calcium';
+            cssClass = 'calc-error';
+        } else if (correctedCa < 2.20) {
+            interpretation = '<strong>Hypocalcemia</strong><br>Investigate cause: PTH, vitamin D, renal function<br>Consider oral calcium/vitamin D';
+            cssClass = 'calc-warning';
+        } else if (correctedCa <= 2.60) {
+            interpretation = '<strong>Normal corrected calcium</strong>';
+            cssClass = 'calc-success';
+        } else if (correctedCa <= 3.00) {
+            interpretation = '<strong>⚠️ Hypercalcemia</strong><br>Investigate: PTH, vitamin D, malignancy screen<br>Ensure adequate hydration';
+            cssClass = 'calc-warning';
+        } else {
+            interpretation = '<strong>⚠️ SEVERE HYPERCALCEMIA</strong><br>Medical emergency<br>• IV fluids 4-6 L/day<br>• Bisphosphonates<br>• Treat underlying cause<br>• Monitor ECG';
+            cssClass = 'calc-error';
+        }
+
+        document.getElementById('ca-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>Corrected Calcium: ${correctedCa.toFixed(2)} mmol/L</h4>
+                <p><small>Measured: ${measuredCa} mmol/L | Albumin: ${albumin} g/L</small></p>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // LDL Calculator
+    getLDLCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>LDL Cholesterol Calculator (Friedewald)</h3>
+                <p>Calculates LDL from lipid panel</p>
+                
+                <div class="calc-input-group">
+                    <label for="ldl-total">Total cholesterol (mmol/L):</label>
+                    <input type="number" id="ldl-total" min="2" max="15" step="0.1" placeholder="e.g., 5.2">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="ldl-hdl">HDL cholesterol (mmol/L):</label>
+                    <input type="number" id="ldl-hdl" min="0.5" max="3" step="0.1" placeholder="e.g., 1.3">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="ldl-trig">Triglycerides (mmol/L):</label>
+                    <input type="number" id="ldl-trig" min="0.5" max="20" step="0.1" placeholder="e.g., 1.5">
+                    <small>⚠️ Friedewald invalid if TG >4.5 mmol/L</small>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateLDL()">Calculate LDL</button>
+                <div id="ldl-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Friedewald Formula:</strong><br>
+                        LDL = Total chol - HDL - (TG / 2.2)<br>
+                        <br>
+                        <strong>UK NICE Targets:</strong><br>
+                        • Primary prevention: Non-HDL <4 mmol/L (LDL <3 mmol/L)<br>
+                        • Secondary prevention: Non-HDL <2.5 mmol/L (LDL <2.0 mmol/L)<br>
+                        • High-risk: Consider LDL <1.8 mmol/L
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateLDL() {
+        const totalChol = parseFloat(document.getElementById('ldl-total').value) || 0;
+        const hdl = parseFloat(document.getElementById('ldl-hdl').value) || 0;
+        const trig = parseFloat(document.getElementById('ldl-trig').value) || 0;
+
+        if (totalChol === 0 || hdl === 0 || trig === 0) {
+            document.getElementById('ldl-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter all lipid values</strong></div>';
+            return;
+        }
+
+        // Check if Friedewald is valid
+        if (trig > 4.5) {
+            document.getElementById('ldl-result').innerHTML = `
+                <div class="calc-error">
+                    <h4>⚠️ Friedewald Equation Invalid</h4>
+                    <p>Triglycerides >4.5 mmol/L (${trig.toFixed(1)} mmol/L)</p>
+                    <p>LDL must be measured directly</p>
+                    <p><small>Non-HDL cholesterol = ${(totalChol - hdl).toFixed(1)} mmol/L</small></p>
+                </div>
+            `;
+            return;
+        }
+
+        // Friedewald equation (in mmol/L, divide TG by 2.2)
+        const ldl = totalChol - hdl - (trig / 2.2);
+        const nonHDL = totalChol - hdl;
+
+        let interpretation = '';
+        let cssClass = 'calc-success';
+        
+        if (ldl < 1.8) {
+            interpretation = '<strong>Optimal LDL</strong><br>Target achieved for high-risk patients';
+            cssClass = 'calc-success';
+        } else if (ldl < 2.0) {
+            interpretation = '<strong>Target for secondary prevention</strong><br>Good control for CVD patients';
+            cssClass = 'calc-success';
+        } else if (ldl < 3.0) {
+            interpretation = '<strong>Acceptable for primary prevention</strong><br>Target for low-risk patients';
+            cssClass = 'calc-success';
+        } else if (ldl < 4.0) {
+            interpretation = '<strong>⚠️ Above target</strong><br>Consider lifestyle modification ± statin';
+            cssClass = 'calc-warning';
+        } else {
+            interpretation = '<strong>⚠️ High LDL</strong><br>Significant CVD risk<br>Lifestyle modification + statin indicated';
+            cssClass = 'calc-error';
+        }
+
+        document.getElementById('ldl-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>LDL Cholesterol: ${ldl.toFixed(1)} mmol/L</h4>
+                <p><small>Non-HDL: ${nonHDL.toFixed(1)} mmol/L | HDL: ${hdl} mmol/L</small></p>
+                <p>${interpretation}</p>
+            </div>
+        `;
+    }
+
+    // Winters Formula Calculator
+    getWintersCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Winters Formula</h3>
+                <p>Expected pCO₂ in metabolic acidosis</p>
+                
+                <div class="calc-input-group">
+                    <label for="winters-hco3">HCO₃⁻ (mmol/L):</label>
+                    <input type="number" id="winters-hco3" min="5" max="35" step="0.1" placeholder="e.g., 15">
+                    <small>Normal: 22-28 mmol/L</small>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="winters-pco2">Actual pCO₂ (kPa):</label>
+                    <input type="number" id="winters-pco2" min="2" max="10" step="0.1" placeholder="e.g., 3.5">
+                    <small>Optional: for comparison with expected</small>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateWinters()">Calculate Expected pCO₂</button>
+                <div id="winters-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Winters Formula:</strong><br>
+                        Expected pCO₂ (kPa) = 0.16 + (0.16 × HCO₃⁻)<br>
+                        <br>
+                        <strong>Interpretation:</strong><br>
+                        • If actual = expected ±0.27 kPa: Appropriate respiratory compensation<br>
+                        • If actual > expected: Concomitant respiratory acidosis<br>
+                        • If actual < expected: Concomitant respiratory alkalosis
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateWinters() {
+        const hco3 = parseFloat(document.getElementById('winters-hco3').value) || 0;
+        const actualPco2 = parseFloat(document.getElementById('winters-pco2').value);
+
+        if (hco3 === 0) {
+            document.getElementById('winters-result').innerHTML = 
+                '<div class="calc-error"><strong>Please enter HCO₃⁻ value</strong></div>';
+            return;
+        }
+
+        // Winters formula: Expected pCO2 (kPa) = 0.16 + (0.16 × HCO3)
+        const expectedPco2 = 0.16 + (0.16 * hco3);
+        const lowerLimit = expectedPco2 - 0.27;
+        const upperLimit = expectedPco2 + 0.27;
+
+        let comparison = '';
+        let cssClass = 'calc-success';
+        
+        if (actualPco2) {
+            if (actualPco2 >= lowerLimit && actualPco2 <= upperLimit) {
+                comparison = `
+                    <p><strong>✓ Appropriate respiratory compensation</strong></p>
+                    <p>Actual pCO₂ (${actualPco2.toFixed(1)} kPa) matches expected range</p>
+                    <p>Pure metabolic acidosis with compensation</p>
+                `;
+                cssClass = 'calc-success';
+            } else if (actualPco2 > upperLimit) {
+                comparison = `
+                    <p><strong>⚠️ Concomitant respiratory acidosis</strong></p>
+                    <p>Actual pCO₂ (${actualPco2.toFixed(1)} kPa) higher than expected</p>
+                    <p>Mixed metabolic and respiratory acidosis</p>
+                `;
+                cssClass = 'calc-warning';
+            } else {
+                comparison = `
+                    <p><strong>⚠️ Concomitant respiratory alkalosis</strong></p>
+                    <p>Actual pCO₂ (${actualPco2.toFixed(1)} kPa) lower than expected</p>
+                    <p>Mixed disorder or over-compensation</p>
+                `;
+                cssClass = 'calc-warning';
+            }
+        }
+
+        document.getElementById('winters-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>Expected pCO₂: ${expectedPco2.toFixed(1)} kPa</h4>
+                <p><small>Expected range: ${lowerLimit.toFixed(1)} - ${upperLimit.toFixed(1)} kPa</small></p>
+                <p><small>HCO₃⁻: ${hco3} mmol/L</small></p>
+                ${comparison}
             </div>
         `;
     }
