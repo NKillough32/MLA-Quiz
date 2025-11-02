@@ -11621,11 +11621,14 @@ class MLAQuizApp {
             contentHtml += `
                 <div class="info-section">
                     <h4>🎯 Treatment Targets</h4>
-                    ${Object.entries(guideline.targets).map(([target, value]) => `
-                        <div class="target-item">
-                            <strong>${target}:</strong> ${value}
-                        </div>
-                    `).join('')}
+                    ${typeof guideline.targets === 'string' ? 
+                        `<p>${guideline.targets}</p>` :
+                        Object.entries(guideline.targets).map(([target, value]) => `
+                            <div class="target-item">
+                                <strong>${target}:</strong> ${value}
+                            </div>
+                        `).join('')
+                    }
                 </div>
             `;
         }
@@ -11882,6 +11885,59 @@ class MLAQuizApp {
                             </div>
                         `).join('')
                     }
+                </div>
+            `;
+        }
+        
+        // ACS-specific fields
+        if (guideline.recognition) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🔍 Recognition</h4>
+                    ${Object.entries(guideline.recognition).map(([aspect, description]) => `
+                        <div class="assessment-item">
+                            <strong>${aspect}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.stemi) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🚨 STEMI Management</h4>
+                    ${Object.entries(guideline.stemi).map(([aspect, description]) => `
+                        <div class="treatment-item">
+                            <strong>${aspect}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline.nstemi) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>⚠️ NSTEMI Management</h4>
+                    ${Object.entries(guideline.nstemi).map(([aspect, description]) => `
+                        <div class="treatment-item">
+                            <strong>${aspect}:</strong> ${description}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        if (guideline['secondary prevention']) {
+            contentHtml += `
+                <div class="info-section">
+                    <h4>🛡️ Secondary Prevention</h4>
+                    ${Object.entries(guideline['secondary prevention']).map(([aspect, description]) => `
+                        <div class="treatment-item">
+                            <strong>${aspect}:</strong> ${description}
+                        </div>
+                    `).join('')}
                 </div>
             `;
         }
@@ -12660,6 +12716,9 @@ class MLAQuizApp {
         const mnemonicsList = document.getElementById('mnemonics-list');
         let mnemonics = Object.keys(mnemonicsDatabase);
         
+        // Reset container to grid layout for list view
+        mnemonicsList.style.display = 'grid';
+        
         // Update active state of category buttons
         const categoryButtons = document.querySelectorAll('.mnemonics-categories .category-btn');
         categoryButtons.forEach(btn => {
@@ -12687,15 +12746,18 @@ class MLAQuizApp {
         const mnemonic = this.mnemonicsDatabase[mnemonicKey];
         const mnemonicsList = document.getElementById('mnemonics-list');
         
+        // Change to block layout for detail view
+        mnemonicsList.style.display = 'block';
+        
         let html = `
             <div class="guideline-detail">
                 <button class="back-btn" onclick="window.quizApp.showMnemonicsCategory('all'); event.stopPropagation();">← Back to Mnemonics</button>
                 <h3>🧠 ${mnemonic.title}</h3>
                 
                 <div class="info-section">
-                    <div class="mnemonic-display">
-                        <div class="mnemonic-large">${mnemonic.mnemonic}</div>
-                        <div class="mnemonic-meaning">${mnemonic.meaning}</div>
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="font-size: 2.5em; font-weight: bold; letter-spacing: 3px; margin-bottom: 10px;">${mnemonic.mnemonic}</div>
+                        <div style="font-size: 1.1em; opacity: 0.95;">${mnemonic.meaning}</div>
                     </div>
                 </div>
                 
@@ -12705,10 +12767,10 @@ class MLAQuizApp {
                 </div>
                 
                 <div class="info-section">
-                    <h4>🔍 Details</h4>
-                    <div class="mnemonic-details">
+                    <h4>🔍 Breakdown</h4>
+                    <div class="treatment-item" style="line-height: 1.8;">
                         ${mnemonic.details.map(detail => 
-                            detail === '' ? '<br>' : `<div class="detail-item">${detail}</div>`
+                            detail === '' ? '<div style="height: 10px;"></div>' : `<div style="padding: 8px 0; border-left: 3px solid #667eea; padding-left: 15px; margin: 5px 0;">${detail}</div>`
                         ).join('')}
                     </div>
                 </div>
@@ -12716,7 +12778,6 @@ class MLAQuizApp {
         `;
         
         mnemonicsList.innerHTML = html;
-        mnemonicsList.style.display = 'block';
     }
 
     // Differential Diagnosis Functions
