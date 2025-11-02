@@ -11186,7 +11186,7 @@ class MLAQuizApp {
                     'Atypical': 'Epigastric pain, dyspnoea, syncope (especially elderly, diabetic, women)',
                     'ECG': 'ST elevation (STEMI), ST depression/T wave inversion (NSTEMI), normal (possible ACS)'
                 },
-                stemi: {
+                'stemi': {
                     'Diagnosis': 'ST elevation ≥1mm in ≥2 contiguous leads OR new LBBB',
                     'Immediate': 'Aspirin 300mg, P2Y12 inhibitor (ticagrelor 180mg), morphine, antiemetic, GTN',
                     'Reperfusion': 'Primary PCI <120 minutes OR thrombolysis if PCI not available <120 minutes',
@@ -12197,6 +12197,526 @@ class MLAQuizApp {
         
         // Also scroll the container itself
         container.scrollTop = 0;
+    }
+
+    // Mnemonics Functions
+    loadMnemonics() {
+        try {
+            const mnemonicsDatabase = {
+                // Cardiovascular
+                'acs-management': {
+                    title: 'ACS Management - MONA',
+                    category: 'cardiovascular',
+                    mnemonic: 'MONA',
+                    meaning: 'Morphine, Oxygen, Nitrates, Aspirin',
+                    usage: 'Initial management of acute coronary syndrome',
+                    details: [
+                        'M - Morphine for pain relief (2-5mg IV)',
+                        'O - Oxygen if saturations <94%',
+                        'N - Nitrates (GTN spray/tablets) for chest pain',
+                        'A - Aspirin 300mg loading dose'
+                    ]
+                },
+                'heart-failure-causes': {
+                    title: 'Heart Failure Causes - I FAILED',
+                    category: 'cardiovascular',
+                    mnemonic: 'I FAILED',
+                    meaning: 'Ischaemia, Forget meds, Arrhythmia, Infection, Lifestyle, Embolism, Drugs',
+                    usage: 'Common precipitants of acute heart failure',
+                    details: [
+                        'I - Ischaemia/MI',
+                        'F - Forget medications (non-compliance)',
+                        'A - Arrhythmia (AF, VT)',
+                        'I - Infection/Inflammatory',
+                        'L - Lifestyle (excessive salt/fluid, alcohol)',
+                        'E - Embolism (PE)',
+                        'D - Drugs (NSAIDs, CCB, corticosteroids)'
+                    ]
+                },
+                'shock-types': {
+                    title: 'Shock Types - CHOPS',
+                    category: 'cardiovascular',
+                    mnemonic: 'CHOPS',
+                    meaning: 'Cardiogenic, Hypovolemic, Obstructive, Psychogenic, Septic',
+                    usage: 'Types of shock',
+                    details: [
+                        'C - Cardiogenic (MI, arrhythmia)',
+                        'H - Hypovolemic (bleeding, dehydration)',
+                        'O - Obstructive (PE, tamponade, tension pneumothorax)',
+                        'P - Psychogenic/Neurogenic',
+                        'S - Septic (infection, SIRS)'
+                    ]
+                },
+                // Respiratory
+                'asthma-severity': {
+                    title: 'Life-Threatening Asthma - CHEST',
+                    category: 'respiratory',
+                    mnemonic: 'CHEST',
+                    meaning: 'Cyanosis, Hypotension, Exhaustion, Silent chest, Tachyarrhythmia',
+                    usage: 'Signs of life-threatening asthma attack',
+                    details: [
+                        'C - Cyanosis or SpO2 <92%',
+                        'H - Hypotension',
+                        'E - Exhaustion, poor respiratory effort',
+                        'S - Silent chest (no wheeze)',
+                        'T - Tachyarrhythmia or bradycardia'
+                    ]
+                },
+                'pneumonia-severity': {
+                    title: 'Pneumonia Severity - CURB-65',
+                    category: 'respiratory',
+                    mnemonic: 'CURB-65',
+                    meaning: 'Confusion, Urea, Respiratory rate, BP, 65 years',
+                    usage: 'Risk stratification for community-acquired pneumonia',
+                    details: [
+                        'C - Confusion (new onset)',
+                        'U - Urea >7 mmol/L',
+                        'R - Respiratory rate ≥30/min',
+                        'B - Blood pressure: SBP <90 or DBP ≤60',
+                        '65 - Age ≥65 years',
+                        '',
+                        'Score 0-1: Low risk (outpatient)',
+                        'Score 2: Moderate risk (consider admission)',
+                        'Score ≥3: High risk (urgent admission, consider ICU)'
+                    ]
+                },
+                // Neurology
+                'stroke-fast': {
+                    title: 'Stroke Recognition - FAST',
+                    category: 'neurology',
+                    mnemonic: 'FAST',
+                    meaning: 'Face, Arms, Speech, Time',
+                    usage: 'Rapid stroke assessment',
+                    details: [
+                        'F - Face drooping (ask to smile)',
+                        'A - Arm weakness (raise both arms)',
+                        'S - Speech difficulty (repeat a phrase)',
+                        'T - Time to call emergency services'
+                    ]
+                },
+                'confusion-causes': {
+                    title: 'Confusion Causes - DIMTOP',
+                    category: 'neurology',
+                    mnemonic: 'DIMTOP',
+                    meaning: 'Drugs, Infection, Metabolic, Trauma, Oxygen, Psychiatric',
+                    usage: 'Differential diagnosis for acute confusion',
+                    details: [
+                        'D - Drugs/toxins',
+                        'I - Infection (UTI, pneumonia, meningitis)',
+                        'M - Metabolic (hypoglycemia, hyponatremia, uremia)',
+                        'T - Trauma (head injury, subdural)',
+                        'O - Oxygen (hypoxia, hypercapnia)',
+                        'P - Psychiatric'
+                    ]
+                },
+                'glasgow-coma': {
+                    title: 'Glasgow Coma Scale - MOVE',
+                    category: 'neurology',
+                    mnemonic: 'MOVE',
+                    meaning: 'Motor, Oral (verbal), Visual (eye)',
+                    usage: 'Remember GCS components (total /15)',
+                    details: [
+                        'M - Motor response (/6)',
+                        'O - Oral/Verbal response (/5)',
+                        'V - Visual/Eye opening (/4)',
+                        'E - (Eyes)',
+                        '',
+                        'Score: 15 = Normal, 13-14 = Mild, 9-12 = Moderate, ≤8 = Severe'
+                    ]
+                },
+                // GI & Liver
+                'gi-bleeding': {
+                    title: 'Upper GI Bleeding - ABCDE',
+                    category: 'gastroenterology',
+                    mnemonic: 'ABCDE',
+                    meaning: 'Airway, Breathing, Circulation, Drugs, Endoscopy',
+                    usage: 'Management priorities in upper GI bleeding',
+                    details: [
+                        'A - Airway protection (consider intubation if drowsy)',
+                        'B - Breathing/Oxygen',
+                        'C - Circulation: 2 large bore cannulas, fluid resuscitation, crossmatch',
+                        'D - Drugs: PPI, stop anticoagulants, reverse if needed',
+                        'E - Endoscopy within 24 hours (urgent if unstable)'
+                    ]
+                },
+                'hepatic-encephalopathy': {
+                    title: 'Hepatic Encephalopathy - HEPATIC',
+                    category: 'gastroenterology',
+                    mnemonic: 'HEPATIC',
+                    meaning: 'High protein, Electrolytes, Portosystemic shunt, Alkalosis, Toxins, Infection, Constipation',
+                    usage: 'Precipitants of hepatic encephalopathy',
+                    details: [
+                        'H - High protein meal',
+                        'E - Electrolyte imbalance (hypokalemia)',
+                        'P - Portosystemic shunt',
+                        'A - Alkalosis',
+                        'T - Toxins/Drugs (sedatives, diuretics)',
+                        'I - Infection (SBP)',
+                        'C - Constipation/GI bleed'
+                    ]
+                },
+                // Renal
+                'aki-causes': {
+                    title: 'AKI Causes - PRE-RENAL-POST',
+                    category: 'renal',
+                    mnemonic: 'PRE-RENAL-POST',
+                    meaning: 'Pre-renal, Renal (intrinsic), Post-renal',
+                    usage: 'Classification of acute kidney injury',
+                    details: [
+                        'PRE-RENAL: Hypovolemia, hypotension, renal artery stenosis',
+                        'RENAL (Intrinsic): ATN, glomerulonephritis, interstitial nephritis, vascular',
+                        'POST-RENAL: Obstruction (stones, BPH, malignancy, catheter blocked)'
+                    ]
+                },
+                'hyperkalaemia-ecg': {
+                    title: 'Hyperkalaemia ECG - MURDER',
+                    category: 'renal',
+                    mnemonic: 'MURDER',
+                    meaning: 'Muscle weakness, U wave absent, R wave tall, Dysrhythmias, Extreme bradycardia, Repolarisation (peaked T)',
+                    usage: 'ECG changes in hyperkalaemia',
+                    details: [
+                        'M - Muscle weakness',
+                        'U - U wave absent/small',
+                        'R - R wave tall (peaked T waves)',
+                        'D - Dysrhythmias',
+                        'E - Extreme bradycardia',
+                        'R - Repolarisation abnormalities (widened QRS, sine wave)'
+                    ]
+                },
+                // Endocrine
+                'hypoglycaemia-symptoms': {
+                    title: 'Hypoglycaemia - TIRED',
+                    category: 'endocrine',
+                    mnemonic: 'TIRED',
+                    meaning: 'Tremor, Irritability, Restless, Excess sweating, Drowsy',
+                    usage: 'Symptoms of hypoglycaemia',
+                    details: [
+                        'T - Tremor, tachycardia',
+                        'I - Irritability',
+                        'R - Restlessness',
+                        'E - Excess sweating, hunger',
+                        'D - Drowsiness, confusion, coma'
+                    ]
+                },
+                'dka-management': {
+                    title: 'DKA Management - INSULIN',
+                    category: 'endocrine',
+                    mnemonic: 'INSULIN',
+                    meaning: 'Investigate, Fluids, Insulin, Potassium',
+                    usage: 'Priorities in DKA management',
+                    details: [
+                        'I - Investigate: glucose, ketones, VBG, U&E',
+                        'N - Normal saline (0.9%) IV fluids',
+                        'S - Suspect precipitant (infection, MI)',
+                        'U - Urinalysis (infection)',
+                        'L - Low-dose insulin infusion (0.1 units/kg/hr)',
+                        'I - IV potassium (monitor closely)',
+                        'N - Never stop insulin (even when glucose normalizes)'
+                    ]
+                },
+                // Infectious Disease
+                'sepsis-six': {
+                    title: 'Sepsis Six',
+                    category: 'infectious',
+                    mnemonic: 'Sepsis 6',
+                    meaning: '3 in, 3 out within 1 hour',
+                    usage: 'Initial sepsis management bundle',
+                    details: [
+                        '3 IN:',
+                        '1. Oxygen to maintain SpO2 >94%',
+                        '2. IV fluid resuscitation',
+                        '3. IV antibiotics',
+                        '',
+                        '3 OUT:',
+                        '4. Blood cultures',
+                        '5. Lactate and FBC',
+                        '6. Urine output monitoring'
+                    ]
+                },
+                'meningitis-causes': {
+                    title: 'Meningitis - V SPIN',
+                    category: 'infectious',
+                    mnemonic: 'V SPIN',
+                    meaning: 'Viral, Strep pneumoniae, Protozoal, Invasive (Neisseria), Neonatal',
+                    usage: 'Common causes of meningitis',
+                    details: [
+                        'V - Viral (enterovirus, HSV)',
+                        'S - Streptococcus pneumoniae (most common bacterial)',
+                        'P - Protozoal/Parasitic (rare)',
+                        'I - Invasive Neisseria meningitidis',
+                        'N - Neonatal causes (Group B Strep, E. coli, Listeria)'
+                    ]
+                },
+                // Trauma & Emergency
+                'trauma-atls': {
+                    title: 'Trauma Assessment - ABCDE',
+                    category: 'emergency',
+                    mnemonic: 'ABCDE',
+                    meaning: 'Airway, Breathing, Circulation, Disability, Exposure',
+                    usage: 'Systematic trauma assessment (ATLS approach)',
+                    details: [
+                        'A - Airway with C-spine protection',
+                        'B - Breathing and ventilation',
+                        'C - Circulation with hemorrhage control',
+                        'D - Disability (neurological assessment - GCS, pupils)',
+                        'E - Exposure/Environmental control (full examination, prevent hypothermia)'
+                    ]
+                },
+                'burns-assessment': {
+                    title: 'Burns Assessment - Rule of 9s',
+                    category: 'emergency',
+                    mnemonic: 'Rule of 9s',
+                    meaning: 'Body surface area estimation',
+                    usage: 'Calculate total body surface area (TBSA) in burns',
+                    details: [
+                        'Head & Neck: 9%',
+                        'Each Arm: 9% (total 18%)',
+                        'Anterior Torso: 18%',
+                        'Posterior Torso: 18%',
+                        'Each Leg: 18% (total 36%)',
+                        'Perineum: 1%',
+                        '',
+                        'Palmar surface = ~1% TBSA (useful for scattered burns)'
+                    ]
+                },
+                // Obstetrics
+                'preeclampsia': {
+                    title: 'Pre-eclampsia Features - HELLP',
+                    category: 'obstetrics',
+                    mnemonic: 'HELLP',
+                    meaning: 'Hemolysis, Elevated Liver enzymes, Low Platelets',
+                    usage: 'HELLP syndrome - severe complication of pre-eclampsia',
+                    details: [
+                        'H - Hemolysis (blood film shows schistocytes)',
+                        'EL - Elevated Liver enzymes (AST/ALT)',
+                        'LP - Low Platelets (<100)',
+                        '',
+                        'Presents with: Epigastric/RUQ pain, nausea/vomiting, malaise',
+                        'Management: Deliver baby, supportive care, monitor closely'
+                    ]
+                },
+                // Rheumatology
+                'gout-joints': {
+                    title: 'Gout - First MTP',
+                    category: 'rheumatology',
+                    mnemonic: 'First MTP',
+                    meaning: 'First Metatarsophalangeal joint',
+                    usage: 'Most common site of gout',
+                    details: [
+                        'First MTP joint (big toe) - 50% of first attacks',
+                        'Also affects: ankles, knees, wrists, fingers',
+                        'Acute monoarthritis: red, hot, swollen, extremely painful',
+                        'Diagnosis: Joint aspiration shows negatively birefringent crystals'
+                    ]
+                },
+                // Pharmacology
+                'cytochrome-inducers': {
+                    title: 'P450 Inducers - PC BRAS',
+                    category: 'pharmacology',
+                    mnemonic: 'PC BRAS',
+                    meaning: 'Phenytoin, Carbamazepine, Barbiturates, Rifampicin, Alcohol (chronic), St Johns Wort, Smoking',
+                    usage: 'Drugs that induce CYP450 (increase metabolism of other drugs)',
+                    details: [
+                        'P - Phenytoin',
+                        'C - Carbamazepine',
+                        'B - Barbiturates',
+                        'R - Rifampicin',
+                        'A - Alcohol (chronic use)',
+                        'S - St John\'s Wort, Smoking',
+                        '',
+                        'Effect: Reduces plasma levels of other drugs (e.g., warfarin, OCP, immunosuppressants)'
+                    ]
+                },
+                'cytochrome-inhibitors': {
+                    title: 'P450 Inhibitors - SICKFACES.COM',
+                    category: 'pharmacology',
+                    mnemonic: 'SICKFACES.COM',
+                    meaning: 'Sodium valproate, Isoniazid, Cimetidine, Ketoconazole, etc.',
+                    usage: 'Drugs that inhibit CYP450 (decrease metabolism)',
+                    details: [
+                        'S - Sodium valproate',
+                        'I - Isoniazid',
+                        'C - Cimetidine, Ciprofloxacin',
+                        'K - Ketoconazole',
+                        'F - Fluconazole',
+                        'A - Alcohol (acute), Amiodarone',
+                        'C - Chloramphenicol',
+                        'E - Erythromycin',
+                        'S - Sulphonamides',
+                        'COM - Clarithromycin, Omeprazole, Metronidazole',
+                        '',
+                        'Effect: Increases plasma levels (risk of toxicity)'
+                    ]
+                },
+                // Haematology
+                'anaemia-causes': {
+                    title: 'Microcytic Anaemia - TAILS',
+                    category: 'haematology',
+                    mnemonic: 'TAILS',
+                    meaning: 'Thalassemia, Anaemia of chronic disease, Iron deficiency, Lead poisoning, Sideroblastic',
+                    usage: 'Causes of low MCV (<80 fL)',
+                    details: [
+                        'T - Thalassemia',
+                        'A - Anaemia of chronic disease (can be normocytic)',
+                        'I - Iron deficiency (most common)',
+                        'L - Lead poisoning',
+                        'S - Sideroblastic anaemia'
+                    ]
+                },
+                'transfusion-reactions': {
+                    title: 'Transfusion Reactions - TRALI',
+                    category: 'haematology',
+                    mnemonic: 'TRALI',
+                    meaning: 'Transfusion-Related Acute Lung Injury',
+                    usage: 'Serious transfusion complication',
+                    details: [
+                        'T - Transfusion-related',
+                        'R - Respiratory distress (hypoxia, dyspnoea)',
+                        'A - Acute onset (within 6 hours)',
+                        'L - Lung injury (bilateral infiltrates on CXR)',
+                        'I - Inflammatory response',
+                        '',
+                        'Management: Stop transfusion, oxygen, supportive care'
+                    ]
+                }
+            };
+
+            const container = document.getElementById('mnemonics-panel');
+            container.innerHTML = `
+                <div class="search-container">
+                    <input type="text" id="mnemonics-search" placeholder="Search mnemonics..." class="tool-search">
+                    <button id="mnemonics-search-btn">🔍</button>
+                </div>
+                <div id="mnemonics-search-results" class="lab-grid"></div>
+                <div class="mnemonics-categories">
+                    <button class="category-btn active" onclick="window.quizApp.showMnemonicsCategory('all'); event.stopPropagation();">All Mnemonics</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('cardiovascular'); event.stopPropagation();">Cardiovascular</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('respiratory'); event.stopPropagation();">Respiratory</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('neurology'); event.stopPropagation();">Neurology</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('gastroenterology'); event.stopPropagation();">Gastroenterology</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('renal'); event.stopPropagation();">Renal</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('endocrine'); event.stopPropagation();">Endocrine</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('infectious'); event.stopPropagation();">Infectious</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('emergency'); event.stopPropagation();">Emergency</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('pharmacology'); event.stopPropagation();">Pharmacology</button>
+                    <button class="category-btn" onclick="window.quizApp.showMnemonicsCategory('haematology'); event.stopPropagation();">Haematology</button>
+                </div>
+                <div id="mnemonics-list" class="lab-grid"></div>
+            `;
+            
+            const searchInput = document.getElementById('mnemonics-search');
+            const searchBtn = document.getElementById('mnemonics-search-btn');
+            searchInput.addEventListener('input', () => this.searchMnemonics(mnemonicsDatabase));
+            searchBtn.addEventListener('click', () => this.searchMnemonics(mnemonicsDatabase));
+            
+            this.mnemonicsDatabase = mnemonicsDatabase;
+            this.showMnemonicsCategory('all');
+            console.log('✅ Mnemonics loaded successfully!');
+            
+        } catch (error) {
+            console.error('❌ Error loading mnemonics:', error);
+            const container = document.getElementById('mnemonics-panel');
+            container.innerHTML = `
+                <div class="error-message">
+                    <h3>⚠️ Mnemonics Loading Error</h3>
+                    <p>Unable to load mnemonics. Please refresh the page.</p>
+                    <button onclick="window.quizApp.loadMnemonics()">Retry</button>
+                </div>
+            `;
+        }
+    }
+
+    searchMnemonics(mnemonicsDatabase) {
+        const query = document.getElementById('mnemonics-search').value.toLowerCase();
+        const resultsContainer = document.getElementById('mnemonics-search-results');
+        
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+        
+        const matches = Object.keys(mnemonicsDatabase).filter(key => 
+            mnemonicsDatabase[key].title.toLowerCase().includes(query) ||
+            mnemonicsDatabase[key].mnemonic.toLowerCase().includes(query) ||
+            mnemonicsDatabase[key].meaning.toLowerCase().includes(query) ||
+            mnemonicsDatabase[key].category.toLowerCase().includes(query)
+        );
+        
+        if (matches.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-results">No mnemonics found</div>';
+            return;
+        }
+        
+        resultsContainer.innerHTML = matches.map(key => `
+            <button class="lab-value-btn" onclick="window.quizApp.showMnemonicDetail('${key}'); event.stopPropagation();">
+                <div class="lab-name">${mnemonicsDatabase[key].mnemonic}</div>
+                <div class="lab-count">${mnemonicsDatabase[key].title}</div>
+            </button>
+        `).join('');
+    }
+
+    showMnemonicsCategory(category) {
+        const mnemonicsDatabase = this.mnemonicsDatabase;
+        const mnemonicsList = document.getElementById('mnemonics-list');
+        let mnemonics = Object.keys(mnemonicsDatabase);
+        
+        // Update active state of category buttons
+        const categoryButtons = document.querySelectorAll('.mnemonics-categories .category-btn');
+        categoryButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent.toLowerCase().includes(category) || (category === 'all' && btn.textContent.includes('All'))) {
+                btn.classList.add('active');
+            }
+        });
+        
+        if (category !== 'all') {
+            mnemonics = mnemonics.filter(key => 
+                mnemonicsDatabase[key].category === category
+            );
+        }
+        
+        mnemonicsList.innerHTML = mnemonics.map(key => `
+            <button class="lab-value-btn" onclick="window.quizApp.showMnemonicDetail('${key}'); event.stopPropagation();">
+                <div class="lab-name">${mnemonicsDatabase[key].mnemonic}</div>
+                <div class="lab-count">${mnemonicsDatabase[key].title}</div>
+            </button>
+        `).join('');
+    }
+
+    showMnemonicDetail(mnemonicKey) {
+        const mnemonic = this.mnemonicsDatabase[mnemonicKey];
+        const mnemonicsList = document.getElementById('mnemonics-list');
+        
+        let html = `
+            <div class="guideline-detail">
+                <button class="back-btn" onclick="window.quizApp.showMnemonicsCategory('all'); event.stopPropagation();">← Back to Mnemonics</button>
+                <h3>🧠 ${mnemonic.title}</h3>
+                
+                <div class="info-section">
+                    <div class="mnemonic-display">
+                        <div class="mnemonic-large">${mnemonic.mnemonic}</div>
+                        <div class="mnemonic-meaning">${mnemonic.meaning}</div>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h4>📋 Clinical Use</h4>
+                    <p>${mnemonic.usage}</p>
+                </div>
+                
+                <div class="info-section">
+                    <h4>🔍 Details</h4>
+                    <div class="mnemonic-details">
+                        ${mnemonic.details.map(detail => 
+                            detail === '' ? '<br>' : `<div class="detail-item">${detail}</div>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        mnemonicsList.innerHTML = html;
+        mnemonicsList.style.display = 'block';
     }
 
     // Differential Diagnosis Functions
@@ -13440,6 +13960,9 @@ class MLAQuizApp {
                 break;
             case 'guidelines':
                 this.loadGuidelines();
+                break;
+            case 'mnemonics':
+                this.loadMnemonics();
                 break;
             case 'differential-dx':
                 this.loadDifferentialDx();
