@@ -506,65 +506,22 @@ class MLAQuizApp {
         this.initializeVibration();
         this.initializeOrientationDetection();
         this.initializeRotationControl();
-        // Try to load upstream QRISK3 library for accurate calculations
-        this.loadExternalQRISK();
         console.log('🩺 About to initialize medical tools...');
         this.initializeMedicalTools();
         this.initializeAnatomyExplorer();
         this.initializeInteractiveFeatures();
         console.log('✅ App initialization complete');
-    }
-
-    loadExternalQRISK() {
-        // Try several CDN locations for the sisuwellness-qrisk3 UMD/UMD-like bundle
-        const urls = [
-            // Prefer a locally vendored copy first (drop upstream UMD build here)
-            '/static/js/qrisk3/qrisk3.umd.js',
-            // Then run a local shim to normalize exports if necessary
-            '/static/js/qrisk3/qrisk3-loader.js',
-            // Fallback to common CDNs
-            'https://unpkg.com/sisuwellness-qrisk3@latest/dist/qrisk3.umd.js',
-            'https://cdn.jsdelivr.net/npm/sisuwellness-qrisk3@latest/dist/qrisk3.umd.js',
-            'https://unpkg.com/sisuwellness-qrisk3@latest/src/qrisk3.js',
-            'https://cdn.jsdelivr.net/npm/sisuwellness-qrisk3@latest/src/qrisk3.js'
-        ];
-
-        const tryLoad = (index) => {
-            if (index >= urls.length) {
-                console.log('⚠️ QRISK3 CDN not available; using fallback calculator');
-                return;
-            }
-
-            const url = urls[index];
-            console.log('🔁 Attempting to load QRISK3 library from', url);
-            const script = document.createElement('script');
-            script.src = url;
-            script.async = true;
-            script.onload = () => {
-                // Some UMD builds attach to window.qrisk3 or module; try to normalize
-                if (window.qrisk3 && typeof window.qrisk3.calculateScore === 'function') {
-                    console.log('✅ Loaded QRISK3 library from', url);
-                } else if (window.qrisk && typeof window.qrisk.calculateScore === 'function') {
-                    window.qrisk3 = window.qrisk; // normalize
-                    console.log('✅ Loaded QRISK3 library (normalized window.qrisk -> window.qrisk3) from', url);
-                } else if (window.calculateScore && window.inputBuilder) {
-                    // Some builds might export globals directly
-                    window.qrisk3 = { calculateScore: window.calculateScore, inputBuilder: window.inputBuilder };
-                    console.log('✅ Loaded QRISK3 globals from', url);
-                } else {
-                    console.log('⚠️ QRISK3 loaded from', url, 'but expected globals not found; trying next CDN');
-                    // try next
-                    tryLoad(index + 1);
-                }
-            };
-            script.onerror = () => {
-                console.log('❌ Failed to load QRISK3 from', url, '- trying next');
-                tryLoad(index + 1);
-            };
-            document.head.appendChild(script);
-        };
-
-        tryLoad(0);
+        
+        // Listen for QRISK3 module load (already loaded by HTML but check availability)
+        if (window.qrisk3 && typeof window.qrisk3.calculateScore === 'function') {
+            console.log('✅ QRISK3 official library detected and ready');
+        } else {
+            console.log('⚠️ QRISK3 library not yet loaded - will use fallback calculation');
+            // Listen for the custom event in case it loads after app init
+            window.addEventListener('qrisk3-loaded', () => {
+                console.log('✅ QRISK3 library loaded after app initialization');
+            });
+        }
     }
     
     bindEvents() {

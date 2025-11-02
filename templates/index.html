@@ -6121,9 +6121,23 @@
     
     <!-- JavaScript will be loaded here -->
     <script src="/static/js/drugDatabase.js"></script>
-    <!-- Vendored canonical QRISK3 (replace with upstream UMD/dist for canonical results) -->
-    <script type="module" src="/static/js/qrisk3/qrisk3.umd.js"></script>
-    <script type="module" src="/static/js/qrisk3/qrisk3-loader.js"></script>
+    <!-- QRISK3 Module Bridge - Load as module and expose to window -->
+    <script type="module">
+        // Import QRISK3 as ES module and attach to window for the main app
+        import { calculateScore, inputBuilder, Disclaimer } from '/static/js/qrisk3/qrisk3.umd.js';
+        
+        // Expose to window for non-module code
+        window.qrisk3 = {
+            calculateScore: calculateScore,
+            inputBuilder: inputBuilder,
+            Disclaimer: Disclaimer
+        };
+        
+        console.log('✅ QRISK3 module loaded and attached to window.qrisk3');
+        
+        // Dispatch custom event to notify that QRISK3 is ready
+        window.dispatchEvent(new CustomEvent('qrisk3-loaded'));
+    </script>
     <script src="/static/js/analytics.js"></script>
     <script src="/static/js/app.js"></script>
     <script src="/static/js/anatomyEnhancements.js"></script>
