@@ -97,14 +97,17 @@ class MLAQuizApp {
                             'https://upload.wikimedia.org/wikipedia/commons/4/4e/Human_skeleton_back.svg',
                             'https://upload.wikimedia.org/wikipedia/commons/d/d7/Posterior_view_of_human_body_skeleton.svg'
                         ],
-                        // High-quality combined muscle diagram with excellent detail (verified)
+                        // High-quality muscle diagrams with labels
                         'muscles_front': [
-                            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg',
-                            'https://upload.wikimedia.org/wikipedia/commons/5/59/Anterior_muscles.png'
+                            // Detailed anterior muscle diagrams with English labels
+                            'https://upload.wikimedia.org/wikipedia/commons/9/91/Anterior_muscles.png',
+                            'https://upload.wikimedia.org/wikipedia/commons/5/5c/Muscular_system.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/0/0c/Muscle_structure.svg'
                         ],
                         'muscles_back': [
-                            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Muscles_front_and_back.svg',
-                            'https://upload.wikimedia.org/wikipedia/commons/1/17/Posterior_muscles.png'
+                            // Detailed posterior muscle diagrams
+                            'https://upload.wikimedia.org/wikipedia/commons/1/14/Posterior_muscles.png',
+                            'https://upload.wikimedia.org/wikipedia/commons/5/5c/Muscular_system.svg'
                         ]
                     };
 
@@ -123,14 +126,34 @@ class MLAQuizApp {
                                 if (contentType && contentType.includes('svg')) {
                                     svgText = await r.text();
                                 } else {
-                                    // If it's a PNG/JPG, handle differently
+                                    // If it's a PNG/JPG, handle differently with clickable muscle buttons
                                     const blob = await r.blob();
                                     const imageUrl = URL.createObjectURL(blob);
-                                    canvas.innerHTML = `
-                                        <img src="${imageUrl}" 
-                                             style="width:100%;height:auto;max-width:600px;display:block;margin:0 auto;"
-                                             alt="${layer} ${view} anatomy" />
-                                    `;
+                                    
+                                    // Check if this is a muscle layer to add interactive buttons
+                                    if (layer === 'muscles') {
+                                        canvas.innerHTML = `
+                                            <div style="position:relative;max-width:600px;margin:0 auto;">
+                                                <img src="${imageUrl}" 
+                                                     style="width:100%;height:auto;display:block;"
+                                                     alt="${layer} ${view} anatomy" />
+                                                <div id="muscle-buttons" style="margin-top:20px;">
+                                                    <p style="text-align:center;color:#666;margin-bottom:12px;">Click on a muscle to learn more:</p>
+                                                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;padding:0 16px;">
+                                                        ${this.getMuscleButtons(view)}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                        // Attach click handlers to muscle buttons
+                                        this.attachMuscleButtonHandlers();
+                                    } else {
+                                        canvas.innerHTML = `
+                                            <img src="${imageUrl}" 
+                                                 style="width:100%;height:auto;max-width:600px;display:block;margin:0 auto;"
+                                                 alt="${layer} ${view} anatomy" />
+                                        `;
+                                    }
                                     console.log(`✅ Loaded remote image (bitmap): ${remoteUrl}`);
                                     return; // Exit after showing image
                                 }
@@ -3880,6 +3903,49 @@ class MLAQuizApp {
         console.log('🩺 Medical tools initialized');
     }
 
+    initializeLadderTabs() {
+        try {
+            // Check if already initialized to avoid duplicate listeners
+            if (this.ladderTabsInitialized) return;
+            this.ladderTabsInitialized = true;
+
+            console.log('🪜 Initializing ladder tabs...');
+
+            const tabButtons = document.querySelectorAll('.ladder-tab-btn');
+            const tabContents = document.querySelectorAll('.ladder-tab-content');
+
+            if (!tabButtons.length || !tabContents.length) {
+                console.warn('⚠️ Ladder tab elements not found');
+                return;
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const targetLadder = button.getAttribute('data-ladder');
+
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Add active class to clicked button
+                    button.classList.add('active');
+
+                    // Show corresponding content
+                    const targetContent = document.getElementById(`${targetLadder}-ladder`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                        console.log(`🪜 Switched to ${targetLadder} ladder`);
+                    }
+                });
+            });
+
+            console.log('✅ Ladder tabs initialized successfully');
+        } catch (err) {
+            console.error('❌ Error initializing ladder tabs:', err);
+        }
+    }
+
     initializeAnatomyExplorer() {
         try {
             if (this.anatomyInitialized) return;
@@ -4074,6 +4140,58 @@ class MLAQuizApp {
         instruction.style.fontSize = '14px';
         instruction.style.color = '#666';
         bodyMap.appendChild(instruction);
+    }
+
+    getMuscleButtons(view) {
+        // Define major muscles for anterior and posterior views
+        const anteriorMuscles = [
+            'pectoralis_major', 'deltoid', 'biceps', 'rectus_abdominis',
+            'external_obliques', 'quadriceps', 'tibialis_anterior',
+            'sternocleidomastoid', 'trapezius', 'serratus_anterior'
+        ];
+        
+        const posteriorMuscles = [
+            'trapezius', 'latissimus_dorsi', 'deltoid', 'triceps',
+            'erector_spinae', 'gluteus_maximus', 'hamstrings',
+            'gastrocnemius', 'soleus', 'rhomboids'
+        ];
+        
+        const muscles = view === 'front' ? anteriorMuscles : posteriorMuscles;
+        
+        return muscles.map(muscleId => {
+            const muscleData = this.anatomyData && this.anatomyData[muscleId];
+            const muscleName = muscleData ? muscleData.commonName : muscleId.replace(/_/g, ' ');
+            return `
+                <button class="muscle-button" data-muscle="${muscleId}" 
+                        style="padding:8px 12px;background:var(--primary-color);color:white;
+                               border:none;border-radius:6px;cursor:pointer;font-size:13px;
+                               transition:transform 0.2s,background 0.2s;">
+                    ${muscleName}
+                </button>
+            `;
+        }).join('');
+    }
+
+    attachMuscleButtonHandlers() {
+        const buttons = document.querySelectorAll('.muscle-button');
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const muscleId = button.getAttribute('data-muscle');
+                this.showStructureInfo(muscleId);
+            });
+            
+            // Add hover effect
+            button.addEventListener('mouseenter', () => {
+                button.style.transform = 'scale(1.05)';
+                button.style.background = 'var(--button-hover, #0056b3)';
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'scale(1)';
+                button.style.background = 'var(--primary-color)';
+            });
+        });
     }
 
     normalizeAnatomySvg(container) {
@@ -16461,6 +16579,7 @@ class MLAQuizApp {
                 this.initializeAnatomyExplorer();
                 break;
             case 'ladders':
+                this.initializeLadderTabs();
                 console.log('🪜 Steroid & Pain Ladders panel activated');
                 break;
         }

@@ -5337,13 +5337,67 @@
 
             .ladders-container h2 {
                 color: var(--primary-color);
-                margin-bottom: 32px;
+                margin-bottom: 24px;
                 font-size: 28px;
                 text-align: center;
             }
 
+            /* Tab Navigation */
+            .ladder-tabs {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 24px;
+                border-bottom: 2px solid var(--border-color, #e0e0e0);
+                padding-bottom: 0;
+            }
+
+            .ladder-tab-btn {
+                padding: 12px 24px;
+                background: transparent;
+                border: none;
+                border-bottom: 3px solid transparent;
+                color: var(--text-color, #666);
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+                bottom: -2px;
+            }
+
+            .ladder-tab-btn:hover {
+                color: var(--primary-color);
+                background: var(--hover-bg, rgba(0,0,0,0.05));
+            }
+
+            .ladder-tab-btn.active {
+                color: var(--primary-color);
+                border-bottom-color: var(--primary-color);
+                font-weight: 600;
+            }
+
+            .ladder-tab-content {
+                display: none;
+                animation: fadeIn 0.3s ease-in;
+            }
+
+            .ladder-tab-content.active {
+                display: block;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
             .ladder-section {
-                background: var(--card-bg);
+                background: var(--card-bg, #ffffff);
                 border-radius: 12px;
                 padding: 24px;
                 margin-bottom: 32px;
@@ -5357,7 +5411,7 @@
             }
 
             .ladder-intro {
-                color: var(--secondary-text);
+                color: var(--secondary-text, #666);
                 font-style: italic;
                 margin-bottom: 24px;
             }
@@ -5366,10 +5420,11 @@
                 width: 100%;
                 border-collapse: collapse;
                 margin: 20px 0;
-                background: white;
+                background: var(--card-bg, #ffffff);
                 border-radius: 8px;
                 overflow: hidden;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border: 1px solid var(--border-color, #e0e0e0);
             }
 
             .ladder-table thead {
@@ -5385,11 +5440,12 @@
 
             .ladder-table td {
                 padding: 12px;
-                border-bottom: 1px solid #eee;
+                border-bottom: 1px solid var(--border-color, #eee);
+                color: var(--text-color, #333);
             }
 
             .ladder-table tbody tr:hover {
-                background: #f8f9fa;
+                background: var(--hover-bg, #f8f9fa);
             }
 
             .potency-ultra-high {
@@ -5416,15 +5472,22 @@
             }
 
             .category-card {
-                background: white;
+                background: var(--card-bg, #ffffff);
                 border-radius: 8px;
                 padding: 16px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border: 1px solid var(--border-color, #e0e0e0);
             }
 
             .category-card h4 {
                 margin-bottom: 8px;
                 font-size: 18px;
+                color: var(--text-color, #333);
+            }
+
+            .category-card p {
+                color: var(--text-color, #333);
+                margin-bottom: 8px;
             }
 
             .category-card ul {
@@ -5434,7 +5497,7 @@
 
             .category-card li {
                 margin: 6px 0;
-                color: var(--secondary-text);
+                color: var(--secondary-text, #666);
             }
 
             .pain-ladder-visual {
@@ -5445,11 +5508,12 @@
             }
 
             .ladder-step {
-                background: white;
+                background: var(--card-bg, #ffffff);
                 border-radius: 12px;
                 padding: 20px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 transition: transform 0.2s;
+                border: 1px solid var(--border-color, #e0e0e0);
             }
 
             .ladder-step:hover {
@@ -5484,6 +5548,16 @@
             .step-content h4 {
                 margin: 12px 0;
                 font-size: 20px;
+                color: var(--text-color, #333);
+            }
+
+            .step-content p {
+                color: var(--text-color, #333);
+            }
+
+            .step-content h4 {
+                margin: 12px 0;
+                font-size: 20px;
             }
 
             .medication-list {
@@ -5491,10 +5565,12 @@
             }
 
             .med-item {
-                background: #f8f9fa;
+                background: var(--hover-bg, #f8f9fa);
                 padding: 12px;
                 margin: 8px 0;
                 border-radius: 6px;
+                border-left: 3px solid var(--primary-color);
+                border: 1px solid var(--border-color, #e0e0e0);
                 border-left: 3px solid var(--primary-color);
             }
 
@@ -5506,21 +5582,22 @@
 
             .med-item span {
                 display: block;
-                color: var(--secondary-text);
+                color: var(--secondary-text, #666);
                 font-size: 14px;
             }
 
             .med-note {
                 font-style: italic;
-                color: #6c757d !important;
+                color: var(--secondary-text, #6c757d) !important;
                 margin-top: 4px;
             }
 
             .adjuvant-section {
                 margin: 32px 0;
                 padding: 20px;
-                background: #f8f9fa;
+                background: var(--hover-bg, #f8f9fa);
                 border-radius: 8px;
+                border: 1px solid var(--border-color, #e0e0e0);
             }
 
             .adjuvant-section h4 {
@@ -5535,10 +5612,11 @@
             }
 
             .adjuvant-card {
-                background: white;
+                background: var(--card-bg, #ffffff);
                 padding: 16px;
                 border-radius: 8px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                border: 1px solid var(--border-color, #e0e0e0);
             }
 
             .adjuvant-card h5 {
@@ -5555,11 +5633,13 @@
             .adjuvant-card li {
                 margin: 6px 0;
                 font-size: 14px;
-                color: var(--secondary-text);
+                color: var(--secondary-text, #666);
             }
 
             .clinical-pearl {
-                background: #fff3cd;
+                background: rgba(255, 243, 205, 0.3);
+                border-left: 4px solid #ffc107;
+                border: 1px solid rgba(255, 193, 7, 0.3);
                 border-left: 4px solid #ffc107;
                 padding: 20px;
                 border-radius: 8px;
@@ -5567,7 +5647,7 @@
             }
 
             .clinical-pearl h4 {
-                color: #856404;
+                color: var(--text-color, #856404);
                 margin-bottom: 12px;
             }
 
@@ -5578,7 +5658,7 @@
 
             .clinical-pearl li {
                 margin: 8px 0;
-                color: #856404;
+                color: var(--text-color, #856404);
             }
 
             .opioid-conversion-table {
@@ -5590,9 +5670,37 @@
                 margin-bottom: 16px;
             }
 
+            /* Dark mode specific overrides for ladders */
+            body.dark-mode .ladder-tab-btn {
+                color: var(--text-color, #ccc);
+            }
+
+            body.dark-mode .ladder-tab-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            body.dark-mode .clinical-pearl {
+                background: rgba(255, 193, 7, 0.15);
+                border-color: rgba(255, 193, 7, 0.5);
+            }
+
+            body.dark-mode .clinical-pearl h4,
+            body.dark-mode .clinical-pearl li {
+                color: #ffc107;
+            }
+
             @media (max-width: 768px) {
                 .ladders-container {
                     padding: 16px;
+                }
+
+                .ladder-tabs {
+                    gap: 4px;
+                }
+
+                .ladder-tab-btn {
+                    padding: 10px 16px;
+                    font-size: 14px;
                 }
 
                 .steroid-categories {
@@ -6379,8 +6487,15 @@
                 <div class="ladders-container">
                     <h2>🪜 Clinical Treatment Ladders</h2>
                     
-                    <!-- Steroid Ladder Section -->
-                    <div class="ladder-section">
+                    <!-- Tab Navigation -->
+                    <div class="ladder-tabs">
+                        <button class="ladder-tab-btn active" data-ladder="steroids">💊 Steroid Ladder</button>
+                        <button class="ladder-tab-btn" data-ladder="pain">🎚️ Pain Ladder</button>
+                    </div>
+                    
+                    <!-- Steroid Ladder Tab Content -->
+                    <div id="steroids-ladder" class="ladder-tab-content active">
+                        <div class="ladder-section">
                         <h3>💊 Corticosteroid Ladder</h3>
                         <p class="ladder-intro">Glucocorticoid potency and equivalent dosing</p>
                         
@@ -6489,8 +6604,10 @@
                             </ul>
                         </div>
                     </div>
+                    </div>
                     
-                    <!-- Pain Ladder Section -->
+                    <!-- Pain Ladder Tab Content -->
+                    <div id="pain-ladder" class="ladder-tab-content">
                     <div class="ladder-section">
                         <h3>🎚️ WHO Analgesic Ladder</h3>
                         <p class="ladder-intro">Stepwise approach to pain management</p>
@@ -6686,6 +6803,7 @@
                                 <li><strong>Multimodal:</strong> Combine paracetamol + NSAID + opioid for additive effect</li>
                             </ul>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
