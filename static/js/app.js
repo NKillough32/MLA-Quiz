@@ -60,7 +60,8 @@ class MLAQuizApp {
                 `/static/anatomy/${layer}_${view}.svg`,
                 `/static/anatomy/${layer}_${view}_front.svg`,
                 `/static/anatomy/${layer}_front.svg`,
-                `/static/anatomy/${layer}.svg`
+                `/static/anatomy/${layer}.svg`,
+                `/static/anatomy/male-musculator.svg`  // User-added detailed muscle SVG
             ];
 
             let svgText = null;
@@ -99,15 +100,20 @@ class MLAQuizApp {
                         ],
                         // High-quality muscle diagrams with labels
                         'muscles_front': [
-                            // Detailed anterior muscle diagrams with English labels
+                            // Try various high-quality anterior muscle diagrams
+                            'https://upload.wikimedia.org/wikipedia/commons/c/c1/Muscular_system_front_labeled.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/0/0b/Anterior_view_of_human_muscular_system.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/3/30/Gray_muscle_front_view.png',
                             'https://upload.wikimedia.org/wikipedia/commons/9/91/Anterior_muscles.png',
-                            'https://upload.wikimedia.org/wikipedia/commons/5/5c/Muscular_system.svg',
-                            'https://upload.wikimedia.org/wikipedia/commons/0/0c/Muscle_structure.svg'
+                            'https://upload.wikimedia.org/wikipedia/commons/5/5a/Muscles_anterior_labeled.png'
                         ],
                         'muscles_back': [
-                            // Detailed posterior muscle diagrams
+                            // Try various high-quality posterior muscle diagrams
+                            'https://upload.wikimedia.org/wikipedia/commons/a/aa/Muscular_system_back_labeled.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/6/60/Posterior_view_of_human_muscular_system.svg',
+                            'https://upload.wikimedia.org/wikipedia/commons/7/72/Gray_muscle_back_view.png',
                             'https://upload.wikimedia.org/wikipedia/commons/1/14/Posterior_muscles.png',
-                            'https://upload.wikimedia.org/wikipedia/commons/5/5c/Muscular_system.svg'
+                            'https://upload.wikimedia.org/wikipedia/commons/b/b4/Muscles_posterior_labeled.png'
                         ]
                     };
 
@@ -228,6 +234,22 @@ class MLAQuizApp {
                     console.log(`✅ Mapped ${Object.keys(mappings).length} anatomical structures`);
                 } else {
                     console.warn('⚠️ No anatomical structures were mapped - tags may not work');
+                    
+                    // If this is a muscle layer and no mappings were found, add interactive buttons
+                    if (layer === 'muscles') {
+                        console.log('🔄 Adding interactive muscle buttons as fallback');
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.id = 'muscle-buttons';
+                        buttonContainer.style.cssText = 'margin-top:20px;';
+                        buttonContainer.innerHTML = `
+                            <p style="text-align:center;color:#666;margin-bottom:12px;">Click on a muscle to learn more:</p>
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;padding:0 16px;">
+                                ${this.getMuscleButtons(view)}
+                            </div>
+                        `;
+                        canvas.appendChild(buttonContainer);
+                        this.attachMuscleButtonHandlers();
+                    }
                 }
             } catch (normErr) {
                 console.error('❌ Anatomy SVG normalization failed:', normErr);
