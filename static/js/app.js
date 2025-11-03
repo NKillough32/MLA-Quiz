@@ -4092,6 +4092,9 @@ class MLAQuizApp {
             Object.keys(this.anatomyData).forEach(k => {
                 const nk = (k || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
                 if (nk) keyMap[nk] = k;
+                
+                // Also add the original key as-is for exact matches (case-sensitive)
+                keyMap[k] = k;
             });
 
             const allEls = svg.querySelectorAll('*');
@@ -4134,7 +4137,18 @@ class MLAQuizApp {
                     let matchType = '';
 
                     for (const cand of normalizedCandidates) {
-                        // Strategy 1: Exact match
+                        // Strategy 0: Try direct lookup in anatomyData (for exact case matches like "Skull", "FemurLeft")
+                        for (const origCand of candidateAttrs) {
+                            if (this.anatomyData[origCand]) {
+                                bestKey = origCand;
+                                bestMatchLen = origCand.length;
+                                matchType = 'direct';
+                                break;
+                            }
+                        }
+                        if (bestKey) break;
+                        
+                        // Strategy 1: Exact normalized match
                         if (keyMap[cand]) {
                             bestKey = keyMap[cand];
                             bestMatchLen = cand.length;
@@ -4275,14 +4289,33 @@ class MLAQuizApp {
             // Log detailed mapping info for debugging
             if (Object.keys(mappings).length === 0) {
                 console.warn('⚠️ No anatomical structures were mapped! Checking SVG structure...');
-                console.log('Available anatomy data keys:', Object.keys(this.anatomyData).slice(0, 10).join(', '), '...');
-                console.log('SVG element IDs found:', Array.from(allEls)
+                console.log('Available anatomy data keys (first 20):', Object.keys(this.anatomyData).slice(0, 20).join(', '));
+                const svgIds = Array.from(allEls)
                     .filter(el => el.id)
-                    .map(el => el.id)
-                    .slice(0, 10)
-                    .join(', ') + '...');
+                    .map(el => el.id);
+                console.log('SVG element IDs found (first 20):', svgIds.slice(0, 20).join(', '));
+                console.log(`Total SVG elements with IDs: ${svgIds.length}`);
+                
+                // Add a user-visible message
+                if (container) {
+                    const warningDiv = document.createElement('div');
+                    warningDiv.style.cssText = `
+                        background: #fff3cd;
+                        border: 1px solid #ffc107;
+                        border-radius: 8px;
+                        padding: 16px;
+                        margin: 16px;
+                        color: #856404;
+                    `;
+                    warningDiv.innerHTML = `
+                        <strong>⚠️ Interactive features may be limited</strong><br>
+                        <small>The anatomy image loaded but structure tagging is not available. 
+                        You can still view the anatomical diagram.</small>
+                    `;
+                    container.appendChild(warningDiv);
+                }
             } else {
-                console.log('🔗 Detailed mappings:', mappings);
+                console.log(`🔗 Mapped structures: ${Object.keys(mappings).join(', ')}`);
             }
             
             return mappings;
@@ -5004,6 +5037,10 @@ class MLAQuizApp {
             case 'winters':
                 calculatorTitle = 'Winters Formula';
                 calculatorContent += this.getWintersCalculator();
+                break;
+            case 'asthma':
+                calculatorTitle = 'Asthma Severity Assessment';
+                calculatorContent += this.getAsthmaCalculator();
                 break;
             default:
                 calculatorTitle = 'Calculator';
@@ -10326,6 +10363,92 @@ class MLAQuizApp {
         `;
     }
 
+    // Asthma Severity Assessment Calculator
+    getAsthmaCalculator() {
+        return `
+            <div class="calc-section">
+                <h3>Acute Asthma Severity Assessment</h3>
+                <p>British Thoracic Society / SIGN Guidelines</p>
+                
+                <div class="calc-input-group">
+                    <label>Clinical Features:</label>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="asthma-unable-complete">
+                        <label for="asthma-unable-complete">Unable to complete sentences in one breath</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="asthma-pulse-110">
+                        <label for="asthma-pulse-110">Pulse ≥110 bpm</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="asthma-rr-25">
+                        <label for="asthma-rr-25">Respiratory rate ≥25/min</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="asthma-pulse-paradoxus">
+                        <label for="asthma-pulse-paradoxus">Pulsus paradoxus present</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="asthma-silent-chest">
+                        <label for="asthma-silent-chest">Silent chest / poor air entry</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="asthma-cyanosis">
+                        <label for="asthma-cyanosis">Cyanosis</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="asthma-exhaustion">
+                        <label for="asthma-exhaustion">Exhaustion / confusion / altered consciousness</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="asthma-bradycardia">
+                        <label for="asthma-bradycardia">Bradycardia / hypotension / arrhythmia</label>
+                    </div>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="asthma-pefr">Peak Expiratory Flow Rate (PEFR) % predicted:</label>
+                    <input type="number" id="asthma-pefr" min="0" max="100" step="1" placeholder="e.g., 50">
+                    <small>Leave blank if unknown</small>
+                </div>
+                
+                <div class="calc-input-group">
+                    <label for="asthma-spo2">SpO₂ (%):</label>
+                    <input type="number" id="asthma-spo2" min="70" max="100" step="1" placeholder="e.g., 92">
+                    <small>On air or specify oxygen</small>
+                </div>
+                
+                <button class="calc-button" onclick="window.quizApp.calculateAsthma()">Assess Severity</button>
+                <div id="asthma-result" class="calc-result"></div>
+                
+                <div class="calc-notes">
+                    <small>
+                        <strong>Severity Classification:</strong><br>
+                        • <strong>Life-threatening:</strong> Silent chest, cyanosis, exhaustion, confusion, arrhythmia, SpO₂ <92%, PEF <33%<br>
+                        • <strong>Acute severe:</strong> Any of: Can't complete sentences, RR ≥25, HR ≥110, PEF 33-50%<br>
+                        • <strong>Moderate:</strong> Increasing symptoms, PEF 50-75% predicted<br><br>
+                        
+                        <strong>Management:</strong><br>
+                        • High-flow oxygen to maintain SpO₂ 94-98%<br>
+                        • Salbutamol 5mg nebulised (back-to-back if severe)<br>
+                        • Ipratropium 500mcg nebulised<br>
+                        • Prednisolone 40-50mg PO or hydrocortisone 100mg IV<br>
+                        • Consider IV magnesium sulphate 1.2-2g over 20min<br>
+                        • Life-threatening: Senior help, ICU referral, consider IV salbutamol
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
     calculateWinters() {
         const hco3 = parseFloat(document.getElementById('winters-hco3').value) || 0;
         const actualPco2 = parseFloat(document.getElementById('winters-pco2').value);
@@ -10375,6 +10498,124 @@ class MLAQuizApp {
                 <p><small>Expected range: ${lowerLimit.toFixed(1)} - ${upperLimit.toFixed(1)} kPa</small></p>
                 <p><small>HCO₃⁻: ${hco3} mmol/L</small></p>
                 ${comparison}
+            </div>
+        `;
+    }
+
+    calculateAsthma() {
+        // Check clinical features
+        const unableComplete = document.getElementById('asthma-unable-complete').checked;
+        const pulse110 = document.getElementById('asthma-pulse-110').checked;
+        const rr25 = document.getElementById('asthma-rr-25').checked;
+        const pulsusParadoxus = document.getElementById('asthma-pulse-paradoxus').checked;
+        const silentChest = document.getElementById('asthma-silent-chest').checked;
+        const cyanosis = document.getElementById('asthma-cyanosis').checked;
+        const exhaustion = document.getElementById('asthma-exhaustion').checked;
+        const bradycardia = document.getElementById('asthma-bradycardia').checked;
+        
+        const pefr = parseFloat(document.getElementById('asthma-pefr').value);
+        const spo2 = parseFloat(document.getElementById('asthma-spo2').value);
+        
+        // Life-threatening features
+        const lifeThreatening = silentChest || cyanosis || exhaustion || bradycardia || 
+                               (spo2 && spo2 < 92) || (pefr && pefr < 33);
+        
+        // Acute severe features
+        const acuteSevere = unableComplete || pulse110 || rr25 || 
+                           (pefr && pefr >= 33 && pefr <= 50);
+        
+        let severity = '';
+        let cssClass = '';
+        let management = '';
+        let urgency = '';
+        
+        if (lifeThreatening) {
+            severity = '🚨 LIFE-THREATENING ASTHMA';
+            cssClass = 'calc-error';
+            urgency = '⚠️ IMMEDIATE ACTION REQUIRED';
+            management = `
+                <strong>Immediate Management:</strong>
+                <ul style="margin-top: 10px; text-align: left;">
+                    <li><strong>Call for senior help immediately</strong></li>
+                    <li><strong>High-flow oxygen 15L/min</strong> (target SpO₂ 94-98%)</li>
+                    <li><strong>Salbutamol 5mg nebulised</strong> continuously or back-to-back</li>
+                    <li><strong>Ipratropium 500mcg nebulised</strong></li>
+                    <li><strong>Hydrocortisone 100mg IV</strong> or prednisolone 40-50mg PO</li>
+                    <li><strong>Magnesium sulphate 1.2-2g IV</strong> over 20 minutes</li>
+                    <li>Consider <strong>IV salbutamol</strong> (ICU setting)</li>
+                    <li>Prepare for <strong>intubation</strong> if deteriorating</li>
+                    <li><strong>ICU referral</strong></li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Monitor:</strong> Continuous SpO₂, ECG, repeat ABG</p>
+            `;
+        } else if (acuteSevere) {
+            severity = '⚠️ ACUTE SEVERE ASTHMA';
+            cssClass = 'calc-warning';
+            urgency = 'Urgent treatment required';
+            management = `
+                <strong>Urgent Management:</strong>
+                <ul style="margin-top: 10px; text-align: left;">
+                    <li><strong>High-flow oxygen</strong> (target SpO₂ 94-98%)</li>
+                    <li><strong>Salbutamol 5mg nebulised</strong> (repeat every 15-30 min if needed)</li>
+                    <li><strong>Ipratropium 500mcg nebulised</strong> (4-6 hourly)</li>
+                    <li><strong>Prednisolone 40-50mg PO</strong> or hydrocortisone 100mg IV</li>
+                    <li>Consider <strong>magnesium sulphate 1.2-2g IV</strong> if poor response</li>
+                    <li>Senior review if not responding within 15-30 minutes</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Monitor:</strong> SpO₂, PEFR every 15-30min, repeat assessment</p>
+            `;
+        } else if (pefr && pefr >= 50 && pefr <= 75) {
+            severity = 'Moderate Asthma Exacerbation';
+            cssClass = 'calc-success';
+            urgency = 'Treatment recommended';
+            management = `
+                <strong>Management:</strong>
+                <ul style="margin-top: 10px; text-align: left;">
+                    <li><strong>Salbutamol 5mg nebulised</strong> or 4-6 puffs via spacer</li>
+                    <li><strong>Prednisolone 40-50mg PO</strong></li>
+                    <li>Consider admission if inadequate response</li>
+                    <li>Reassess after 1 hour</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Monitor:</strong> Clinical response, PEFR, SpO₂</p>
+            `;
+        } else {
+            severity = 'Mild or Improving';
+            cssClass = 'calc-success';
+            urgency = 'Continue monitoring';
+            management = `
+                <strong>Management:</strong>
+                <ul style="margin-top: 10px; text-align: left;">
+                    <li>Regular bronchodilators</li>
+                    <li>Consider prednisolone if symptoms persist</li>
+                    <li>Ensure follow-up arranged</li>
+                    <li>Review inhaler technique and action plan</li>
+                </ul>
+            `;
+        }
+        
+        // List present features
+        let features = [];
+        if (unableComplete) features.push('Unable to complete sentences');
+        if (pulse110) features.push('Pulse ≥110 bpm');
+        if (rr25) features.push('RR ≥25/min');
+        if (pulsusParadoxus) features.push('Pulsus paradoxus');
+        if (silentChest) features.push('Silent chest');
+        if (cyanosis) features.push('Cyanosis');
+        if (exhaustion) features.push('Exhaustion/confusion');
+        if (bradycardia) features.push('Bradycardia/arrhythmia');
+        if (pefr) features.push(`PEFR ${pefr}%`);
+        if (spo2) features.push(`SpO₂ ${spo2}%`);
+        
+        const featuresText = features.length > 0 
+            ? `<p style="text-align: left;"><strong>Present features:</strong><br>${features.join(', ')}</p>`
+            : '';
+        
+        document.getElementById('asthma-result').innerHTML = `
+            <div class="${cssClass}">
+                <h4>${severity}</h4>
+                <p><strong>${urgency}</strong></p>
+                ${featuresText}
+                ${management}
             </div>
         `;
     }
@@ -16167,7 +16408,8 @@ class MLAQuizApp {
             'examination': 'examination-panel',
             'emergency-protocols': 'emergency-protocols-panel',
             'interpretation': 'interpretation-panel',
-            'anatomy': 'anatomy-panel'
+            'anatomy': 'anatomy-panel',
+            'ladders': 'ladders-panel'
         };
         
         // Show selected panel
@@ -16217,6 +16459,9 @@ class MLAQuizApp {
                 break;
             case 'anatomy':
                 this.initializeAnatomyExplorer();
+                break;
+            case 'ladders':
+                console.log('🪜 Steroid & Pain Ladders panel activated');
                 break;
         }
         

@@ -5328,6 +5328,295 @@
                 }
             }
 
+            /* Steroid & Pain Ladders Styling */
+            .ladders-container {
+                padding: 24px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .ladders-container h2 {
+                color: var(--primary-color);
+                margin-bottom: 32px;
+                font-size: 28px;
+                text-align: center;
+            }
+
+            .ladder-section {
+                background: var(--card-bg);
+                border-radius: 12px;
+                padding: 24px;
+                margin-bottom: 32px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .ladder-section h3 {
+                color: var(--primary-color);
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .ladder-intro {
+                color: var(--secondary-text);
+                font-style: italic;
+                margin-bottom: 24px;
+            }
+
+            .ladder-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .ladder-table thead {
+                background: var(--primary-color);
+                color: white;
+            }
+
+            .ladder-table th {
+                padding: 12px;
+                text-align: left;
+                font-weight: 600;
+            }
+
+            .ladder-table td {
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .ladder-table tbody tr:hover {
+                background: #f8f9fa;
+            }
+
+            .potency-ultra-high {
+                border-left: 4px solid #dc3545;
+            }
+
+            .potency-high {
+                border-left: 4px solid #fd7e14;
+            }
+
+            .potency-medium {
+                border-left: 4px solid #ffc107;
+            }
+
+            .potency-low {
+                border-left: 4px solid #28a745;
+            }
+
+            .steroid-categories {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin: 24px 0;
+            }
+
+            .category-card {
+                background: white;
+                border-radius: 8px;
+                padding: 16px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .category-card h4 {
+                margin-bottom: 8px;
+                font-size: 18px;
+            }
+
+            .category-card ul {
+                margin: 12px 0;
+                padding-left: 20px;
+            }
+
+            .category-card li {
+                margin: 6px 0;
+                color: var(--secondary-text);
+            }
+
+            .pain-ladder-visual {
+                display: flex;
+                flex-direction: column-reverse;
+                gap: 16px;
+                margin: 24px 0;
+            }
+
+            .ladder-step {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s;
+            }
+
+            .ladder-step:hover {
+                transform: translateX(8px);
+            }
+
+            .step-3 {
+                border-left: 6px solid #dc3545;
+            }
+
+            .step-2 {
+                border-left: 6px solid #fd7e14;
+            }
+
+            .step-1 {
+                border-left: 6px solid #28a745;
+            }
+
+            .step-number {
+                display: inline-block;
+                background: var(--primary-color);
+                color: white;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 40px;
+                font-weight: bold;
+                margin-bottom: 12px;
+            }
+
+            .step-content h4 {
+                margin: 12px 0;
+                font-size: 20px;
+            }
+
+            .medication-list {
+                margin-top: 16px;
+            }
+
+            .med-item {
+                background: #f8f9fa;
+                padding: 12px;
+                margin: 8px 0;
+                border-radius: 6px;
+                border-left: 3px solid var(--primary-color);
+            }
+
+            .med-item strong {
+                display: block;
+                color: var(--primary-color);
+                margin-bottom: 4px;
+            }
+
+            .med-item span {
+                display: block;
+                color: var(--secondary-text);
+                font-size: 14px;
+            }
+
+            .med-note {
+                font-style: italic;
+                color: #6c757d !important;
+                margin-top: 4px;
+            }
+
+            .adjuvant-section {
+                margin: 32px 0;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 8px;
+            }
+
+            .adjuvant-section h4 {
+                color: var(--primary-color);
+                margin-bottom: 16px;
+            }
+
+            .adjuvant-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 16px;
+            }
+
+            .adjuvant-card {
+                background: white;
+                padding: 16px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            }
+
+            .adjuvant-card h5 {
+                color: var(--primary-color);
+                margin-bottom: 12px;
+                font-size: 16px;
+            }
+
+            .adjuvant-card ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            .adjuvant-card li {
+                margin: 6px 0;
+                font-size: 14px;
+                color: var(--secondary-text);
+            }
+
+            .clinical-pearl {
+                background: #fff3cd;
+                border-left: 4px solid #ffc107;
+                padding: 20px;
+                border-radius: 8px;
+                margin: 24px 0;
+            }
+
+            .clinical-pearl h4 {
+                color: #856404;
+                margin-bottom: 12px;
+            }
+
+            .clinical-pearl ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            .clinical-pearl li {
+                margin: 8px 0;
+                color: #856404;
+            }
+
+            .opioid-conversion-table {
+                margin: 32px 0;
+            }
+
+            .opioid-conversion-table h4 {
+                color: var(--primary-color);
+                margin-bottom: 16px;
+            }
+
+            @media (max-width: 768px) {
+                .ladders-container {
+                    padding: 16px;
+                }
+
+                .steroid-categories {
+                    grid-template-columns: 1fr;
+                }
+
+                .adjuvant-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .ladder-table {
+                    font-size: 12px;
+                }
+
+                .ladder-table th,
+                .ladder-table td {
+                    padding: 8px;
+                }
+
+                .ladder-step:hover {
+                    transform: translateX(4px);
+                }
+            }
+
             @media (max-width: 480px) {
                 .region-buttons {
                     grid-template-columns: repeat(2, 1fr);
@@ -5655,6 +5944,7 @@
             <button class="tool-nav-btn" data-tool="triads">🔺 Clinical Triads</button>
             <button class="tool-nav-btn" data-tool="examination">🩺 Examination</button>
             <button class="tool-nav-btn" data-tool="anatomy">🦴 Muscles & Bones</button>
+            <button class="tool-nav-btn" data-tool="ladders">🪜 Steroid & Pain Ladders</button>
         </div>
         
         <div class="tools-content">
@@ -5910,6 +6200,10 @@
                         <div class="calc-icon">🫁</div>
                         <div class="calc-name">Winters Formula</div>
                     </button>
+                    <button class="calculator-btn" data-calc="asthma">
+                        <div class="calc-icon">💨</div>
+                        <div class="calc-name">Asthma Severity</div>
+                    </button>
                 </div>
                 <div id="calculator-workspace" class="calculator-workspace">
                     <!-- Dynamic calculator content loads here -->
@@ -6076,6 +6370,322 @@
                             <span class="btn-icon">🎯</span>
                             <span class="btn-text">Start Quiz Mode</span>
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Steroid & Pain Ladders Panel -->
+            <div id="ladders-panel" class="tool-panel">
+                <div class="ladders-container">
+                    <h2>🪜 Clinical Treatment Ladders</h2>
+                    
+                    <!-- Steroid Ladder Section -->
+                    <div class="ladder-section">
+                        <h3>💊 Corticosteroid Ladder</h3>
+                        <p class="ladder-intro">Glucocorticoid potency and equivalent dosing</p>
+                        
+                        <div class="steroid-comparison">
+                            <table class="ladder-table">
+                                <thead>
+                                    <tr>
+                                        <th>Steroid</th>
+                                        <th>Relative Potency</th>
+                                        <th>Equivalent Dose</th>
+                                        <th>Duration</th>
+                                        <th>Clinical Uses</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="potency-ultra-high">
+                                        <td><strong>Betamethasone</strong></td>
+                                        <td>25-30x</td>
+                                        <td>0.75 mg</td>
+                                        <td>36-54h</td>
+                                        <td>Fetal lung maturation, severe inflammation</td>
+                                    </tr>
+                                    <tr class="potency-ultra-high">
+                                        <td><strong>Dexamethasone</strong></td>
+                                        <td>25-30x</td>
+                                        <td>0.75 mg</td>
+                                        <td>36-54h</td>
+                                        <td>Cerebral oedema, croup, severe asthma, COVID-19</td>
+                                    </tr>
+                                    <tr class="potency-high">
+                                        <td><strong>Methylprednisolone</strong></td>
+                                        <td>5x</td>
+                                        <td>4 mg</td>
+                                        <td>12-36h</td>
+                                        <td>Acute asthma, COPD, spinal cord injury</td>
+                                    </tr>
+                                    <tr class="potency-high">
+                                        <td><strong>Prednisolone</strong></td>
+                                        <td>4x</td>
+                                        <td>5 mg</td>
+                                        <td>12-36h</td>
+                                        <td>Asthma, COPD, polymyalgia rheumatica, IBD</td>
+                                    </tr>
+                                    <tr class="potency-medium">
+                                        <td><strong>Hydrocortisone</strong></td>
+                                        <td>1x (baseline)</td>
+                                        <td>20 mg</td>
+                                        <td>8-12h</td>
+                                        <td>Addison's, adrenal crisis, septic shock</td>
+                                    </tr>
+                                    <tr class="potency-low">
+                                        <td><strong>Cortisone</strong></td>
+                                        <td>0.8x</td>
+                                        <td>25 mg</td>
+                                        <td>8-12h</td>
+                                        <td>Rarely used (requires hepatic conversion)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="steroid-categories">
+                            <div class="category-card">
+                                <h4>🔴 High Potency (Long-acting)</h4>
+                                <p><strong>Dexamethasone, Betamethasone</strong></p>
+                                <ul>
+                                    <li>Minimal mineralocorticoid activity</li>
+                                    <li>Suitable for cerebral oedema</li>
+                                    <li>Used in fetal lung maturation</li>
+                                    <li>Severe inflammatory conditions</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="category-card">
+                                <h4>🟠 Intermediate Potency</h4>
+                                <p><strong>Prednisolone, Methylprednisolone</strong></p>
+                                <ul>
+                                    <li>Most common for systemic use</li>
+                                    <li>Acute asthma exacerbations</li>
+                                    <li>COPD exacerbations</li>
+                                    <li>Autoimmune conditions</li>
+                                    <li>IBD flares</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="category-card">
+                                <h4>🟡 Low Potency (Short-acting)</h4>
+                                <p><strong>Hydrocortisone</strong></p>
+                                <ul>
+                                    <li>Physiological replacement therapy</li>
+                                    <li>Addison's disease</li>
+                                    <li>Adrenal crisis</li>
+                                    <li>Has mineralocorticoid activity</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="clinical-pearl">
+                            <h4>💡 Clinical Pearls</h4>
+                            <ul>
+                                <li><strong>Conversion:</strong> Prednisolone 40mg ≈ Hydrocortisone 100mg ≈ Dexamethasone 6mg</li>
+                                <li><strong>Tapering:</strong> Required if >3 weeks use, >40mg/day prednisolone, or evening doses</li>
+                                <li><strong>Side effects:</strong> Hyperglycaemia, immunosuppression, osteoporosis, adrenal suppression</li>
+                                <li><strong>Morning dosing:</strong> Mimics physiological cortisol rhythm (except dexamethasone)</li>
+                                <li><strong>PPI protection:</strong> Consider if high-dose, elderly, or GI risk factors</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Pain Ladder Section -->
+                    <div class="ladder-section">
+                        <h3>🎚️ WHO Analgesic Ladder</h3>
+                        <p class="ladder-intro">Stepwise approach to pain management</p>
+                        
+                        <div class="pain-ladder-visual">
+                            <div class="ladder-step step-3">
+                                <div class="step-number">Step 3</div>
+                                <div class="step-content">
+                                    <h4>🔴 Severe Pain (7-10/10)</h4>
+                                    <p><strong>Strong Opioids ± Non-opioid ± Adjuvant</strong></p>
+                                    <div class="medication-list">
+                                        <div class="med-item">
+                                            <strong>Morphine</strong>
+                                            <span>5-10mg PO/2.5-5mg SC/IV 4-hourly (immediate release)</span>
+                                            <span class="med-note">Gold standard, predictable</span>
+                                        </div>
+                                        <div class="med-item">
+                                            <strong>Oxycodone</strong>
+                                            <span>5-10mg PO 4-6 hourly</span>
+                                            <span class="med-note">1.5x potency of morphine</span>
+                                        </div>
+                                        <div class="med-item">
+                                            <strong>Fentanyl</strong>
+                                            <span>12-25mcg/hr patch (change 72-hourly)</span>
+                                            <span class="med-note">100x morphine potency, for stable pain</span>
+                                        </div>
+                                        <div class="med-item">
+                                            <strong>Buprenorphine</strong>
+                                            <span>5-20mcg/hr patch (change weekly)</span>
+                                            <span class="med-note">Partial agonist, ceiling effect</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="ladder-step step-2">
+                                <div class="step-number">Step 2</div>
+                                <div class="step-content">
+                                    <h4>🟠 Moderate Pain (4-6/10)</h4>
+                                    <p><strong>Weak Opioids ± Non-opioid ± Adjuvant</strong></p>
+                                    <div class="medication-list">
+                                        <div class="med-item">
+                                            <strong>Codeine</strong>
+                                            <span>30-60mg PO 4-6 hourly (max 240mg/day)</span>
+                                            <span class="med-note">Prodrug, 10% morphine potency</span>
+                                        </div>
+                                        <div class="med-item">
+                                            <strong>Tramadol</strong>
+                                            <span>50-100mg PO/IV 6-hourly (max 400mg/day)</span>
+                                            <span class="med-note">Mixed mechanism, lower dependence risk</span>
+                                        </div>
+                                        <div class="med-item">
+                                            <strong>Dihydrocodeine</strong>
+                                            <span>30mg PO 4-6 hourly</span>
+                                            <span class="med-note">Similar to codeine</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="ladder-step step-1">
+                                <div class="step-number">Step 1</div>
+                                <div class="step-content">
+                                    <h4>🟢 Mild Pain (1-3/10)</h4>
+                                    <p><strong>Non-opioid ± Adjuvant</strong></p>
+                                    <div class="medication-list">
+                                        <div class="med-item">
+                                            <strong>Paracetamol</strong>
+                                            <span>1g PO/IV 6-hourly (max 4g/day)</span>
+                                            <span class="med-note">Safe, minimal side effects</span>
+                                        </div>
+                                        <div class="med-item">
+                                            <strong>Ibuprofen</strong>
+                                            <span>400mg PO 8-hourly (max 2.4g/day)</span>
+                                            <span class="med-note">Anti-inflammatory, GI risk</span>
+                                        </div>
+                                        <div class="med-item">
+                                            <strong>Naproxen</strong>
+                                            <span>250-500mg PO 12-hourly</span>
+                                            <span class="med-note">Longer-acting NSAID</span>
+                                        </div>
+                                        <div class="med-item">
+                                            <strong>Diclofenac</strong>
+                                            <span>50mg PO 8-hourly</span>
+                                            <span class="med-note">Potent NSAID, CV risk</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="adjuvant-section">
+                            <h4>➕ Adjuvant Analgesics (All Steps)</h4>
+                            <div class="adjuvant-grid">
+                                <div class="adjuvant-card">
+                                    <h5>Neuropathic Pain</h5>
+                                    <ul>
+                                        <li><strong>Amitriptyline:</strong> 10-75mg nocte</li>
+                                        <li><strong>Gabapentin:</strong> 300mg-1.2g TDS</li>
+                                        <li><strong>Pregabalin:</strong> 75-300mg BD</li>
+                                        <li><strong>Duloxetine:</strong> 60mg OD</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="adjuvant-card">
+                                    <h5>Bone Pain</h5>
+                                    <ul>
+                                        <li><strong>Bisphosphonates</strong> (e.g., zoledronic acid)</li>
+                                        <li><strong>Radiotherapy</strong> for metastases</li>
+                                        <li><strong>NSAIDs</strong> (if safe)</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="adjuvant-card">
+                                    <h5>Muscle Spasm</h5>
+                                    <ul>
+                                        <li><strong>Baclofen:</strong> 5-20mg TDS</li>
+                                        <li><strong>Diazepam:</strong> 2-5mg BD-TDS</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="adjuvant-card">
+                                    <h5>Inflammatory Pain</h5>
+                                    <ul>
+                                        <li><strong>Corticosteroids</strong> (e.g., dexamethasone 4-8mg OD)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="opioid-conversion-table">
+                            <h4>🔄 Opioid Conversion Guide</h4>
+                            <table class="ladder-table">
+                                <thead>
+                                    <tr>
+                                        <th>Medication</th>
+                                        <th>Route</th>
+                                        <th>Oral Morphine Equivalent</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Morphine</td>
+                                        <td>Oral</td>
+                                        <td>1 (baseline)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Morphine</td>
+                                        <td>SC/IV</td>
+                                        <td>2-3x oral dose</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Oxycodone</td>
+                                        <td>Oral</td>
+                                        <td>1.5-2x</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Codeine</td>
+                                        <td>Oral</td>
+                                        <td>÷10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tramadol</td>
+                                        <td>Oral</td>
+                                        <td>÷10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fentanyl patch</td>
+                                        <td>Transdermal</td>
+                                        <td>12mcg/hr ≈ 30mg oral morphine/day</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Buprenorphine patch</td>
+                                        <td>Transdermal</td>
+                                        <td>5mcg/hr ≈ 12mg oral morphine/day</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="clinical-pearl">
+                            <h4>💡 Clinical Pearls</h4>
+                            <ul>
+                                <li><strong>Breakthrough pain:</strong> 1/6th of total daily opioid dose for rescue</li>
+                                <li><strong>Starting strong opioids:</strong> Morphine 5mg PO 4-hourly or 2.5mg SC 4-hourly</li>
+                                <li><strong>Titration:</strong> Increase by 30-50% if inadequate pain control</li>
+                                <li><strong>Constipation:</strong> ALL patients on opioids need laxatives (senna + docusate)</li>
+                                <li><strong>Nausea:</strong> Common in first week, prescribe antiemetic prophylactically</li>
+                                <li><strong>Renal impairment:</strong> Avoid morphine, codeine (toxic metabolites); use oxycodone, fentanyl, buprenorphine</li>
+                                <li><strong>Hepatic impairment:</strong> Reduce doses, avoid codeine</li>
+                                <li><strong>By the mouth:</strong> Oral route preferred when possible</li>
+                                <li><strong>By the clock:</strong> Regular dosing, not PRN alone</li>
+                                <li><strong>Multimodal:</strong> Combine paracetamol + NSAID + opioid for additive effect</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
