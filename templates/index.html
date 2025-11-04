@@ -6997,12 +6997,54 @@
         window.dispatchEvent(new CustomEvent('qrisk3-loaded'));
     </script>
     <script src="/static/js/analytics.js"></script>
-    <script src="/static/js/app.js"></script>
-    <script src="/static/js/anatomyEnhancements.js"></script>
+    <!-- ============================================ -->
+    <!-- V1 APPLICATION (PRODUCTION - STABLE)        -->
+    <!-- ============================================ -->
+    <!-- V1 uses monolithic architecture (23K lines) -->
+    <!-- All functionality working and tested        -->
+    <script src="/static/js/v1/app.js"></script>
+    <script src="/static/js/v1/anatomyEnhancements.js"></script>
+    
+    <!-- ============================================ -->
+    <!-- V2 MODULAR SYSTEM (TESTING - EXPERIMENTAL)  -->
+    <!-- ============================================ -->
+    <!-- V2 uses modern ES6 modules architecture     -->
+    <!-- Currently in testing - disabled by default  -->
+    <!-- To enable V2: Uncomment the section below   -->
+    <!--
+    <script src="/static/js/drugDatabase.js"></script>
+    <script src="/static/js/labDatabase.js"></script>
+    <script src="/static/js/guidelinesDatabase.js"></script>
+    <script type="module" src="/static/js/v2/main.js"></script>
+    -->
     
     <script>
         // Add event listener for report generation
         document.addEventListener('DOMContentLoaded', () => {
+            // V2 Integration (disabled - uncomment when ready to test V2)
+            /*
+            setTimeout(() => {
+                if (window.quizApp && window.initializeV2Integration) {
+                    const success = window.initializeV2Integration(window.quizApp);
+                    if (success) {
+                        console.log('🔗 V2 Integration successfully bridged to V1 app');
+                        console.log('📊 V2 Features:');
+                        console.log('   - Calculators:', window.calculatorManager?.getCalculatorCount() || 0);
+                        console.log('   - Drugs:', window.drugReferenceManager?.getDrugCount?.() || 0);
+                        console.log('   - Lab Panels:', window.labValuesManager?.getPanelCount?.() || 0);
+                        console.log('   - Guidelines:', window.guidelinesManager?.getGuidelinesCount?.() || 0);
+                    }
+                } else {
+                    console.warn('⚠️ V2 Integration not available yet, retrying in 1s...');
+                    setTimeout(() => {
+                        if (window.quizApp && window.initializeV2Integration) {
+                            window.initializeV2Integration(window.quizApp);
+                        }
+                    }, 1000);
+                }
+            }, 500);
+            */
+            
             // Add report generation handler for both buttons
             document.addEventListener('click', (e) => {
                 if (e.target.id === 'generate-report-btn' || e.target.id === 'floating-pdf-btn') {

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLA Quiz PWA - V2 Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #10b981;
+            color: white;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-size: 20px;
+        }
+        
+        .selector {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            background: white;
+        }
+        
+        .selector:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .recent-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .recent-btn {
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .recent-btn:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+        }
+        
+        .calculator-form {
+            margin-top: 20px;
+        }
+        
+        .calc-input-group {
+            margin-bottom: 16px;
+        }
+        
+        .calc-input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .calc-input-group input,
+        .calc-input-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .calc-input-group input:focus,
+        .calc-input-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .calc-checkbox-group {
+            margin-bottom: 16px;
+        }
+        
+        .calc-checkbox-group label {
+            display: block;
+            padding: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .calc-checkbox-group label:hover {
+            background: #f9fafb;
+        }
+        
+        .calc-button {
+            width: 100%;
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .calc-button:hover {
+            background: #2563eb;
+        }
+        
+        .calc-button:active {
+            transform: scale(0.98);
+        }
+        
+        .calc-result {
+            margin-top: 20px;
+            min-height: 60px;
+        }
+        
+        .calc-reference {
+            margin-top: 16px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .calc-reference small {
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        
+        .error {
+            color: #ef4444;
+            padding: 12px;
+            background: #fee2e2;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .status.online {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status.offline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .info-item {
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        
+        .info-item strong {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        
+        .info-item span {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                MLA Quiz PWA <span class="badge">V2</span>
+            </h1>
+            <p>Modular calculator system demo - Running alongside V1</p>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>System Status</strong>
+                    <span id="system-status">Loading...</span>
+                </div>
+                <div class="info-item">
+                    <strong>Calculators Available</strong>
+                    <span id="calc-count">0</span>
+                </div>
+                <div class="info-item">
+                    <strong>Last Calculated</strong>
+                    <span id="last-calc">None</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Calculator Selector -->
+        <div class="card">
+            <h2>📊 Medical Calculators</h2>
+            <select id="calc-selector" class="selector">
+                <option value="">Select a calculator...</option>
+            </select>
+            
+            <!-- Recent calculators -->
+            <div id="recent-container" style="display:none;">
+                <p style="font-size:13px;color:#6b7280;margin-bottom:8px">Recently used:</p>
+                <div class="recent-list" id="recent-list"></div>
+            </div>
+        </div>
+        
+        <!-- Calculator Display -->
+        <div class="card">
+            <div id="calculator-display">
+                <p style="text-align:center;color:#9ca3af;padding:40px 20px;">
+                    Select a calculator from the dropdown above to get started
+                </p>
+            </div>
+        </div>
+        
+        <!-- V1 Comparison (optional) -->
+        <div class="card">
+            <h2>🔄 V1 vs V2 Status</h2>
+            <p style="color:#6b7280;font-size:14px;margin-bottom:12px">
+                Both systems are running independently:
+            </p>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>V1 (app.js)</strong>
+                    <span id="v1-status">
+                        <span class="status" id="v1-badge">Checking...</span>
+                    </span>
+                </div>
+                <div class="info-item">
+                    <strong>V2 (modules)</strong>
+                    <span id="v2-status">
+                        <span class="status online">Online</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- V2 Module System -->
+    <script type="module">
+        import app from '/static/js/main.js';
+        import { calculatorManager } from '/static/js/modules/CalculatorManager.js';
+        import { eventBus } from '/static/js/modules/EventBus.js';
+        import { uiManager } from '/static/js/modules/UIManager.js';
+        
+        // Make available globally for debugging
+        window.quizAppV2 = app;
+        window.calculatorManager = calculatorManager;
+        window.eventBus = eventBus;
+        
+        // Update system status
+        document.getElementById('system-status').innerHTML = '✅ Online';
+        
+        // Populate calculator selector
+        function populateSelector() {
+            const selector = document.getElementById('calc-selector');
+            const calculators = calculatorManager.getAllCalculators();
+            
+            // Update count
+            document.getElementById('calc-count').textContent = calculators.length;
+            
+            // Group by category
+            const byCategory = {};
+            calculators.forEach(calc => {
+                if (!byCategory[calc.category]) {
+                    byCategory[calc.category] = [];
+                }
+                byCategory[calc.category].push(calc);
+            });
+            
+            // Add to selector
+            Object.entries(byCategory).forEach(([category, calcs]) => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = category.charAt(0).toUpperCase() + category.slice(1);
+                
+                calcs.forEach(calc => {
+                    const option = document.createElement('option');
+                    option.value = calc.id;
+                    option.textContent = calc.name;
+                    optgroup.appendChild(option);
+                });
+                
+                selector.appendChild(optgroup);
+            });
+        }
+        
+        // Update recent calculators
+        function updateRecent() {
+            const recent = calculatorManager.getRecentCalculators();
+            const container = document.getElementById('recent-container');
+            const list = document.getElementById('recent-list');
+            
+            if (recent.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            list.innerHTML = recent.map(calc => `
+                <button class="recent-btn" data-calc-id="${calc.id}">
+                    ${calc.name}
+                </button>
+            `).join('');
+            
+            // Add click handlers
+            list.querySelectorAll('.recent-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const calcId = btn.dataset.calcId;
+                    document.getElementById('calc-selector').value = calcId;
+                    showCalculator(calcId);
+                });
+            });
+        }
+        
+        // Show calculator
+        function showCalculator(calcId) {
+            if (!calcId) {
+                document.getElementById('calculator-display').innerHTML = `
+                    <p style="text-align:center;color:#9ca3af;padding:40px 20px;">
+                        Select a calculator from the dropdown above to get started
+                    </p>
+                `;
+                return;
+            }
+            
+            const success = calculatorManager.renderCalculator(calcId, 'calculator-display');
+            if (success) {
+                calculatorManager.addToRecent(calcId);
+                updateRecent();
+            }
+        }
+        
+        // Event: Calculator calculated
+        eventBus.on('calculator:calculated', (data) => {
+            console.log('Calculator result:', data);
+            document.getElementById('last-calc').textContent = data.name;
+            
+            // Show toast (if UIManager provides it)
+            if (uiManager && uiManager.showToast) {
+                uiManager.showToast('Calculation complete!', 'success');
+            }
+        });
+        
+        // Calculator selector change
+        document.getElementById('calc-selector').addEventListener('change', (e) => {
+            showCalculator(e.target.value);
+        });
+        
+        // Initialize
+        populateSelector();
+        updateRecent();
+        
+        // Check for V1
+        setTimeout(() => {
+            const v1Badge = document.getElementById('v1-badge');
+            if (window.quizApp) {
+                v1Badge.textContent = 'Online';
+                v1Badge.classList.add('online');
+                console.log('✅ V1 detected:', window.quizApp);
+            } else {
+                v1Badge.textContent = 'Not loaded';
+                v1Badge.classList.add('offline');
+            }
+        }, 500);
+        
+        console.log('🎉 V2 Demo initialized!');
+        console.log('Available:', {
+            calculators: calculatorManager.getAllCalculators().length,
+            categories: calculatorManager.getCategories()
+        });
+    </script>
+</body>
+</html>
