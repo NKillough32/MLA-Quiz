@@ -218,3 +218,5 @@ export class StorageManager {
 
 // Export singleton instance
 export const storage = new StorageManager();
+export const storageManager = storage; // Alias for compatibility
+

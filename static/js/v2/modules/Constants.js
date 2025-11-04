@@ -91,12 +91,21 @@ export const CALCULATOR_TYPES = {
 
 // Medical Tool Categories
 export const TOOL_CATEGORIES = {
-    EMERGENCY: 'emergency',
-    CARDIOLOGY: 'cardiology',
-    NEUROLOGY: 'neurology',
-    RESPIRATORY: 'respiratory',
+    BODY_METRICS: 'Body Metrics',
+    CARDIOLOGY: 'Cardiology',
+    NEUROLOGY: 'Neurology',
+    RESPIRATORY: 'Respiratory',
+    CRITICAL_CARE: 'Critical Care',
+    RENAL: 'Renal',
+    GASTROENTEROLOGY: 'Gastroenterology',
+    EMERGENCY: 'Emergency',
+    GERIATRICS: 'Geriatrics',
+    PSYCHIATRY: 'Psychiatry',
+    ENDOCRINE: 'Endocrine',
+    CHEMISTRY: 'Chemistry',
+    OBSTETRICS: 'Obstetrics',
+    OTHER: 'Other',
     NEPHROLOGY: 'nephrology',
-    ENDOCRINE: 'endocrine',
     REFERENCE: 'reference',
     ANATOMY: 'anatomy'
 };

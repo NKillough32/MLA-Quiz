@@ -21,6 +21,9 @@ import { calculatorManager } from './modules/CalculatorManager.js';
 import { DrugReferenceManager } from './modules/DrugReferenceManager.js';
 import { LabValuesManager } from './modules/LabValuesManager.js';
 import { GuidelinesManager } from './modules/GuidelinesManager.js';
+import { MnemonicsManager } from './modules/MnemonicsManager.js';
+import { InterpretationToolsManager } from './modules/InterpretationToolsManager.js';
+import { LaddersManager } from './modules/LaddersManager.js';
 
 // Clinical Feature Modules (bridge to V1)
 import { differentialDxManager } from './modules/DifferentialDxManager.js';
@@ -40,6 +43,9 @@ class MLAQuizApp {
         this.drugManager = new DrugReferenceManager();
         this.labManager = new LabValuesManager();
         this.guidelinesManager = new GuidelinesManager();
+        this.mnemonicsManager = new MnemonicsManager();
+        this.interpretationToolsManager = new InterpretationToolsManager();
+        this.laddersManager = new LaddersManager();
         this.v2Integration = v2Integration;
         this.setupEventListeners();
     }
@@ -120,11 +126,23 @@ class MLAQuizApp {
         // Initialize guidelines manager (requires guidelinesDatabase.js to be loaded)
         await this.guidelinesManager.initialize();
 
+        // Initialize mnemonics manager
+        await this.mnemonicsManager.initialize();
+
+        // Initialize interpretation tools manager
+        await this.interpretationToolsManager.initialize();
+
+        // Initialize ladders manager
+        await this.laddersManager.initialize();
+
         console.log('✅ All managers initialized');
         console.log(`   - Calculators: ${calculatorManager.getCalculatorCount()}`);
         console.log(`   - Drugs: ${this.drugManager.getDrugCount()}`);
         console.log(`   - Lab panels: ${this.labManager.getPanelCount()}, Tests: ${this.labManager.getTestCount()}`);
         console.log(`   - Guidelines: ${this.guidelinesManager.getGuidelinesCount()}`);
+        console.log(`   - Mnemonics: ${this.mnemonicsManager.getStatistics().totalMnemonics}`);
+        console.log(`   - Interpretation Tools: ${this.interpretationToolsManager.getStatistics().totalTools}`);
+        console.log(`   - Treatment Ladders: ${this.laddersManager.getStatistics().totalLadders}`);
         
         // Initialize V2 Integration Layer (must happen AFTER V1 app exists)
         // This will be called from index.html after V1's app.js loads
@@ -409,7 +427,13 @@ class MLAQuizApp {
                 calculator: calculatorManager.getStatistics(),
                 storage: 'initialized',
                 orientation: 'initialized',
-                analytics: 'initialized'
+                analytics: 'initialized',
+                drug: this.drugManager.getStatistics(),
+                lab: this.labManager.getStatistics(),
+                guidelines: this.guidelinesManager.getStatistics(),
+                mnemonics: this.mnemonicsManager.getStatistics(),
+                interpretation: this.interpretationToolsManager.getStatistics(),
+                ladders: this.laddersManager.getStatistics()
             }
         };
     }
@@ -440,6 +464,9 @@ window.analytics = analytics;
 window.drugManager = app.drugManager;
 window.labManager = app.labManager;
 window.guidelinesManager = app.guidelinesManager;
+window.mnemonicsManager = app.mnemonicsManager;
+window.interpretationToolsManager = app.interpretationToolsManager;
+window.laddersManager = app.laddersManager;
 window.differentialDxManager = differentialDxManager;
 window.triadsManager = triadsManager;
 window.examinationManager = examinationManager;
@@ -456,6 +483,9 @@ window.initializeV2Integration = function(v1AppInstance) {
         window.drugReferenceManager = app.drugManager;
         window.labValuesManager = app.labManager;
         window.guidelinesManager = app.guidelinesManager;
+        window.mnemonicsManager = app.mnemonicsManager;
+        window.interpretationToolsManager = app.interpretationToolsManager;
+        window.laddersManager = app.laddersManager;
         
         return true;
     }
