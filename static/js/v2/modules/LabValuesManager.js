@@ -278,4 +278,9 @@ export class LabValuesManager {
     }
 }
 
+
+
+// Export singleton instance
+export const labValuesManager = new LabValuesManager();
 export default LabValuesManager;
+

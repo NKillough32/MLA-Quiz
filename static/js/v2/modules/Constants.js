@@ -118,6 +118,7 @@ export const EVENTS = {
     THEME_CHANGED: 'theme:changed',
     FONT_SIZE_CHANGED: 'fontsize:changed',
     ORIENTATION_CHANGED: 'orientation:changed',
+    UI_SWITCH_TOOL: 'ui:switchTool',
     
     // Anatomy Events
     ANATOMY_LOADED: 'anatomy:loaded',

@@ -323,4 +323,7 @@ export class DrugReferenceManager {
     }
 }
 
+// Export singleton instance
+export const drugReferenceManager = new DrugReferenceManager();
 export default DrugReferenceManager;
+

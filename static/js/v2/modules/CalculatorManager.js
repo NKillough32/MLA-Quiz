@@ -48,8 +48,10 @@ export class CalculatorManager {
             name: config.name,
             category: config.category || TOOL_CATEGORIES.OTHER,
             description: config.description || '',
-            renderFn: config.render,
-            calculateFn: config.calculate,
+            keywords: config.keywords || [],
+            getTemplate: config.getTemplate,
+            calculate: config.calculate,
+            bindEvents: config.bindEvents,
             metadata: config.metadata || {}
         };
 
@@ -58,6 +60,80 @@ export class CalculatorManager {
         return calculator;
     }
     
+    /**
+     * Load calculator into detail view
+     */
+    loadCalculator(calculatorId) {
+        const calculator = this.getCalculator(calculatorId);
+        if (!calculator) {
+            console.error(`Calculator not found: ${calculatorId}`);
+            return false;
+        }
+
+        try {
+            // Switch to calculator detail panel first
+            eventBus.emit(EVENTS.UI_SWITCH_TOOL, { tool: 'calculator-detail' });
+            
+            // Get container
+            const container = document.getElementById('calculator-detail-container');
+            if (!container) {
+                console.error('Calculator detail container not found');
+                return false;
+            }
+
+            // Build header with back button
+            const headerHtml = `
+                <div class="calculator-header">
+                    <button class="back-btn" id="calc-back-btn">← Back to Calculators</button>
+                    <h3>${calculator.name}</h3>
+                </div>
+                <div class="calculator-content">
+                    ${calculator.getTemplate()}
+                </div>
+            `;
+
+            container.innerHTML = headerHtml;
+
+            // Bind back button
+            const backBtn = document.getElementById('calc-back-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    eventBus.emit(EVENTS.UI_SWITCH_TOOL, { tool: 'calculators' });
+                });
+            }
+
+            // Bind calculator events
+            if (calculator.bindEvents) {
+                calculator.bindEvents();
+            }
+
+            // Set as current calculator
+            this.currentCalculator = calculator;
+
+            // Add to recent
+            this.addToRecent(calculatorId);
+
+            // Track usage
+            analytics.trackCalculatorUse(calculator.name);
+
+            // Emit event
+            eventBus.emit(EVENTS.CALCULATOR_OPENED, { 
+                id: calculatorId, 
+                name: calculator.name 
+            });
+
+            // Switch to detail view
+            eventBus.emit(EVENTS.UI_SWITCH_TOOL, { tool: 'calculator-detail' });
+
+            console.log(`🧮 Loaded calculator: ${calculator.name}`);
+            return true;
+
+        } catch (error) {
+            console.error('Error loading calculator:', error);
+            return false;
+        }
+    }
+
     /**
      * Render calculator HTML into a container
      */
@@ -73,31 +149,14 @@ export class CalculatorManager {
         }
         
         try {
-            // Render HTML
-            const html = calculator.renderFn();
+            // Render HTML using getTemplate
+            const html = calculator.getTemplate();
             container.innerHTML = html;
             
-            // Attach calculate button handler
-            const calcButton = container.querySelector(`[data-calc="${calculatorId}"]`);
-            if (calcButton) {
-                calcButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.executeCalculation(calculatorId);
-                });
+            // Bind calculator events
+            if (calculator.bindEvents) {
+                calculator.bindEvents();
             }
-            
-            // Also look for legacy onclick handlers and replace with data-calc
-            const legacyButtons = container.querySelectorAll('button:not([data-calc])');
-            legacyButtons.forEach(btn => {
-                if (btn.getAttribute('onclick')?.includes('calculate')) {
-                    btn.setAttribute('data-calc', calculatorId);
-                    btn.removeAttribute('onclick');
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.executeCalculation(calculatorId);
-                    });
-                }
-            });
             
             return true;
         } catch (error) {
@@ -117,7 +176,7 @@ export class CalculatorManager {
         }
         
         try {
-            const result = calculator.calculateFn();
+            const result = calculator.calculate();
             
             // Emit event
             eventBus.emit(EVENTS.CALCULATOR_CALCULATED, {
@@ -127,8 +186,10 @@ export class CalculatorManager {
             });
             
             // Vibration feedback
-            if (result) {
+            if (result && !result.error) {
                 analytics.vibrateSuccess();
+            } else if (result && result.error) {
+                analytics.vibrateError();
             }
             
             return result;
@@ -214,13 +275,13 @@ export class CalculatorManager {
         const calculator = this.currentCalculator;
         
         try {
-            const result = calculator.calculateFn(inputs);
+            // New calculators don't take inputs, they read from DOM
+            const result = calculator.calculate();
             
             // Emit event
             eventBus.emit(EVENTS.CALCULATOR_CALCULATED, {
                 id: calculator.id,
                 name: calculator.name,
-                inputs,
                 result
             });
             

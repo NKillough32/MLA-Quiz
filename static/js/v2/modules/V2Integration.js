@@ -12,6 +12,10 @@ import { calculatorManager } from './CalculatorManager.js';
 import { drugReferenceManager } from './DrugReferenceManager.js';
 import { labValuesManager } from './LabValuesManager.js';
 import { guidelinesManager } from './GuidelinesManager.js';
+import { differentialDxManager } from './DifferentialDxManager.js';
+import { triadsManager } from './TriadsManager.js';
+import { examinationManager } from './ExaminationManager.js';
+import { emergencyProtocolsManager } from './EmergencyProtocolsManager.js';
 import { eventBus } from './EventBus.js';
 import { EVENTS, TOOL_CATEGORIES } from './Constants.js';
 
@@ -32,6 +36,12 @@ export class V2Integration {
 
         this.v1App = v1AppInstance;
         
+        // Initialize all managers with V1 app reference
+        differentialDxManager.initialize(v1AppInstance);
+        triadsManager.initialize(v1AppInstance);
+        examinationManager.initialize(v1AppInstance);
+        emergencyProtocolsManager.initialize(v1AppInstance);
+        
         // Hook into V1's switchMedicalTool method
         this.patchV1SwitchMethod();
         
@@ -40,6 +50,7 @@ export class V2Integration {
         
         this.initialized = true;
         console.log('🔗 V2 Integration initialized - bridging V2 modules to V1 UI');
+        console.log('   ✅ Calculators, Differential Dx, Triads, Examinations, Emergency Protocols');
     }
 
     /**

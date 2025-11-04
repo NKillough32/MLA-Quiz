@@ -22,6 +22,12 @@ import { DrugReferenceManager } from './modules/DrugReferenceManager.js';
 import { LabValuesManager } from './modules/LabValuesManager.js';
 import { GuidelinesManager } from './modules/GuidelinesManager.js';
 
+// Clinical Feature Modules (bridge to V1)
+import { differentialDxManager } from './modules/DifferentialDxManager.js';
+import { triadsManager } from './modules/TriadsManager.js';
+import { examinationManager } from './modules/ExaminationManager.js';
+import { emergencyProtocolsManager } from './modules/EmergencyProtocolsManager.js';
+
 // V2 Integration Layer
 import { v2Integration } from './modules/V2Integration.js';
 
@@ -131,6 +137,22 @@ class MLAQuizApp {
     setupCrossModuleCommunication() {
         console.log('🔗 Setting up cross-module communication...');
 
+        // Calculator button clicks (event delegation on calculator panel)
+        const calculatorPanel = document.getElementById('calculator-panel');
+        if (calculatorPanel) {
+            calculatorPanel.addEventListener('click', (e) => {
+                const calcBtn = e.target.closest('.calculator-btn');
+                if (calcBtn) {
+                    const calcId = calcBtn.getAttribute('data-calc');
+                    if (calcId) {
+                        console.log(`🧮 Calculator button clicked: ${calcId}`);
+                        calculatorManager.loadCalculator(calcId);
+                    }
+                }
+            });
+            console.log('✅ Calculator panel event delegation setup');
+        }
+
         // Quiz completion → Show results in UI
         eventBus.on(EVENTS.QUIZ_COMPLETED, (data) => {
             const score = data.score;
@@ -168,6 +190,12 @@ class MLAQuizApp {
         // Theme changed → Update everywhere
         eventBus.on(EVENTS.THEME_CHANGED, (data) => {
             console.log(`🎨 Theme changed to: ${data.darkMode ? 'dark' : 'light'}`);
+        });
+
+        // UI tool switching (for calculators, etc.)
+        eventBus.on(EVENTS.UI_SWITCH_TOOL, (data) => {
+            console.log(`🔧 Switching to tool: ${data.tool}`);
+            this.switchTool(data.tool);
         });
 
         // Error handling
@@ -321,6 +349,54 @@ class MLAQuizApp {
     }
 
     /**
+     * Switch between tools/panels (V1 compatibility method)
+     */
+    switchTool(toolType) {
+        const toolPanels = document.querySelectorAll('.tool-panel');
+        const navButtons = document.querySelectorAll('.tool-nav-btn');
+        
+        // Remove active class from all nav buttons
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked nav button
+        const activeNavBtn = document.querySelector(`[data-tool="${toolType}"]`);
+        if (activeNavBtn) {
+            activeNavBtn.classList.add('active');
+        }
+        
+        // Hide all panels
+        toolPanels.forEach(panel => {
+            panel.classList.remove('active');
+        });
+        
+        // Map navigation data-tool values to actual panel IDs
+        const panelIdMap = {
+            'drug-reference': 'drug-panel',
+            'calculators': 'calculator-panel',
+            'calculator-detail': 'calculator-detail',
+            'lab-values': 'lab-panel',
+            'guidelines': 'guidelines-panel',
+            'differential-dx': 'differential-panel',
+            'triads': 'triads-panel',
+            'examination': 'examination-panel',
+            'emergency-protocols': 'emergency-protocols-panel',
+            'interpretation': 'interpretation-panel',
+            'anatomy': 'anatomy-panel',
+            'ladders': 'ladders-panel'
+        };
+        
+        // Show selected panel
+        const panelId = panelIdMap[toolType] || `${toolType}-panel`;
+        const targetPanel = document.getElementById(panelId);
+        if (targetPanel) {
+            targetPanel.classList.add('active');
+            console.log(`✅ Switched to panel: ${panelId}`);
+        } else {
+            console.warn(`⚠️ Panel not found: ${panelId}`);
+        }
+    }
+
+    /**
      * Get app info
      */
     getInfo() {
@@ -364,6 +440,10 @@ window.analytics = analytics;
 window.drugManager = app.drugManager;
 window.labManager = app.labManager;
 window.guidelinesManager = app.guidelinesManager;
+window.differentialDxManager = differentialDxManager;
+window.triadsManager = triadsManager;
+window.examinationManager = examinationManager;
+window.emergencyProtocolsManager = emergencyProtocolsManager;
 window.v2Integration = v2Integration;
 
 // Helper function to initialize V2 integration after V1 app is ready

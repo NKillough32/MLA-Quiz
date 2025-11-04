@@ -308,7 +308,12 @@ export class GuidelinesManager {
             }
         }
 
+
         html += '</div>';
         return html;
     }
 }
+
+// Export singleton instance
+export const guidelinesManager = new GuidelinesManager();
+export default GuidelinesManager;

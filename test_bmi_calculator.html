@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator Test - V2</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+        
+        .status.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .calculator-form {
+            margin-top: 30px;
+        }
+        
+        .calc-input-group {
+            margin-bottom: 20px;
+        }
+        
+        .calc-input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #424242;
+        }
+        
+        .calc-input-group input,
+        .calc-input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .calc-checkbox-group {
+            margin: 20px 0;
+        }
+        
+        .calc-checkbox-group label {
+            display: inline-block;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        button:hover {
+            background: #1565c0;
+        }
+        
+        .calc-result {
+            margin-top: 20px;
+            min-height: 50px;
+        }
+        
+        .calc-reference {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        
+        .calc-reference small {
+            color: #616161;
+            line-height: 1.6;
+        }
+        
+        .error {
+            color: #f44336;
+            font-weight: 500;
+        }
+        
+        #debug-output {
+            margin-top: 30px;
+            padding: 15px;
+            background: #263238;
+            color: #aed581;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .debug-line {
+            margin: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧮 BMI Calculator Test (V2)</h1>
+        <p style="color: #666;">Testing the extracted BMI calculator from V1 → V2 registry</p>
+        
+        <div id="status-messages"></div>
+        
+        <div id="calculator-container"></div>
+        
+        <div id="debug-output">
+            <div class="debug-line">📋 Debug Log:</div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import calculator registry
+        import { calculatorRegistry } from './static/js/v2/modules/calculators/CalculatorRegistry.js';
+        
+        const statusDiv = document.getElementById('status-messages');
+        const calculatorDiv = document.getElementById('calculator-container');
+        const debugDiv = document.getElementById('debug-output');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = 'debug-line';
+            line.textContent = `[${timestamp}] ${message}`;
+            debugDiv.appendChild(line);
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function showStatus(message, type = 'info') {
+            const status = document.createElement('div');
+            status.className = `status ${type}`;
+            status.textContent = message;
+            statusDiv.appendChild(status);
+        }
+        
+        // Test 1: Check if registry is loaded
+        log('Test 1: Checking calculator registry...');
+        if (calculatorRegistry) {
+            showStatus('✅ Calculator registry loaded successfully', 'success');
+            log(`✅ Registry loaded with ${Object.keys(calculatorRegistry).length} calculators`);
+        } else {
+            showStatus('❌ Failed to load calculator registry', 'error');
+            log('❌ Registry is undefined');
+        }
+        
+        // Test 2: Check if BMI calculator exists
+        log('Test 2: Checking for BMI calculator...');
+        const bmiCalc = calculatorRegistry['bmi'];
+        if (bmiCalc) {
+            showStatus('✅ BMI calculator found in registry', 'success');
+            log(`✅ BMI calculator: ${bmiCalc.name}`);
+            log(`   Category: ${bmiCalc.category}`);
+            log(`   Description: ${bmiCalc.description}`);
+        } else {
+            showStatus('❌ BMI calculator not found', 'error');
+            log('❌ BMI calculator missing from registry');
+        }
+        
+        // Test 3: Check calculator methods
+        log('Test 3: Checking calculator methods...');
+        if (bmiCalc && typeof bmiCalc.getTemplate === 'function') {
+            showStatus('✅ getTemplate() method exists', 'success');
+            log('✅ getTemplate() is a function');
+        } else {
+            showStatus('❌ getTemplate() method missing', 'error');
+            log('❌ getTemplate() not found');
+        }
+        
+        if (bmiCalc && typeof bmiCalc.calculate === 'function') {
+            showStatus('✅ calculate() method exists', 'success');
+            log('✅ calculate() is a function');
+        } else {
+            showStatus('❌ calculate() method missing', 'error');
+            log('❌ calculate() not found');
+        }
+        
+        if (bmiCalc && typeof bmiCalc.bindEvents === 'function') {
+            showStatus('✅ bindEvents() method exists', 'success');
+            log('✅ bindEvents() is a function');
+        } else {
+            showStatus('❌ bindEvents() method missing', 'error');
+            log('❌ bindEvents() not found');
+        }
+        
+        // Test 4: Render calculator HTML
+        log('Test 4: Rendering calculator HTML...');
+        try {
+            const html = bmiCalc.getTemplate();
+            calculatorDiv.innerHTML = html;
+            showStatus('✅ Calculator HTML rendered successfully', 'success');
+            log(`✅ Rendered ${html.length} characters of HTML`);
+        } catch (error) {
+            showStatus(`❌ Failed to render HTML: ${error.message}`, 'error');
+            log(`❌ Render error: ${error.message}`);
+        }
+        
+        // Test 5: Bind events
+        log('Test 5: Binding calculator events...');
+        try {
+            bmiCalc.bindEvents();
+            showStatus('✅ Events bound successfully', 'success');
+            log('✅ Event bindings complete');
+        } catch (error) {
+            showStatus(`❌ Failed to bind events: ${error.message}`, 'error');
+            log(`❌ Event binding error: ${error.message}`);
+        }
+        
+        // Test 6: Check for calculate button
+        log('Test 6: Checking for calculate button...');
+        const calcButton = document.getElementById('bmi-calculate-btn');
+        if (calcButton) {
+            showStatus('✅ Calculate button found and bound', 'success');
+            log('✅ Calculate button exists with correct ID');
+        } else {
+            showStatus('❌ Calculate button not found', 'error');
+            log('❌ Button with id="bmi-calculate-btn" not found');
+        }
+        
+        // Test 7: Test calculation with sample data
+        log('Test 7: Testing calculation with sample data...');
+        setTimeout(() => {
+            try {
+                // Set sample values
+                document.getElementById('bmi-weight').value = '70';
+                document.getElementById('bmi-height').value = '175';
+                document.getElementById('bmi-ethnicity').value = 'european';
+                document.querySelector('input[name="bmi-sex"][value="male"]').checked = true;
+                
+                log('   Sample data: 70kg, 175cm, European, Male');
+                
+                // Trigger calculation
+                const result = bmiCalc.calculate();
+                
+                if (result && !result.error) {
+                    showStatus(`✅ Calculation successful! BMI: ${result.bmi}`, 'success');
+                    log(`✅ Calculation result: BMI=${result.bmi}, Category=${result.category}`);
+                } else if (result && result.error) {
+                    showStatus(`⚠️ Calculation returned error: ${result.html}`, 'error');
+                    log(`⚠️ Calculation error: ${result.html}`);
+                } else {
+                    showStatus('❌ Calculation returned no result', 'error');
+                    log('❌ No result object returned');
+                }
+            } catch (error) {
+                showStatus(`❌ Calculation failed: ${error.message}`, 'error');
+                log(`❌ Calculation error: ${error.message}`);
+                log(`   Stack: ${error.stack}`);
+            }
+        }, 500);
+        
+        log('==================================================');
+        log('🎯 All automated tests complete. Try manual input above!');
+        log('==================================================');
+        
+        // Add manual test instructions
+        setTimeout(() => {
+            showStatus('🎯 Automated tests complete! Now try entering your own values and clicking Calculate', 'info');
+        }, 1000);
+    </script>
+</body>
+</html>

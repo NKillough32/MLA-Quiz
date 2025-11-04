@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>V2 Module Load Test</title>
+</head>
+<body>
+    <h1>V2 Module Load Test</h1>
+    <div id="output"></div>
+    
+    <script type="module">
+        const output = document.getElementById('output');
+        
+        function log(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.style.padding = '5px';
+            div.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            div.textContent = msg;
+            output.appendChild(div);
+        }
+        
+        try {
+            log('Testing V2 module imports...', 'info');
+            
+            // Try to import main.js
+            log('Importing main.js...', 'info');
+            import('/static/js/v2/main.js')
+                .then(() => {
+                    log('✅ main.js loaded successfully', 'success');
+                    log('Checking window objects...', 'info');
+                    
+                    setTimeout(() => {
+                        if (window.calculatorManager) {
+                            log(`✅ calculatorManager exists, count: ${window.calculatorManager.getCalculatorCount()}`, 'success');
+                        } else {
+                            log('❌ calculatorManager not found', 'error');
+                        }
+                        
+                        if (window.eventBus) {
+                            log('✅ eventBus exists', 'success');
+                        } else {
+                            log('❌ eventBus not found', 'error');
+                        }
+                        
+                        if (window.initializeV2Integration) {
+                            log('✅ initializeV2Integration exists', 'success');
+                        } else {
+                            log('❌ initializeV2Integration not found', 'error');
+                        }
+                    }, 1000);
+                })
+                .catch(err => {
+                    log(`❌ Failed to load main.js: ${err.message}`, 'error');
+                    log(`Stack: ${err.stack}`, 'error');
+                });
+                
+        } catch (error) {
+            log(`❌ Error: ${error.message}`, 'error');
+            log(`Stack: ${error.stack}`, 'error');
+        }
+        
+        // Also test importing individual modules
+        setTimeout(() => {
+            log('\\n--- Testing individual modules ---', 'info');
+            
+            import('/static/js/v2/modules/EventBus.js')
+                .then(() => log('✅ EventBus.js loads', 'success'))
+                .catch(err => log(`❌ EventBus.js: ${err.message}`, 'error'));
+                
+            import('/static/js/v2/modules/CalculatorManager.js')
+                .then(() => log('✅ CalculatorManager.js loads', 'success'))
+                .catch(err => log(`❌ CalculatorManager.js: ${err.message}`, 'error'));
+                
+            import('/static/js/v2/modules/calculators/CalculatorRegistry.js')
+                .then(() => log('✅ CalculatorRegistry.js loads', 'success'))
+                .catch(err => log(`❌ CalculatorRegistry.js: ${err.message}`, 'error'));
+        }, 500);
+    </script>
+</body>
+</html>

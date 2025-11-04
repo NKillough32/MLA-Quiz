@@ -7006,11 +7006,11 @@
     <script src="/static/js/v1/anatomyEnhancements.js"></script>
     
     <!-- ============================================ -->
-    <!-- V2 MODULAR SYSTEM (TESTING - EXPERIMENTAL)  -->
+    <!-- V2 MODULAR SYSTEM (DISABLED - CACHE ISSUES) -->
     <!-- ============================================ -->
     <!-- V2 uses modern ES6 modules architecture     -->
-    <!-- Currently in testing - disabled by default  -->
-    <!-- To enable V2: Uncomment the section below   -->
+    <!-- TEMPORARILY DISABLED due to browser cache   -->
+    <!-- Export fixes added but browser won't reload -->
     <!--
     <script src="/static/js/drugDatabase.js"></script>
     <script src="/static/js/labDatabase.js"></script>
@@ -7021,8 +7021,7 @@
     <script>
         // Add event listener for report generation
         document.addEventListener('DOMContentLoaded', () => {
-            // V2 Integration (disabled - uncomment when ready to test V2)
-            /*
+            // V2 Integration (NOW ACTIVE - using bridge to V1 calculators)
             setTimeout(() => {
                 if (window.quizApp && window.initializeV2Integration) {
                     const success = window.initializeV2Integration(window.quizApp);
@@ -7043,7 +7042,6 @@
                     }, 1000);
                 }
             }, 500);
-            */
             
             // Add report generation handler for both buttons
             document.addEventListener('click', (e) => {
